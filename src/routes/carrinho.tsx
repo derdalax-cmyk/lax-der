@@ -67,10 +67,11 @@ function CarrinhoPage() {
                     </button>
                   </div>
                   {it.product.is_unique && it.product.reserved_until && (
-                    <div className="mt-2 text-xs text-success font-medium">
+                    <div className="mt-2 text-xs font-medium text-gold">
                       <CountdownTimer until={it.product.reserved_until} onExpire={refresh} />
                     </div>
                   )}
+
                   <div className="mt-3 flex items-center justify-between">
                     <div className="flex items-center border border-border rounded">
                       <button
