@@ -170,7 +170,26 @@ function CheckoutPage() {
       }).eq("id", user.id);
 
       await clear();
-      toast.success("✅ Pedido criado! Conclua o pagamento.");
+
+      // Initiate Paysuite payment
+      try {
+        const returnUrl = `${window.location.origin}/pedido/${order.id}`;
+        const result = await initPayment({
+          data: {
+            orderId: order.id,
+            method: payMethod === "e-mpesa" ? "mpesa" : "emola",
+            msisdn: payPhone,
+            returnUrl,
+          },
+        });
+        if (result?.checkoutUrl) {
+          window.location.href = result.checkoutUrl;
+          return;
+        }
+        toast.success("✅ Pedido criado! Verifique o telefone para autorizar.");
+      } catch (payErr) {
+        toast.warning(`Pedido criado, mas pagamento falhou: ${payErr instanceof Error ? payErr.message : "erro"}`);
+      }
       navigate({ to: "/pedido/$id", params: { id: order.id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao processar pedido");
