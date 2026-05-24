@@ -55,6 +55,8 @@ export const Route = createFileRoute("/api/public/payments/paysuite")({
         const ref = payload?.data?.reference;
         const providerId = payload?.data?.id;
         const event = payload?.event ?? "";
+        console.log("🔎 Paysuite payload parsed:", { event, ref, providerId, status: payload?.data?.status });
+
         if (!ref && !providerId) return new Response("Missing identifier", { status: 400 });
 
         // Locate the order
@@ -62,6 +64,7 @@ export const Route = createFileRoute("/api/public/payments/paysuite")({
         query = ref ? query.eq("payment_reference", ref) : query.eq("payment_provider_id", providerId!);
         const { data: orders, error } = await query;
         if (error || !orders || orders.length === 0) {
+          console.warn("⚠️ Paysuite webhook: pedido não encontrado", { ref, providerId, error: error?.message });
           return new Response("Order not found", { status: 404 });
         }
         const order = orders[0];
@@ -76,11 +79,15 @@ export const Route = createFileRoute("/api/public/payments/paysuite")({
             payment_provider_id: providerId ?? null,
             updated_at: new Date().toISOString(),
           }).eq("id", order.id);
+          console.log("✅ Pedido marcado como pago:", order.id);
         } else if (isFailure) {
           await supabaseAdmin.from("orders").update({
             payment_status: "failed",
             updated_at: new Date().toISOString(),
           }).eq("id", order.id);
+          console.log("❌ Pedido marcado como falhado:", order.id);
+        } else {
+          console.log("ℹ️ Paysuite webhook ignorado (sem mudança de estado):", { orderId: order.id, current: order.payment_status });
         }
 
         return new Response(JSON.stringify({ ok: true }), {
