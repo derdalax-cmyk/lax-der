@@ -26,6 +26,7 @@ import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizador
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
+import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -112,6 +113,12 @@ const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   path: '/administradores',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicPaymentsPaysuiteRoute =
+  ApiPublicPaymentsPaysuiteRouteImport.update({
+    id: '/api/public/payments/paysuite',
+    path: '/api/public/payments/paysuite',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,6 +157,7 @@ export interface FileRoutesByTo {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -169,6 +178,7 @@ export interface FileRoutesById {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin/'
+    | '/api/public/payments/paysuite'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin'
+    | '/api/public/payments/paysuite'
   id:
     | '__root__'
     | '/'
@@ -227,6 +239,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin/'
+    | '/api/public/payments/paysuite'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -241,6 +254,7 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
+  ApiPublicPaymentsPaysuiteRoute: typeof ApiPublicPaymentsPaysuiteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -364,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdministradoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/payments/paysuite': {
+      id: '/api/public/payments/paysuite'
+      path: '/api/public/payments/paysuite'
+      fullPath: '/api/public/payments/paysuite'
+      preLoaderRoute: typeof ApiPublicPaymentsPaysuiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -408,7 +429,18 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
+  ApiPublicPaymentsPaysuiteRoute: ApiPublicPaymentsPaysuiteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
