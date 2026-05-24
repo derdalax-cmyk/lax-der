@@ -92,6 +92,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          updated_at: string
+          user_id: string
+          variation_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+          variation_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+          variation_id?: string | null
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -314,7 +344,6 @@ export type Database = {
           email: string | null
           id: string
           name: string | null
-          nr_documento: string | null
           phone: string | null
           updated_at: string
         }
@@ -324,7 +353,6 @@ export type Database = {
           email?: string | null
           id: string
           name?: string | null
-          nr_documento?: string | null
           phone?: string | null
           updated_at?: string
         }
@@ -334,7 +362,6 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string | null
-          nr_documento?: string | null
           phone?: string | null
           updated_at?: string
         }
@@ -415,6 +442,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      promote_next_in_queue: {
+        Args: { _product_id: string }
+        Returns: undefined
+      }
+      release_expired_reservations: { Args: never; Returns: number }
+      release_product: { Args: { _product_id: string }; Returns: undefined }
+      reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
     }
     Enums: {
