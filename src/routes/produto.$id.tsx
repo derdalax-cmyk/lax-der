@@ -4,7 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { ProductCard, type ProductCardData, formatMZN } from "@/components/ProductCard";
+import { CountdownTimer } from "@/components/cart/CountdownTimer";
+import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -12,6 +16,7 @@ export const Route = createFileRoute("/produto/$id")({
   head: () => ({ meta: [{ title: "Produto · DERDALAX" }] }),
   component: ProdutoDetalhe,
 });
+
 
 type Product = {
   id: string;
