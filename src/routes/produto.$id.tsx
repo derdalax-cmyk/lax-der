@@ -27,7 +27,10 @@ type Product = {
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
+  reserved_by: string | null;
+  reserved_until: string | null;
 };
+
 
 type Variation = {
   id: string;
@@ -56,6 +59,8 @@ function ProdutoDetalhe() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
+  const { user } = useAuth();
+  const { addItem } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [related, setRelated] = useState<ProductCardData[]>([]);
@@ -65,6 +70,8 @@ function ProdutoDetalhe() {
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+  const [adding, setAdding] = useState(false);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -109,13 +116,28 @@ function ProdutoDetalhe() {
 
   const effectivePrice = selectedVariation?.price ?? product?.base_price ?? 0;
 
-  const canBuy = product?.status === "available" && stockAvailable > 0 &&
+  const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
+  const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
+
+  const canBuy = !!product && product.status !== "sold" && !reservedByOther && stockAvailable > 0 &&
     (sizes.length === 0 || !!size) && (colors.length === 0 || !!color);
 
-  const handleAddToCart = () => {
-    if (!canBuy) { toast.error("Selecione variação disponível"); return; }
-    toast.success("Carrinho em construção — em breve");
+  const reload = async () => {
+    const { data: p } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+    setProduct(p as Product | null);
   };
+
+  const handleAddToCart = async (): Promise<boolean> => {
+    if (!product) return false;
+    if (reservedByOther) { toast.error("Peça indisponível"); return false; }
+    if (!canBuy) { toast.error("Selecione variação disponível"); return false; }
+    setAdding(true);
+    const ok = await addItem(product.id, selectedVariation?.id ?? null, qty);
+    setAdding(false);
+    if (ok) await reload();
+    return ok;
+  };
+
 
   if (loading) {
     return <div className="max-w-[1200px] mx-auto px-5 py-16">
