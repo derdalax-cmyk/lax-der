@@ -202,7 +202,15 @@ function ProdutoDetalhe() {
         <div>
           <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
           <p className="mt-2 text-2xl font-medium">{formatMZN(Number(effectivePrice))}</p>
-          {product.status === "reserved" && <p className="mt-2 text-sm text-muted-foreground">Reservado por outro cliente.</p>}
+          {reservedByOther && (
+            <p className="mt-2 text-sm text-destructive font-medium">🔴 Indisponível temporariamente — reservado por outro cliente.</p>
+          )}
+          {reservedByMe && product.reserved_until && (
+            <p className="mt-2 text-sm text-gold font-medium">
+              <CountdownTimer until={product.reserved_until} onExpire={reload} />
+            </p>
+          )}
+
 
           {stripMeta(product.description) && (
             <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{stripMeta(product.description)}</p>
@@ -261,13 +269,24 @@ function ProdutoDetalhe() {
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Button onClick={handleAddToCart} disabled={!canBuy} variant="outline" className="flex-1">Adicionar ao carrinho</Button>
-            <Button onClick={() => { handleAddToCart(); navigate({ to: "/carrinho" }); }} disabled={!canBuy} className="flex-1 bg-gold text-ink hover:bg-gold/90">Comprar agora</Button>
+            <Button onClick={handleAddToCart} disabled={!canBuy || adding} variant="outline" className="flex-1">
+              {adding ? "A adicionar…" : "Adicionar ao carrinho"}
+            </Button>
+            <Button onClick={async () => { const ok = await handleAddToCart(); if (ok) navigate({ to: "/carrinho" }); }} disabled={!canBuy || adding} className="flex-1 bg-gold text-ink hover:bg-gold/90">
+              Comprar agora
+            </Button>
             <button onClick={() => toggle(product.id)} aria-label="Favoritar" className="h-10 w-10 flex items-center justify-center border border-border rounded">
               <Heart className={cn("w-5 h-5", isFavorite(product.id) ? "fill-destructive text-destructive" : "")} />
             </button>
           </div>
+
+          {reservedByOther && (
+            <div className="mt-4">
+              <WaitingListButton productId={product.id} />
+            </div>
+          )}
         </div>
+
       </div>
 
       {related.length > 0 && (
