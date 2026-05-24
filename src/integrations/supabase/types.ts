@@ -59,6 +59,21 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_allowlist: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           key: string
@@ -392,6 +407,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -399,6 +415,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "client"

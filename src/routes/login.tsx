@@ -27,7 +27,7 @@ function GoogleIcon() {
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,8 +35,8 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/" });
-  }, [user, loading, navigate]);
+    if (!loading && user) navigate({ to: isAdmin ? "/admin" : "/" });
+  }, [user, loading, isAdmin, navigate]);
 
   const oauth = async (provider: "google" | "apple") => {
     setBusy(true);
@@ -62,7 +62,7 @@ function LoginPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/" });
+        // navigation handled by useEffect once isAdmin resolves
       }
     } catch (err) {
       toast.error((err as Error).message);
