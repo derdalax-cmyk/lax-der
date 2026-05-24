@@ -2,7 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { Search, Heart, ShoppingCart, User, Menu } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
+
 
 const links = [
   { to: "/", label: "Início" },
@@ -13,7 +15,9 @@ const links = [
 
 export function Navbar() {
   const { user, isAdmin } = useAuth();
+  const { count } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
+
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
@@ -45,7 +49,11 @@ export function Navbar() {
             </Link>
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
               <ShoppingCart className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center">{count}</span>
+              )}
             </Link>
+
             <Link to={user ? (isAdmin ? "/admin" : "/perfil") : "/login"} className="hover:text-gold transition-colors" aria-label="Conta">
               <User className="w-5 h-5" />
             </Link>

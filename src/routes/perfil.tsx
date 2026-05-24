@@ -20,8 +20,8 @@ function Perfil() {
         <div><span className="text-muted-foreground text-sm">Nome:</span> <span className="font-medium">{profile?.name || "—"}</span></div>
         <div><span className="text-muted-foreground text-sm">Email:</span> <span className="font-medium">{profile?.email || user.email}</span></div>
         <div><span className="text-muted-foreground text-sm">Telefone:</span> <span className="font-medium">{profile?.phone || "—"}</span></div>
-        <div><span className="text-muted-foreground text-sm">Nº doc:</span> <span className="font-medium">{profile?.nr_documento || "—"}</span></div>
         <div><span className="text-muted-foreground text-sm">Cidade:</span> <span className="font-medium">{profile?.city || "—"}</span></div>
+
       </div>
       <Button className="mt-6" variant="outline" onClick={() => signOut()}>Terminar sessão</Button>
     </div>

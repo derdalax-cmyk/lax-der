@@ -4,7 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { ProductCard, type ProductCardData, formatMZN } from "@/components/ProductCard";
+import { CountdownTimer } from "@/components/cart/CountdownTimer";
+import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -12,6 +16,7 @@ export const Route = createFileRoute("/produto/$id")({
   head: () => ({ meta: [{ title: "Produto · DERDALAX" }] }),
   component: ProdutoDetalhe,
 });
+
 
 type Product = {
   id: string;
@@ -22,7 +27,10 @@ type Product = {
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
+  reserved_by: string | null;
+  reserved_until: string | null;
 };
+
 
 type Variation = {
   id: string;
@@ -51,6 +59,8 @@ function ProdutoDetalhe() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
+  const { user } = useAuth();
+  const { addItem } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [related, setRelated] = useState<ProductCardData[]>([]);
@@ -60,6 +70,8 @@ function ProdutoDetalhe() {
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
+  const [adding, setAdding] = useState(false);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -104,13 +116,28 @@ function ProdutoDetalhe() {
 
   const effectivePrice = selectedVariation?.price ?? product?.base_price ?? 0;
 
-  const canBuy = product?.status === "available" && stockAvailable > 0 &&
+  const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
+  const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
+
+  const canBuy = !!product && product.status !== "sold" && !reservedByOther && stockAvailable > 0 &&
     (sizes.length === 0 || !!size) && (colors.length === 0 || !!color);
 
-  const handleAddToCart = () => {
-    if (!canBuy) { toast.error("Selecione variação disponível"); return; }
-    toast.success("Carrinho em construção — em breve");
+  const reload = async () => {
+    const { data: p } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+    setProduct(p as Product | null);
   };
+
+  const handleAddToCart = async (): Promise<boolean> => {
+    if (!product) return false;
+    if (reservedByOther) { toast.error("Peça indisponível"); return false; }
+    if (!canBuy) { toast.error("Selecione variação disponível"); return false; }
+    setAdding(true);
+    const ok = await addItem(product.id, selectedVariation?.id ?? null, qty);
+    setAdding(false);
+    if (ok) await reload();
+    return ok;
+  };
+
 
   if (loading) {
     return <div className="max-w-[1200px] mx-auto px-5 py-16">
@@ -175,7 +202,15 @@ function ProdutoDetalhe() {
         <div>
           <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
           <p className="mt-2 text-2xl font-medium">{formatMZN(Number(effectivePrice))}</p>
-          {product.status === "reserved" && <p className="mt-2 text-sm text-muted-foreground">Reservado por outro cliente.</p>}
+          {reservedByOther && (
+            <p className="mt-2 text-sm text-destructive font-medium">🔴 Indisponível temporariamente — reservado por outro cliente.</p>
+          )}
+          {reservedByMe && product.reserved_until && (
+            <p className="mt-2 text-sm text-gold font-medium">
+              <CountdownTimer until={product.reserved_until} onExpire={reload} />
+            </p>
+          )}
+
 
           {stripMeta(product.description) && (
             <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{stripMeta(product.description)}</p>
@@ -234,13 +269,24 @@ function ProdutoDetalhe() {
           </div>
 
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Button onClick={handleAddToCart} disabled={!canBuy} variant="outline" className="flex-1">Adicionar ao carrinho</Button>
-            <Button onClick={() => { handleAddToCart(); navigate({ to: "/carrinho" }); }} disabled={!canBuy} className="flex-1 bg-gold text-ink hover:bg-gold/90">Comprar agora</Button>
+            <Button onClick={handleAddToCart} disabled={!canBuy || adding} variant="outline" className="flex-1">
+              {adding ? "A adicionar…" : "Adicionar ao carrinho"}
+            </Button>
+            <Button onClick={async () => { const ok = await handleAddToCart(); if (ok) navigate({ to: "/carrinho" }); }} disabled={!canBuy || adding} className="flex-1 bg-gold text-ink hover:bg-gold/90">
+              Comprar agora
+            </Button>
             <button onClick={() => toggle(product.id)} aria-label="Favoritar" className="h-10 w-10 flex items-center justify-center border border-border rounded">
               <Heart className={cn("w-5 h-5", isFavorite(product.id) ? "fill-destructive text-destructive" : "")} />
             </button>
           </div>
+
+          {reservedByOther && (
+            <div className="mt-4">
+              <WaitingListButton productId={product.id} />
+            </div>
+          )}
         </div>
+
       </div>
 
       {related.length > 0 && (
