@@ -206,7 +206,10 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           id: string
+          notes: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
+          payment_phone: string | null
+          payment_reference: string | null
           payment_status: string | null
           shipping: number
           shipping_address: Json | null
@@ -221,7 +224,10 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
+          notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_phone?: string | null
+          payment_reference?: string | null
           payment_status?: string | null
           shipping?: number
           shipping_address?: Json | null
@@ -236,7 +242,10 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           id?: string
+          notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          payment_phone?: string | null
+          payment_reference?: string | null
           payment_status?: string | null
           shipping?: number
           shipping_address?: Json | null
@@ -434,6 +443,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
       grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
         Args: {
