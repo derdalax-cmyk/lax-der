@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth, MZ_CITIES } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -12,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { initPaysuitePayment } from "@/lib/paysuite.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
@@ -40,6 +42,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
   const { items, subtotal, shipping, total, clear, loading: cartLoading } = useCart();
+  const initPayment = useServerFn(initPaysuitePayment);
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -167,7 +170,26 @@ function CheckoutPage() {
       }).eq("id", user.id);
 
       await clear();
-      toast.success("✅ Pedido criado! Conclua o pagamento.");
+
+      // Initiate Paysuite payment
+      try {
+        const returnUrl = `${window.location.origin}/pedido/${order.id}`;
+        const result = await initPayment({
+          data: {
+            orderId: order.id,
+            method: payMethod === "e-mpesa" ? "mpesa" : "emola",
+            msisdn: payPhone,
+            returnUrl,
+          },
+        });
+        if (result?.checkoutUrl) {
+          window.location.href = result.checkoutUrl;
+          return;
+        }
+        toast.success("✅ Pedido criado! Verifique o telefone para autorizar.");
+      } catch (payErr) {
+        toast.warning(`Pedido criado, mas pagamento falhou: ${payErr instanceof Error ? payErr.message : "erro"}`);
+      }
       navigate({ to: "/pedido/$id", params: { id: order.id } });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao processar pedido");

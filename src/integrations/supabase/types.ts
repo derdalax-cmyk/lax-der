@@ -209,6 +209,7 @@ export type Database = {
           notes: string | null
           payment_method: Database["public"]["Enums"]["payment_method"] | null
           payment_phone: string | null
+          payment_provider_id: string | null
           payment_reference: string | null
           payment_status: string | null
           shipping: number
@@ -227,6 +228,7 @@ export type Database = {
           notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_phone?: string | null
+          payment_provider_id?: string | null
           payment_reference?: string | null
           payment_status?: string | null
           shipping?: number
@@ -245,6 +247,7 @@ export type Database = {
           notes?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"] | null
           payment_phone?: string | null
+          payment_provider_id?: string | null
           payment_reference?: string | null
           payment_status?: string | null
           shipping?: number

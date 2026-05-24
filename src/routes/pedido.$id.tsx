@@ -50,17 +50,28 @@ function PedidoPage() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) { setLoading(false); return; }
-    (async () => {
+    let active = true;
+    const load = async () => {
       const [{ data: o }, { data: its }] = await Promise.all([
         supabase.from("orders").select("*").eq("id", id).maybeSingle(),
         supabase.from("order_items")
           .select("id,quantity,price,product_id,variation_id, product:products(title,images)")
           .eq("order_id", id),
       ]);
+      if (!active) return;
       setOrder(o as OrderRow | null);
       setItems((its ?? []) as ItemRow[]);
       setLoading(false);
-    })();
+    };
+    load();
+    // Poll while awaiting payment confirmation
+    const iv = setInterval(() => {
+      setOrder((curr) => {
+        if (curr && curr.payment_status !== "paid" && curr.payment_status !== "failed") load();
+        return curr;
+      });
+    }, 5000);
+    return () => { active = false; clearInterval(iv); };
   }, [id, user, authLoading]);
 
   if (loading || authLoading) return <div className="max-w-2xl mx-auto px-5 py-20 text-center text-muted-foreground">A carregar pedido…</div>;
