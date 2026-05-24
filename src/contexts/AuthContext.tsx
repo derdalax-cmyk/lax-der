@@ -7,9 +7,9 @@ type Profile = {
   email: string | null;
   name: string | null;
   phone: string | null;
-  nr_documento: string | null;
   city: string | null;
 };
+
 
 type AuthCtx = {
   user: User | null;
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const needsProfileCompletion = !!user && !!profile && (!profile.city || !profile.nr_documento || !profile.phone || !profile.name);
+  const needsProfileCompletion = !!user && !!profile && (!profile.city || !profile.phone || !profile.name);
 
   return (
     <Ctx.Provider value={{

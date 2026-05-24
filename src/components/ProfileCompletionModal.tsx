@@ -12,14 +12,13 @@ export function ProfileCompletionModal() {
   const { user, profile, needsProfileCompletion, refreshProfile } = useAuth();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", nr_documento: "", city: "" });
+  const [form, setForm] = useState({ name: "", phone: "", city: "" });
 
   useEffect(() => {
     if (needsProfileCompletion && profile) {
       setForm({
         name: profile.name || "",
         phone: profile.phone || "",
-        nr_documento: profile.nr_documento || "",
         city: profile.city || "",
       });
       setOpen(true);
@@ -31,7 +30,7 @@ export function ProfileCompletionModal() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (!form.name || !form.phone || !form.nr_documento || !form.city) {
+    if (!form.name || !form.phone || !form.city) {
       toast.error("Preencha todos os campos.");
       return;
     }
@@ -39,7 +38,6 @@ export function ProfileCompletionModal() {
     const { error } = await supabase.from("profiles").update({
       name: form.name,
       phone: form.phone,
-      nr_documento: form.nr_documento,
       city: form.city,
     }).eq("id", user.id);
     setSaving(false);
@@ -49,7 +47,7 @@ export function ProfileCompletionModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => { /* obrigatório - não fecha */ }}>
+    <Dialog open={open} onOpenChange={() => { /* obrigatório */ }}>
       <DialogContent className="max-w-md" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Complete o seu perfil</DialogTitle>
@@ -65,10 +63,6 @@ export function ProfileCompletionModal() {
           <div>
             <Label htmlFor="phone">Telefone (+258)</Label>
             <Input id="phone" placeholder="+258 84 000 0000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
-          </div>
-          <div>
-            <Label htmlFor="doc">Nº de documento</Label>
-            <Input id="doc" value={form.nr_documento} onChange={(e) => setForm({ ...form, nr_documento: e.target.value })} required />
           </div>
           <div>
             <Label>Cidade</Label>
