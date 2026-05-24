@@ -42,6 +42,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
   const { items, subtotal, shipping, total, clear, loading: cartLoading } = useCart();
+  const initPayment = useServerFn(initPaysuitePayment);
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
