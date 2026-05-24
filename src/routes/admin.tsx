@@ -39,7 +39,7 @@ function AdminLayout() {
             return (
               <Link
                 key={n.to}
-                to={n.to}
+                to={n.to as "/admin"}
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-md text-sm whitespace-nowrap transition-colors",
                   active ? "bg-ink text-gold" : "text-foreground hover:bg-secondary",
