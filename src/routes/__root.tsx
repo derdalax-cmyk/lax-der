@@ -113,6 +113,7 @@ function AppShell() {
       </main>
       <Footer />
       <ProfileCompletionModal />
+      <InstallAppPrompt />
       <Toaster richColors position="top-right" />
     </div>
   );
