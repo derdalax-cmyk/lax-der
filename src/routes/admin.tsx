@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Package, Users, ShoppingBag, Shield } from "lucide-react";
+import { LayoutDashboard, Package, Users, ShoppingBag, Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
@@ -12,6 +12,7 @@ export const Route = createFileRoute("/admin")({
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
+  { to: "/admin/categorias-destaque", label: "Destaques", icon: Star },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/administradores", label: "Administradores", icon: Shield },
   { to: "/admin/utilizadores", label: "Utilizadores", icon: Users },
