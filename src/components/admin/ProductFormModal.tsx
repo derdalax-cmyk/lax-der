@@ -150,8 +150,29 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
         }
       }
 
+      if (pid) {
+        // Sync featured collection memberships for this product
+        await supabase.from("featured_collection_products").delete().eq("product_id", pid);
+        const chosen = [...selectedCollections];
+        if (chosen.length) {
+          const { data: maxRows } = await supabase
+            .from("featured_collection_products")
+            .select("collection_id,sort_order")
+            .in("collection_id", chosen);
+          const maxByCol: Record<string, number> = {};
+          (maxRows ?? []).forEach((r) => {
+            maxByCol[r.collection_id] = Math.max(maxByCol[r.collection_id] ?? -1, r.sort_order);
+          });
+          const rows = chosen.map((cid) => ({ collection_id: cid, product_id: pid!, sort_order: (maxByCol[cid] ?? -1) + 1 }));
+          const { error } = await supabase.from("featured_collection_products").insert(rows);
+          if (error) throw error;
+        }
+      }
+
       toast.success(product ? "Produto atualizado" : "Produto criado");
       qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
+      qc.invalidateQueries({ queryKey: ["home-collections"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
