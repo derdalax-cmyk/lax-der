@@ -13,6 +13,7 @@ import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ExplorarRouteImport } from './routes/explorar'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
@@ -25,6 +26,7 @@ import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
+import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
@@ -46,6 +48,11 @@ const PerfilRoute = PerfilRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExplorarRoute = ExplorarRouteImport.update({
+  id: '/explorar',
+  path: '/explorar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -108,6 +115,11 @@ const AdminPedidosRoute = AdminPedidosRouteImport.update({
   path: '/pedidos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
+  id: '/categorias-destaque',
+  path: '/categorias-destaque',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   id: '/administradores',
   path: '/administradores',
@@ -126,11 +138,13 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/categorias': typeof CategoriasRoute
   '/checkout': typeof CheckoutRoute
+  '/explorar': typeof ExplorarRoute
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -145,11 +159,13 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/categorias': typeof CategoriasRoute
   '/checkout': typeof CheckoutRoute
+  '/explorar': typeof ExplorarRoute
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -166,11 +182,13 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/categorias': typeof CategoriasRoute
   '/checkout': typeof CheckoutRoute
+  '/explorar': typeof ExplorarRoute
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -188,11 +206,13 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/categorias'
     | '/checkout'
+    | '/explorar'
     | '/login'
     | '/perfil'
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -207,11 +227,13 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/categorias'
     | '/checkout'
+    | '/explorar'
     | '/login'
     | '/perfil'
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -227,11 +249,13 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/categorias'
     | '/checkout'
+    | '/explorar'
     | '/login'
     | '/perfil'
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -248,6 +272,7 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   CategoriasRoute: typeof CategoriasRoute
   CheckoutRoute: typeof CheckoutRoute
+  ExplorarRoute: typeof ExplorarRoute
   LoginRoute: typeof LoginRoute
   PerfilRoute: typeof PerfilRouteWithChildren
   ProdutosRoute: typeof ProdutosRoute
@@ -285,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explorar': {
+      id: '/explorar'
+      path: '/explorar'
+      fullPath: '/explorar'
+      preLoaderRoute: typeof ExplorarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -371,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPedidosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/categorias-destaque': {
+      id: '/admin/categorias-destaque'
+      path: '/categorias-destaque'
+      fullPath: '/admin/categorias-destaque'
+      preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/administradores': {
       id: '/admin/administradores'
       path: '/administradores'
@@ -390,6 +429,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdministradoresRoute: typeof AdminAdministradoresRoute
+  AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
   AdminPedidosRoute: typeof AdminPedidosRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
@@ -398,6 +438,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdministradoresRoute: AdminAdministradoresRoute,
+  AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
   AdminPedidosRoute: AdminPedidosRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
@@ -423,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   CategoriasRoute: CategoriasRoute,
   CheckoutRoute: CheckoutRoute,
+  ExplorarRoute: ExplorarRoute,
   LoginRoute: LoginRoute,
   PerfilRoute: PerfilRouteWithChildren,
   ProdutosRoute: ProdutosRoute,
@@ -434,13 +476,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

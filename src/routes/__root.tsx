@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
 import { Footer } from "@/components/Footer";
 import { InstallAppPrompt } from "@/components/InstallAppPrompt";
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
@@ -112,7 +113,7 @@ function AppShell() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pb-20 md:pb-0">
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
         ) : (
@@ -120,6 +121,7 @@ function AppShell() {
         )}
       </main>
       <Footer />
+      <BottomNav />
       <ProfileCompletionModal />
       <InstallAppPrompt />
       <Toaster richColors position="top-right" />

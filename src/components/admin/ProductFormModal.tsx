@@ -68,6 +68,15 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
   const [images, setImages] = useState<string[]>([]);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [saving, setSaving] = useState(false);
+  const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.from("featured_collections").select("id,name,icon").order("sort_order").then(({ data }) => {
+      setCollections(data ?? []);
+    });
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -89,8 +98,11 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
+      supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id).then(({ data }) => {
+        setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
+      });
     } else {
-      setTitle(""); setText(""); setPrice(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]);
+      setTitle(""); setText(""); setPrice(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
     }
   }, [product, open]);
 
@@ -138,8 +150,29 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
         }
       }
 
+      if (pid) {
+        // Sync featured collection memberships for this product
+        await supabase.from("featured_collection_products").delete().eq("product_id", pid);
+        const chosen = [...selectedCollections];
+        if (chosen.length) {
+          const { data: maxRows } = await supabase
+            .from("featured_collection_products")
+            .select("collection_id,sort_order")
+            .in("collection_id", chosen);
+          const maxByCol: Record<string, number> = {};
+          (maxRows ?? []).forEach((r) => {
+            maxByCol[r.collection_id] = Math.max(maxByCol[r.collection_id] ?? -1, r.sort_order);
+          });
+          const rows = chosen.map((cid) => ({ collection_id: cid, product_id: pid!, sort_order: (maxByCol[cid] ?? -1) + 1 }));
+          const { error } = await supabase.from("featured_collection_products").insert(rows);
+          if (error) throw error;
+        }
+      }
+
       toast.success(product ? "Produto atualizado" : "Produto criado");
       qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
+      qc.invalidateQueries({ queryKey: ["home-collections"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
@@ -209,6 +242,34 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={isUnique} onCheckedChange={(v) => setIsUnique(!!v)} /> Peça única</label>
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
+          </div>
+
+          <div>
+            <Label className="mb-2 block">Categorias de destaque</Label>
+            {collections.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {collections.map((c) => {
+                  const checked = selectedCollections.has(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setSelectedCollections((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
+                        return next;
+                      })}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
+                    >
+                      <span>{c.icon}</span> {c.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground mt-1">Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).</p>
           </div>
 
           <div>
