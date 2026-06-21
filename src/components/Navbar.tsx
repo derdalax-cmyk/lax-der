@@ -6,9 +6,9 @@ import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 
 
-const links = [
+const links: { to: "/" | "/explorar" | "/categorias" | "/suporte"; label: string }[] = [
   { to: "/", label: "Início" },
-  { to: "/produtos", label: "Explorar" },
+  { to: "/explorar", label: "Explorar" },
   { to: "/categorias", label: "Categorias" },
   { to: "/suporte", label: "Suporte" },
 ];
