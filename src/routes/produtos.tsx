@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/ProductCard";
@@ -9,7 +11,12 @@ import { Button } from "@/components/ui/button";
 import { CATEGORIES } from "@/components/admin/ProductFormModal";
 import { Search } from "lucide-react";
 
+const searchSchema = z.object({
+  categoria: fallback(z.string(), "").default(""),
+});
+
 export const Route = createFileRoute("/produtos")({
+  validateSearch: zodValidator(searchSchema),
   head: () => ({ meta: [
     { title: "Produtos · DERDALAX" },
     { name: "description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
@@ -20,6 +27,7 @@ export const Route = createFileRoute("/produtos")({
 const PAGE_SIZE = 10;
 
 function ProdutosPage() {
+  const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
   const [products, setProducts] = useState<ProductCardData[]>([]);
   const [total, setTotal] = useState(0);
@@ -27,9 +35,12 @@ function ProdutosPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [category, setCategory] = useState<string>("all");
+  const [category, setCategory] = useState<string>(categoria || "all");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
+
+  useEffect(() => { setCategory(categoria || "all"); }, [categoria]);
+
 
   useEffect(() => {
     const t = setTimeout(() => setSearchDebounced(search), 300);
