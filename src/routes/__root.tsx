@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Navbar } from "@/components/Navbar";
+import { BottomNav } from "@/components/BottomNav";
 import { Footer } from "@/components/Footer";
 import { InstallAppPrompt } from "@/components/InstallAppPrompt";
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
