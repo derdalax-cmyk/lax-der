@@ -68,6 +68,15 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
   const [images, setImages] = useState<string[]>([]);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [saving, setSaving] = useState(false);
+  const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.from("featured_collections").select("id,name,icon").order("sort_order").then(({ data }) => {
+      setCollections(data ?? []);
+    });
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;

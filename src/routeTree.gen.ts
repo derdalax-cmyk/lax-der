@@ -26,6 +26,7 @@ import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
+import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
@@ -114,6 +115,11 @@ const AdminPedidosRoute = AdminPedidosRouteImport.update({
   path: '/pedidos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
+  id: '/categorias-destaque',
+  path: '/categorias-destaque',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   id: '/administradores',
   path: '/administradores',
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -244,6 +255,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/admin/administradores'
+    | '/admin/categorias-destaque'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/utilizadores'
@@ -391,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPedidosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/categorias-destaque': {
+      id: '/admin/categorias-destaque'
+      path: '/categorias-destaque'
+      fullPath: '/admin/categorias-destaque'
+      preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/administradores': {
       id: '/admin/administradores'
       path: '/administradores'
@@ -410,6 +429,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdministradoresRoute: typeof AdminAdministradoresRoute
+  AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
   AdminPedidosRoute: typeof AdminPedidosRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
@@ -418,6 +438,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdministradoresRoute: AdminAdministradoresRoute,
+  AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
   AdminPedidosRoute: AdminPedidosRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
