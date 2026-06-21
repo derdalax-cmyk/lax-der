@@ -245,6 +245,34 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
           </div>
 
           <div>
+            <Label className="mb-2 block">Categorias de destaque</Label>
+            {collections.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {collections.map((c) => {
+                  const checked = selectedCollections.has(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setSelectedCollections((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
+                        return next;
+                      })}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
+                    >
+                      <span>{c.icon}</span> {c.name}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground mt-1">Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).</p>
+          </div>
+
+          <div>
             <Label className="mb-2 block">Imagens</Label>
             <ImageUploader productId={productId} value={images} onChange={setImages} />
           </div>
