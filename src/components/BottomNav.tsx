@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Compass, LayoutGrid, Headset } from "lucide-react";
 
-const items = [
+const items: { to: "/" | "/explorar" | "/categorias" | "/suporte"; label: string; icon: typeof Home; exact?: boolean }[] = [
   { to: "/", label: "Início", icon: Home, exact: true },
   { to: "/explorar", label: "Explorar", icon: Compass },
   { to: "/categorias", label: "Categorias", icon: LayoutGrid },
   { to: "/suporte", label: "Suporte", icon: Headset },
-] as const;
+];
 
 export function BottomNav() {
   return (
