@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Search, Users, UserPlus, UserCheck, UserX, UserCog,
-  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, Crown,
+  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox,
 } from "lucide-react";
+
 import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 import { cn } from "@/lib/utils";
 
