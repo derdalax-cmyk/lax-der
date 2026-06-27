@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LayoutDashboard, Package, Users, ShoppingBag, Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/admin/NotificationBell";
+
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin · DERDALAX" }, { name: "description", content: "Painel administrativo." }] }),
@@ -53,8 +55,12 @@ function AdminLayout() {
         </nav>
       </aside>
       <section className="min-w-0">
+        <div className="flex justify-end mb-2">
+          <NotificationBell />
+        </div>
         <Outlet />
       </section>
+
     </div>
   );
 }

@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Search, ShoppingBag, DollarSign, Clock, TrendingUp, CalendarDays, AlertCircle,
-  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, ArrowUpRight, ArrowDownRight,
+  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, ArrowUpRight, ArrowDownRight, X,
 } from "lucide-react";
 import { StatusBadge, PaymentBadge, ORDER_STATUS, ORDER_STATUS_META, PAYMENT_METHOD_LABEL } from "@/components/admin/StatusBadge";
+import { OrderDetailDrawer } from "@/components/admin/OrderDetailDrawer";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/admin/pedidos")({
   component: AdminPedidos,
@@ -46,6 +50,7 @@ type SortKey = "seq" | "customer_name" | "created_at" | "itemsCount" | "total" |
 function startOfDay(d: Date) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
 
 function AdminPedidos() {
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [method, setMethod] = useState("all");
@@ -56,6 +61,10 @@ function AdminPedidos() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [drawerOrder, setDrawerOrder] = useState<EnrichedOrder | null>(null);
+  const [bulkStatus, setBulkStatus] = useState("");
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-orders"],
@@ -184,9 +193,9 @@ function AdminPedidos() {
     else { setSortKey(key); setSortDir("asc"); }
   };
 
-  const exportCsv = () => {
+  const exportCsv = (list: EnrichedOrder[] = filtered) => {
     const headers = ["Pedido", "Cliente", "Telefone", "Email", "Data", "Itens", "Subtotal", "Frete", "Total", "Status", "Pagamento", "Metodo"];
-    const rows = filtered.map((o) => [
+    const rows = list.map((o) => [
       o.seq, o.customer_name ?? "", o.customer_phone ?? "", o.email ?? "",
       new Date(o.created_at).toLocaleString("pt-PT"), o.itemsCount,
       o.subtotal, o.shipping, o.total,
@@ -201,6 +210,37 @@ function AdminPedidos() {
     a.href = url; a.download = `pedidos-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
+
+  const pageIds = paged.map((o) => o.id);
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id));
+  const toggleSelectAll = () => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allPageSelected) pageIds.forEach((id) => next.delete(id));
+      else pageIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+  const selectedOrders = filtered.filter((o) => selected.has(o.id));
+
+  const bulkUpdateStatus = async () => {
+    if (!bulkStatus || selected.size === 0) return;
+    const ids = [...selected];
+    const { error } = await supabase.from("orders").update({ status: bulkStatus as never }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${ids.length} pedido(s) atualizados para ${ORDER_STATUS_META[bulkStatus]?.label ?? bulkStatus}`);
+    setBulkStatus("");
+    setSelected(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
 
   const SortHeader = ({ k, children, className }: { k: SortKey; children: React.ReactNode; className?: string }) => (
     <th className={cn("px-4 py-3", className)}>
@@ -218,7 +258,7 @@ function AdminPedidos() {
           <h1 className="font-display text-3xl">Pedidos</h1>
           <p className="text-sm text-muted-foreground">Gestão e acompanhamento de encomendas.</p>
         </div>
-        <Button onClick={exportCsv} variant="outline">
+        <Button onClick={() => exportCsv()} variant="outline">
           <Download className="w-4 h-4 mr-1" /> Exportar CSV
         </Button>
       </div>
@@ -267,12 +307,33 @@ function AdminPedidos() {
         <Input type="number" value={maxVal} onChange={(e) => { setMaxVal(e.target.value); setPage(1); }} placeholder="Max MT" className="w-[110px]" />
       </div>
 
+      {/* Bulk actions */}
+      {selected.size > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-4 bg-ink text-white rounded-xl px-4 py-3">
+          <span className="text-sm font-medium">{selected.size} selecionado(s)</span>
+          <Select value={bulkStatus} onValueChange={setBulkStatus}>
+            <SelectTrigger className="w-[180px] h-9 bg-background text-foreground"><SelectValue placeholder="Mudar status para…" /></SelectTrigger>
+            <SelectContent>
+              {ORDER_STATUS.map((s) => <SelectItem key={s} value={s}>{ORDER_STATUS_META[s].label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button size="sm" className="bg-gold text-ink hover:bg-gold/90" disabled={!bulkStatus} onClick={bulkUpdateStatus}>Aplicar</Button>
+          <Button size="sm" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => exportCsv(selectedOrders)}>
+            <Download className="w-4 h-4 mr-1" /> Exportar selecionados
+          </Button>
+          <Button size="sm" variant="ghost" className="ml-auto text-white hover:bg-white/10" onClick={() => setSelected(new Set())}>
+            <X className="w-4 h-4 mr-1" /> Limpar
+          </Button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
+                <th className="px-4 py-3 w-10"><Checkbox checked={allPageSelected} onCheckedChange={toggleSelectAll} aria-label="Selecionar tudo" /></th>
                 <SortHeader k="seq">Pedido</SortHeader>
                 <SortHeader k="customer_name">Cliente</SortHeader>
                 <SortHeader k="created_at">Data</SortHeader>
@@ -283,15 +344,18 @@ function AdminPedidos() {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">A carregar…</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">A carregar…</td></tr>}
               {!isLoading && paged.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-16 text-center">
+                <tr><td colSpan={8} className="px-4 py-16 text-center">
                   <Inbox className="w-10 h-10 mx-auto text-muted-foreground/50 mb-2" />
                   <div className="text-muted-foreground">Nenhum pedido encontrado.</div>
                 </td></tr>
               )}
               {paged.map((o) => (
-                <tr key={o.id} className="border-t border-border hover:bg-secondary/40">
+                <tr key={o.id} className={cn("border-t border-border hover:bg-secondary/40 cursor-pointer", selected.has(o.id) && "bg-gold/5")} onClick={() => setDrawerOrder(o)}>
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox checked={selected.has(o.id)} onCheckedChange={() => toggleSelect(o.id)} aria-label="Selecionar pedido" />
+                  </td>
                   <td className="px-4 py-3 font-mono font-medium text-xs">{o.seq}</td>
                   <td className="px-4 py-3">
                     <div className="font-medium">{o.customer_name ?? "—"}</div>
@@ -318,6 +382,7 @@ function AdminPedidos() {
                   </td>
                 </tr>
               ))}
+
             </tbody>
           </table>
         </div>
@@ -345,7 +410,10 @@ function AdminPedidos() {
           </div>
         </div>
       </div>
+
+      <OrderDetailDrawer order={drawerOrder} open={!!drawerOrder} onOpenChange={(o) => !o && setDrawerOrder(null)} />
     </div>
+
   );
 }
 

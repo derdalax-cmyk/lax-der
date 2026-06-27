@@ -9,7 +9,10 @@ import {
   Search, Users, UserPlus, UserCheck, UserX, UserCog,
   ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox,
 } from "lucide-react";
+
+import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/admin/utilizadores")({
   component: AdminUtilizadores,
@@ -43,6 +46,8 @@ function AdminUtilizadores() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [drawerUser, setDrawerUser] = useState<EnrichedUser | null>(null);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -240,7 +245,7 @@ function AdminUtilizadores() {
                 </td></tr>
               )}
               {paged.map((u) => (
-                <tr key={u.id} className="border-t border-border hover:bg-secondary/40">
+                <tr key={u.id} className="border-t border-border hover:bg-secondary/40 cursor-pointer" onClick={() => setDrawerUser(u)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-ink text-gold flex items-center justify-center text-xs font-semibold shrink-0">
@@ -295,7 +300,10 @@ function AdminUtilizadores() {
           </div>
         </div>
       </div>
+
+      <UserDetailDrawer user={drawerUser} open={!!drawerUser} onOpenChange={(o) => !o && setDrawerUser(null)} />
     </div>
+
   );
 }
 

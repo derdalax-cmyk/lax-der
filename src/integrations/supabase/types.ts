@@ -417,28 +417,40 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_notes: string | null
+          blocked: boolean
           city: string | null
           created_at: string
+          document: string | null
           email: string | null
           id: string
+          is_vip: boolean
           name: string | null
           phone: string | null
           updated_at: string
         }
         Insert: {
+          admin_notes?: string | null
+          blocked?: boolean
           city?: string | null
           created_at?: string
+          document?: string | null
           email?: string | null
           id: string
+          is_vip?: boolean
           name?: string | null
           phone?: string | null
           updated_at?: string
         }
         Update: {
+          admin_notes?: string | null
+          blocked?: boolean
           city?: string | null
           created_at?: string
+          document?: string | null
           email?: string | null
           id?: string
+          is_vip?: boolean
           name?: string | null
           phone?: string | null
           updated_at?: string
