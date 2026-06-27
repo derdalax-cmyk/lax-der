@@ -50,6 +50,7 @@ type SortKey = "seq" | "customer_name" | "created_at" | "itemsCount" | "total" |
 function startOfDay(d: Date) { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
 
 function AdminPedidos() {
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [method, setMethod] = useState("all");
@@ -60,6 +61,10 @@ function AdminPedidos() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [drawerOrder, setDrawerOrder] = useState<EnrichedOrder | null>(null);
+  const [bulkStatus, setBulkStatus] = useState("");
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-orders"],
