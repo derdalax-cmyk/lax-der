@@ -193,9 +193,9 @@ function AdminPedidos() {
     else { setSortKey(key); setSortDir("asc"); }
   };
 
-  const exportCsv = () => {
+  const exportCsv = (list: EnrichedOrder[] = filtered) => {
     const headers = ["Pedido", "Cliente", "Telefone", "Email", "Data", "Itens", "Subtotal", "Frete", "Total", "Status", "Pagamento", "Metodo"];
-    const rows = filtered.map((o) => [
+    const rows = list.map((o) => [
       o.seq, o.customer_name ?? "", o.customer_phone ?? "", o.email ?? "",
       new Date(o.created_at).toLocaleString("pt-PT"), o.itemsCount,
       o.subtotal, o.shipping, o.total,
@@ -210,6 +210,37 @@ function AdminPedidos() {
     a.href = url; a.download = `pedidos-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
+
+  const pageIds = paged.map((o) => o.id);
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selected.has(id));
+  const toggleSelectAll = () => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allPageSelected) pageIds.forEach((id) => next.delete(id));
+      else pageIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+  const toggleSelect = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+  const selectedOrders = filtered.filter((o) => selected.has(o.id));
+
+  const bulkUpdateStatus = async () => {
+    if (!bulkStatus || selected.size === 0) return;
+    const ids = [...selected];
+    const { error } = await supabase.from("orders").update({ status: bulkStatus as never }).in("id", ids);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${ids.length} pedido(s) atualizados para ${ORDER_STATUS_META[bulkStatus]?.label ?? bulkStatus}`);
+    setBulkStatus("");
+    setSelected(new Set());
+    qc.invalidateQueries({ queryKey: ["admin-orders"] });
+  };
+
 
   const SortHeader = ({ k, children, className }: { k: SortKey; children: React.ReactNode; className?: string }) => (
     <th className={cn("px-4 py-3", className)}>
