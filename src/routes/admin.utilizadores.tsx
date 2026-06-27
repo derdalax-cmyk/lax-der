@@ -244,7 +244,7 @@ function AdminUtilizadores() {
                 </td></tr>
               )}
               {paged.map((u) => (
-                <tr key={u.id} className="border-t border-border hover:bg-secondary/40">
+                <tr key={u.id} className="border-t border-border hover:bg-secondary/40 cursor-pointer" onClick={() => setDrawerUser(u)}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-ink text-gold flex items-center justify-center text-xs font-semibold shrink-0">
