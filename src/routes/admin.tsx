@@ -53,8 +53,12 @@ function AdminLayout() {
         </nav>
       </aside>
       <section className="min-w-0">
+        <div className="flex justify-end mb-2">
+          <NotificationBell />
+        </div>
         <Outlet />
       </section>
+
     </div>
   );
 }
