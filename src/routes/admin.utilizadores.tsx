@@ -299,7 +299,10 @@ function AdminUtilizadores() {
           </div>
         </div>
       </div>
+
+      <UserDetailDrawer user={drawerUser} open={!!drawerUser} onOpenChange={(o) => !o && setDrawerUser(null)} />
     </div>
+
   );
 }
 
