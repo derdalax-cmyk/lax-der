@@ -76,43 +76,29 @@ function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="relative bg-ink text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-30" style={{ background: "var(--gradient-dark)" }} />
-        <div className="absolute top-1/2 -right-32 w-[600px] h-[600px] rounded-full bg-gold/20 blur-3xl -translate-y-1/2" />
-        <div className="relative max-w-[1400px] mx-auto px-5 py-20 md:py-32 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/30 text-gold text-xs uppercase tracking-widest mb-6">
-              <Sparkles className="w-3.5 h-3.5" /> Nova coleção
-            </div>
-            <h1 className="font-display text-4xl md:text-6xl leading-[1.05] mb-6">
-              Moda com <span className="text-gold italic">história</span>, estilo com futuro.
-            </h1>
-            <p className="text-lg text-white/70 max-w-md mb-8 leading-relaxed">
-              Peças únicas, selecionadas para você.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                to="/explorar"
-                className="inline-flex items-center gap-2 bg-gold text-ink px-6 py-3 rounded-md font-medium hover:bg-gold/90 transition-colors"
-              >
-                Explorar coleção <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/categorias"
-                className="inline-flex items-center gap-2 border border-white/20 text-white px-6 py-3 rounded-md font-medium hover:bg-white/5 transition-colors"
-              >
-                Ver categorias
-              </Link>
-            </div>
-          </div>
+      <section className="relative overflow-hidden">
+        <img
+          src={heroBg.url}
+          alt="Arara de roupas DERDALAX com iluminação quente"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* overlay de cor sólida transparente para legibilidade */}
+        <div className="absolute inset-0 bg-ink/65" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
 
-          <div className="hidden md:block relative">
-            <div className="aspect-[3/4] rounded-2xl overflow-hidden border border-white/10" style={{ background: "var(--gradient-gold)" }}>
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="font-display text-9xl text-ink/20">D</span>
-              </div>
-            </div>
+        <div className="relative max-w-[1400px] mx-auto px-5 py-14 md:py-24 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/40 text-gold text-xs uppercase tracking-widest mb-5 animate-fade-in">
+            <Sparkles className="w-3.5 h-3.5" /> Nova coleção
           </div>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-6xl leading-[1.05] mb-4 text-white animate-fade-in">
+            Moda com <span className="text-gold italic">história</span>, estilo com futuro.
+          </h1>
+          <p
+            className="text-base md:text-lg text-white/85 max-w-md mx-auto leading-relaxed animate-fade-in"
+            style={{ animationDelay: "150ms", animationFillMode: "backwards" }}
+          >
+            Peças únicas, selecionadas para você.
+          </p>
         </div>
       </section>
 
