@@ -410,7 +410,10 @@ function AdminPedidos() {
           </div>
         </div>
       </div>
+
+      <OrderDetailDrawer order={drawerOrder} open={!!drawerOrder} onOpenChange={(o) => !o && setDrawerOrder(null)} />
     </div>
+
   );
 }
 
