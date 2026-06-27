@@ -29,7 +29,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
   return (
     <section className="py-6">
       <div className="max-w-[1400px] mx-auto px-5 flex items-end justify-between mb-4">
-        <h2 className="font-display text-2xl md:text-3xl flex items-center gap-2">
+        <h2 className="font-display text-xl md:text-2xl flex items-center gap-2">
           {icon && <span aria-hidden>{icon}</span>} {title}
         </h2>
         {seeMoreTo && (
