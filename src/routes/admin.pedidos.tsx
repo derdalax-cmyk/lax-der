@@ -307,12 +307,33 @@ function AdminPedidos() {
         <Input type="number" value={maxVal} onChange={(e) => { setMaxVal(e.target.value); setPage(1); }} placeholder="Max MT" className="w-[110px]" />
       </div>
 
+      {/* Bulk actions */}
+      {selected.size > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-4 bg-ink text-white rounded-xl px-4 py-3">
+          <span className="text-sm font-medium">{selected.size} selecionado(s)</span>
+          <Select value={bulkStatus} onValueChange={setBulkStatus}>
+            <SelectTrigger className="w-[180px] h-9 bg-background text-foreground"><SelectValue placeholder="Mudar status para…" /></SelectTrigger>
+            <SelectContent>
+              {ORDER_STATUS.map((s) => <SelectItem key={s} value={s}>{ORDER_STATUS_META[s].label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Button size="sm" className="bg-gold text-ink hover:bg-gold/90" disabled={!bulkStatus} onClick={bulkUpdateStatus}>Aplicar</Button>
+          <Button size="sm" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" onClick={() => exportCsv(selectedOrders)}>
+            <Download className="w-4 h-4 mr-1" /> Exportar selecionados
+          </Button>
+          <Button size="sm" variant="ghost" className="ml-auto text-white hover:bg-white/10" onClick={() => setSelected(new Set())}>
+            <X className="w-4 h-4 mr-1" /> Limpar
+          </Button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-secondary text-left text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
+                <th className="px-4 py-3 w-10"><Checkbox checked={allPageSelected} onCheckedChange={toggleSelectAll} aria-label="Selecionar tudo" /></th>
                 <SortHeader k="seq">Pedido</SortHeader>
                 <SortHeader k="customer_name">Cliente</SortHeader>
                 <SortHeader k="created_at">Data</SortHeader>
@@ -323,15 +344,18 @@ function AdminPedidos() {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">A carregar…</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">A carregar…</td></tr>}
               {!isLoading && paged.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-16 text-center">
+                <tr><td colSpan={8} className="px-4 py-16 text-center">
                   <Inbox className="w-10 h-10 mx-auto text-muted-foreground/50 mb-2" />
                   <div className="text-muted-foreground">Nenhum pedido encontrado.</div>
                 </td></tr>
               )}
               {paged.map((o) => (
-                <tr key={o.id} className="border-t border-border hover:bg-secondary/40">
+                <tr key={o.id} className={cn("border-t border-border hover:bg-secondary/40 cursor-pointer", selected.has(o.id) && "bg-gold/5")} onClick={() => setDrawerOrder(o)}>
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox checked={selected.has(o.id)} onCheckedChange={() => toggleSelect(o.id)} aria-label="Selecionar pedido" />
+                  </td>
                   <td className="px-4 py-3 font-mono font-medium text-xs">{o.seq}</td>
                   <td className="px-4 py-3">
                     <div className="font-medium">{o.customer_name ?? "—"}</div>
@@ -358,6 +382,7 @@ function AdminPedidos() {
                   </td>
                 </tr>
               ))}
+
             </tbody>
           </table>
         </div>
