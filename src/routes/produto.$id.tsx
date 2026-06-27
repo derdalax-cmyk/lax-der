@@ -228,8 +228,19 @@ function ProdutoDetalhe() {
           )}
 
 
-          {stripMeta(product.description) && (
-            <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{stripMeta(product.description)}</p>
+          {descText && (
+            <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{descText}</p>
+          )}
+
+          {specs.length > 0 && (
+            <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm border-t border-border pt-5">
+              {specs.map((s) => (
+                <div key={s.label} className="flex flex-col">
+                  <dt className="text-muted-foreground text-xs uppercase tracking-wide">{s.label}</dt>
+                  <dd className="font-medium capitalize">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
           )}
 
           {sizes.length > 0 && (
