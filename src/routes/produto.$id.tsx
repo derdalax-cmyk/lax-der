@@ -50,9 +50,17 @@ function imagesArr(images: unknown): string[] {
   }).filter(Boolean);
 }
 
-function stripMeta(desc: string | null): string {
-  if (!desc) return "";
-  return desc.replace(/<!--META:.+?-->/s, "").trim();
+type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
+
+function parseMeta(desc: string | null): { text: string; meta: Meta } {
+  if (!desc) return { text: "", meta: {} };
+  const m = desc.match(/<!--META:(.+?)-->/s);
+  if (!m) return { text: desc.trim(), meta: {} };
+  try {
+    return { text: desc.replace(m[0], "").trim(), meta: JSON.parse(m[1]) as Meta };
+  } catch {
+    return { text: desc.replace(m[0], "").trim(), meta: {} };
+  }
 }
 
 function ProdutoDetalhe() {
