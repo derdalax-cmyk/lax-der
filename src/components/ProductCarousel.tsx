@@ -43,7 +43,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
         )}
       </div>
 
-      <div className="flex gap-4 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {products.map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
