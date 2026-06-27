@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Search, ShoppingBag, DollarSign, Clock, TrendingUp, CalendarDays, AlertCircle,
-  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, ArrowUpRight, ArrowDownRight,
+  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, ArrowUpRight, ArrowDownRight, X,
 } from "lucide-react";
 import { StatusBadge, PaymentBadge, ORDER_STATUS, ORDER_STATUS_META, PAYMENT_METHOD_LABEL } from "@/components/admin/StatusBadge";
+import { OrderDetailDrawer } from "@/components/admin/OrderDetailDrawer";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/admin/pedidos")({
   component: AdminPedidos,
