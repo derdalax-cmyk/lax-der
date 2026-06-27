@@ -96,7 +96,9 @@ export function UserDetailDrawer({ user, open, onOpenChange }: {
   };
 
   const toggleFlag = async (field: "is_vip" | "blocked", value: boolean) => {
-    const { error } = await supabase.from("profiles").update({ [field]: value } as Record<string, boolean>).eq("id", user.id);
+    const payload = field === "is_vip" ? { is_vip: value } : { blocked: value };
+    const { error } = await supabase.from("profiles").update(payload).eq("id", user.id);
+
     if (error) { toast.error(error.message); return; }
     toast.success(field === "is_vip" ? (value ? "Marcado como VIP" : "VIP removido") : (value ? "Utilizador bloqueado" : "Utilizador desbloqueado"));
     qc.invalidateQueries({ queryKey: ["admin-user-detail", user.id] });
