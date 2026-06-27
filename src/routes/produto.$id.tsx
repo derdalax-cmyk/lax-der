@@ -110,6 +110,14 @@ function ProdutoDetalhe() {
   }, [id]);
 
   const imgs = useMemo(() => product ? imagesArr(product.images) : [], [product]);
+  const { text: descText, meta } = useMemo(() => parseMeta(product?.description ?? null), [product]);
+  const specs = useMemo(() => ([
+    { label: "Gênero", value: meta.gender },
+    { label: "Marca", value: meta.brand },
+    { label: "Material", value: meta.material },
+    { label: "Cor", value: meta.color },
+    { label: "Tamanho padrão", value: meta.default_size },
+  ].filter((s) => s.value && String(s.value).trim())), [meta]);
   const sizes = useMemo(() => Array.from(new Set(variations.map((v) => v.size).filter(Boolean) as string[])), [variations]);
   const colors = useMemo(() => Array.from(new Set(variations.map((v) => v.color).filter(Boolean) as string[])), [variations]);
 
