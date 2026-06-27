@@ -205,6 +205,14 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
           <div>
             <Label className="mb-2 block">Ícone</Label>
             <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setIcon("")}
+                className={cn("h-10 px-3 rounded-lg border text-xs font-medium flex items-center justify-center transition-colors",
+                  icon === "" ? "border-gold bg-gold/10" : "border-border hover:bg-secondary")}
+              >
+                Sem ícone
+              </button>
               {FEATURED_ICONS.map((ic) => (
                 <button
                   key={ic}

@@ -50,9 +50,17 @@ function imagesArr(images: unknown): string[] {
   }).filter(Boolean);
 }
 
-function stripMeta(desc: string | null): string {
-  if (!desc) return "";
-  return desc.replace(/<!--META:.+?-->/s, "").trim();
+type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
+
+function parseMeta(desc: string | null): { text: string; meta: Meta } {
+  if (!desc) return { text: "", meta: {} };
+  const m = desc.match(/<!--META:(.+?)-->/s);
+  if (!m) return { text: desc.trim(), meta: {} };
+  try {
+    return { text: desc.replace(m[0], "").trim(), meta: JSON.parse(m[1]) as Meta };
+  } catch {
+    return { text: desc.replace(m[0], "").trim(), meta: {} };
+  }
 }
 
 function ProdutoDetalhe() {
@@ -102,6 +110,14 @@ function ProdutoDetalhe() {
   }, [id]);
 
   const imgs = useMemo(() => product ? imagesArr(product.images) : [], [product]);
+  const { text: descText, meta } = useMemo(() => parseMeta(product?.description ?? null), [product]);
+  const specs = useMemo(() => ([
+    { label: "Gênero", value: meta.gender },
+    { label: "Marca", value: meta.brand },
+    { label: "Material", value: meta.material },
+    { label: "Cor", value: meta.color },
+    { label: "Tamanho padrão", value: meta.default_size },
+  ].filter((s) => s.value && String(s.value).trim())), [meta]);
   const sizes = useMemo(() => Array.from(new Set(variations.map((v) => v.size).filter(Boolean) as string[])), [variations]);
   const colors = useMemo(() => Array.from(new Set(variations.map((v) => v.color).filter(Boolean) as string[])), [variations]);
 
@@ -212,8 +228,19 @@ function ProdutoDetalhe() {
           )}
 
 
-          {stripMeta(product.description) && (
-            <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{stripMeta(product.description)}</p>
+          {descText && (
+            <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{descText}</p>
+          )}
+
+          {specs.length > 0 && (
+            <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm border-t border-border pt-5">
+              {specs.map((s) => (
+                <div key={s.label} className="flex flex-col">
+                  <dt className="text-muted-foreground text-xs uppercase tracking-wide">{s.label}</dt>
+                  <dd className="font-medium capitalize">{s.value}</dd>
+                </div>
+              ))}
+            </dl>
           )}
 
           {sizes.length > 0 && (
