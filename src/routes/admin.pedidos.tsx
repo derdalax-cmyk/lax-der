@@ -258,7 +258,7 @@ function AdminPedidos() {
           <h1 className="font-display text-3xl">Pedidos</h1>
           <p className="text-sm text-muted-foreground">Gestão e acompanhamento de encomendas.</p>
         </div>
-        <Button onClick={exportCsv} variant="outline">
+        <Button onClick={() => exportCsv()} variant="outline">
           <Download className="w-4 h-4 mr-1" /> Exportar CSV
         </Button>
       </div>
