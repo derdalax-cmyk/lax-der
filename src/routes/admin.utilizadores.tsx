@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Search, Users, UserPlus, UserCheck, UserX, UserCog,
-  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox,
+  ArrowUpDown, ArrowUp, ArrowDown, Download, ChevronLeft, ChevronRight, Inbox, Crown,
 } from "lucide-react";
+import { UserDetailDrawer } from "@/components/admin/UserDetailDrawer";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/admin/utilizadores")({
   component: AdminUtilizadores,
