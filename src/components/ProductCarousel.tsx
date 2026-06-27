@@ -50,31 +50,31 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
           return (
             <div
               key={p.id}
-              className="snap-start shrink-0 w-[70%] sm:w-[45%] md:w-[30%] lg:w-[23%] xl:w-[19%] group relative"
+              className="snap-start shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%] group relative"
             >
               <Link to="/produto/$id" params={{ id: p.id }} className="block">
-                <div className="relative aspect-[3/4] bg-secondary overflow-hidden rounded-xl border border-border">
+                <div className="relative aspect-square bg-secondary overflow-hidden rounded-lg border border-border">
                   {img ? (
                     <img src={img} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                   )}
                   {p.is_unique && (
-                    <span className="absolute top-2 left-2 bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
+                    <span className="absolute top-1.5 left-1.5 bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>
                   )}
                 </div>
-                <div className="pt-2">
-                  <h3 className="font-medium text-sm line-clamp-1">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">{formatMZN(Number(p.base_price))}</p>
+                <div className="pt-1.5">
+                  <h3 className="font-medium text-xs line-clamp-1">{p.title}</h3>
+                  <p className="text-xs text-gold font-semibold mt-0.5">{formatMZN(Number(p.base_price))}</p>
                 </div>
               </Link>
               <button
                 type="button"
                 aria-label="Favoritar"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(p.id); }}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/90 backdrop-blur flex items-center justify-center hover:bg-background border border-border"
+                className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-background/90 backdrop-blur flex items-center justify-center hover:bg-background border border-border"
               >
-                <Heart className={cn("w-4 h-4", fav ? "fill-destructive text-destructive" : "text-foreground")} />
+                <Heart className={cn("w-3.5 h-3.5", fav ? "fill-destructive text-destructive" : "text-foreground")} />
               </button>
             </div>
           );
