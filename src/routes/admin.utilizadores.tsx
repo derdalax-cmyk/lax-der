@@ -45,6 +45,8 @@ function AdminUtilizadores() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [drawerUser, setDrawerUser] = useState<EnrichedUser | null>(null);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
