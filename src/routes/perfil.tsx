@@ -176,7 +176,7 @@ function Perfil() {
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-        <Link to="/perfil/favoritos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
+        <Link to="/favoritos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
           <span className="flex items-center gap-3">
             <span className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
               <Heart className="w-5 h-5 text-[#c44545]" />
