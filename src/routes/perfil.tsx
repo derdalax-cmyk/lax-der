@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Shield, LogOut, Pencil, Save, X, Phone, MapPin, IdCard, Mail, Crown,
+  Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
   Heart, ShoppingBag, ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ function Perfil() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", city: "", document: "" });
+  const [form, setForm] = useState({ name: "", phone: "", city: "" });
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
@@ -35,7 +35,7 @@ function Perfil() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("document, is_vip, created_at")
+        .select("is_vip, created_at")
         .eq("id", user!.id)
         .maybeSingle();
       return data;
@@ -47,7 +47,6 @@ function Perfil() {
       name: profile?.name ?? "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
-      document: full?.document ?? "",
     });
   }, [profile, full]);
 
@@ -165,16 +164,11 @@ function Perfil() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="sm:col-span-2">
-              <Label className="text-xs">Documento (NR/BI)</Label>
-              <Input value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} placeholder="Número do documento" />
-            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field icon={Phone} label="Telefone" value={profile?.phone} />
             <Field icon={MapPin} label="Província" value={profile?.city} />
-            <Field icon={IdCard} label="Documento" value={full?.document} />
             <Field icon={Mail} label="Email" value={profile?.email || user.email} />
           </div>
         )}
@@ -182,7 +176,7 @@ function Perfil() {
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-        <Link to="/perfil/favoritos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
+        <Link to="/favoritos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
           <span className="flex items-center gap-3">
             <span className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
               <Heart className="w-5 h-5 text-[#c44545]" />
