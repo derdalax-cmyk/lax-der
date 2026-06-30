@@ -11,7 +11,7 @@ const links: { to: "/" | "/explorar" | "/categorias" | "/suporte"; label: string
 ];
 
 export function Navbar() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const { count } = useCart();
 
   return (
