@@ -164,16 +164,11 @@ function Perfil() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="sm:col-span-2">
-              <Label className="text-xs">Documento (NR/BI)</Label>
-              <Input value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} placeholder="Número do documento" />
-            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field icon={Phone} label="Telefone" value={profile?.phone} />
             <Field icon={MapPin} label="Província" value={profile?.city} />
-            <Field icon={IdCard} label="Documento" value={full?.document} />
             <Field icon={Mail} label="Email" value={profile?.email || user.email} />
           </div>
         )}
