@@ -35,7 +35,7 @@ function Perfil() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("document, is_vip, created_at")
+        .select("is_vip, created_at")
         .eq("id", user!.id)
         .maybeSingle();
       return data;
@@ -47,7 +47,6 @@ function Perfil() {
       name: profile?.name ?? "",
       phone: profile?.phone ?? "",
       city: profile?.city ?? "",
-      document: full?.document ?? "",
     });
   }, [profile, full]);
 
