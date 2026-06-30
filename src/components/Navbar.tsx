@@ -46,7 +46,7 @@ export function Navbar() {
                 <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center">{count}</span>
               )}
             </Link>
-            <Link to={user ? (isAdmin ? "/admin" : "/perfil") : "/login"} className="hover:text-gold transition-colors" aria-label="Conta">
+            <Link to={user ? "/perfil" : "/login"} className="hover:text-gold transition-colors" aria-label="Conta">
               <User className="w-5 h-5" />
             </Link>
           </div>
