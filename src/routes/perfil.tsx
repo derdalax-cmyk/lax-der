@@ -25,7 +25,7 @@ function Perfil() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", city: "", document: "" });
+  const [form, setForm] = useState({ name: "", phone: "", city: "" });
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
