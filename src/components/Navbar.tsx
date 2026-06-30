@@ -37,7 +37,7 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link to={user ? "/perfil/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
+            <Link to={user ? "/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
               <Heart className="w-5 h-5" />
             </Link>
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
