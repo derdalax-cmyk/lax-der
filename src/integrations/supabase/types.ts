@@ -418,6 +418,7 @@ export type Database = {
       profiles: {
         Row: {
           admin_notes: string | null
+          avatar_url: string | null
           blocked: boolean
           city: string | null
           created_at: string
@@ -431,6 +432,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          avatar_url?: string | null
           blocked?: boolean
           city?: string | null
           created_at?: string
@@ -444,6 +446,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          avatar_url?: string | null
           blocked?: boolean
           city?: string | null
           created_at?: string

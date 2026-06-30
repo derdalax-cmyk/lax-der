@@ -8,6 +8,7 @@ type Profile = {
   name: string | null;
   phone: string | null;
   city: string | null;
+  avatar_url: string | null;
 };
 
 
@@ -82,3 +83,17 @@ export function useAuth() {
 }
 
 export const MZ_CITIES = ["Beira", "Maputo", "Nampula", "Quelimane", "Chimoio", "Tete", "Lichinga", "Pemba", "Xai-Xai", "Inhambane"] as const;
+
+export const MZ_PROVINCES = [
+  "Maputo Cidade",
+  "Maputo Província",
+  "Gaza",
+  "Inhambane",
+  "Sofala",
+  "Manica",
+  "Tete",
+  "Zambézia",
+  "Nampula",
+  "Cabo Delgado",
+  "Niassa",
+] as const;
