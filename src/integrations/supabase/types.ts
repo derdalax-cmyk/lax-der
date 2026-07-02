@@ -460,6 +460,60 @@ export type Database = {
         }
         Relationships: []
       }
+      sellers: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          full_name: string
+          id: string
+          logo_url: string | null
+          phone: string
+          province: string
+          status: string
+          store_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          logo_url?: string | null
+          phone: string
+          province: string
+          status?: string
+          store_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          logo_url?: string | null
+          phone?: string
+          province?: string
+          status?: string
+          store_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

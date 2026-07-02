@@ -3,9 +3,10 @@ import { Heart, ShoppingCart, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 
-const links: { to: "/" | "/explorar" | "/categorias" | "/suporte"; label: string }[] = [
+const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string }[] = [
   { to: "/", label: "Início" },
   { to: "/explorar", label: "Explorar" },
+  { to: "/tornar-se-vendedor", label: "Vender" },
   { to: "/categorias", label: "Categorias" },
   { to: "/suporte", label: "Suporte" },
 ];

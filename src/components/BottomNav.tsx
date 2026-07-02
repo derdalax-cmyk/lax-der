@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Compass, LayoutGrid, Headset } from "lucide-react";
+import { Home, Compass, Store, LayoutGrid, Headset } from "lucide-react";
 
-const items: { to: "/" | "/explorar" | "/categorias" | "/suporte"; label: string; icon: typeof Home; exact?: boolean }[] = [
+const items: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string; icon: typeof Home; exact?: boolean }[] = [
   { to: "/", label: "Início", icon: Home, exact: true },
   { to: "/explorar", label: "Explorar", icon: Compass },
+  { to: "/tornar-se-vendedor", label: "Vender", icon: Store },
   { to: "/categorias", label: "Categorias", icon: LayoutGrid },
   { to: "/suporte", label: "Suporte", icon: Headset },
 ];
@@ -15,7 +16,7 @@ export function BottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Navegação principal"
     >
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {items.map((it) => {
           const Icon = it.icon;
           return (

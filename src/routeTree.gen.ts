@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TornarSeVendedorRouteImport } from './routes/tornar-se-vendedor'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as PerfilRouteImport } from './routes/perfil'
@@ -31,6 +32,11 @@ import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.cate
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
+const TornarSeVendedorRoute = TornarSeVendedorRouteImport.update({
+  id: '/tornar-se-vendedor',
+  path: '/tornar-se-vendedor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
   path: '/suporte',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
+  '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
+  '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRouteWithChildren
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
+  '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/produtos'
     | '/suporte'
+    | '/tornar-se-vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/produtos'
     | '/suporte'
+    | '/tornar-se-vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/produtos'
     | '/suporte'
+    | '/tornar-se-vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -290,6 +302,7 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRouteWithChildren
   ProdutosRoute: typeof ProdutosRoute
   SuporteRoute: typeof SuporteRoute
+  TornarSeVendedorRoute: typeof TornarSeVendedorRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiPublicPaymentsPaysuiteRoute: typeof ApiPublicPaymentsPaysuiteRoute
@@ -297,6 +310,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tornar-se-vendedor': {
+      id: '/tornar-se-vendedor'
+      path: '/tornar-se-vendedor'
+      fullPath: '/tornar-se-vendedor'
+      preLoaderRoute: typeof TornarSeVendedorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/suporte': {
       id: '/suporte'
       path: '/suporte'
@@ -490,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRouteWithChildren,
   ProdutosRoute: ProdutosRoute,
   SuporteRoute: SuporteRoute,
+  TornarSeVendedorRoute: TornarSeVendedorRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiPublicPaymentsPaysuiteRoute: ApiPublicPaymentsPaysuiteRoute,
