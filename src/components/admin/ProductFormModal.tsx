@@ -31,6 +31,7 @@ type Props = {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   product: ProductRow | null; // null = create
+  sellerId?: string | null; // when set, runs in seller mode (products go pending)
 };
 
 type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
