@@ -22,6 +22,7 @@ import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VendedorIndexRouteImport } from './routes/vendedor.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
@@ -99,6 +100,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendedorIndexRoute = VendedorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VendedorRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -169,7 +175,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
-  '/vendedor': typeof VendedorRoute
+  '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesByTo {
@@ -194,7 +201,6 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
-  '/vendedor': typeof VendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -205,6 +211,7 @@ export interface FileRoutesByTo {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin': typeof AdminIndexRoute
+  '/vendedor': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesById {
@@ -221,7 +228,7 @@ export interface FileRoutesById {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
-  '/vendedor': typeof VendedorRoute
+  '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -232,6 +239,7 @@ export interface FileRoutesById {
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRouteTypes {
@@ -260,6 +268,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin/'
+    | '/vendedor/'
     | '/api/public/payments/paysuite'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -274,7 +283,6 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
-    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -285,6 +293,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin'
+    | '/vendedor'
     | '/api/public/payments/paysuite'
   id:
     | '__root__'
@@ -311,6 +320,7 @@ export interface FileRouteTypes {
     | '/perfil/favoritos'
     | '/produto/$id'
     | '/admin/'
+    | '/vendedor/'
     | '/api/public/payments/paysuite'
   fileRoutesById: FileRoutesById
 }
@@ -327,7 +337,7 @@ export interface RootRouteChildren {
   ProdutosRoute: typeof ProdutosRoute
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
-  VendedorRoute: typeof VendedorRoute
+  VendedorRoute: typeof VendedorRouteWithChildren
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiPublicPaymentsPaysuiteRoute: typeof ApiPublicPaymentsPaysuiteRoute
@@ -425,6 +435,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/vendedor/': {
+      id: '/vendedor/'
+      path: '/'
+      fullPath: '/vendedor/'
+      preLoaderRoute: typeof VendedorIndexRouteImport
+      parentRoute: typeof VendedorRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -539,6 +556,18 @@ const PerfilRouteChildren: PerfilRouteChildren = {
 const PerfilRouteWithChildren =
   PerfilRoute._addFileChildren(PerfilRouteChildren)
 
+interface VendedorRouteChildren {
+  VendedorIndexRoute: typeof VendedorIndexRoute
+}
+
+const VendedorRouteChildren: VendedorRouteChildren = {
+  VendedorIndexRoute: VendedorIndexRoute,
+}
+
+const VendedorRouteWithChildren = VendedorRoute._addFileChildren(
+  VendedorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -552,7 +581,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosRoute: ProdutosRoute,
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
-  VendedorRoute: VendedorRoute,
+  VendedorRoute: VendedorRouteWithChildren,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiPublicPaymentsPaysuiteRoute: ApiPublicPaymentsPaysuiteRoute,
