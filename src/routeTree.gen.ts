@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VendedorRouteImport } from './routes/vendedor'
 import { Route as TornarSeVendedorRouteImport } from './routes/tornar-se-vendedor'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ProdutosRouteImport } from './routes/produtos'
@@ -21,7 +22,10 @@ import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VendedorIndexRouteImport } from './routes/vendedor.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos'
+import { Route as VendedorLojaRouteImport } from './routes/vendedor.loja'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
@@ -33,6 +37,11 @@ import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.cate
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
+const VendedorRoute = VendedorRouteImport.update({
+  id: '/vendedor',
+  path: '/vendedor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TornarSeVendedorRoute = TornarSeVendedorRouteImport.update({
   id: '/tornar-se-vendedor',
   path: '/tornar-se-vendedor',
@@ -93,10 +102,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendedorIndexRoute = VendedorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VendedorRoute,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const VendedorProdutosRoute = VendedorProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => VendedorRoute,
+} as any)
+const VendedorLojaRoute = VendedorLojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => VendedorRoute,
 } as any)
 const ProdutoIdRoute = ProdutoIdRouteImport.update({
   id: '/produto/$id',
@@ -163,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
+  '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -172,7 +197,10 @@ export interface FileRoutesByFullPath {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/loja': typeof VendedorLojaRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
+  '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesByTo {
@@ -196,7 +224,10 @@ export interface FileRoutesByTo {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/loja': typeof VendedorLojaRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin': typeof AdminIndexRoute
+  '/vendedor': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesById {
@@ -213,6 +244,7 @@ export interface FileRoutesById {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
+  '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -222,7 +254,10 @@ export interface FileRoutesById {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/loja': typeof VendedorLojaRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
+  '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRouteTypes {
@@ -240,6 +275,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
+    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -249,7 +285,10 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/loja'
+    | '/vendedor/produtos'
     | '/admin/'
+    | '/vendedor/'
     | '/api/public/payments/paysuite'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -273,7 +312,10 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/loja'
+    | '/vendedor/produtos'
     | '/admin'
+    | '/vendedor'
     | '/api/public/payments/paysuite'
   id:
     | '__root__'
@@ -289,6 +331,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
+    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -298,7 +341,10 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/loja'
+    | '/vendedor/produtos'
     | '/admin/'
+    | '/vendedor/'
     | '/api/public/payments/paysuite'
   fileRoutesById: FileRoutesById
 }
@@ -315,6 +361,7 @@ export interface RootRouteChildren {
   ProdutosRoute: typeof ProdutosRoute
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
+  VendedorRoute: typeof VendedorRouteWithChildren
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiPublicPaymentsPaysuiteRoute: typeof ApiPublicPaymentsPaysuiteRoute
@@ -322,6 +369,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vendedor': {
+      id: '/vendedor'
+      path: '/vendedor'
+      fullPath: '/vendedor'
+      preLoaderRoute: typeof VendedorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tornar-se-vendedor': {
       id: '/tornar-se-vendedor'
       path: '/tornar-se-vendedor'
@@ -406,12 +460,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vendedor/': {
+      id: '/vendedor/'
+      path: '/'
+      fullPath: '/vendedor/'
+      preLoaderRoute: typeof VendedorIndexRouteImport
+      parentRoute: typeof VendedorRoute
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/vendedor/produtos': {
+      id: '/vendedor/produtos'
+      path: '/produtos'
+      fullPath: '/vendedor/produtos'
+      preLoaderRoute: typeof VendedorProdutosRouteImport
+      parentRoute: typeof VendedorRoute
+    }
+    '/vendedor/loja': {
+      id: '/vendedor/loja'
+      path: '/loja'
+      fullPath: '/vendedor/loja'
+      preLoaderRoute: typeof VendedorLojaRouteImport
+      parentRoute: typeof VendedorRoute
     }
     '/produto/$id': {
       id: '/produto/$id'
@@ -519,6 +594,22 @@ const PerfilRouteChildren: PerfilRouteChildren = {
 const PerfilRouteWithChildren =
   PerfilRoute._addFileChildren(PerfilRouteChildren)
 
+interface VendedorRouteChildren {
+  VendedorLojaRoute: typeof VendedorLojaRoute
+  VendedorProdutosRoute: typeof VendedorProdutosRoute
+  VendedorIndexRoute: typeof VendedorIndexRoute
+}
+
+const VendedorRouteChildren: VendedorRouteChildren = {
+  VendedorLojaRoute: VendedorLojaRoute,
+  VendedorProdutosRoute: VendedorProdutosRoute,
+  VendedorIndexRoute: VendedorIndexRoute,
+}
+
+const VendedorRouteWithChildren = VendedorRoute._addFileChildren(
+  VendedorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
@@ -532,6 +623,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosRoute: ProdutosRoute,
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
+  VendedorRoute: VendedorRouteWithChildren,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiPublicPaymentsPaysuiteRoute: ApiPublicPaymentsPaysuiteRoute,

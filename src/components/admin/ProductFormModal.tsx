@@ -31,6 +31,7 @@ type Props = {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   product: ProductRow | null; // null = create
+  sellerId?: string | null; // when set, runs in seller mode (products go pending)
 };
 
 type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
@@ -50,7 +51,8 @@ function packMeta(text: string, meta: Meta): string {
   return `${text}\n<!--META:${JSON.stringify(meta)}-->`;
 }
 
-export function ProductFormModal({ open, onOpenChange, product }: Props) {
+export function ProductFormModal({ open, onOpenChange, product, sellerId }: Props) {
+  const isSeller = !!sellerId;
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
   const [title, setTitle] = useState("");
@@ -120,9 +122,10 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
         base_price: price,
         category,
         is_unique: isUnique,
-        featured,
+        featured: isSeller ? false : featured,
         images,
         status: inStock ? "available" as const : "sold" as const,
+        ...(isSeller ? { seller_id: sellerId, approval_status: "pending" as const } : {}),
       };
 
       let pid = product?.id;
@@ -150,8 +153,8 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
         }
       }
 
-      if (pid) {
-        // Sync featured collection memberships for this product
+      if (pid && !isSeller) {
+        // Sync featured collection memberships for this product (admin only)
         await supabase.from("featured_collection_products").delete().eq("product_id", pid);
         const chosen = [...selectedCollections];
         if (chosen.length) {
@@ -169,8 +172,11 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
         }
       }
 
-      toast.success(product ? "Produto atualizado" : "Produto criado");
+      toast.success(isSeller
+        ? (product ? "Produto atualizado — aguarda aprovação" : "Produto enviado para aprovação")
+        : (product ? "Produto atualizado" : "Produto criado"));
       qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
       onOpenChange(false);
@@ -240,11 +246,18 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
 
           <div className="flex flex-wrap gap-5 py-2">
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={isUnique} onCheckedChange={(v) => setIsUnique(!!v)} /> Peça única</label>
-            <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>
+            {!isSeller && <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>}
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
           </div>
 
-          <div>
+          {isSeller && (
+            <div className="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-xs text-muted-foreground">
+              Os produtos que criar ou editar ficam <strong className="text-foreground">pendentes de aprovação</strong> antes de aparecerem na loja.
+            </div>
+          )}
+
+
+          {!isSeller && <div>
             <Label className="mb-2 block">Categorias de destaque</Label>
             {collections.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
@@ -270,7 +283,7 @@ export function ProductFormModal({ open, onOpenChange, product }: Props) {
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).</p>
-          </div>
+          </div>}
 
           <div>
             <Label className="mb-2 block">Imagens</Label>

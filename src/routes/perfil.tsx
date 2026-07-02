@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight,
+  Heart, ShoppingBag, ChevronRight, Store,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useSeller } from "@/hooks/useSeller";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 
 export const Route = createFileRoute("/perfil")({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/perfil")({
 
 function Perfil() {
   const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
+  const { isApproved: isSeller } = useSeller();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -120,6 +122,25 @@ function Perfil() {
                 </span>
               </span>
               <ChevronRight className="w-5 h-5 text-gold group-hover:translate-x-1 transition-transform" />
+            </Link>
+          )}
+
+          {/* Seller panel CTA — approved sellers only */}
+          {isSeller && (
+            <Link
+              to="/vendedor"
+              className="mt-3 group flex items-center justify-between gap-3 rounded-2xl bg-green text-white px-5 py-4 hover:bg-green/90 transition-colors"
+            >
+              <span className="flex items-center gap-3">
+                <span className="h-10 w-10 rounded-xl bg-white/15 flex items-center justify-center">
+                  <Store className="w-5 h-5 text-white" />
+                </span>
+                <span>
+                  <span className="block font-semibold">Painel do Vendedor</span>
+                  <span className="block text-xs text-white/70">Gerir os produtos da sua loja</span>
+                </span>
+              </span>
+              <ChevronRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform" />
             </Link>
           )}
         </div>

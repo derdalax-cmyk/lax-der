@@ -369,6 +369,7 @@ export type Database = {
       }
       products: {
         Row: {
+          approval_status: string
           base_price: number
           category: string | null
           created_at: string
@@ -377,13 +378,16 @@ export type Database = {
           id: string
           images: Json | null
           is_unique: boolean
+          rejection_reason: string | null
           reserved_by: string | null
           reserved_until: string | null
+          seller_id: string | null
           status: Database["public"]["Enums"]["product_status"]
           title: string
           updated_at: string
         }
         Insert: {
+          approval_status?: string
           base_price?: number
           category?: string | null
           created_at?: string
@@ -392,13 +396,16 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          rejection_reason?: string | null
           reserved_by?: string | null
           reserved_until?: string | null
+          seller_id?: string | null
           status?: Database["public"]["Enums"]["product_status"]
           title: string
           updated_at?: string
         }
         Update: {
+          approval_status?: string
           base_price?: number
           category?: string | null
           created_at?: string
@@ -407,13 +414,23 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          rejection_reason?: string | null
           reserved_by?: string | null
           reserved_until?: string | null
+          seller_id?: string | null
           status?: Database["public"]["Enums"]["product_status"]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -581,6 +598,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_seller_id: { Args: never; Returns: string }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
       grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
