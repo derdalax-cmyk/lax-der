@@ -246,9 +246,16 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
 
           <div className="flex flex-wrap gap-5 py-2">
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={isUnique} onCheckedChange={(v) => setIsUnique(!!v)} /> Peça única</label>
-            <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>
+            {!isSeller && <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>}
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
           </div>
+
+          {isSeller && (
+            <div className="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-xs text-muted-foreground">
+              Os produtos que criar ou editar ficam <strong className="text-foreground">pendentes de aprovação</strong> antes de aparecerem na loja.
+            </div>
+          )}
+
 
           <div>
             <Label className="mb-2 block">Categorias de destaque</Label>
