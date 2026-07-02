@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VendedorRouteImport } from './routes/vendedor'
 import { Route as TornarSeVendedorRouteImport } from './routes/tornar-se-vendedor'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ProdutosRouteImport } from './routes/produtos'
@@ -33,6 +34,11 @@ import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.cate
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
+const VendedorRoute = VendedorRouteImport.update({
+  id: '/vendedor',
+  path: '/vendedor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TornarSeVendedorRoute = TornarSeVendedorRouteImport.update({
   id: '/tornar-se-vendedor',
   path: '/tornar-se-vendedor',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
+  '/vendedor': typeof VendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
+  '/vendedor': typeof VendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
+  '/vendedor': typeof VendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/pedidos': typeof AdminPedidosRoute
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
+    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
+    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
+    | '/vendedor'
     | '/admin/administradores'
     | '/admin/categorias-destaque'
     | '/admin/pedidos'
@@ -315,6 +327,7 @@ export interface RootRouteChildren {
   ProdutosRoute: typeof ProdutosRoute
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
+  VendedorRoute: typeof VendedorRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ApiPublicPaymentsPaysuiteRoute: typeof ApiPublicPaymentsPaysuiteRoute
@@ -322,6 +335,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vendedor': {
+      id: '/vendedor'
+      path: '/vendedor'
+      fullPath: '/vendedor'
+      preLoaderRoute: typeof VendedorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tornar-se-vendedor': {
       id: '/tornar-se-vendedor'
       path: '/tornar-se-vendedor'
@@ -532,6 +552,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProdutosRoute: ProdutosRoute,
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
+  VendedorRoute: VendedorRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ApiPublicPaymentsPaysuiteRoute: ApiPublicPaymentsPaysuiteRoute,
