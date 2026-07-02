@@ -15,6 +15,7 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/categorias-destaque", label: "Destaques", icon: Star },
+  { to: "/admin/vendedores", label: "Vendedores", icon: Store },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/administradores", label: "Administradores", icon: Shield },
   { to: "/admin/utilizadores", label: "Utilizadores", icon: Users },
