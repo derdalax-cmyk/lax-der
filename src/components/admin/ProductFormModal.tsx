@@ -153,8 +153,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         }
       }
 
-      if (pid) {
-        // Sync featured collection memberships for this product
+      if (pid && !isSeller) {
+        // Sync featured collection memberships for this product (admin only)
         await supabase.from("featured_collection_products").delete().eq("product_id", pid);
         const chosen = [...selectedCollections];
         if (chosen.length) {
@@ -172,8 +172,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         }
       }
 
-      toast.success(product ? "Produto atualizado" : "Produto criado");
+      toast.success(isSeller
+        ? (product ? "Produto atualizado — aguarda aprovação" : "Produto enviado para aprovação")
+        : (product ? "Produto atualizado" : "Produto criado"));
       qc.invalidateQueries({ queryKey: ["admin-products"] });
+      qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
       onOpenChange(false);
