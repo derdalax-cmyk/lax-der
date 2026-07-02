@@ -23,6 +23,7 @@ export const Route = createFileRoute("/perfil")({
 
 function Perfil() {
   const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
+  const { isApproved: isSeller } = useSeller();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
