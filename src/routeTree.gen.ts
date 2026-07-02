@@ -24,6 +24,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendedorIndexRouteImport } from './routes/vendedor.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
@@ -110,6 +111,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const VendedorProdutosRoute = VendedorProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => VendedorRoute,
+} as any)
 const ProdutoIdRoute = ProdutoIdRouteImport.update({
   id: '/produto/$id',
   path: '/produto/$id',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin': typeof AdminIndexRoute
   '/vendedor': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/produtos'
     | '/admin/'
     | '/vendedor/'
     | '/api/public/payments/paysuite'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/produtos'
     | '/admin'
     | '/vendedor'
     | '/api/public/payments/paysuite'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/produtos'
     | '/admin/'
     | '/vendedor/'
     | '/api/public/payments/paysuite'
@@ -450,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/vendedor/produtos': {
+      id: '/vendedor/produtos'
+      path: '/produtos'
+      fullPath: '/vendedor/produtos'
+      preLoaderRoute: typeof VendedorProdutosRouteImport
+      parentRoute: typeof VendedorRoute
+    }
     '/produto/$id': {
       id: '/produto/$id'
       path: '/produto/$id'
@@ -557,10 +576,12 @@ const PerfilRouteWithChildren =
   PerfilRoute._addFileChildren(PerfilRouteChildren)
 
 interface VendedorRouteChildren {
+  VendedorProdutosRoute: typeof VendedorProdutosRoute
   VendedorIndexRoute: typeof VendedorIndexRoute
 }
 
 const VendedorRouteChildren: VendedorRouteChildren = {
+  VendedorProdutosRoute: VendedorProdutosRoute,
   VendedorIndexRoute: VendedorIndexRoute,
 }
 
