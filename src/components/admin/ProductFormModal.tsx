@@ -122,9 +122,10 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         base_price: price,
         category,
         is_unique: isUnique,
-        featured,
+        featured: isSeller ? false : featured,
         images,
         status: inStock ? "available" as const : "sold" as const,
+        ...(isSeller ? { seller_id: sellerId, approval_status: "pending" as const } : {}),
       };
 
       let pid = product?.id;
