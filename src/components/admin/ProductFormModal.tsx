@@ -257,7 +257,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
           )}
 
 
-          <div>
+          {!isSeller && <div>
             <Label className="mb-2 block">Categorias de destaque</Label>
             {collections.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
