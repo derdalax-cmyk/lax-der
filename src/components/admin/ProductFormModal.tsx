@@ -283,7 +283,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).</p>
-          </div>
+          </div>}
 
           <div>
             <Label className="mb-2 block">Imagens</Label>
