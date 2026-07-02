@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Package, Users, ShoppingBag, Shield, Star } from "lucide-react";
+import { LayoutDashboard, Package, Users, ShoppingBag, Shield, Star, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 
