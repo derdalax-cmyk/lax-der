@@ -51,7 +51,8 @@ function packMeta(text: string, meta: Meta): string {
   return `${text}\n<!--META:${JSON.stringify(meta)}-->`;
 }
 
-export function ProductFormModal({ open, onOpenChange, product }: Props) {
+export function ProductFormModal({ open, onOpenChange, product, sellerId }: Props) {
+  const isSeller = !!sellerId;
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
   const [title, setTitle] = useState("");
