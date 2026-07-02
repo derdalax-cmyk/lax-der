@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight,
+  Heart, ShoppingBag, ChevronRight, Store,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useSeller } from "@/hooks/useSeller";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 
 export const Route = createFileRoute("/perfil")({
