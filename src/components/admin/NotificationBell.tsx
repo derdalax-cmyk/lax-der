@@ -24,12 +24,12 @@ export function NotificationBell() {
       .channel("admin-notifications")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, (payload) => {
         const o = payload.new as { id: string; customer_name: string | null; total: number; created_at: string };
-        setItems((prev) => [{ kind: "order", id: o.id, title: o.customer_name ?? "Cliente", sub: money(Number(o.total)), at: o.created_at }, ...prev].slice(0, 20));
+        setItems((prev) => [{ kind: "order" as const, id: o.id, title: o.customer_name ?? "Cliente", sub: money(Number(o.total)), at: o.created_at }, ...prev].slice(0, 20));
         ping();
       })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "sellers" }, (payload) => {
         const s = payload.new as { id: string; store_name: string; province: string; created_at: string };
-        setItems((prev) => [{ kind: "seller", id: s.id, title: s.store_name, sub: `Novo vendedor · ${s.province}`, at: s.created_at }, ...prev].slice(0, 20));
+        setItems((prev) => [{ kind: "seller" as const, id: s.id, title: s.store_name, sub: `Novo vendedor · ${s.province}`, at: s.created_at }, ...prev].slice(0, 20));
         ping();
       })
       .subscribe();
