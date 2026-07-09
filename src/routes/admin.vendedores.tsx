@@ -231,6 +231,7 @@ function AdminVendedores() {
                 <DetailRow icon={Mail} label="Email" value={detail.email ?? "—"} />
                 <DetailRow icon={Phone} label="Telefone / WhatsApp" value={detail.phone} />
                 <DetailRow icon={MapPin} label="Localização" value={`${detail.province}${detail.city ? " · " + detail.city : ""}`} />
+                <CityEditor seller={detail} onSaved={(city) => { setDetail({ ...detail, city }); qc.invalidateQueries({ queryKey: ["admin-sellers"] }); }} />
                 <DetailRow icon={Calendar} label="Cadastro" value={new Date(detail.created_at).toLocaleString("pt-PT")} />
                 {detail.description && (
                   <div className="bg-secondary/40 rounded-xl px-4 py-3">
@@ -294,6 +295,37 @@ function DetailRow({ icon: Icon, label, value }: { icon: typeof Store; label: st
       <div className="min-w-0">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
         <div className="font-medium break-words">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function CityEditor({ seller, onSaved }: { seller: Seller; onSaved: (city: string) => void }) {
+  const [city, setCity] = useState(seller.city ?? "");
+  const [saving, setSaving] = useState(false);
+  const dirty = (seller.city ?? "") !== city.trim();
+
+  const save = async () => {
+    setSaving(true);
+    const value = city.trim() || null;
+    const { error } = await supabase.from("sellers").update({ city: value }).eq("id", seller.id);
+    setSaving(false);
+    if (error) { toast.error("Erro ao definir cidade"); return; }
+    toast.success("Cidade atualizada");
+    onSaved(value ?? "");
+  };
+
+  return (
+    <div className="flex items-start gap-3">
+      <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Cidade de venda (só admin)</div>
+        <div className="flex gap-2">
+          <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Beira" className="h-9" />
+          <Button size="sm" onClick={save} disabled={!dirty || saving} className="shrink-0">
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar"}
+          </Button>
+        </div>
       </div>
     </div>
   );

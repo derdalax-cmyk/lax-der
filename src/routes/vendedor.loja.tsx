@@ -75,7 +75,6 @@ function SellerLoja() {
       full_name: form.full_name.trim(),
       phone: form.phone.trim(),
       province: form.province,
-      city: form.city.trim() || null,
       description: form.description.trim() || null,
       logo_url: logoUrl,
     }).eq("id", seller.id);
@@ -129,7 +128,8 @@ function SellerLoja() {
           </div>
           <div>
             <Label>Cidade</Label>
-            <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
+            <Input value={form.city} disabled readOnly placeholder="Definida pelo administrador" />
+            <p className="text-xs text-muted-foreground mt-1">A cidade da sua loja é definida pela administração. É por ela que os seus produtos aparecem no seletor de cidades.</p>
           </div>
           <div className="sm:col-span-2">
             <Label>Descrição da loja</Label>
