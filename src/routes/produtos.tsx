@@ -78,7 +78,7 @@ function ProdutosPage() {
     };
     fetchData();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, minPrice, maxPrice]);
+  }, [page, searchDebounced, category, minPrice, maxPrice, city]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
