@@ -90,6 +90,7 @@ function ProdutoDetalhe() {
   const [color, setColor] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [seller, setSeller] = useState<PublicSeller | null>(null);
 
 
   useEffect(() => {
