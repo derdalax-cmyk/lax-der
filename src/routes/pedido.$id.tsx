@@ -82,6 +82,15 @@ function PedidoPage() {
   const isPaid = order.payment_status === "paid";
   const target = PAYMENT_TARGETS[(order.payment_method ?? "e-mpesa") as keyof typeof PAYMENT_TARGETS];
 
+  const sellers = useMemo(() => {
+    const map = new Map<string, { id: string; store_name: string; logo_url: string | null }>();
+    items.forEach((it) => {
+      const s = it.product?.seller;
+      if (s?.id) map.set(s.id, s);
+    });
+    return [...map.values()];
+  }, [items]);
+
   const copy = (text: string) => { navigator.clipboard.writeText(text); toast.success("Copiado"); };
 
   return (
