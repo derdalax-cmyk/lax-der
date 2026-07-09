@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatMZN } from "@/components/ProductCard";
-import { Copy, CheckCircle2, Smartphone, Clock } from "lucide-react";
+import { RateSellerModal } from "@/components/RateSellerModal";
+import { Copy, CheckCircle2, Smartphone, Clock, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedido/$id")({
@@ -32,7 +33,7 @@ type ItemRow = {
   price: number;
   product_id: string | null;
   variation_id: string | null;
-  product?: { title: string; images: unknown } | null;
+  product?: { title: string; images: unknown; seller?: { id: string; store_name: string; logo_url: string | null } | null } | null;
 };
 
 const PAYMENT_TARGETS = {
@@ -46,6 +47,7 @@ function PedidoPage() {
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [items, setItems] = useState<ItemRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rateTarget, setRateTarget] = useState<{ id: string; store_name: string; logo_url: string | null } | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -55,7 +57,7 @@ function PedidoPage() {
       const [{ data: o }, { data: its }] = await Promise.all([
         supabase.from("orders").select("*").eq("id", id).maybeSingle(),
         supabase.from("order_items")
-          .select("id,quantity,price,product_id,variation_id, product:products(title,images)")
+          .select("id,quantity,price,product_id,variation_id, product:products(title,images, seller:sellers(id,store_name,logo_url))")
           .eq("order_id", id),
       ]);
       if (!active) return;
@@ -79,6 +81,15 @@ function PedidoPage() {
 
   const isPaid = order.payment_status === "paid";
   const target = PAYMENT_TARGETS[(order.payment_method ?? "e-mpesa") as keyof typeof PAYMENT_TARGETS];
+
+  const sellers = useMemo(() => {
+    const map = new Map<string, { id: string; store_name: string; logo_url: string | null }>();
+    items.forEach((it) => {
+      const s = it.product?.seller;
+      if (s?.id) map.set(s.id, s);
+    });
+    return [...map.values()];
+  }, [items]);
 
   const copy = (text: string) => { navigator.clipboard.writeText(text); toast.success("Copiado"); };
 
@@ -153,10 +164,42 @@ function PedidoPage() {
         </div>
       </section>
 
+      {isPaid && sellers.length > 0 && (
+        <section className="bg-card border border-gold/40 rounded-xl p-6">
+          <h2 className="font-display text-xl mb-1 flex items-center gap-2"><Star className="w-5 h-5 text-gold" /> Classifique {sellers.length > 1 ? "os vendedores" : "o vendedor"}</h2>
+          <p className="text-sm text-muted-foreground mb-4">O seu pagamento foi confirmado. Ajude a comunidade partilhando a sua experiência.</p>
+          <ul className="space-y-2">
+            {sellers.map((s) => (
+              <li key={s.id} className="flex items-center justify-between gap-3 bg-secondary/50 rounded-lg px-3 py-2">
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="w-8 h-8 rounded-lg bg-secondary overflow-hidden grid place-items-center shrink-0">
+                    {s.logo_url ? <img src={s.logo_url} alt="" className="w-full h-full object-cover" /> : <Star className="w-4 h-4 text-muted-foreground" />}
+                  </span>
+                  <span className="font-medium truncate">{s.store_name}</span>
+                </span>
+                <button onClick={() => setRateTarget(s)} className="text-sm font-medium text-gold hover:underline whitespace-nowrap">Avaliar</button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <div className="flex flex-wrap gap-3 justify-center">
         <Link to="/produtos" className="border border-border rounded-md px-5 py-2.5 text-sm hover:bg-secondary">Continuar a comprar</Link>
         <Link to="/perfil" className="bg-gold text-ink rounded-md px-5 py-2.5 text-sm font-medium hover:bg-gold/90">Os meus pedidos</Link>
       </div>
+
+      {rateTarget && (
+        <RateSellerModal
+          open={!!rateTarget}
+          onOpenChange={(o) => !o && setRateTarget(null)}
+          sellerId={rateTarget.id}
+          sellerName={rateTarget.store_name}
+          sellerLogo={rateTarget.logo_url}
+          orderId={order.id}
+          onDone={() => setRateTarget(null)}
+        />
+      )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { StarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Trash2, Pencil, MessageSquare } from "lucide-react";
+import { Loader2, Trash2, Pencil, MessageSquare, Star } from "lucide-react";
 import { toast } from "sonner";
 
 type Review = {
@@ -18,10 +18,23 @@ type Review = {
   reviewer_avatar: string | null;
 };
 
+type Breakdown = {
+  avg_quality: number;
+  avg_delivery: number;
+  avg_service: number;
+  distribution: Record<string, number>;
+};
+
+const DIMS = [
+  { key: "quality" as const, label: "Qualidade do produto" },
+  { key: "delivery" as const, label: "Prazo de entrega" },
+  { key: "service" as const, label: "Atendimento" },
+];
+
 export function SellerReviews({ sellerId }: { sellerId: string }) {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [rating, setRating] = useState(0);
+  const [scores, setScores] = useState({ quality: 0, delivery: 0, service: 0 });
   const [comment, setComment] = useState("");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -35,7 +48,14 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     },
   });
 
-  // Determine my existing review by querying own row (reviews rpc omits user_id)
+  const { data: breakdown } = useQuery({
+    queryKey: ["seller-breakdown", sellerId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_seller_rating_breakdown", { _seller_id: sellerId });
+      if (error) throw error;
+      return data as unknown as Breakdown;
+    },
+  });
 
   const { data: mine } = useQuery({
     queryKey: ["my-seller-review", sellerId, user?.id],
@@ -43,25 +63,42 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     queryFn: async () => {
       const { data } = await supabase
         .from("seller_reviews")
-        .select("id,rating,comment")
+        .select("id,rating,rating_quality,rating_delivery,rating_service,comment")
         .eq("seller_id", sellerId)
         .eq("user_id", user!.id)
         .maybeSingle();
-      return (data ?? null) as { id: string; rating: number; comment: string | null } | null;
+      return (data ?? null) as
+        | { id: string; rating: number; rating_quality: number | null; rating_delivery: number | null; rating_service: number | null; comment: string | null }
+        | null;
     },
   });
 
   const startEdit = () => {
-    setRating(mine?.rating ?? 0);
+    setScores({
+      quality: mine?.rating_quality ?? mine?.rating ?? 0,
+      delivery: mine?.rating_delivery ?? mine?.rating ?? 0,
+      service: mine?.rating_service ?? mine?.rating ?? 0,
+    });
     setComment(mine?.comment ?? "");
     setEditing(true);
   };
 
   const submit = async () => {
     if (!user) return;
-    if (rating < 1) { toast.error("Escolha uma nota de 1 a 5 estrelas."); return; }
+    if (scores.quality < 1 || scores.delivery < 1 || scores.service < 1) {
+      toast.error("Classifique as três categorias de 1 a 5 estrelas.");
+      return;
+    }
     setSaving(true);
-    const payload = { seller_id: sellerId, user_id: user.id, rating, comment: comment.trim() || null };
+    const payload = {
+      seller_id: sellerId,
+      user_id: user.id,
+      rating_quality: scores.quality,
+      rating_delivery: scores.delivery,
+      rating_service: scores.service,
+      rating: Math.round((scores.quality + scores.delivery + scores.service) / 3),
+      comment: comment.trim() || null,
+    };
     const { error } = await supabase
       .from("seller_reviews")
       .upsert(payload, { onConflict: "seller_id,user_id" });
@@ -69,9 +106,7 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     if (error) { toast.error("Não foi possível guardar a avaliação."); return; }
     toast.success("Avaliação guardada. Obrigado!");
     setEditing(false);
-    qc.invalidateQueries({ queryKey: ["seller-reviews", sellerId] });
-    qc.invalidateQueries({ queryKey: ["my-seller-review", sellerId, user.id] });
-    qc.invalidateQueries({ queryKey: ["public-seller", sellerId] });
+    invalidate();
   };
 
   const remove = async () => {
@@ -82,14 +117,58 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     if (error) { toast.error("Não foi possível remover."); return; }
     toast.success("Avaliação removida.");
     setEditing(false);
-    setRating(0); setComment("");
+    setScores({ quality: 0, delivery: 0, service: 0 });
+    setComment("");
+    invalidate();
+  };
+
+  const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["seller-reviews", sellerId] });
+    qc.invalidateQueries({ queryKey: ["seller-breakdown", sellerId] });
     qc.invalidateQueries({ queryKey: ["my-seller-review", sellerId, user?.id] });
     qc.invalidateQueries({ queryKey: ["public-seller", sellerId] });
   };
 
+  const total = reviews.length;
+  const dist = breakdown?.distribution ?? {};
+
   return (
     <div>
+      {/* Breakdown */}
+      {total > 0 && breakdown && (
+        <div className="bg-card border border-border rounded-xl p-5 mb-6 grid sm:grid-cols-2 gap-5">
+          <div className="space-y-2">
+            {[5, 4, 3, 2, 1].map((n) => {
+              const c = Number(dist[String(n)] ?? 0);
+              const pct = total ? (c / total) * 100 : 0;
+              return (
+                <div key={n} className="flex items-center gap-2 text-xs">
+                  <span className="w-8 flex items-center gap-0.5">{n}<Star className="w-3 h-3 fill-gold text-gold" /></span>
+                  <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
+                    <div className="h-full bg-gold" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="w-6 text-right text-muted-foreground">{c}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="space-y-2.5 sm:border-l sm:border-border sm:pl-5">
+            {DIMS.map((d) => {
+              const avg = Number((breakdown as never)[`avg_${d.key}`] ?? 0);
+              return (
+                <div key={d.key} className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-muted-foreground">{d.label}</span>
+                  <span className="flex items-center gap-1.5">
+                    <StarRating value={Math.round(avg)} size={13} />
+                    <span className="text-sm font-medium w-7 text-right">{avg.toFixed(1)}</span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Write / edit review */}
       {!user ? (
         <div className="bg-card border border-border rounded-xl p-5 mb-6 text-sm text-muted-foreground">
@@ -97,8 +176,15 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
         </div>
       ) : editing || !mine ? (
         <div className="bg-card border border-border rounded-xl p-5 mb-6">
-          <h3 className="font-semibold mb-3">{mine ? "Editar a sua avaliação" : "Avaliar esta loja"}</h3>
-          <StarRating value={rating} size={28} onChange={setRating} className="mb-3" />
+          <h3 className="font-semibold mb-4">{mine ? "Editar a sua avaliação" : "Avaliar esta loja"}</h3>
+          <div className="space-y-3 mb-4">
+            {DIMS.map((d) => (
+              <div key={d.key} className="flex items-center justify-between gap-3">
+                <span className="text-sm">{d.label}</span>
+                <StarRating value={scores[d.key]} size={24} onChange={(v) => setScores((s) => ({ ...s, [d.key]: v }))} />
+              </div>
+            ))}
+          </div>
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}

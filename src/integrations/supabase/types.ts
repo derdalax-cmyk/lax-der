@@ -637,7 +637,11 @@ export type Database = {
           comment: string | null
           created_at: string
           id: string
+          order_id: string | null
           rating: number
+          rating_delivery: number | null
+          rating_quality: number | null
+          rating_service: number | null
           seller_id: string
           updated_at: string
           user_id: string
@@ -646,7 +650,11 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          order_id?: string | null
           rating: number
+          rating_delivery?: number | null
+          rating_quality?: number | null
+          rating_service?: number | null
           seller_id: string
           updated_at?: string
           user_id: string
@@ -655,12 +663,23 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          order_id?: string | null
           rating?: number
+          rating_delivery?: number | null
+          rating_quality?: number | null
+          rating_service?: number | null
           seller_id?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "seller_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "seller_reviews_seller_id_fkey"
             columns: ["seller_id"]
@@ -802,6 +821,7 @@ export type Database = {
     Functions: {
       current_seller_id: { Args: never; Returns: string }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
+      get_admin_sellers_dashboard: { Args: never; Returns: Json }
       get_available_cities: {
         Args: never
         Returns: {
@@ -814,6 +834,10 @@ export type Database = {
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_featured_collections: { Args: never; Returns: Json }
       get_seller_orders: { Args: never; Returns: Json }
+      get_seller_rating_breakdown: {
+        Args: { _seller_id: string }
+        Returns: Json
+      }
       get_seller_reviews: {
         Args: { _seller_id: string }
         Returns: {

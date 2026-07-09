@@ -39,6 +39,7 @@ import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
+import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.vendedores_.dashboard'
 import { Route as ApiPublicPaymentsPaysuiteRouteImport } from './routes/api/public/payments/paysuite'
 
 const VendedorRoute = VendedorRouteImport.update({
@@ -191,6 +192,12 @@ const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   path: '/administradores',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminVendedoresDashboardRoute =
+  AdminVendedoresDashboardRouteImport.update({
+    id: '/vendedores_/dashboard',
+    path: '/vendedores/dashboard',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const ApiPublicPaymentsPaysuiteRoute =
   ApiPublicPaymentsPaysuiteRouteImport.update({
     id: '/api/public/payments/paysuite',
@@ -229,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
+  '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesByTo {
@@ -260,6 +268,7 @@ export interface FileRoutesByTo {
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin': typeof AdminIndexRoute
   '/vendedor': typeof VendedorIndexRoute
+  '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRoutesById {
@@ -294,6 +303,7 @@ export interface FileRoutesById {
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
+  '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
   '/api/public/payments/paysuite': typeof ApiPublicPaymentsPaysuiteRoute
 }
 export interface FileRouteTypes {
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/vendedor/produtos'
     | '/admin/'
     | '/vendedor/'
+    | '/admin/vendedores/dashboard'
     | '/api/public/payments/paysuite'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -360,6 +371,7 @@ export interface FileRouteTypes {
     | '/vendedor/produtos'
     | '/admin'
     | '/vendedor'
+    | '/admin/vendedores/dashboard'
     | '/api/public/payments/paysuite'
   id:
     | '__root__'
@@ -393,6 +405,7 @@ export interface FileRouteTypes {
     | '/vendedor/produtos'
     | '/admin/'
     | '/vendedor/'
+    | '/admin/vendedores_/dashboard'
     | '/api/public/payments/paysuite'
   fileRoutesById: FileRoutesById
 }
@@ -629,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdministradoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/vendedores_/dashboard': {
+      id: '/admin/vendedores_/dashboard'
+      path: '/vendedores/dashboard'
+      fullPath: '/admin/vendedores/dashboard'
+      preLoaderRoute: typeof AdminVendedoresDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/payments/paysuite': {
       id: '/api/public/payments/paysuite'
       path: '/api/public/payments/paysuite'
@@ -647,6 +667,7 @@ interface AdminRouteChildren {
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminVendedoresDashboardRoute: typeof AdminVendedoresDashboardRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -657,6 +678,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminVendedoresDashboardRoute: AdminVendedoresDashboardRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
