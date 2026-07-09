@@ -157,18 +157,24 @@ export type Database = {
           created_at: string
           product_id: string
           sort_order: number
+          status: string
+          submitted_by: string | null
         }
         Insert: {
           collection_id: string
           created_at?: string
           product_id: string
           sort_order?: number
+          status?: string
+          submitted_by?: string | null
         }
         Update: {
           collection_id?: string
           created_at?: string
           product_id?: string
           sort_order?: number
+          status?: string
+          submitted_by?: string | null
         }
         Relationships: [
           {
@@ -189,30 +195,48 @@ export type Database = {
       }
       featured_collections: {
         Row: {
+          cover_image: string | null
           created_at: string
+          ends_at: string | null
+          hidden_sellers: string[]
           icon: string | null
           id: string
+          is_active: boolean
+          max_products_per_seller: number
           name: string
           slug: string
           sort_order: number
+          starts_at: string | null
           updated_at: string
         }
         Insert: {
+          cover_image?: string | null
           created_at?: string
+          ends_at?: string | null
+          hidden_sellers?: string[]
           icon?: string | null
           id?: string
+          is_active?: boolean
+          max_products_per_seller?: number
           name: string
           slug: string
           sort_order?: number
+          starts_at?: string | null
           updated_at?: string
         }
         Update: {
+          cover_image?: string | null
           created_at?: string
+          ends_at?: string | null
+          hidden_sellers?: string[]
           icon?: string | null
           id?: string
+          is_active?: boolean
+          max_products_per_seller?: number
           name?: string
           slug?: string
           sort_order?: number
+          starts_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -659,6 +683,7 @@ export type Database = {
       }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
+      get_seller_featured_collections: { Args: never; Returns: Json }
       get_seller_orders: { Args: never; Returns: Json }
       get_seller_reviews: {
         Args: { _seller_id: string }
@@ -687,6 +712,14 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      submit_products_to_collection: {
+        Args: { _collection_id: string; _product_ids: string[] }
+        Returns: undefined
+      }
+      withdraw_product_from_collection: {
+        Args: { _collection_id: string; _product_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "client"

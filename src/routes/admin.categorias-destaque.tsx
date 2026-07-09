@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import { FeaturedCollectionModal, type FeaturedCollection } from "@/components/admin/FeaturedCollectionModal";
+import { PendingCandidacies } from "@/components/admin/PendingCandidacies";
 import { cn } from "@/lib/utils";
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
@@ -34,7 +35,19 @@ function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => 
           <GripVertical className="w-4 h-4" />
         </button>
       </td>
-      <td className="px-3 py-3"><span className="text-xl mr-2">{row.icon}</span><span className="font-medium">{row.name}</span></td>
+      <td className="px-3 py-3">
+        <span className="inline-flex items-center gap-2">
+          {row.cover_image ? (
+            <img src={row.cover_image} alt="" className="w-8 h-8 rounded object-cover shrink-0" />
+          ) : row.icon ? (
+            <span className="text-xl">{row.icon}</span>
+          ) : null}
+          <span className="font-medium">{row.name}</span>
+          {row.is_active === false && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Inativo</span>
+          )}
+        </span>
+      </td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.slug}</td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.count} produtos</td>
       <td className="px-3 py-3">
@@ -61,10 +74,10 @@ function AdminFeaturedCollections() {
     queryFn: async () => {
       const { data: cols, error } = await supabase
         .from("featured_collections")
-        .select("id,name,slug,icon,sort_order")
+        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active")
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      const { data: links } = await supabase.from("featured_collection_products").select("collection_id");
+      const { data: links } = await supabase.from("featured_collection_products").select("collection_id").eq("status", "approved");
       const counts: Record<string, number> = {};
       (links ?? []).forEach((l) => { counts[l.collection_id] = (counts[l.collection_id] ?? 0) + 1; });
       return (cols ?? []).map((c) => ({ ...c, count: counts[c.id] ?? 0 })) as Row[];
@@ -135,6 +148,10 @@ function AdminFeaturedCollections() {
             </DndContext>
           </table>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <PendingCandidacies />
       </div>
 
       <FeaturedCollectionModal

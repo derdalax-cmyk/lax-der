@@ -27,6 +27,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos'
 import { Route as VendedorPedidosRouteImport } from './routes/vendedor.pedidos'
 import { Route as VendedorLojaRouteImport } from './routes/vendedor.loja'
+import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
@@ -129,6 +130,11 @@ const VendedorLojaRoute = VendedorLojaRouteImport.update({
   path: '/loja',
   getParentRoute: () => VendedorRoute,
 } as any)
+const VendedorDestaquesRoute = VendedorDestaquesRouteImport.update({
+  id: '/destaques',
+  path: '/destaques',
+  getParentRoute: () => VendedorRoute,
+} as any)
 const ProdutoIdRoute = ProdutoIdRouteImport.update({
   id: '/produto/$id',
   path: '/produto/$id',
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
@@ -239,6 +246,7 @@ export interface FileRoutesByTo {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/produto/$id': typeof ProdutoIdRoute
+  '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/destaques'
     | '/vendedor/loja'
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/destaques'
     | '/vendedor/loja'
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/produto/$id'
+    | '/vendedor/destaques'
     | '/vendedor/loja'
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
@@ -520,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendedorLojaRouteImport
       parentRoute: typeof VendedorRoute
     }
+    '/vendedor/destaques': {
+      id: '/vendedor/destaques'
+      path: '/destaques'
+      fullPath: '/vendedor/destaques'
+      preLoaderRoute: typeof VendedorDestaquesRouteImport
+      parentRoute: typeof VendedorRoute
+    }
     '/produto/$id': {
       id: '/produto/$id'
       path: '/produto/$id'
@@ -634,6 +653,7 @@ const PerfilRouteWithChildren =
   PerfilRoute._addFileChildren(PerfilRouteChildren)
 
 interface VendedorRouteChildren {
+  VendedorDestaquesRoute: typeof VendedorDestaquesRoute
   VendedorLojaRoute: typeof VendedorLojaRoute
   VendedorPedidosRoute: typeof VendedorPedidosRoute
   VendedorProdutosRoute: typeof VendedorProdutosRoute
@@ -641,6 +661,7 @@ interface VendedorRouteChildren {
 }
 
 const VendedorRouteChildren: VendedorRouteChildren = {
+  VendedorDestaquesRoute: VendedorDestaquesRoute,
   VendedorLojaRoute: VendedorLojaRoute,
   VendedorPedidosRoute: VendedorPedidosRoute,
   VendedorProdutosRoute: VendedorProdutosRoute,
