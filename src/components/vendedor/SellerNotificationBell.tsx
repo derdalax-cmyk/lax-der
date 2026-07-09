@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Bell, ShoppingBag, CheckCircle2, XCircle, Sparkles, Check, Trash2, Loader2,
+  Bell, ShoppingBag, CheckCircle2, XCircle, Sparkles, Check, Trash2, Loader2, MessageSquare,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ export type NotificationRow = {
 
 const ICONS: Record<string, { icon: typeof Bell; cls: string }> = {
   order: { icon: ShoppingBag, cls: "bg-gold/20 text-gold" },
+  message: { icon: MessageSquare, cls: "bg-gold/20 text-gold" },
   product_approved: { icon: CheckCircle2, cls: "bg-success/15 text-success" },
   product_rejected: { icon: XCircle, cls: "bg-destructive/15 text-destructive" },
   featured_approved: { icon: Sparkles, cls: "bg-success/15 text-success" },

@@ -11,6 +11,7 @@ import { ProductCard, type ProductCardData, formatMZN } from "@/components/Produ
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
+import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/produto/$id")({
@@ -356,6 +357,10 @@ function ProdutoDetalhe() {
               </div>
               <ChevRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </Link>
+          )}
+
+          {seller && (
+            <ContactSellerButton sellerId={seller.id} productId={product.id} className="mt-3 w-full" />
           )}
         </div>
 
