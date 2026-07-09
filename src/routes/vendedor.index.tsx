@@ -128,19 +128,19 @@ function SellerDashboard() {
                 <AreaChart data={daily} margin={{ top: 5, right: 5, left: -18, bottom: 0 }}>
                   <defs>
                     <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--gold))" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="hsl(var(--gold))" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--gold)" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="var(--gold)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                   <XAxis dataKey="day" tickFormatter={(v) => String(v).slice(8)} fontSize={11} tickLine={false} axisLine={false} interval={4} />
                   <YAxis fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => (v >= 1000 ? `${v / 1000}k` : `${v}`)} />
                   <Tooltip
                     formatter={(v) => [mzn(Number(v)), "Faturamento"]}
                     labelFormatter={(l) => `Dia ${String(l).slice(8)}`}
-                    contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", fontSize: 12 }}
+                    contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 12 }}
                   />
-                  <Area type="monotone" dataKey="revenue" stroke="hsl(var(--gold))" strokeWidth={2} fill="url(#rev)" />
+                  <Area type="monotone" dataKey="revenue" stroke="var(--gold)" strokeWidth={2} fill="url(#rev)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
