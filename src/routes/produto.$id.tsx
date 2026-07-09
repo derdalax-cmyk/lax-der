@@ -105,6 +105,13 @@ function ProdutoDetalhe() {
       setProduct(p as Product | null);
       setVariations((v ?? []) as Variation[]);
       setImgIdx(0); setSize(null); setColor(null); setQty(1);
+      setSeller(null);
+      const sellerId = (p as Product | null)?.seller_id;
+      if (sellerId) {
+        supabase.rpc("get_public_seller", { _id: sellerId }).then(({ data: s }) => {
+          if (!cancelled) setSeller((s ?? null) as unknown as PublicSeller | null);
+        });
+      }
       if (p?.category) {
         const { data: rel } = await supabase
           .from("products")
