@@ -98,6 +98,7 @@ function LojaPublica() {
           {seller.description && (
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{seller.description}</p>
           )}
+          <ContactSellerButton sellerId={seller.id} className="mt-4" />
         </div>
       </div>
 
