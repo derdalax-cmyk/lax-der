@@ -48,6 +48,12 @@ export function Navbar() {
             <Link to={user ? "/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
               <Heart className="w-5 h-5" />
             </Link>
+            <Link to={user ? "/mensagens" : "/login"} className="relative hover:text-gold transition-colors" aria-label="Mensagens">
+              <MessageSquare className="w-5 h-5" />
+              {unreadMsgs > 0 && (
+                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center">{unreadMsgs > 9 ? "9+" : unreadMsgs}</span>
+              )}
+            </Link>
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
               <ShoppingCart className="w-5 h-5" />
               {count > 0 && (
