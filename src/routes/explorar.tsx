@@ -78,7 +78,7 @@ function ExplorarPage() {
     };
     run();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, sort]);
+  }, [page, searchDebounced, category, sort, city]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">
