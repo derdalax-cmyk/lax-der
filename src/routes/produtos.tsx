@@ -49,7 +49,7 @@ function ProdutosPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [searchDebounced, category, minPrice, maxPrice]);
+  useEffect(() => { setPage(1); }, [searchDebounced, category, minPrice, maxPrice, city]);
 
   useEffect(() => {
     let cancelled = false;
