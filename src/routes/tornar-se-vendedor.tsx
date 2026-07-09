@@ -306,7 +306,8 @@ function TornarSeVendedor() {
             </div>
             <div>
               <Label className="text-xs">Cidade</Label>
-              <Input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Ex: Beira" />
+              <Input value="Definida após aprovação" disabled readOnly />
+              <p className="text-[11px] text-muted-foreground mt-1">A cidade da loja é atribuída pela administração.</p>
             </div>
             <div className="sm:col-span-2">
               <Label className="text-xs">Descrição da loja</Label>
