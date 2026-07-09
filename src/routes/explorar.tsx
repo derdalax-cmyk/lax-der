@@ -33,6 +33,7 @@ function firstImage(images: unknown): string | null {
 
 function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
+  const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
