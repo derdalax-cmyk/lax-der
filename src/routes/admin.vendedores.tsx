@@ -300,6 +300,37 @@ function DetailRow({ icon: Icon, label, value }: { icon: typeof Store; label: st
   );
 }
 
+function CityEditor({ seller, onSaved }: { seller: Seller; onSaved: (city: string) => void }) {
+  const [city, setCity] = useState(seller.city ?? "");
+  const [saving, setSaving] = useState(false);
+  const dirty = (seller.city ?? "") !== city.trim();
+
+  const save = async () => {
+    setSaving(true);
+    const value = city.trim() || null;
+    const { error } = await supabase.from("sellers").update({ city: value }).eq("id", seller.id);
+    setSaving(false);
+    if (error) { toast.error("Erro ao definir cidade"); return; }
+    toast.success("Cidade atualizada");
+    onSaved(value ?? "");
+  };
+
+  return (
+    <div className="flex items-start gap-3">
+      <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Cidade de venda (só admin)</div>
+        <div className="flex gap-2">
+          <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Beira" className="h-9" />
+          <Button size="sm" onClick={save} disabled={!dirty || saving} className="shrink-0">
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ label, value, icon: Icon, accent }: {
   label: string; value: number | string; icon: React.ComponentType<{ className?: string }>; accent?: boolean;
 }) {
