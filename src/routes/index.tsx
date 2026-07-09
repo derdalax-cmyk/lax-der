@@ -4,6 +4,7 @@ import { Sparkles, Truck, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
+import { useCity } from "@/contexts/CityContext";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -21,14 +22,18 @@ export const Route = createFileRoute("/")({
 const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
 function Home() {
+  const { city } = useCity();
+
   const { data: featured = [] } = useQuery({
-    queryKey: ["home-featured"],
+    queryKey: ["home-featured", city],
     queryFn: async () => {
-      const { data } = await supabase
+      let q = supabase
         .from("products")
         .select(PRODUCT_FIELDS)
         .eq("featured", true)
-        .neq("status", "sold")
+        .neq("status", "sold");
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
+      const { data } = await q
         .order("created_at", { ascending: false })
         .limit(12);
       return (data ?? []) as ProductCardData[];
@@ -36,7 +41,7 @@ function Home() {
   });
 
   const { data: collections = [] } = useQuery({
-    queryKey: ["home-collections"],
+    queryKey: ["home-collections", city],
     queryFn: async () => {
       const { data: cols } = await supabase
         .from("featured_collections")
@@ -52,11 +57,13 @@ function Home() {
       const productIds = [...new Set((links ?? []).map((l) => l.product_id))];
       let products: ProductCardData[] = [];
       if (productIds.length) {
-        const { data: prods } = await supabase
+        let pq = supabase
           .from("products")
           .select(PRODUCT_FIELDS)
           .in("id", productIds)
           .neq("status", "sold");
+        if (city) pq = pq.or(`city.eq.${city},city.is.null`);
+        const { data: prods } = await pq;
         products = (prods ?? []) as ProductCardData[];
       }
       const byId = new Map(products.map((p) => [p.id, p]));

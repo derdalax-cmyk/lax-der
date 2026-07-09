@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { type ProductCardData, formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ function firstImage(images: unknown): string | null {
 
 function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
+  const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -46,7 +48,7 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, sort]);
+  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, sort, city]);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,6 +61,7 @@ function ExplorarPage() {
 
       if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
       if (category !== "all") q = q.eq("category", category);
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
       if (sort === "recent") q = q.order("created_at", { ascending: false });
       if (sort === "price_asc") q = q.order("base_price", { ascending: true });
       if (sort === "price_desc") q = q.order("base_price", { ascending: false });
@@ -75,7 +78,7 @@ function ExplorarPage() {
     };
     run();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, sort]);
+  }, [page, searchDebounced, category, sort, city]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">

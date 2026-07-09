@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { CityProvider } from "@/contexts/CityContext";
 import { Navbar } from "@/components/Navbar";
 import { BottomNav } from "@/components/BottomNav";
 import { Footer } from "@/components/Footer";
@@ -134,9 +135,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CartProvider>
-          <AppShell />
-        </CartProvider>
+        <CityProvider>
+          <CartProvider>
+            <AppShell />
+          </CartProvider>
+        </CityProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, ShoppingCart, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
+import { CitySelector } from "@/components/CitySelector";
 
 const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string }[] = [
   { to: "/", label: "Início" },
@@ -19,9 +20,12 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
       <div className="max-w-[1400px] mx-auto px-5">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="font-display text-2xl font-bold tracking-wider text-gold">
-            DERDALAX
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="font-display text-2xl font-bold tracking-wider text-gold">
+              DERDALAX
+            </Link>
+            <CitySelector className="hidden sm:inline-flex" />
+          </div>
 
           <nav className="hidden md:flex items-center gap-8">
             {links.map((l) => (
@@ -38,6 +42,7 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-4">
+            <CitySelector compact className="sm:hidden" />
             <Link to={user ? "/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
               <Heart className="w-5 h-5" />
             </Link>

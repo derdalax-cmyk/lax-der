@@ -2,30 +2,65 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSeller } from "@/hooks/useSeller";
-import { Package, Clock, CheckCircle2, XCircle, TrendingUp, Plus, ImageOff } from "lucide-react";
+import {
+  Package, Clock, CheckCircle2, TrendingUp, Plus, ShoppingBag, Star, AlertTriangle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
+} from "recharts";
 
 export const Route = createFileRoute("/vendedor/")({
   component: SellerDashboard,
 });
 
-type P = {
-  id: string; title: string; base_price: number; status: string;
-  approval_status: string; images: unknown; created_at: string;
+type Dashboard = {
+  error?: string;
+  month_revenue: number;
+  month_orders: number;
+  pending_orders: number;
+  avg_rating: number | null;
+  total_reviews: number | null;
+  top_products: { title: string; qty: number }[];
+  daily: { day: string; revenue: number }[];
+  category_sales: { category: string; revenue: number }[];
+  recent_orders: { id: string; customer_name: string | null; total: number; status: string; created_at: string }[];
+  low_stock: { title: string; size: string | null; color: string | null; stock: number }[];
+};
+
+const mzn = (n: number) => `${Number(n || 0).toLocaleString("pt-PT")} MT`;
+
+const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
+  pending: { label: "Pendente", cls: "bg-gold/15 text-gold" },
+  paid: { label: "Pago", cls: "bg-success/15 text-success" },
+  processing: { label: "A processar", cls: "bg-ink/5 text-ink" },
+  sent: { label: "Enviado", cls: "bg-green/10 text-green" },
+  delivered: { label: "Entregue", cls: "bg-success/15 text-success" },
+  cancelled: { label: "Cancelado", cls: "bg-destructive/15 text-destructive" },
 };
 
 function SellerDashboard() {
   const { seller } = useSeller();
 
+  const { data: dash } = useQuery({
+    queryKey: ["seller-dashboard", seller?.id],
+    enabled: !!seller?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_seller_dashboard");
+      if (error) throw error;
+      return data as unknown as Dashboard;
+    },
+  });
+
   const { data: products } = useQuery({
-    queryKey: ["seller-products", seller?.id],
+    queryKey: ["seller-products-counts", seller?.id],
     enabled: !!seller?.id,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("products").select("id,title,base_price,status,approval_status,images,created_at")
-        .eq("seller_id", seller!.id).order("created_at", { ascending: false });
+        .from("products").select("id,approval_status,status")
+        .eq("seller_id", seller!.id);
       if (error) throw error;
-      return data as P[];
+      return data as { id: string; approval_status: string; status: string }[];
     },
   });
 
@@ -33,19 +68,17 @@ function SellerDashboard() {
   const total = list.length;
   const pending = list.filter((p) => p.approval_status === "pending").length;
   const approved = list.filter((p) => p.approval_status === "approved").length;
-  const rejected = list.filter((p) => p.approval_status === "rejected").length;
-  const sold = list.filter((p) => p.status === "sold");
-  const revenue = sold.reduce((s, p) => s + Number(p.base_price), 0);
+
+  const daily = dash?.daily ?? [];
+  const maxDaily = Math.max(1, ...daily.map((d) => Number(d.revenue)));
 
   const stats = [
-    { label: "Produtos", value: total, icon: Package, cls: "bg-ink/5 text-ink" },
-    { label: "Pendentes", value: pending, icon: Clock, cls: "bg-gold/15 text-gold" },
-    { label: "Aprovados", value: approved, icon: CheckCircle2, cls: "bg-success/10 text-success" },
-    { label: "Rejeitados", value: rejected, icon: XCircle, cls: "bg-destructive/10 text-destructive" },
-    { label: "Vendas", value: `${revenue.toLocaleString("pt-PT")} MT`, icon: TrendingUp, cls: "bg-green/10 text-green" },
+    { label: "Faturamento do mês", value: mzn(dash?.month_revenue ?? 0), icon: TrendingUp, cls: "bg-green/10 text-green" },
+    { label: "Pedidos do mês", value: dash?.month_orders ?? 0, icon: ShoppingBag, cls: "bg-ink/5 text-ink" },
+    { label: "Pedidos pendentes", value: dash?.pending_orders ?? 0, icon: Clock, cls: "bg-gold/15 text-gold" },
+    { label: "Avaliação", value: dash?.avg_rating ? `${Number(dash.avg_rating).toFixed(1)} ★` : "—", icon: Star, cls: "bg-gold/15 text-gold" },
+    { label: "Produtos ativos", value: `${approved}/${total}`, icon: Package, cls: "bg-success/10 text-success" },
   ];
-
-  const recent = list.slice(0, 5);
 
   return (
     <div>
@@ -59,6 +92,7 @@ function SellerDashboard() {
         </Button>
       </div>
 
+      {/* STATS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         {stats.map((s) => {
           const Icon = s.icon;
@@ -79,37 +113,116 @@ function SellerDashboard() {
         </div>
       )}
 
-      <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h2 className="font-semibold">Produtos recentes</h2>
-          <Link to="/vendedor/produtos" className="text-sm text-gold hover:underline">Ver todos</Link>
-        </div>
-        {recent.length === 0 ? (
-          <div className="px-4 py-12 text-center text-muted-foreground text-sm">
-            Ainda não tem produtos. <Link to="/vendedor/produtos" className="text-gold hover:underline">Adicione o primeiro</Link>.
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        {/* REVENUE CHART */}
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold">Faturamento (últimos 30 dias)</h2>
+            <TrendingUp className="w-4 h-4 text-green" />
           </div>
-        ) : (
-          <ul className="divide-y divide-border">
-            {recent.map((p) => {
-              const imgs = Array.isArray(p.images) ? (p.images as string[]) : [];
-              const st = p.approval_status;
-              return (
-                <li key={p.id} className="flex items-center gap-3 px-4 py-3">
-                  <div className="w-11 h-11 rounded-md bg-secondary overflow-hidden grid place-items-center shrink-0">
-                    {imgs[0] ? <img src={imgs[0]} alt={p.title} className="w-full h-full object-cover" /> : <ImageOff className="w-4 h-4 text-muted-foreground" />}
-                  </div>
+          {daily.length === 0 || maxDaily <= 1 ? (
+            <div className="h-56 grid place-items-center text-sm text-muted-foreground">Sem vendas registadas ainda.</div>
+          ) : (
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={daily} margin={{ top: 5, right: 5, left: -18, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--gold)" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="var(--gold)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="day" tickFormatter={(v) => String(v).slice(8)} fontSize={11} tickLine={false} axisLine={false} interval={4} />
+                  <YAxis fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => (v >= 1000 ? `${v / 1000}k` : `${v}`)} />
+                  <Tooltip
+                    formatter={(v) => [mzn(Number(v)), "Faturamento"]}
+                    labelFormatter={(l) => `Dia ${String(l).slice(8)}`}
+                    contentStyle={{ borderRadius: 8, border: "1px solid var(--border)", fontSize: 12 }}
+                  />
+                  <Area type="monotone" dataKey="revenue" stroke="var(--gold)" strokeWidth={2} fill="url(#rev)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </div>
+
+        {/* TOP PRODUCTS */}
+        <div className="bg-card border border-border rounded-xl p-4">
+          <h2 className="font-semibold mb-3">Mais vendidos</h2>
+          {(dash?.top_products ?? []).length === 0 ? (
+            <div className="h-56 grid place-items-center text-sm text-muted-foreground text-center px-4">Ainda sem vendas.</div>
+          ) : (
+            <ul className="space-y-3">
+              {dash!.top_products.map((t, i) => (
+                <li key={t.title + i} className="flex items-center gap-3">
+                  <span className="w-6 h-6 rounded-md bg-ink text-gold text-xs font-bold grid place-items-center shrink-0">{i + 1}</span>
+                  <span className="flex-1 truncate text-sm">{t.title}</span>
+                  <span className="text-sm font-semibold">{t.qty}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* RECENT ORDERS */}
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <h2 className="font-semibold">Pedidos recentes</h2>
+            <ShoppingBag className="w-4 h-4 text-muted-foreground" />
+          </div>
+          {(dash?.recent_orders ?? []).length === 0 ? (
+            <div className="px-4 py-12 text-center text-muted-foreground text-sm">Sem pedidos ainda.</div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {dash!.recent_orders.map((o) => {
+                const st = STATUS_LABEL[o.status] ?? { label: o.status, cls: "bg-secondary text-foreground" };
+                return (
+                  <li key={o.id} className="flex items-center gap-3 px-4 py-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium truncate text-sm">{o.customer_name ?? "Cliente"}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString("pt-PT")}</p>
+                    </div>
+                    <span className="text-sm font-semibold shrink-0">{mzn(Number(o.total))}</span>
+                    <span className={`text-[11px] px-2 py-1 rounded-full shrink-0 ${st.cls}`}>{st.label}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        {/* LOW STOCK */}
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <h2 className="font-semibold">Stock baixo</h2>
+            <AlertTriangle className="w-4 h-4 text-gold" />
+          </div>
+          {(dash?.low_stock ?? []).length === 0 ? (
+            <div className="px-4 py-12 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
+              <CheckCircle2 className="w-6 h-6 text-success" />
+              Stock em dia.
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {dash!.low_stock.map((s, i) => (
+                <li key={s.title + i} className="flex items-center gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium truncate">{p.title}</p>
-                    <p className="text-xs text-muted-foreground">{Number(p.base_price).toLocaleString("pt-PT")} MT</p>
+                    <p className="font-medium truncate text-sm">{s.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {[s.size, s.color].filter(Boolean).join(" · ") || "Variação"}
+                    </p>
                   </div>
-                  <span className={`text-[11px] px-2 py-1 rounded-full ${st === "approved" ? "bg-success/15 text-success" : st === "pending" ? "bg-gold/15 text-gold" : "bg-destructive/15 text-destructive"}`}>
-                    {st === "approved" ? "Aprovado" : st === "pending" ? "Pendente" : "Rejeitado"}
+                  <span className={`text-sm font-semibold shrink-0 ${s.stock === 0 ? "text-destructive" : "text-gold"}`}>
+                    {s.stock} un.
                   </span>
                 </li>
-              );
-            })}
-          </ul>
-        )}
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

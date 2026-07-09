@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ const PAGE_SIZE = 10;
 function ProdutosPage() {
   const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
+  const { city } = useCity();
   const [products, setProducts] = useState<ProductCardData[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -47,7 +49,7 @@ function ProdutosPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [searchDebounced, category, minPrice, maxPrice]);
+  useEffect(() => { setPage(1); }, [searchDebounced, category, minPrice, maxPrice, city]);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +65,7 @@ function ProdutosPage() {
       if (category !== "all") q = q.eq("category", category);
       const min = Number(minPrice); if (minPrice && !isNaN(min)) q = q.gte("base_price", min);
       const max = Number(maxPrice); if (maxPrice && !isNaN(max)) q = q.lte("base_price", max);
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
 
       const from = (page - 1) * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
@@ -75,7 +78,7 @@ function ProdutosPage() {
     };
     fetchData();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, minPrice, maxPrice]);
+  }, [page, searchDebounced, category, minPrice, maxPrice, city]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
