@@ -29,6 +29,16 @@ type Product = {
   status: "available" | "reserved" | "sold";
   reserved_by: string | null;
   reserved_until: string | null;
+  seller_id: string | null;
+};
+
+type PublicSeller = {
+  id: string;
+  store_name: string;
+  logo_url: string | null;
+  city: string | null;
+  rating: number | null;
+  total_reviews: number | null;
 };
 
 
