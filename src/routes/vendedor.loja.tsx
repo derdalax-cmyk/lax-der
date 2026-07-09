@@ -75,7 +75,6 @@ function SellerLoja() {
       full_name: form.full_name.trim(),
       phone: form.phone.trim(),
       province: form.province,
-      city: form.city.trim() || null,
       description: form.description.trim() || null,
       logo_url: logoUrl,
     }).eq("id", seller.id);
