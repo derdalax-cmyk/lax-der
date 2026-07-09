@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Heart, ShoppingCart, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
+import { CitySelector } from "@/components/CitySelector";
 
 const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string }[] = [
   { to: "/", label: "Início" },
