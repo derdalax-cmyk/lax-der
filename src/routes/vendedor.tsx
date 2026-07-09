@@ -5,7 +5,6 @@ import { useSeller } from "@/hooks/useSeller";
 import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { SellerNotificationBell } from "@/components/vendedor/SellerNotificationBell";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({ meta: [{ title: "Painel do Vendedor · DERDALAX" }, { name: "description", content: "Gerir a sua loja na DERDALAX." }] }),
@@ -96,9 +95,6 @@ function SellerLayout() {
         </nav>
       </aside>
       <section className="min-w-0">
-        <div className="flex justify-end mb-4 md:mb-2">
-          <SellerNotificationBell sellerId={seller.id} />
-        </div>
         <Outlet />
       </section>
     </div>
