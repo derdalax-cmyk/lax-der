@@ -122,6 +122,63 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          buyer_id: string
+          buyer_unread: number
+          created_at: string
+          id: string
+          last_message: string | null
+          last_message_at: string | null
+          product_id: string | null
+          seller_id: string
+          seller_unread: number
+          seller_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          buyer_unread?: number
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          product_id?: string | null
+          seller_id: string
+          seller_unread?: number
+          seller_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          buyer_unread?: number
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          product_id?: string | null
+          seller_id?: string
+          seller_unread?: number
+          seller_user_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           created_at: string
@@ -240,6 +297,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read: boolean
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read?: boolean
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -717,6 +809,7 @@ export type Database = {
           product_count: number
         }[]
       }
+      get_my_conversations: { Args: never; Returns: Json }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_featured_collections: { Args: never; Returns: Json }
@@ -740,6 +833,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_conversation_read: {
+        Args: { _conversation_id: string }
+        Returns: undefined
+      }
       promote_next_in_queue: {
         Args: { _product_id: string }
         Returns: undefined
@@ -748,6 +845,10 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      start_conversation: {
+        Args: { _product_id?: string; _seller_id: string }
+        Returns: string
+      }
       submit_products_to_collection: {
         Args: { _collection_id: string; _product_ids: string[] }
         Returns: undefined
