@@ -5,6 +5,7 @@ import { useSeller } from "@/hooks/useSeller";
 import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { SellerNotificationBell } from "@/components/vendedor/SellerNotificationBell";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({ meta: [{ title: "Painel do Vendedor · DERDALAX" }, { name: "description", content: "Gerir a sua loja na DERDALAX." }] }),
