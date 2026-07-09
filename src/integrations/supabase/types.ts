@@ -372,6 +372,7 @@ export type Database = {
           approval_status: string
           base_price: number
           category: string | null
+          city: string | null
           created_at: string
           description: string | null
           featured: boolean
@@ -390,6 +391,7 @@ export type Database = {
           approval_status?: string
           base_price?: number
           category?: string | null
+          city?: string | null
           created_at?: string
           description?: string | null
           featured?: boolean
@@ -408,6 +410,7 @@ export type Database = {
           approval_status?: string
           base_price?: number
           category?: string | null
+          city?: string | null
           created_at?: string
           description?: string | null
           featured?: boolean
@@ -487,11 +490,14 @@ export type Database = {
           email: string | null
           full_name: string
           id: string
+          is_blocked: boolean
           logo_url: string | null
           phone: string
           province: string
+          rating: number
           status: string
           store_name: string
+          total_reviews: number
           updated_at: string
           user_id: string
         }
@@ -504,11 +510,14 @@ export type Database = {
           email?: string | null
           full_name: string
           id?: string
+          is_blocked?: boolean
           logo_url?: string | null
           phone: string
           province: string
+          rating?: number
           status?: string
           store_name: string
+          total_reviews?: number
           updated_at?: string
           user_id: string
         }
@@ -521,11 +530,14 @@ export type Database = {
           email?: string | null
           full_name?: string
           id?: string
+          is_blocked?: boolean
           logo_url?: string | null
           phone?: string
           province?: string
+          rating?: number
           status?: string
           store_name?: string
+          total_reviews?: number
           updated_at?: string
           user_id?: string
         }
@@ -600,6 +612,14 @@ export type Database = {
     Functions: {
       current_seller_id: { Args: never; Returns: string }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
+      get_available_cities: {
+        Args: never
+        Returns: {
+          city: string
+          product_count: number
+        }[]
+      }
+      get_seller_dashboard: { Args: never; Returns: Json }
       grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
         Args: {
