@@ -150,6 +150,10 @@ function AdminFeaturedCollections() {
         </div>
       </div>
 
+      <div className="mt-6">
+        <PendingCandidacies />
+      </div>
+
       <FeaturedCollectionModal
         open={modalOpen}
         onOpenChange={setModalOpen}
