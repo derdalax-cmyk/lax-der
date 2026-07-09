@@ -34,7 +34,19 @@ function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => 
           <GripVertical className="w-4 h-4" />
         </button>
       </td>
-      <td className="px-3 py-3"><span className="text-xl mr-2">{row.icon}</span><span className="font-medium">{row.name}</span></td>
+      <td className="px-3 py-3">
+        <span className="inline-flex items-center gap-2">
+          {row.cover_image ? (
+            <img src={row.cover_image} alt="" className="w-8 h-8 rounded object-cover shrink-0" />
+          ) : row.icon ? (
+            <span className="text-xl">{row.icon}</span>
+          ) : null}
+          <span className="font-medium">{row.name}</span>
+          {row.is_active === false && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Inativo</span>
+          )}
+        </span>
+      </td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.slug}</td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.count} produtos</td>
       <td className="px-3 py-3">
