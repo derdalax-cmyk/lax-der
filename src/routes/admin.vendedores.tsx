@@ -231,6 +231,7 @@ function AdminVendedores() {
                 <DetailRow icon={Mail} label="Email" value={detail.email ?? "—"} />
                 <DetailRow icon={Phone} label="Telefone / WhatsApp" value={detail.phone} />
                 <DetailRow icon={MapPin} label="Localização" value={`${detail.province}${detail.city ? " · " + detail.city : ""}`} />
+                <CityEditor seller={detail} onSaved={(city) => { setDetail({ ...detail, city }); qc.invalidateQueries({ queryKey: ["admin-sellers"] }); }} />
                 <DetailRow icon={Calendar} label="Cadastro" value={new Date(detail.created_at).toLocaleString("pt-PT")} />
                 {detail.description && (
                   <div className="bg-secondary/40 rounded-xl px-4 py-3">
