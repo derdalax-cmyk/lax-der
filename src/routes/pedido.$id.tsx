@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatMZN } from "@/components/ProductCard";
-import { Copy, CheckCircle2, Smartphone, Clock } from "lucide-react";
+import { RateSellerModal } from "@/components/RateSellerModal";
+import { Copy, CheckCircle2, Smartphone, Clock, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedido/$id")({
