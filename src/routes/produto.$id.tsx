@@ -357,6 +357,10 @@ function ProdutoDetalhe() {
               <ChevRight className="w-4 h-4 text-muted-foreground shrink-0" />
             </Link>
           )}
+
+          {seller && (
+            <ContactSellerButton sellerId={seller.id} productId={product.id} className="mt-3 w-full" />
+          )}
         </div>
 
 
