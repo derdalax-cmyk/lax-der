@@ -11,6 +11,7 @@ import { ProductCard, type ProductCardData, formatMZN } from "@/components/Produ
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
+import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/produto/$id")({
