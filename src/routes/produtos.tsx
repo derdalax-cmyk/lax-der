@@ -30,6 +30,7 @@ const PAGE_SIZE = 10;
 function ProdutosPage() {
   const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
+  const { city } = useCity();
   const [products, setProducts] = useState<ProductCardData[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
