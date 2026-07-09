@@ -41,7 +41,7 @@ function Home() {
   });
 
   const { data: collections = [] } = useQuery({
-    queryKey: ["home-collections"],
+    queryKey: ["home-collections", city],
     queryFn: async () => {
       const { data: cols } = await supabase
         .from("featured_collections")
