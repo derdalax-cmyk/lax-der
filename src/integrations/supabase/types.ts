@@ -620,6 +620,7 @@ export type Database = {
         }[]
       }
       get_seller_dashboard: { Args: never; Returns: Json }
+      get_seller_orders: { Args: never; Returns: Json }
       grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
         Args: {

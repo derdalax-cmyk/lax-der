@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tansta
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSeller } from "@/hooks/useSeller";
-import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/vendedor")({
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/vendedor", label: "Visão geral", icon: LayoutDashboard, exact: true },
   { to: "/vendedor/produtos", label: "Produtos", icon: Package },
+  { to: "/vendedor/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
 ];
 
