@@ -22,14 +22,18 @@ export const Route = createFileRoute("/")({
 const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
 function Home() {
+  const { city } = useCity();
+
   const { data: featured = [] } = useQuery({
-    queryKey: ["home-featured"],
+    queryKey: ["home-featured", city],
     queryFn: async () => {
-      const { data } = await supabase
+      let q = supabase
         .from("products")
         .select(PRODUCT_FIELDS)
         .eq("featured", true)
-        .neq("status", "sold")
+        .neq("status", "sold");
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
+      const { data } = await q
         .order("created_at", { ascending: false })
         .limit(12);
       return (data ?? []) as ProductCardData[];
