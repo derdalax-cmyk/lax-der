@@ -96,6 +96,9 @@ function SellerLayout() {
         </nav>
       </aside>
       <section className="min-w-0">
+        <div className="flex items-center justify-end mb-3">
+          <SellerNotificationBell />
+        </div>
         <Outlet />
       </section>
     </div>
