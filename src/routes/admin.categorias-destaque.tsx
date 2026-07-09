@@ -61,10 +61,10 @@ function AdminFeaturedCollections() {
     queryFn: async () => {
       const { data: cols, error } = await supabase
         .from("featured_collections")
-        .select("id,name,slug,icon,sort_order")
+        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active")
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      const { data: links } = await supabase.from("featured_collection_products").select("collection_id");
+      const { data: links } = await supabase.from("featured_collection_products").select("collection_id").eq("status", "approved");
       const counts: Record<string, number> = {};
       (links ?? []).forEach((l) => { counts[l.collection_id] = (counts[l.collection_id] ?? 0) + 1; });
       return (cols ?? []).map((c) => ({ ...c, count: counts[c.id] ?? 0 })) as Row[];
