@@ -14,6 +14,7 @@ export const Route = createFileRoute("/vendedor")({
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/vendedor", label: "Visão geral", icon: LayoutDashboard, exact: true },
   { to: "/vendedor/produtos", label: "Produtos", icon: Package },
+  { to: "/vendedor/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
 ];
 
