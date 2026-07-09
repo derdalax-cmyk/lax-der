@@ -43,15 +43,20 @@ function Home() {
   const { data: collections = [] } = useQuery({
     queryKey: ["home-collections", city],
     queryFn: async () => {
+      const nowIso = new Date().toISOString();
       const { data: cols } = await supabase
         .from("featured_collections")
-        .select("id,name,slug,icon,sort_order")
+        .select("id,name,slug,icon,sort_order,starts_at,ends_at")
+        .eq("is_active", true)
+        .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
+        .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
         .order("sort_order", { ascending: true });
       if (!cols?.length) return [] as { id: string; name: string; icon: string | null; products: ProductCardData[] }[];
 
       const { data: links } = await supabase
         .from("featured_collection_products")
         .select("collection_id,product_id,sort_order")
+        .eq("status", "approved")
         .order("sort_order", { ascending: true });
 
       const productIds = [...new Set((links ?? []).map((l) => l.product_id))];
