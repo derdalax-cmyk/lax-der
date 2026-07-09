@@ -5,6 +5,7 @@ import { ProductCard, type ProductCardData } from "@/components/ProductCard";
 import { StarRating } from "@/components/StarRating";
 import { SellerReviews } from "@/components/SellerReviews";
 import { useFavorites } from "@/hooks/useFavorites";
+import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { Store, MapPin, Loader2, Package } from "lucide-react";
 
 export const Route = createFileRoute("/loja/$id")({
