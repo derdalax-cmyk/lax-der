@@ -35,12 +35,8 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     },
   });
 
-  const myReview = useMemo(
-    () => (user ? reviews.find((r) => false) : undefined),
-    [reviews, user],
-  );
-
   // Determine my existing review by querying own row (reviews rpc omits user_id)
+
   const { data: mine } = useQuery({
     queryKey: ["my-seller-review", sellerId, user?.id],
     enabled: !!user,
