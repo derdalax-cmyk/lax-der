@@ -57,7 +57,7 @@ function PedidoPage() {
       const [{ data: o }, { data: its }] = await Promise.all([
         supabase.from("orders").select("*").eq("id", id).maybeSingle(),
         supabase.from("order_items")
-          .select("id,quantity,price,product_id,variation_id, product:products(title,images)")
+          .select("id,quantity,price,product_id,variation_id, product:products(title,images, seller:sellers(id,store_name,logo_url))")
           .eq("order_id", id),
       ]);
       if (!active) return;
