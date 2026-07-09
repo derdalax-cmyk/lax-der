@@ -57,11 +57,13 @@ function Home() {
       const productIds = [...new Set((links ?? []).map((l) => l.product_id))];
       let products: ProductCardData[] = [];
       if (productIds.length) {
-        const { data: prods } = await supabase
+        let pq = supabase
           .from("products")
           .select(PRODUCT_FIELDS)
           .in("id", productIds)
           .neq("status", "sold");
+        if (city) pq = pq.or(`city.eq.${city},city.is.null`);
+        const { data: prods } = await pq;
         products = (prods ?? []) as ProductCardData[];
       }
       const byId = new Map(products.map((p) => [p.id, p]));
