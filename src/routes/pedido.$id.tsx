@@ -47,6 +47,7 @@ function PedidoPage() {
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [items, setItems] = useState<ItemRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rateTarget, setRateTarget] = useState<{ id: string; store_name: string; logo_url: string | null } | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
