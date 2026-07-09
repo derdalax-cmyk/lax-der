@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Search, Store, Clock, CheckCircle2, XCircle, Check, X, Eye, Inbox,
-  Phone, Mail, MapPin, Calendar, Loader2,
+  Phone, Mail, MapPin, Calendar, Loader2, BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -106,9 +106,14 @@ function AdminVendedores() {
 
   return (
     <div>
-      <div className="mb-5">
-        <h1 className="font-display text-3xl">Vendedores</h1>
-        <p className="text-sm text-muted-foreground">Aprove ou rejeite as lojas que se cadastram na DERDALAX.</p>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+        <div>
+          <h1 className="font-display text-3xl">Vendedores</h1>
+          <p className="text-sm text-muted-foreground">Aprove ou rejeite as lojas que se cadastram na DERDALAX.</p>
+        </div>
+        <Link to="/admin/vendedores/dashboard">
+          <Button variant="outline" className="gap-1.5"><BarChart3 className="w-4 h-4" /> Ver dashboard</Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
