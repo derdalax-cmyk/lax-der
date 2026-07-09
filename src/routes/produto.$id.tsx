@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight } from "lucide-react";
+import { StarRating } from "@/components/StarRating";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -29,6 +30,16 @@ type Product = {
   status: "available" | "reserved" | "sold";
   reserved_by: string | null;
   reserved_until: string | null;
+  seller_id: string | null;
+};
+
+type PublicSeller = {
+  id: string;
+  store_name: string;
+  logo_url: string | null;
+  city: string | null;
+  rating: number | null;
+  total_reviews: number | null;
 };
 
 
@@ -79,6 +90,7 @@ function ProdutoDetalhe() {
   const [color, setColor] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [seller, setSeller] = useState<PublicSeller | null>(null);
 
 
   useEffect(() => {
@@ -93,6 +105,13 @@ function ProdutoDetalhe() {
       setProduct(p as Product | null);
       setVariations((v ?? []) as Variation[]);
       setImgIdx(0); setSize(null); setColor(null); setQty(1);
+      setSeller(null);
+      const sellerId = (p as Product | null)?.seller_id;
+      if (sellerId) {
+        supabase.rpc("get_public_seller", { _id: sellerId }).then(({ data: s }) => {
+          if (!cancelled) setSeller((s ?? null) as unknown as PublicSeller | null);
+        });
+      }
       if (p?.category) {
         const { data: rel } = await supabase
           .from("products")
@@ -312,7 +331,34 @@ function ProdutoDetalhe() {
               <WaitingListButton productId={product.id} />
             </div>
           )}
+
+          {seller && (
+            <Link
+              to="/loja/$id"
+              params={{ id: seller.id }}
+              className="mt-6 flex items-center gap-3 rounded-xl border border-border bg-card p-3 transition-colors hover:border-gold/50"
+            >
+              <div className="w-11 h-11 rounded-lg bg-secondary overflow-hidden grid place-items-center shrink-0">
+                {seller.logo_url ? (
+                  <img src={seller.logo_url} alt={seller.store_name} className="w-full h-full object-cover" />
+                ) : (
+                  <Store className="w-5 h-5 text-muted-foreground" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold truncate">{seller.store_name}</p>
+                <span className="flex items-center gap-1.5">
+                  <StarRating value={Number(seller.rating ?? 0)} size={13} />
+                  <span className="text-xs text-muted-foreground">
+                    {Number(seller.rating ?? 0).toFixed(1)} ({seller.total_reviews ?? 0})
+                  </span>
+                </span>
+              </div>
+              <ChevRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            </Link>
+          )}
         </div>
+
 
       </div>
 

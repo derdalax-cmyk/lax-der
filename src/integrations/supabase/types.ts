@@ -480,6 +480,44 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          seller_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          seller_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          seller_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_reviews_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sellers: {
         Row: {
           admin_notes: string | null
@@ -619,8 +657,20 @@ export type Database = {
           product_count: number
         }[]
       }
+      get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_orders: { Args: never; Returns: Json }
+      get_seller_reviews: {
+        Args: { _seller_id: string }
+        Returns: {
+          comment: string
+          created_at: string
+          id: string
+          rating: number
+          reviewer_avatar: string
+          reviewer_name: string
+        }[]
+      }
       grant_admin_by_email: { Args: { _email: string }; Returns: undefined }
       has_role: {
         Args: {
