@@ -48,7 +48,7 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, sort]);
+  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, sort, city]);
 
   useEffect(() => {
     let cancelled = false;
