@@ -61,6 +61,7 @@ function ExplorarPage() {
 
       if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
       if (category !== "all") q = q.eq("category", category);
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
       if (sort === "recent") q = q.order("created_at", { ascending: false });
       if (sort === "price_asc") q = q.order("base_price", { ascending: true });
       if (sort === "price_desc") q = q.order("base_price", { ascending: false });
