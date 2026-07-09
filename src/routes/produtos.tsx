@@ -65,6 +65,7 @@ function ProdutosPage() {
       if (category !== "all") q = q.eq("category", category);
       const min = Number(minPrice); if (minPrice && !isNaN(min)) q = q.gte("base_price", min);
       const max = Number(maxPrice); if (maxPrice && !isNaN(max)) q = q.lte("base_price", max);
+      if (city) q = q.or(`city.eq.${city},city.is.null`);
 
       const from = (page - 1) * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
