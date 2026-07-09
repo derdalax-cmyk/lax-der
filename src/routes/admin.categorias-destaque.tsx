@@ -7,6 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { toast } from "sonner";
 import { FeaturedCollectionModal, type FeaturedCollection } from "@/components/admin/FeaturedCollectionModal";
+import { PendingCandidacies } from "@/components/admin/PendingCandidacies";
 import { cn } from "@/lib/utils";
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
