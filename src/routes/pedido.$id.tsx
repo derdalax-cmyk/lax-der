@@ -33,7 +33,7 @@ type ItemRow = {
   price: number;
   product_id: string | null;
   variation_id: string | null;
-  product?: { title: string; images: unknown } | null;
+  product?: { title: string; images: unknown; seller?: { id: string; store_name: string; logo_url: string | null } | null } | null;
 };
 
 const PAYMENT_TARGETS = {
