@@ -14,6 +14,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { CityProvider } from "@/contexts/CityContext";
 import { Navbar } from "@/components/Navbar";
+import { CityAlert } from "@/components/CityAlert";
 import { BottomNav } from "@/components/BottomNav";
 import { Footer } from "@/components/Footer";
 import { InstallAppPrompt } from "@/components/InstallAppPrompt";
