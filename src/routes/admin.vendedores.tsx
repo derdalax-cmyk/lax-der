@@ -184,7 +184,14 @@ function AdminVendedores() {
                     <div className="text-xs text-muted-foreground truncate max-w-[160px]">{s.email ?? "—"}</div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{s.phone}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{s.province}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    <div>{s.province}</div>
+                    {s.city ? (
+                      <div className="text-xs text-gold font-medium">{s.city}</div>
+                    ) : (
+                      <div className="text-xs text-destructive">Sem cidade de venda</div>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("pt-PT")}</td>
                   <td className="px-4 py-3"><StatusPill status={s.status} /></td>
                   <td className="px-4 py-3">
