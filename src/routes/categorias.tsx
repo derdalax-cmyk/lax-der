@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCity } from "@/contexts/CityContext";
 import { CATEGORY_META } from "@/lib/categories";
 
 export const Route = createFileRoute("/categorias")({
