@@ -32,6 +32,7 @@ type Product = {
   reserved_by: string | null;
   reserved_until: string | null;
   seller_id: string | null;
+  city: string | null;
 };
 
 type PublicSeller = {
