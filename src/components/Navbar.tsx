@@ -15,7 +15,6 @@ const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "
 export function Navbar() {
   const { user } = useAuth();
   const { count } = useCart();
-  const unreadMsgs = useUnreadMessages();
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
