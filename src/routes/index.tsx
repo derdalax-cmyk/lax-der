@@ -87,7 +87,11 @@ function Home() {
     },
   });
 
+  const noCityProducts =
+    !!city && featured.length === 0 && collections.every((c) => c.products.length === 0);
+
   return (
+
     <>
       {/* HERO */}
       <section className="relative overflow-hidden">
