@@ -23,8 +23,7 @@ const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
 function Home() {
   const { city } = useCity();
-  const noCityProducts =
-    !!city && featured.length === 0 && collections.every((c) => c.products.length === 0);
+
 
 
   const { data: featured = [] } = useQuery({
