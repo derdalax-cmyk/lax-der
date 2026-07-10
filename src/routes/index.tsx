@@ -24,6 +24,8 @@ const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 function Home() {
   const { city } = useCity();
 
+
+
   const { data: featured = [] } = useQuery({
     queryKey: ["home-featured", city],
     queryFn: async () => {
@@ -85,7 +87,11 @@ function Home() {
     },
   });
 
+  const noCityProducts =
+    !!city && featured.length === 0 && collections.every((c) => c.products.length === 0);
+
   return (
+
     <>
       {/* HERO */}
       <section className="relative overflow-hidden">
@@ -114,16 +120,27 @@ function Home() {
         </div>
       </section>
 
-      {/* DESTAQUES DA SEMANA */}
-      <div className="pt-8">
-        <ProductCarousel
-          title="Destaques da semana"
-          icon="⭐"
-          products={featured}
-          seeMoreTo="/explorar"
-          seeMoreLabel="Ver tudo"
-        />
-      </div>
+      {noCityProducts ? (
+        <div className="max-w-[1400px] mx-auto px-5 py-16 text-center">
+          <p className="text-lg font-medium">Ainda não há produtos em {city}.</p>
+          <p className="text-muted-foreground mt-2">
+            Experimente escolher outra cidade no seletor ou ver todas as cidades.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* DESTAQUES DA SEMANA */}
+          <div className="pt-8">
+            <ProductCarousel
+              title="Destaques da semana"
+              icon="⭐"
+              products={featured}
+              seeMoreTo="/explorar"
+              seeMoreLabel="Ver tudo"
+            />
+          </div>
+        </>
+      )}
 
       {/* COLEÇÕES DE DESTAQUE (admin) */}
       {collections.map((c) => (

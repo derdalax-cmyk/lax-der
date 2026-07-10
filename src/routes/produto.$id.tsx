@@ -32,6 +32,7 @@ type Product = {
   reserved_by: string | null;
   reserved_until: string | null;
   seller_id: string | null;
+  city: string | null;
 };
 
 type PublicSeller = {
@@ -114,13 +115,15 @@ function ProdutoDetalhe() {
         });
       }
       if (p?.category) {
-        const { data: rel } = await supabase
+        let relQ = supabase
           .from("products")
           .select("id,title,base_price,images,is_unique,status,category")
           .eq("category", p.category)
           .neq("id", id)
-          .neq("status", "sold")
-          .limit(5);
+          .neq("status", "sold");
+        // Produtos relacionados da mesma cidade do produto atual (ou globais/admin)
+        if (p.city) relQ = relQ.or(`city.eq.${p.city},city.is.null`);
+        const { data: rel } = await relQ.limit(5);
         if (!cancelled) setRelated((rel ?? []) as ProductCardData[]);
       }
       setLoading(false);

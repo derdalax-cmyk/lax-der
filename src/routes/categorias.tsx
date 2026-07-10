@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useCity } from "@/contexts/CityContext";
 import { CATEGORY_META } from "@/lib/categories";
 
 export const Route = createFileRoute("/categorias")({
@@ -12,17 +13,20 @@ export const Route = createFileRoute("/categorias")({
 });
 
 function CategoriasPage() {
+  const { city } = useCity();
   const { data: counts = {} } = useQuery({
-    queryKey: ["category-counts"],
+    queryKey: ["category-counts", city],
     queryFn: async () => {
       const result: Record<string, number> = {};
       await Promise.all(
         CATEGORY_META.map(async (c) => {
-          const { count } = await supabase
+          let q = supabase
             .from("products")
             .select("id", { count: "exact", head: true })
             .eq("category", c.slug)
             .neq("status", "sold");
+          if (city) q = q.or(`city.eq.${city},city.is.null`);
+          const { count } = await q;
           result[c.slug] = count ?? 0;
         }),
       );
