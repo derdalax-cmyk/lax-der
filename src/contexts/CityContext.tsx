@@ -5,11 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 export type AvailableCity = { city: string; product_count: number };
 
 const STORAGE_KEY = "derdalax-city";
-const DEFAULT_CITY = "Beira";
 
 type CityContextValue = {
   city: string;
   setCity: (c: string) => void;
+  clearCity: () => void;
+  hasCity: boolean;
+  ready: boolean;
   cities: AvailableCity[];
   loading: boolean;
 };
@@ -17,7 +19,7 @@ type CityContextValue = {
 const CityContext = createContext<CityContextValue | undefined>(undefined);
 
 export function CityProvider({ children }: { children: ReactNode }) {
-  const [city, setCityState] = useState<string>(DEFAULT_CITY);
+  const [city, setCityState] = useState<string>("");
   const [ready, setReady] = useState(false);
 
   // Load persisted selection on mount (client only)
@@ -50,9 +52,28 @@ export function CityProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const clearCity = () => {
+    setCityState("");
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const effectiveCity = ready ? city : "";
+
   const value = useMemo<CityContextValue>(
-    () => ({ city: ready ? city : DEFAULT_CITY, setCity, cities, loading: isLoading }),
-    [city, ready, cities, isLoading],
+    () => ({
+      city: effectiveCity,
+      setCity,
+      clearCity,
+      hasCity: !!effectiveCity,
+      ready,
+      cities,
+      loading: isLoading,
+    }),
+    [effectiveCity, ready, cities, isLoading],
   );
 
   return <CityContext.Provider value={value}>{children}</CityContext.Provider>;
