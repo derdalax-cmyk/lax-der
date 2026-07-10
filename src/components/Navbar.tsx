@@ -1,8 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, ShoppingCart, User, MessageSquare } from "lucide-react";
+import { Heart, ShoppingCart, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { useUnreadMessages } from "@/hooks/useMessaging";
 import { CitySelector } from "@/components/CitySelector";
 
 const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string }[] = [
@@ -16,7 +15,6 @@ const links: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "
 export function Navbar() {
   const { user } = useAuth();
   const { count } = useCart();
-  const unreadMsgs = useUnreadMessages();
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
@@ -47,12 +45,6 @@ export function Navbar() {
             <CitySelector compact className="sm:hidden" />
             <Link to={user ? "/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
               <Heart className="w-5 h-5" />
-            </Link>
-            <Link to={user ? "/mensagens" : "/login"} className="relative hover:text-gold transition-colors" aria-label="Mensagens">
-              <MessageSquare className="w-5 h-5" />
-              {unreadMsgs > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center">{unreadMsgs > 9 ? "9+" : unreadMsgs}</span>
-              )}
             </Link>
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
               <ShoppingCart className="w-5 h-5" />
