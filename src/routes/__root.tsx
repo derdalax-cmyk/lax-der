@@ -115,6 +115,7 @@ function AppShell() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <CityAlert />
       <main className="flex-1 pb-20 md:pb-0">
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
