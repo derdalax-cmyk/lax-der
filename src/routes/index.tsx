@@ -120,16 +120,27 @@ function Home() {
         </div>
       </section>
 
-      {/* DESTAQUES DA SEMANA */}
-      <div className="pt-8">
-        <ProductCarousel
-          title="Destaques da semana"
-          icon="⭐"
-          products={featured}
-          seeMoreTo="/explorar"
-          seeMoreLabel="Ver tudo"
-        />
-      </div>
+      {noCityProducts ? (
+        <div className="max-w-[1400px] mx-auto px-5 py-16 text-center">
+          <p className="text-lg font-medium">Ainda não há produtos em {city}.</p>
+          <p className="text-muted-foreground mt-2">
+            Experimente escolher outra cidade no seletor ou ver todas as cidades.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* DESTAQUES DA SEMANA */}
+          <div className="pt-8">
+            <ProductCarousel
+              title="Destaques da semana"
+              icon="⭐"
+              products={featured}
+              seeMoreTo="/explorar"
+              seeMoreLabel="Ver tudo"
+            />
+          </div>
+        </>
+      )}
 
       {/* COLEÇÕES DE DESTAQUE (admin) */}
       {collections.map((c) => (
