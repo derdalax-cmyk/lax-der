@@ -109,6 +109,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       setIsUnique(product.is_unique);
       setFeatured(product.featured);
       setImages(Array.isArray(product.images) ? (product.images as string[]) : []);
+      setStatus((product.status as ProductStatus) ?? "available");
+      setStock(Number(product.stock ?? 0));
+      setStockAlert(Number(product.stock_alert ?? 5));
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
@@ -116,7 +119,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
       });
     } else {
-      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
+      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
   }, [product, open]);
 
