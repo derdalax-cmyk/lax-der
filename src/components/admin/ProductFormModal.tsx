@@ -108,7 +108,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
       });
     } else {
-      setTitle(""); setText(""); setPrice(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
+      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
     }
   }, [product, open]);
 
