@@ -17,7 +17,12 @@ export type SellerRow = {
   admin_notes: string | null;
   approved_at: string | null;
   created_at: string;
+  emola_number: string | null;
+  mpesa_number: string | null;
+  bank_name: string | null;
+  bank_account: string | null;
 };
+
 
 export function useSeller() {
   const { user, loading: authLoading } = useAuth();

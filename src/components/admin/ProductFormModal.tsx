@@ -15,6 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 export const CATEGORIES = ["camisas", "calcas", "sapatos", "chapeus", "calcoes", "casacos"] as const;
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
+type ProductStatus = "available" | "reserved" | "sold" | "out_of_stock" | "inactive";
+
 type ProductRow = {
   id: string;
   title: string;
@@ -25,8 +27,11 @@ type ProductRow = {
   images: unknown;
   is_unique: boolean;
   featured: boolean;
-  status: "available" | "reserved" | "sold";
+  status: ProductStatus;
+  stock?: number | null;
+  stock_alert?: number | null;
 };
+
 
 
 type Props = {
@@ -72,6 +77,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [featured, setFeatured] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [variations, setVariations] = useState<Variation[]>([]);
+  const [status, setStatus] = useState<ProductStatus>("available");
+  const [stock, setStock] = useState<number>(0);
+  const [stockAlert, setStockAlert] = useState<number>(5);
   const [saving, setSaving] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
@@ -101,6 +109,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       setIsUnique(product.is_unique);
       setFeatured(product.featured);
       setImages(Array.isArray(product.images) ? (product.images as string[]) : []);
+      setStatus((product.status as ProductStatus) ?? "available");
+      setStock(Number(product.stock ?? 0));
+      setStockAlert(Number(product.stock_alert ?? 5));
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
@@ -108,7 +119,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
       });
     } else {
-      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
+      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
   }, [product, open]);
 
@@ -133,20 +144,28 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       };
 
       let pid = product?.id;
+      const hasVariations = variations.length > 0;
+      // Determine effective status from the explicit select, honoring the "Em estoque" toggle for non-unique products.
+      let effectiveStatus: ProductStatus = status;
+      if (!isUnique) {
+        if (status === "available" && !inStock) effectiveStatus = "out_of_stock";
+        if (status === "out_of_stock" && inStock) effectiveStatus = "available";
+      }
+      const stockPayload = !isUnique && !hasVariations
+        ? { stock: Math.max(0, stock), stock_alert: Math.max(0, stockAlert) }
+        : {};
       if (product) {
-        // Preserve status on update — status is managed by the reserve/sold flow, not by this form.
-        // Only non-unique products can be toggled sold/available via the "Em estoque" checkbox.
         const updatePayload = !isUnique
-          ? { ...payload, status: inStock ? ("available" as const) : ("sold" as const) }
-          : payload;
+          ? { ...payload, ...stockPayload, status: effectiveStatus }
+          : { ...payload, status: effectiveStatus === "inactive" ? "inactive" as const : product.status };
         const { error } = await supabase.from("products").update(updatePayload).eq("id", product.id);
         if (error) throw error;
       } else {
-        // New products always start available — unique pieces enter the reserve flow from there.
-        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, status: "available" as const }).select("id").single();
+        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, ...stockPayload, status: isUnique ? "available" as const : effectiveStatus }).select("id").single();
         if (error) throw error;
         pid = data.id;
       }
+
 
       if (pid) {
         await supabase.from("product_variations").delete().eq("product_id", pid);
@@ -265,11 +284,40 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
           </div>
 
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <Label>Estado do produto</Label>
+              <Select value={status} onValueChange={(v) => setStatus(v as ProductStatus)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="available">Disponível</SelectItem>
+                  <SelectItem value="out_of_stock">Sem stock</SelectItem>
+                  <SelectItem value="inactive">Inativo (oculto)</SelectItem>
+                  {!isUnique && <SelectItem value="sold">Esgotado</SelectItem>}
+                </SelectContent>
+              </Select>
+            </div>
+            {!isUnique && variations.length === 0 && (
+              <>
+                <div>
+                  <Label>Stock disponível</Label>
+                  <Input type="number" min={0} value={stock} onChange={(e) => setStock(Number(e.target.value))} />
+                </div>
+                <div>
+                  <Label>Alerta de stock</Label>
+                  <Input type="number" min={0} value={stockAlert} onChange={(e) => setStockAlert(Number(e.target.value))} />
+                </div>
+              </>
+            )}
+          </div>
+
           {isSeller && (
             <div className="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-xs text-muted-foreground">
               Os produtos que criar ou editar ficam <strong className="text-foreground">pendentes de aprovação</strong> antes de aparecerem na loja.
             </div>
           )}
+
 
 
           {!isSeller && <div>

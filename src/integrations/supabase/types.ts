@@ -418,6 +418,57 @@ export type Database = {
           },
         ]
       }
+      order_sellers: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          order_id: string
+          seller_id: string
+          status: string
+          subtotal: number
+          tracking_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          seller_id: string
+          status?: string
+          subtotal?: number
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          seller_id?: string
+          status?: string
+          subtotal?: number
+          tracking_code?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_sellers_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_sellers_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           created_at: string
@@ -537,6 +588,8 @@ export type Database = {
           seller_id: string | null
           shipping_fee: number
           status: Database["public"]["Enums"]["product_status"]
+          stock: number
+          stock_alert: number
           title: string
           updated_at: string
         }
@@ -557,6 +610,8 @@ export type Database = {
           seller_id?: string | null
           shipping_fee?: number
           status?: Database["public"]["Enums"]["product_status"]
+          stock?: number
+          stock_alert?: number
           title: string
           updated_at?: string
         }
@@ -577,6 +632,8 @@ export type Database = {
           seller_id?: string | null
           shipping_fee?: number
           status?: Database["public"]["Enums"]["product_status"]
+          stock?: number
+          stock_alert?: number
           title?: string
           updated_at?: string
         }
@@ -905,6 +962,15 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      set_order_seller_status: {
+        Args: {
+          _notes?: string
+          _order_id: string
+          _status: string
+          _tracking?: string
+        }
+        Returns: undefined
+      }
       start_conversation: {
         Args: { _product_id?: string; _seller_id: string }
         Returns: string
@@ -928,7 +994,12 @@ export type Database = {
         | "delivered"
         | "cancelled"
       payment_method: "e-mpesa" | "e-mola"
-      product_status: "available" | "reserved" | "sold"
+      product_status:
+        | "available"
+        | "reserved"
+        | "sold"
+        | "out_of_stock"
+        | "inactive"
       waiting_status: "waiting" | "notified" | "expired"
     }
     CompositeTypes: {
@@ -1067,7 +1138,13 @@ export const Constants = {
         "cancelled",
       ],
       payment_method: ["e-mpesa", "e-mola"],
-      product_status: ["available", "reserved", "sold"],
+      product_status: [
+        "available",
+        "reserved",
+        "sold",
+        "out_of_stock",
+        "inactive",
+      ],
       waiting_status: ["waiting", "notified", "expired"],
     },
   },

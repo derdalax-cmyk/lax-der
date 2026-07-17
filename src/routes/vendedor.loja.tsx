@@ -22,7 +22,10 @@ function SellerLoja() {
   const qc = useQueryClient();
   const logoInput = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState({ store_name: "", full_name: "", phone: "", province: "", city: "", description: "" });
+  const [form, setForm] = useState({
+    store_name: "", full_name: "", phone: "", province: "", city: "", description: "",
+    emola_number: "", mpesa_number: "", bank_name: "", bank_account: "",
+  });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -36,10 +39,15 @@ function SellerLoja() {
         province: seller.province ?? "",
         city: seller.city ?? "",
         description: seller.description ?? "",
+        emola_number: seller.emola_number ?? "",
+        mpesa_number: seller.mpesa_number ?? "",
+        bank_name: seller.bank_name ?? "",
+        bank_account: seller.bank_account ?? "",
       });
       setLogoUrl(seller.logo_url ?? null);
     }
   }, [seller]);
+
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -77,6 +85,10 @@ function SellerLoja() {
       province: form.province,
       description: form.description.trim() || null,
       logo_url: logoUrl,
+      emola_number: form.emola_number.trim() || null,
+      mpesa_number: form.mpesa_number.trim() || null,
+      bank_name: form.bank_name.trim() || null,
+      bank_account: form.bank_account.trim() || null,
     }).eq("id", seller.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
@@ -136,6 +148,30 @@ function SellerLoja() {
             <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} />
           </div>
         </div>
+
+        <div className="border-t border-border pt-5">
+          <h2 className="font-display text-lg mb-1">Métodos de recebimento</h2>
+          <p className="text-xs text-muted-foreground mb-3">Estes dados são usados para lhe transferirmos o valor dos seus pedidos. São privados.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Nº e-Mola</Label>
+              <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="+258 84 …" />
+            </div>
+            <div>
+              <Label>Nº M-Pesa</Label>
+              <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="+258 82 …" />
+            </div>
+            <div>
+              <Label>Banco</Label>
+              <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BIM, BCI, Standard Bank" />
+            </div>
+            <div>
+              <Label>NIB / IBAN</Label>
+              <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="0000 0000 0000 0000" />
+            </div>
+          </div>
+        </div>
+
 
         <div className="flex justify-end">
           <Button onClick={save} disabled={saving} className="bg-gold text-ink hover:bg-gold/90">

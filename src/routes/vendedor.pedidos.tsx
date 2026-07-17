@@ -1,18 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSeller } from "@/hooks/useSeller";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  ShoppingBag, Search, TrendingUp, Clock, ChevronDown, Package, Loader2,
+  ShoppingBag, Search, TrendingUp, Clock, ChevronDown, Package, Loader2, Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,
 });
+
 
 type OrderItem = { title: string; quantity: number; price: number; size: string | null; color: string | null };
 type SellerOrder = {
@@ -26,6 +30,9 @@ type SellerOrder = {
   created_at: string;
   seller_total: number;
   items: OrderItem[];
+  seller_status?: string;
+  tracking_code?: string | null;
+  seller_notes?: string | null;
 };
 type SellerOrders = {
   error?: string;
@@ -34,6 +41,15 @@ type SellerOrders = {
 };
 
 const mzn = (n: number) => `${Number(n || 0).toLocaleString("pt-PT")} MT`;
+
+const SELLER_STATUS: Record<string, { label: string; cls: string }> = {
+  pending: { label: "Pendente", cls: "bg-gold/15 text-gold" },
+  processing: { label: "A processar", cls: "bg-ink/5 text-ink" },
+  sent: { label: "Enviado", cls: "bg-green/10 text-green" },
+  delivered: { label: "Entregue", cls: "bg-success/15 text-success" },
+  cancelled: { label: "Cancelado", cls: "bg-destructive/15 text-destructive" },
+};
+
 
 const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
   pending: { label: "Pendente", cls: "bg-gold/15 text-gold" },
@@ -46,9 +62,27 @@ const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
 
 function SellerPedidos() {
   const { seller } = useSeller();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const updateStatus = async (orderId: string, next: string, extra?: { tracking?: string; notes?: string }) => {
+    setSavingId(orderId);
+    const { error } = await supabase.rpc("set_order_seller_status", {
+      _order_id: orderId,
+      _status: next,
+      _tracking: extra?.tracking ?? tracking[orderId] ?? null,
+      _notes: extra?.notes ?? notes[orderId] ?? null,
+    });
+    setSavingId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Pedido atualizado");
+    qc.invalidateQueries({ queryKey: ["seller-orders"] });
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["seller-orders", seller?.id],
@@ -65,7 +99,7 @@ function SellerPedidos() {
 
   const filtered = useMemo(() => {
     return orders.filter((o) => {
-      if (status !== "all" && o.status !== status) return false;
+      if (status !== "all" && (o.seller_status ?? "pending") !== status) return false;
       if (search) {
         const q = search.toLowerCase();
         const hit =
@@ -118,11 +152,12 @@ function SellerPedidos() {
           <SelectTrigger className="sm:w-48"><SelectValue placeholder="Estado" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os estados</SelectItem>
-            {Object.entries(STATUS_LABEL).map(([k, v]) => (
+            {Object.entries(SELLER_STATUS).map(([k, v]) => (
               <SelectItem key={k} value={k}>{v.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
+
       </div>
 
       {isLoading ? (
@@ -135,8 +170,11 @@ function SellerPedidos() {
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
           {filtered.map((o) => {
-            const st = STATUS_LABEL[o.status] ?? { label: o.status, cls: "bg-secondary text-foreground" };
+            const sellerStatusKey = o.seller_status ?? "pending";
+            const st = SELLER_STATUS[sellerStatusKey] ?? { label: sellerStatusKey, cls: "bg-secondary text-foreground" };
             const open = expanded === o.id;
+            const trk = tracking[o.id] ?? o.tracking_code ?? "";
+            const nts = notes[o.id] ?? o.seller_notes ?? "";
             return (
               <div key={o.id}>
                 <button
@@ -190,11 +228,50 @@ function SellerPedidos() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="mt-4 border-t border-border pt-4">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5" /> Gestão do pedido
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Input
+                          value={trk}
+                          onChange={(e) => setTracking((p) => ({ ...p, [o.id]: e.target.value }))}
+                          placeholder="Código de rastreio (opcional)"
+                        />
+                        <Select value={sellerStatusKey} onValueChange={(v) => updateStatus(o.id, v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(SELLER_STATUS).map(([k, v]) => (
+                              <SelectItem key={k} value={k}>{v.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Textarea
+                        value={nts}
+                        onChange={(e) => setNotes((p) => ({ ...p, [o.id]: e.target.value }))}
+                        placeholder="Notas internas ou instruções para o cliente"
+                        rows={2}
+                        className="mt-2"
+                      />
+                      <div className="flex justify-end mt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => updateStatus(o.id, sellerStatusKey)}
+                          disabled={savingId === o.id}
+                          className="bg-ink text-gold hover:bg-ink/90"
+                        >
+                          {savingId === o.id ? "A guardar…" : "Guardar alterações"}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             );
           })}
+
         </div>
       )}
     </div>
