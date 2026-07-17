@@ -65,21 +65,10 @@ function OrdersHistoryPage() {
 
   const newOrder = useMemo(() => orders.find((order) => order.id === novo), [orders, novo]);
 
-  const openChat = async (orderId: string, sellerId: string, autoMessage = false) => {
+  const openChat = async (orderId: string, sellerId: string) => {
     setChatting(`${orderId}-${sellerId}`);
     try {
-      const conversationId = await startOrderConversation(orderId, sellerId);
-      if (autoMessage) {
-        const { data: existing } = await supabase.from("messages").select("id").eq("conversation_id", conversationId).limit(1);
-        if (!existing?.length) {
-          const { error } = await supabase.from("messages").insert({
-            conversation_id: conversationId,
-            sender_id: user!.id,
-            body: `Olá! 👋\n\nAcabei de fazer um pedido na sua loja (Pedido #${orderId.slice(0, 8).toUpperCase()}).\nAguardo informações sobre o envio. Obrigado!`,
-          });
-          if (error) throw error;
-        }
-      }
+      await startOrderConversation(orderId, sellerId);
       navigate({ to: "/chat/order/$orderId", params: { orderId }, search: { seller: sellerId } });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível abrir o chat");
@@ -153,7 +142,7 @@ function OrdersHistoryPage() {
                       {order.sellers.map((seller) => (
                         <div key={seller.id} className="flex items-center gap-2 text-sm">
                           <Store className="w-4 h-4 text-muted-foreground" /><span className="flex-1 truncate">{seller.store_name}</span>
-                          <button onClick={() => openChat(order.id, seller.id, true)} disabled={chatting === `${order.id}-${seller.id}`} className="text-gold hover:underline">Conversar</button>
+                          <button onClick={() => openChat(order.id, seller.id)} disabled={chatting === `${order.id}-${seller.id}`} className="text-gold hover:underline">Conversar</button>
                         </div>
                       ))}
                     </div>
@@ -185,7 +174,7 @@ function OrdersHistoryPage() {
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          {selected && <OrderDetails order={selected} chatting={chatting} onChat={(sellerId) => openChat(selected.id, sellerId, true)} />}
+          {selected && <OrderDetails order={selected} chatting={chatting} onChat={(sellerId) => openChat(selected.id, sellerId)} />}
         </DialogContent>
       </Dialog>
     </main>

@@ -163,7 +163,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       if (product) {
         const updatePayload = !isUnique
           ? { ...payload, ...stockPayload, status: effectiveStatus }
-          : { ...payload, status: effectiveStatus === "inactive" ? "inactive" as const : product.status };
+          : { ...payload, status: effectiveStatus === "inactive" || effectiveStatus === "available" ? effectiveStatus : product.status };
         const { error } = await supabase.from("products").update(updatePayload).eq("id", product.id);
         if (error) throw error;
       } else {
@@ -332,6 +332,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
                   <SelectItem value="out_of_stock">Sem stock</SelectItem>
                   <SelectItem value="inactive">Inativo (oculto)</SelectItem>
                   {!isUnique && <SelectItem value="sold">Esgotado</SelectItem>}
+                  {isUnique && status === "reserved" && <SelectItem value="reserved" disabled>Reservado</SelectItem>}
+                  {isUnique && status === "sold" && <SelectItem value="sold" disabled>Vendido</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
