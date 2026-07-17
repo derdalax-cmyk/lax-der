@@ -118,7 +118,7 @@ function ProdutoDetalhe() {
       if (p?.category) {
         let relQ = supabase
           .from("products")
-          .select("id,title,base_price,images,is_unique,status,category")
+          .select("id,title,base_price,shipping_fee,images,is_unique,status,category")
           .eq("category", p.category)
           .neq("id", id)
           .neq("status", "sold");
