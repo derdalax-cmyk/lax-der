@@ -7,6 +7,7 @@ export type CartProduct = {
   id: string;
   title: string;
   base_price: number;
+  shipping_fee: number | null;
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
