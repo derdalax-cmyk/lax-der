@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useSeller } from "@/hooks/useSeller";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 
-export const Route = createFileRoute("/perfil")({
+export const Route = createFileRoute("/perfil/")({
   head: () => ({ meta: [{ title: "Perfil · DERDALAX" }, { name: "description", content: "O seu perfil." }] }),
   component: Perfil,
 });
