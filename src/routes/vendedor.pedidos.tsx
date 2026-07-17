@@ -30,6 +30,9 @@ type SellerOrder = {
   created_at: string;
   seller_total: number;
   items: OrderItem[];
+  seller_status?: string;
+  tracking_code?: string | null;
+  seller_notes?: string | null;
 };
 type SellerOrders = {
   error?: string;
@@ -38,6 +41,15 @@ type SellerOrders = {
 };
 
 const mzn = (n: number) => `${Number(n || 0).toLocaleString("pt-PT")} MT`;
+
+const SELLER_STATUS: Record<string, { label: string; cls: string }> = {
+  pending: { label: "Pendente", cls: "bg-gold/15 text-gold" },
+  processing: { label: "A processar", cls: "bg-ink/5 text-ink" },
+  sent: { label: "Enviado", cls: "bg-green/10 text-green" },
+  delivered: { label: "Entregue", cls: "bg-success/15 text-success" },
+  cancelled: { label: "Cancelado", cls: "bg-destructive/15 text-destructive" },
+};
+
 
 const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
   pending: { label: "Pendente", cls: "bg-gold/15 text-gold" },
