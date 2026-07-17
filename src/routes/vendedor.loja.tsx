@@ -85,6 +85,10 @@ function SellerLoja() {
       province: form.province,
       description: form.description.trim() || null,
       logo_url: logoUrl,
+      emola_number: form.emola_number.trim() || null,
+      mpesa_number: form.mpesa_number.trim() || null,
+      bank_name: form.bank_name.trim() || null,
+      bank_account: form.bank_account.trim() || null,
     }).eq("id", seller.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
