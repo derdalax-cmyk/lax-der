@@ -72,7 +72,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const productIds = Array.from(new Set(rows.map((r) => r.product_id)));
     const variationIds = Array.from(new Set(rows.map((r) => r.variation_id).filter(Boolean) as string[]));
     const [{ data: products }, { data: variations }] = await Promise.all([
-      supabase.from("products").select("id,title,base_price,images,is_unique,status,reserved_until,reserved_by").in("id", productIds),
+      supabase.from("products").select("id,title,base_price,shipping_fee,images,is_unique,status,reserved_until,reserved_by").in("id", productIds),
       variationIds.length
         ? supabase.from("product_variations").select("id,size,color,price,stock").in("id", variationIds)
         : Promise.resolve({ data: [] as CartVariation[] }),
