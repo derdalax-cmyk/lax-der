@@ -77,6 +77,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [featured, setFeatured] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [variations, setVariations] = useState<Variation[]>([]);
+  const [status, setStatus] = useState<ProductStatus>("available");
+  const [stock, setStock] = useState<number>(0);
+  const [stockAlert, setStockAlert] = useState<number>(5);
   const [saving, setSaving] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
