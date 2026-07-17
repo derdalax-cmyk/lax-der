@@ -247,6 +247,10 @@ function AdminVendedores() {
                     <p className="text-sm">{detail.description}</p>
                   </div>
                 )}
+
+                <DocumentsSection seller={detail} />
+                <PaymentSection seller={detail} />
+
                 {detail.admin_notes && (
                   <div className="bg-destructive/5 border border-destructive/20 rounded-xl px-4 py-3">
                     <div className="text-[11px] uppercase tracking-wider text-destructive mb-1">Notas do admin</div>
