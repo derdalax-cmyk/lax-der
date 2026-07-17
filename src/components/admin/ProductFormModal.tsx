@@ -20,12 +20,14 @@ type ProductRow = {
   title: string;
   description: string | null;
   base_price: number;
+  shipping_fee: number | null;
   category: string | null;
   images: unknown;
   is_unique: boolean;
   featured: boolean;
   status: "available" | "reserved" | "sold";
 };
+
 
 type Props = {
   open: boolean;
