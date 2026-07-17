@@ -284,11 +284,45 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
           </div>
 
+          <div className="flex flex-wrap gap-5 py-2">
+            <label className="flex items-center gap-2 text-sm"><Checkbox checked={isUnique} onCheckedChange={(v) => setIsUnique(!!v)} /> Peça única</label>
+            {!isSeller && <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>}
+            <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <Label>Estado do produto</Label>
+              <Select value={status} onValueChange={(v) => setStatus(v as ProductStatus)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="available">Disponível</SelectItem>
+                  <SelectItem value="out_of_stock">Sem stock</SelectItem>
+                  <SelectItem value="inactive">Inativo (oculto)</SelectItem>
+                  {!isUnique && <SelectItem value="sold">Esgotado</SelectItem>}
+                </SelectContent>
+              </Select>
+            </div>
+            {!isUnique && variations.length === 0 && (
+              <>
+                <div>
+                  <Label>Stock disponível</Label>
+                  <Input type="number" min={0} value={stock} onChange={(e) => setStock(Number(e.target.value))} />
+                </div>
+                <div>
+                  <Label>Alerta de stock</Label>
+                  <Input type="number" min={0} value={stockAlert} onChange={(e) => setStockAlert(Number(e.target.value))} />
+                </div>
+              </>
+            )}
+          </div>
+
           {isSeller && (
             <div className="rounded-lg border border-gold/30 bg-gold/5 px-3 py-2 text-xs text-muted-foreground">
               Os produtos que criar ou editar ficam <strong className="text-foreground">pendentes de aprovação</strong> antes de aparecerem na loja.
             </div>
           )}
+
 
 
           {!isSeller && <div>
