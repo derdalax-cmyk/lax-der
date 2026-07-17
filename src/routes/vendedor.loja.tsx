@@ -149,6 +149,30 @@ function SellerLoja() {
           </div>
         </div>
 
+        <div className="border-t border-border pt-5">
+          <h2 className="font-display text-lg mb-1">Métodos de recebimento</h2>
+          <p className="text-xs text-muted-foreground mb-3">Estes dados são usados para lhe transferirmos o valor dos seus pedidos. São privados.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Nº e-Mola</Label>
+              <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="+258 84 …" />
+            </div>
+            <div>
+              <Label>Nº M-Pesa</Label>
+              <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="+258 82 …" />
+            </div>
+            <div>
+              <Label>Banco</Label>
+              <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BIM, BCI, Standard Bank" />
+            </div>
+            <div>
+              <Label>NIB / IBAN</Label>
+              <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="0000 0000 0000 0000" />
+            </div>
+          </div>
+        </div>
+
+
         <div className="flex justify-end">
           <Button onClick={save} disabled={saving} className="bg-gold text-ink hover:bg-gold/90">
             {saving ? "A guardar…" : "Guardar alterações"}
