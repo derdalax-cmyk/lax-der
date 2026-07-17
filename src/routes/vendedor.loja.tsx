@@ -22,7 +22,10 @@ function SellerLoja() {
   const qc = useQueryClient();
   const logoInput = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState({ store_name: "", full_name: "", phone: "", province: "", city: "", description: "" });
+  const [form, setForm] = useState({
+    store_name: "", full_name: "", phone: "", province: "", city: "", description: "",
+    emola_number: "", mpesa_number: "", bank_name: "", bank_account: "",
+  });
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -36,10 +39,15 @@ function SellerLoja() {
         province: seller.province ?? "",
         city: seller.city ?? "",
         description: seller.description ?? "",
+        emola_number: seller.emola_number ?? "",
+        mpesa_number: seller.mpesa_number ?? "",
+        bank_name: seller.bank_name ?? "",
+        bank_account: seller.bank_account ?? "",
       });
       setLogoUrl(seller.logo_url ?? null);
     }
   }, [seller]);
+
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
