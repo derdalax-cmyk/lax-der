@@ -361,3 +361,82 @@ function StatCard({ label, value, icon: Icon, accent }: {
     </div>
   );
 }
+
+function SignedImage({ path, label }: { path: string; label: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    const [bucket, ...rest] = path.split("/");
+    const key = rest.join("/");
+    if (!bucket || !key) { setErr(true); return; }
+    supabase.storage.from(bucket).createSignedUrl(key, 60 * 10).then(({ data, error }) => {
+      if (cancelled) return;
+      if (error || !data) setErr(true);
+      else setUrl(data.signedUrl);
+    });
+    return () => { cancelled = true; };
+  }, [path]);
+  return (
+    <div>
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">{label}</div>
+      {err ? (
+        <div className="h-32 rounded-lg bg-secondary flex items-center justify-center text-xs text-destructive">Erro ao carregar</div>
+      ) : url ? (
+        <a href={url} target="_blank" rel="noreferrer" className="block">
+          <img src={url} alt={label} className="w-full h-32 object-cover rounded-lg hover:opacity-90 transition" />
+        </a>
+      ) : (
+        <div className="h-32 rounded-lg bg-secondary animate-pulse" />
+      )}
+    </div>
+  );
+}
+
+function DocumentsSection({ seller }: { seller: Seller }) {
+  const items: Array<{ key: keyof Seller; label: string }> = [
+    { key: "document_front_url", label: "Frente do documento" },
+    { key: "document_back_url", label: "Verso do documento" },
+    { key: "document_selfie_url", label: "Selfie com documento" },
+    { key: "face_photo_url", label: "Foto do rosto" },
+  ];
+  const hasAny = items.some((i) => (seller as unknown as Record<string, string | null>)[i.key as string]);
+  if (!hasAny && !seller.document_number) return null;
+  return (
+    <div className="bg-secondary/40 rounded-xl px-4 py-3 space-y-3">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Documentos de identificação</div>
+      <div className="text-sm">
+        <span className="font-medium">{seller.document_type ?? "—"}</span>
+        {seller.document_number && <span className="text-muted-foreground"> · {seller.document_number}</span>}
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((i) => {
+          const path = (seller as unknown as Record<string, string | null>)[i.key as string];
+          if (!path) return null;
+          return <SignedImage key={i.key as string} path={path} label={i.label} />;
+        })}
+      </div>
+    </div>
+  );
+}
+
+function PaymentSection({ seller }: { seller: Seller }) {
+  const rows: Array<[string, string | null]> = [
+    ["e-Mola", seller.emola_number ?? null],
+    ["M-Pesa", seller.mpesa_number ?? null],
+    ["Conta bancária", seller.bank_account ?? null],
+    ["Banco", seller.bank_name ?? null],
+  ].filter(([, v]) => !!v) as Array<[string, string | null]>;
+  if (rows.length === 0) return null;
+  return (
+    <div className="bg-secondary/40 rounded-xl px-4 py-3">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">Métodos de pagamento</div>
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        {rows.map(([k, v]) => (
+          <div key={k}><span className="text-muted-foreground">{k}:</span> <span className="font-medium">{v}</span></div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
