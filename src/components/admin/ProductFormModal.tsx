@@ -86,10 +86,14 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
 
   useEffect(() => {
     if (!open) return;
-    supabase.from("featured_collections").select("id,name,icon").order("sort_order").then(({ data }) => {
+    let query = supabase.from("featured_collections").select("id,name,icon").order("sort_order");
+    if (isSeller && sellerId) {
+      query = query.eq("is_active", true).not("hidden_sellers", "cs", `{${sellerId}}`);
+    }
+    query.then(({ data }) => {
       setCollections(data ?? []);
     });
-  }, [open]);
+  }, [open, isSeller, sellerId]);
 
   useEffect(() => {
     if (!open) return;
@@ -201,8 +205,39 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         }
       }
 
+      if (pid && isSeller) {
+        const { data: currentRows, error: currentError } = await supabase
+          .from("featured_collection_products")
+          .select("collection_id,status")
+          .eq("product_id", pid)
+          .eq("seller_id", sellerId!);
+        if (currentError) throw currentError;
+
+        const current = new Map((currentRows ?? []).map((r) => [r.collection_id, r.status]));
+        const chosen = [...selectedCollections];
+        const toAdd = chosen.filter((cid) => !current.has(cid));
+        const toRemove = [...current.entries()]
+          .filter(([cid, submissionStatus]) => !selectedCollections.has(cid) && submissionStatus !== "approved")
+          .map(([cid]) => cid);
+
+        for (const collectionId of toAdd) {
+          const { error } = await supabase.rpc("submit_products_to_collection", {
+            _collection_id: collectionId,
+            _product_ids: [pid],
+          });
+          if (error) throw error;
+        }
+        for (const collectionId of toRemove) {
+          const { error } = await supabase.rpc("withdraw_product_from_collection", {
+            _collection_id: collectionId,
+            _product_id: pid,
+          });
+          if (error) throw error;
+        }
+      }
+
       toast.success(isSeller
-        ? (product ? "Produto atualizado — aguarda aprovação" : "Produto enviado para aprovação")
+        ? (product ? "Produto e destaques atualizados" : "Produto criado e destaques enviados para aprovação")
         : (product ? "Produto atualizado" : "Produto criado"));
       qc.invalidateQueries({ queryKey: ["admin-products"] });
       qc.invalidateQueries({ queryKey: ["seller-products"] });
@@ -320,8 +355,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
 
 
 
-          {!isSeller && <div>
-            <Label className="mb-2 block">Categorias de destaque</Label>
+          <div>
+            <Label className="mb-2 block">{isSeller ? "Adicionar a Destaques" : "Categorias de destaque"}</Label>
             {collections.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
             ) : (
@@ -337,7 +372,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
                         if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
                         return next;
                       })}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
                     >
                       <span>{c.icon}</span> {c.name}
                     </button>
@@ -345,8 +380,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
                 })}
               </div>
             )}
-            <p className="text-xs text-muted-foreground mt-1">Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).</p>
-          </div>}
+            <p className="text-xs text-muted-foreground mt-1">
+              {isSeller
+                ? "A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente."
+                : "Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo)."}
+            </p>
+          </div>
 
           <div>
             <Label className="mb-2 block">Imagens</Label>
