@@ -3,8 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth, MZ_CITIES } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -65,13 +64,8 @@ export function ProfileCompletionModal() {
             <Input id="phone" placeholder="+258 84 000 0000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
           </div>
           <div>
-            <Label>Cidade</Label>
-            <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-              <SelectContent>
-                {MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="city">Cidade</Label>
+            <Input id="city" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Ex: Maputo" required />
           </div>
           <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={saving}>
             {saving ? "A guardar..." : "Guardar e continuar"}

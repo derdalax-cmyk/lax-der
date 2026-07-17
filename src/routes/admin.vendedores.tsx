@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MZ_CITIES } from "@/lib/locations";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
@@ -333,12 +332,12 @@ function CityEditor({ seller, onSaved }: { seller: Seller; onSaved: (city: strin
       <div className="min-w-0 flex-1">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Cidade de venda (só admin)</div>
         <div className="flex gap-2">
-          <Select value={city || undefined} onValueChange={setCity}>
-            <SelectTrigger className="h-9 flex-1"><SelectValue placeholder="Selecionar cidade" /></SelectTrigger>
-            <SelectContent>
-              {MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <Input
+            value={city ?? ""}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Ex: Maputo"
+            className="h-9 flex-1"
+          />
           <Button size="sm" onClick={save} disabled={!dirty || saving} className="shrink-0">
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "Guardar"}
           </Button>

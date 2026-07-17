@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
-import { useAuth, MZ_CITIES } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -250,11 +250,8 @@ function CheckoutPage() {
                   <Input id="neighborhood" value={address.neighborhood} onChange={(e) => setAddress({ ...address, neighborhood: e.target.value })} required />
                 </div>
                 <div>
-                  <Label>Cidade *</Label>
-                  <Select value={address.city} onValueChange={(v) => setAddress({ ...address, city: v })}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>{MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <Label htmlFor="city">Cidade *</Label>
+                  <Input id="city" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="Ex: Maputo" required />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
