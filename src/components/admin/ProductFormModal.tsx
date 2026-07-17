@@ -15,6 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 export const CATEGORIES = ["camisas", "calcas", "sapatos", "chapeus", "calcoes", "casacos"] as const;
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
+type ProductStatus = "available" | "reserved" | "sold" | "out_of_stock" | "inactive";
+
 type ProductRow = {
   id: string;
   title: string;
@@ -25,8 +27,11 @@ type ProductRow = {
   images: unknown;
   is_unique: boolean;
   featured: boolean;
-  status: "available" | "reserved" | "sold";
+  status: ProductStatus;
+  stock?: number | null;
+  stock_alert?: number | null;
 };
+
 
 
 type Props = {
