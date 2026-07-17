@@ -7,6 +7,7 @@ export type CartProduct = {
   id: string;
   title: string;
   base_price: number;
+  shipping_fee: number | null;
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
@@ -46,7 +47,8 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | undefined>(undefined);
 const STORAGE_KEY = "derdalax_cart_v1";
-const SHIPPING_FEE = 100;
+// Fallback flat shipping (only used if no product-level shipping_fee is set on any item)
+const FALLBACK_SHIPPING_FEE = 100;
 const FREE_SHIPPING_THRESHOLD = 2500;
 
 type LocalRow = { product_id: string; variation_id: string | null; quantity: number };
@@ -71,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const productIds = Array.from(new Set(rows.map((r) => r.product_id)));
     const variationIds = Array.from(new Set(rows.map((r) => r.variation_id).filter(Boolean) as string[]));
     const [{ data: products }, { data: variations }] = await Promise.all([
-      supabase.from("products").select("id,title,base_price,images,is_unique,status,reserved_until,reserved_by").in("id", productIds),
+      supabase.from("products").select("id,title,base_price,shipping_fee,images,is_unique,status,reserved_until,reserved_by").in("id", productIds),
       variationIds.length
         ? supabase.from("product_variations").select("id,size,color,price,stock").in("id", variationIds)
         : Promise.resolve({ data: [] as CartVariation[] }),
@@ -246,7 +248,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return { subtotal: s, count: c };
   }, [items]);
 
-  const shipping = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shipping = useMemo(() => {
+    if (subtotal === 0) return 0;
+    if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
+    // Sum per-product shipping_fee across distinct products. If none set, use flat fallback.
+    const seen = new Set<string>();
+    let sum = 0;
+    let anySet = false;
+    for (const i of items) {
+      if (seen.has(i.product.id)) continue;
+      seen.add(i.product.id);
+      const fee = Number(i.product.shipping_fee ?? 0);
+      if (fee > 0) { sum += fee; anySet = true; }
+    }
+    return anySet ? sum : FALLBACK_SHIPPING_FEE;
+  }, [items, subtotal]);
   const total = subtotal + shipping;
 
   return (

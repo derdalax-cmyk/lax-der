@@ -20,12 +20,14 @@ type ProductRow = {
   title: string;
   description: string | null;
   base_price: number;
+  shipping_fee: number | null;
   category: string | null;
   images: unknown;
   is_unique: boolean;
   featured: boolean;
   status: "available" | "reserved" | "sold";
 };
+
 
 type Props = {
   open: boolean;
@@ -58,6 +60,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [price, setPrice] = useState<number>(0);
+  const [shippingFee, setShippingFee] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [material, setMaterial] = useState("");
@@ -87,6 +90,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       setTitle(product.title);
       setText(text);
       setPrice(Number(product.base_price));
+      setShippingFee(Number(product.shipping_fee ?? 0));
       setCategory(product.category ?? "");
       setGender(meta.gender ?? "");
       setMaterial(meta.material ?? "");
@@ -104,7 +108,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
       });
     } else {
-      setTitle(""); setText(""); setPrice(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
+      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set());
     }
   }, [product, open]);
 
@@ -120,20 +124,26 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         title: title.trim(),
         description: packMeta(text.trim(), meta),
         base_price: price,
+        shipping_fee: shippingFee || 0,
         category,
         is_unique: isUnique,
         featured: isSeller ? false : featured,
         images,
-        status: inStock ? "available" as const : "sold" as const,
         ...(isSeller ? { seller_id: sellerId } : {}),
       };
 
       let pid = product?.id;
       if (product) {
-        const { error } = await supabase.from("products").update(payload).eq("id", product.id);
+        // Preserve status on update — status is managed by the reserve/sold flow, not by this form.
+        // Only non-unique products can be toggled sold/available via the "Em estoque" checkbox.
+        const updatePayload = !isUnique
+          ? { ...payload, status: inStock ? ("available" as const) : ("sold" as const) }
+          : payload;
+        const { error } = await supabase.from("products").update(updatePayload).eq("id", product.id);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload }).select("id").single();
+        // New products always start available — unique pieces enter the reserve flow from there.
+        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, status: "available" as const }).select("id").single();
         if (error) throw error;
         pid = data.id;
       }
@@ -207,6 +217,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
             <div>
               <Label>Preço base (MT) *</Label>
               <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+            </div>
+            <div>
+              <Label>Frete de entrega (MT)</Label>
+              <Input type="number" min={0} step="0.01" value={shippingFee} onChange={(e) => setShippingFee(Number(e.target.value))} placeholder="0 = Grátis" />
+              <p className="text-[11px] text-muted-foreground mt-1">Deixe 0 (ou vazio) para <strong>Frete Grátis</strong>.</p>
             </div>
             <div>
               <Label>Categoria *</Label>

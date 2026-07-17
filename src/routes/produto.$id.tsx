@@ -25,6 +25,7 @@ type Product = {
   title: string;
   description: string | null;
   base_price: number;
+  shipping_fee: number | null;
   category: string | null;
   images: unknown;
   is_unique: boolean;
@@ -117,7 +118,7 @@ function ProdutoDetalhe() {
       if (p?.category) {
         let relQ = supabase
           .from("products")
-          .select("id,title,base_price,images,is_unique,status,category")
+          .select("id,title,base_price,shipping_fee,images,is_unique,status,category")
           .eq("category", p.category)
           .neq("id", id)
           .neq("status", "sold");
@@ -241,6 +242,13 @@ function ProdutoDetalhe() {
         <div>
           <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
           <p className="mt-2 text-2xl font-medium">{formatMZN(Number(effectivePrice))}</p>
+          <p className="mt-1 text-sm">
+            {Number(product.shipping_fee ?? 0) > 0 ? (
+              <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-green font-medium">🚚 Frete Grátis</span>
+            )}
+          </p>
           {reservedByOther && (
             <p className="mt-2 text-sm text-destructive font-medium">🔴 Indisponível temporariamente — reservado por outro cliente.</p>
           )}
