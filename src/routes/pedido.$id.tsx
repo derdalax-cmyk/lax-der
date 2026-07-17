@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,6 +43,7 @@ const PAYMENT_TARGETS = {
 
 function PedidoPage() {
   const { id } = useParams({ from: "/pedido/$id" });
+  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [order, setOrder] = useState<OrderRow | null>(null);
   const [items, setItems] = useState<ItemRow[]>([]);
@@ -90,6 +91,18 @@ function PedidoPage() {
     });
     return [...map.values()];
   }, [items]);
+
+  useEffect(() => {
+    if (!isPaid || sellers.length === 0) return;
+    const destination = sessionStorage.getItem(`derdalax_post_purchase_${id}`);
+    if (!destination) return;
+    sessionStorage.removeItem(`derdalax_post_purchase_${id}`);
+    if (sellers.length === 1) {
+      navigate({ to: "/chat/order/$orderId", params: { orderId: id }, search: { seller: sellers[0].id }, replace: true });
+    } else {
+      navigate({ to: "/perfil/pedidos", search: { novo: id }, replace: true });
+    }
+  }, [id, isPaid, sellers, navigate]);
 
   const copy = (text: string) => { navigator.clipboard.writeText(text); toast.success("Copiado"); };
 
@@ -186,7 +199,7 @@ function PedidoPage() {
 
       <div className="flex flex-wrap gap-3 justify-center">
         <Link to="/produtos" className="border border-border rounded-md px-5 py-2.5 text-sm hover:bg-secondary">Continuar a comprar</Link>
-        <Link to="/perfil" className="bg-gold text-ink rounded-md px-5 py-2.5 text-sm font-medium hover:bg-gold/90">Os meus pedidos</Link>
+        <Link to="/perfil/pedidos" className="bg-gold text-ink rounded-md px-5 py-2.5 text-sm font-medium hover:bg-gold/90">Os meus pedidos</Link>
       </div>
 
       {rateTarget && (
