@@ -152,11 +152,12 @@ function SellerPedidos() {
           <SelectTrigger className="sm:w-48"><SelectValue placeholder="Estado" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os estados</SelectItem>
-            {Object.entries(STATUS_LABEL).map(([k, v]) => (
+            {Object.entries(SELLER_STATUS).map(([k, v]) => (
               <SelectItem key={k} value={k}>{v.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
+
       </div>
 
       {isLoading ? (
