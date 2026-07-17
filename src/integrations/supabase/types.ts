@@ -693,14 +693,24 @@ export type Database = {
         Row: {
           admin_notes: string | null
           approved_at: string | null
+          bank_account: string | null
+          bank_name: string | null
           city: string | null
           created_at: string
           description: string | null
+          document_back_url: string | null
+          document_front_url: string | null
+          document_number: string | null
+          document_selfie_url: string | null
+          document_type: string | null
           email: string | null
+          emola_number: string | null
+          face_photo_url: string | null
           full_name: string
           id: string
           is_blocked: boolean
           logo_url: string | null
+          mpesa_number: string | null
           phone: string
           province: string
           rating: number
@@ -709,18 +719,29 @@ export type Database = {
           total_reviews: number
           updated_at: string
           user_id: string
+          verified_at: string | null
         }
         Insert: {
           admin_notes?: string | null
           approved_at?: string | null
+          bank_account?: string | null
+          bank_name?: string | null
           city?: string | null
           created_at?: string
           description?: string | null
+          document_back_url?: string | null
+          document_front_url?: string | null
+          document_number?: string | null
+          document_selfie_url?: string | null
+          document_type?: string | null
           email?: string | null
+          emola_number?: string | null
+          face_photo_url?: string | null
           full_name: string
           id?: string
           is_blocked?: boolean
           logo_url?: string | null
+          mpesa_number?: string | null
           phone: string
           province: string
           rating?: number
@@ -729,18 +750,29 @@ export type Database = {
           total_reviews?: number
           updated_at?: string
           user_id: string
+          verified_at?: string | null
         }
         Update: {
           admin_notes?: string | null
           approved_at?: string | null
+          bank_account?: string | null
+          bank_name?: string | null
           city?: string | null
           created_at?: string
           description?: string | null
+          document_back_url?: string | null
+          document_front_url?: string | null
+          document_number?: string | null
+          document_selfie_url?: string | null
+          document_type?: string | null
           email?: string | null
+          emola_number?: string | null
+          face_photo_url?: string | null
           full_name?: string
           id?: string
           is_blocked?: boolean
           logo_url?: string | null
+          mpesa_number?: string | null
           phone?: string
           province?: string
           rating?: number
@@ -749,6 +781,7 @@ export type Database = {
           total_reviews?: number
           updated_at?: string
           user_id?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
