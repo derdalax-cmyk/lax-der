@@ -124,20 +124,26 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         title: title.trim(),
         description: packMeta(text.trim(), meta),
         base_price: price,
+        shipping_fee: shippingFee || 0,
         category,
         is_unique: isUnique,
         featured: isSeller ? false : featured,
         images,
-        status: inStock ? "available" as const : "sold" as const,
         ...(isSeller ? { seller_id: sellerId } : {}),
       };
 
       let pid = product?.id;
       if (product) {
-        const { error } = await supabase.from("products").update(payload).eq("id", product.id);
+        // Preserve status on update — status is managed by the reserve/sold flow, not by this form.
+        // Only non-unique products can be toggled sold/available via the "Em estoque" checkbox.
+        const updatePayload = !isUnique
+          ? { ...payload, status: inStock ? ("available" as const) : ("sold" as const) }
+          : payload;
+        const { error } = await supabase.from("products").update(updatePayload).eq("id", product.id);
         if (error) throw error;
       } else {
-        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload }).select("id").single();
+        // New products always start available — unique pieces enter the reserve flow from there.
+        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, status: "available" as const }).select("id").single();
         if (error) throw error;
         pid = data.id;
       }
