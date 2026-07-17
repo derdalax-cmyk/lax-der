@@ -6,8 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { MZ_CITIES } from "@/lib/locations";
+import { isValidMzPhone } from "@/lib/validation";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { z } from "zod";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -25,13 +30,45 @@ function GoogleIcon() {
   );
 }
 
+function PasswordInput({
+  id, value, onChange, minLength, placeholder,
+}: { id: string; value: string; onChange: (v: string) => void; minLength?: number; placeholder?: string }) {
+  const [show, setShow] = useState(false);
+  return (
+    <div className="relative">
+      <Input
+        id={id} type={show ? "text" : "password"} value={value}
+        onChange={(e) => onChange(e.target.value)}
+        minLength={minLength} required placeholder={placeholder}
+        className="pr-10"
+      />
+      <button type="button" onClick={() => setShow((s) => !s)}
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+        aria-label={show ? "Ocultar palavra-passe" : "Mostrar palavra-passe"}>
+        {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+}
+
+const signupSchema = z.object({
+  name: z.string().trim().min(2, "Nome muito curto").max(120),
+  email: z.string().trim().email("Email inválido"),
+  phone: z.string().trim().refine(isValidMzPhone, "Telefone inválido (84/85/86/87 + 7 dígitos)"),
+  city: z.string().trim().min(1, "Selecione a cidade"),
+  password: z.string().min(6, "Palavra-passe mínima de 6 caracteres"),
+});
+
 function LoginPage() {
   const navigate = useNavigate();
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, refreshProfile } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -50,19 +87,32 @@ function LoginPage() {
     setBusy(true);
     try {
       if (tab === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email, password,
+        if (password !== confirm) { toast.error("As senhas não coincidem"); setBusy(false); return; }
+        const parsed = signupSchema.safeParse({ name, email, phone, city, password });
+        if (!parsed.success) { toast.error(parsed.error.issues[0].message); setBusy(false); return; }
+
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(), password,
           options: {
             emailRedirectTo: window.location.origin,
             data: { full_name: name },
           },
         });
         if (error) throw error;
-        toast.success("Conta criada. Verifique o seu email.");
+
+        // If session is created immediately (email confirmation disabled), update profile
+        if (data.session) {
+          await supabase.from("profiles").update({
+            name, phone: phone.trim(), city,
+          }).eq("id", data.user!.id);
+          await refreshProfile();
+          toast.success("Conta criada com sucesso!");
+        } else {
+          toast.success("Conta criada. Verifique o seu email para confirmar.");
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
-        // navigation handled by useEffect once isAdmin resolves
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -102,19 +152,45 @@ function LoginPage() {
           <TabsContent value="login">
             <form onSubmit={submit} className="space-y-3">
               <div><Label htmlFor="email">Email</Label><Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-              <div><Label htmlFor="password">Palavra-passe</Label><Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+              <div><Label htmlFor="password">Palavra-passe</Label>
+                <PasswordInput id="password" value={password} onChange={setPassword} />
+              </div>
               <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy}>
-                {busy ? "A entrar..." : "Entrar"}
+                {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A entrar...</> : "Entrar"}
               </Button>
             </form>
           </TabsContent>
           <TabsContent value="signup">
             <form onSubmit={submit} className="space-y-3">
-              <div><Label htmlFor="name">Nome completo</Label><Input id="name" required value={name} onChange={(e) => setName(e.target.value)} /></div>
-              <div><Label htmlFor="email2">Email</Label><Input id="email2" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-              <div><Label htmlFor="password2">Palavra-passe</Label><Input id="password2" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} /></div>
+              <div><Label htmlFor="name">Nome completo *</Label>
+                <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} /></div>
+              <div><Label htmlFor="email2">Email *</Label>
+                <Input id="email2" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              <div><Label htmlFor="phone">Telefone (WhatsApp) *</Label>
+                <Input id="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="84xxxxxxx" />
+                {phone && !isValidMzPhone(phone) && (
+                  <p className="text-xs text-destructive mt-1">Formato inválido — use 84/85/86/87 + 7 dígitos.</p>
+                )}
+              </div>
+              <div><Label>Cidade *</Label>
+                <Select value={city} onValueChange={setCity}>
+                  <SelectTrigger><SelectValue placeholder="Selecionar cidade" /></SelectTrigger>
+                  <SelectContent>
+                    {MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div><Label htmlFor="password2">Palavra-passe *</Label>
+                <PasswordInput id="password2" value={password} onChange={setPassword} minLength={6} placeholder="Mínimo 6 caracteres" />
+              </div>
+              <div><Label htmlFor="confirm">Confirmar palavra-passe *</Label>
+                <PasswordInput id="confirm" value={confirm} onChange={setConfirm} minLength={6} />
+                {confirm && password !== confirm && (
+                  <p className="text-xs text-destructive mt-1">As senhas não coincidem</p>
+                )}
+              </div>
               <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy}>
-                {busy ? "A criar..." : "Criar conta"}
+                {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A criar...</> : "Criar conta"}
               </Button>
             </form>
           </TabsContent>
