@@ -535,6 +535,7 @@ export type Database = {
           reserved_by: string | null
           reserved_until: string | null
           seller_id: string | null
+          shipping_fee: number
           status: Database["public"]["Enums"]["product_status"]
           title: string
           updated_at: string
@@ -554,6 +555,7 @@ export type Database = {
           reserved_by?: string | null
           reserved_until?: string | null
           seller_id?: string | null
+          shipping_fee?: number
           status?: Database["public"]["Enums"]["product_status"]
           title: string
           updated_at?: string
@@ -573,6 +575,7 @@ export type Database = {
           reserved_by?: string | null
           reserved_until?: string | null
           seller_id?: string | null
+          shipping_fee?: number
           status?: Database["public"]["Enums"]["product_status"]
           title?: string
           updated_at?: string
