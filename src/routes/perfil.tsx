@@ -200,12 +200,12 @@ function Perfil() {
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
-        <Link to="/produtos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
+        <Link to="/perfil/pedidos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
           <span className="flex items-center gap-3">
             <span className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-emerald-600" />
             </span>
-            <span className="font-medium">Continuar a comprar</span>
+            <span className="font-medium">Os meus pedidos</span>
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
