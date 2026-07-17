@@ -172,13 +172,8 @@ function LoginPage() {
                   <p className="text-xs text-destructive mt-1">Formato inválido — use 84/85/86/87 + 7 dígitos.</p>
                 )}
               </div>
-              <div><Label>Cidade *</Label>
-                <Select value={city} onValueChange={setCity}>
-                  <SelectTrigger><SelectValue placeholder="Selecionar cidade" /></SelectTrigger>
-                  <SelectContent>
-                    {MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div><Label htmlFor="city">Cidade *</Label>
+                <Input id="city" required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Maputo" />
               </div>
               <div><Label htmlFor="password2">Palavra-passe *</Label>
                 <PasswordInput id="password2" value={password} onChange={setPassword} minLength={6} placeholder="Mínimo 6 caracteres" />
