@@ -177,13 +177,8 @@ function Perfil() {
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+258 84 000 0000" />
             </div>
             <div>
-              <Label className="text-xs">Província</Label>
-              <Select value={form.city} onValueChange={(v) => setForm({ ...form, city: v })}>
-                <SelectTrigger><SelectValue placeholder="Selecione a província" /></SelectTrigger>
-                <SelectContent>
-                  {MZ_PROVINCES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                </SelectContent>
-              </Select>
+              <Label className="text-xs">Cidade</Label>
+              <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Ex: Maputo" />
             </div>
           </div>
         ) : (
