@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingBag, Users } from "lucide-react";
+import { Package, Users, Store } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminHome,
@@ -23,12 +23,12 @@ function AdminHome() {
   const { data } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
-      const [p, o, u] = await Promise.all([
+      const [p, s, u] = await Promise.all([
         supabase.from("products").select("id", { count: "exact", head: true }),
-        supabase.from("orders").select("id", { count: "exact", head: true }),
+        supabase.from("sellers").select("id", { count: "exact", head: true }),
         supabase.from("profiles").select("id", { count: "exact", head: true }),
       ]);
-      return { products: p.count ?? 0, orders: o.count ?? 0, users: u.count ?? 0 };
+      return { products: p.count ?? 0, sellers: s.count ?? 0, users: u.count ?? 0 };
     },
   });
 
@@ -38,7 +38,7 @@ function AdminHome() {
       <p className="text-muted-foreground mb-6">Resumo da loja DERDALAX.</p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <StatCard label="Produtos" value={data?.products ?? "—"} icon={Package} />
-        <StatCard label="Pedidos" value={data?.orders ?? "—"} icon={ShoppingBag} />
+        <StatCard label="Vendedores" value={data?.sellers ?? "—"} icon={Store} />
         <StatCard label="Utilizadores" value={data?.users ?? "—"} icon={Users} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

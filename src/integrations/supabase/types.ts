@@ -130,6 +130,7 @@ export type Database = {
           id: string
           last_message: string | null
           last_message_at: string | null
+          order_id: string | null
           product_id: string | null
           seller_id: string
           seller_unread: number
@@ -143,6 +144,7 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          order_id?: string | null
           product_id?: string | null
           seller_id: string
           seller_unread?: number
@@ -156,6 +158,7 @@ export type Database = {
           id?: string
           last_message?: string | null
           last_message_at?: string | null
+          order_id?: string | null
           product_id?: string | null
           seller_id?: string
           seller_unread?: number
@@ -163,6 +166,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "conversations_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "conversations_product_id_fkey"
             columns: ["product_id"]
@@ -213,6 +223,7 @@ export type Database = {
           collection_id: string
           created_at: string
           product_id: string
+          seller_id: string | null
           sort_order: number
           status: string
           submitted_by: string | null
@@ -221,6 +232,7 @@ export type Database = {
           collection_id: string
           created_at?: string
           product_id: string
+          seller_id?: string | null
           sort_order?: number
           status?: string
           submitted_by?: string | null
@@ -229,6 +241,7 @@ export type Database = {
           collection_id?: string
           created_at?: string
           product_id?: string
+          seller_id?: string | null
           sort_order?: number
           status?: string
           submitted_by?: string | null
@@ -246,6 +259,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "featured_collection_products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
             referencedColumns: ["id"]
           },
         ]
@@ -923,6 +943,7 @@ export type Database = {
         }[]
       }
       get_my_conversations: { Args: never; Returns: Json }
+      get_my_order_history: { Args: never; Returns: Json }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_featured_collections: { Args: never; Returns: Json }
@@ -973,6 +994,10 @@ export type Database = {
       }
       start_conversation: {
         Args: { _product_id?: string; _seller_id: string }
+        Returns: string
+      }
+      start_order_conversation: {
+        Args: { _order_id: string; _seller_id: string }
         Returns: string
       }
       submit_products_to_collection: {

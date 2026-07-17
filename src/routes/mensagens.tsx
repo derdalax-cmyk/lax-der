@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useConversations, type Conversation, type Message } from "@/hooks/useMessaging";
-import { Store, Send, Loader2, MessageSquare, ChevronLeft, User as UserIcon } from "lucide-react";
+import { Store, Send, Loader2, MessageSquare, ChevronLeft, User as UserIcon, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -101,6 +101,9 @@ function MensagensPage() {
           )}
         </section>
       </div>
+      <button type="button" onClick={() => window.history.back()} className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+        <ChevronLeft className="w-4 h-4" /> Voltar atrás
+      </button>
     </div>
   );
 }
@@ -195,9 +198,10 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold truncate">{conversation.name}</p>
           {conversation.role === "buyer" ? (
-            <Link to="/loja/$id" params={{ id: conversation.seller_id }} className="text-[11px] text-gold hover:underline">
-              Ver loja
-            </Link>
+            <div className="flex items-center gap-3 text-[11px]">
+              <Link to="/loja/$id" params={{ id: conversation.seller_id }} className="text-gold hover:underline">Ver loja</Link>
+              {conversation.phone && <a href={`tel:${conversation.phone}`} className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"><Phone className="w-3 h-3" /> {conversation.phone}</a>}
+            </div>
           ) : (
             <span className="text-[11px] text-muted-foreground">Cliente</span>
           )}

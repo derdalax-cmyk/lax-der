@@ -1,15 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Compass, Store, LayoutGrid, Headset } from "lucide-react";
-
-const items: { to: "/" | "/explorar" | "/tornar-se-vendedor" | "/categorias" | "/suporte"; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: "/", label: "Início", icon: Home, exact: true },
-  { to: "/explorar", label: "Explorar", icon: Compass },
-  { to: "/tornar-se-vendedor", label: "Vender", icon: Store },
-  { to: "/categorias", label: "Categorias", icon: LayoutGrid },
-  { to: "/suporte", label: "Suporte", icon: Headset },
-];
+import { useSeller } from "@/hooks/useSeller";
 
 export function BottomNav() {
+  const { isApproved } = useSeller();
+  const items = [
+    { to: "/" as const, label: "Início", icon: Home, exact: true },
+    { to: "/explorar" as const, label: "Explorar", icon: Compass },
+    { to: isApproved ? "/vendedor" as const : "/tornar-se-vendedor" as const, label: "Vender", icon: Store },
+    { to: "/categorias" as const, label: "Categorias", icon: LayoutGrid },
+    { to: "/suporte" as const, label: "Suporte", icon: Headset },
+  ];
   return (
     <nav
       className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-ink/95 backdrop-blur border-t border-white/10"

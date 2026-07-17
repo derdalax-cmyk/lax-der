@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus, Search, Pencil, Trash2, ImageOff, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, ImageOff, Clock, CheckCircle2, XCircle, CircleCheck, CircleOff, BadgeCheck } from "lucide-react";
 import { ProductFormModal, CATEGORIES, type ProductRow } from "@/components/admin/ProductFormModal";
 import { toast } from "sonner";
 
@@ -21,6 +21,14 @@ const APPROVAL: Record<string, { label: string; cls: string; icon: typeof Clock 
   approved: { label: "Aprovado", cls: "bg-success/15 text-success", icon: CheckCircle2 },
   pending: { label: "Pendente", cls: "bg-gold/15 text-gold", icon: Clock },
   rejected: { label: "Rejeitado", cls: "bg-destructive/15 text-destructive", icon: XCircle },
+};
+
+const PRODUCT_STATUS: Record<string, { label: string; cls: string; icon: typeof Clock }> = {
+  available: { label: "Disponível", cls: "bg-success/15 text-success", icon: CircleCheck },
+  reserved: { label: "Reservado", cls: "bg-gold/15 text-gold", icon: Clock },
+  sold: { label: "Vendido", cls: "bg-destructive/15 text-destructive", icon: BadgeCheck },
+  out_of_stock: { label: "Sem stock", cls: "bg-destructive/15 text-destructive", icon: CircleOff },
+  inactive: { label: "Inativo", cls: "bg-secondary text-muted-foreground", icon: CircleOff },
 };
 
 function SellerProdutos() {
@@ -113,18 +121,21 @@ function SellerProdutos() {
                 <th className="px-4 py-3">Categoria</th>
                 <th className="px-4 py-3">Preço</th>
                 <th className="px-4 py-3">Aprovação</th>
+                <th className="px-4 py-3">Disponibilidade</th>
                 <th className="px-4 py-3 text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
+              {isLoading && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
               {!isLoading && filtered.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Nenhum produto encontrado.</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">Nenhum produto encontrado.</td></tr>
               )}
               {filtered.map((p) => {
                 const imgs = Array.isArray(p.images) ? (p.images as string[]) : [];
                 const ap = APPROVAL[p.approval_status] ?? APPROVAL.pending;
                 const Icon = ap.icon;
+                const productStatus = PRODUCT_STATUS[p.status] ?? PRODUCT_STATUS.available;
+                const ProductStatusIcon = productStatus.icon;
                 return (
                   <tr key={p.id} className="border-t border-border hover:bg-secondary/40 align-top">
                     <td className="px-4 py-2">
@@ -143,6 +154,11 @@ function SellerProdutos() {
                     <td className="px-4 py-2">
                       <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${ap.cls}`}>
                         <Icon className="w-3 h-3" /> {ap.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                      <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${productStatus.cls}`}>
+                        <ProductStatusIcon className="w-3 h-3" /> {productStatus.label}
                       </span>
                     </td>
                     <td className="px-4 py-2">

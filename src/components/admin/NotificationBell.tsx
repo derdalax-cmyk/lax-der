@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, ShoppingBag, Store } from "lucide-react";
+import { Bell, Store } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
-type Notif =
-  | { kind: "order"; id: string; title: string; sub: string; at: string }
-  | { kind: "seller"; id: string; title: string; sub: string; at: string };
-
-const money = (n: number) => `${Number(n).toLocaleString("pt-PT")} MT`;
+type Notif = { kind: "seller"; id: string; title: string; sub: string; at: string };
 
 export function NotificationBell() {
   const navigate = useNavigate();
@@ -22,11 +17,6 @@ export function NotificationBell() {
 
     const channel = supabase
       .channel("admin-notifications")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, (payload) => {
-        const o = payload.new as { id: string; customer_name: string | null; total: number; created_at: string };
-        setItems((prev) => [{ kind: "order" as const, id: o.id, title: o.customer_name ?? "Cliente", sub: money(Number(o.total)), at: o.created_at }, ...prev].slice(0, 20));
-        ping();
-      })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "sellers" }, (payload) => {
         const s = payload.new as { id: string; store_name: string; province: string; created_at: string };
         setItems((prev) => [{ kind: "seller" as const, id: s.id, title: s.store_name, sub: `Novo vendedor · ${s.province}`, at: s.created_at }, ...prev].slice(0, 20));
@@ -58,12 +48,11 @@ export function NotificationBell() {
             items.map((n) => (
               <button
                 key={n.kind + n.id}
-                onClick={() => { setOpen(false); navigate({ to: n.kind === "order" ? "/admin/pedidos" : "/admin/vendedores" }); }}
-                className={cn("w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-secondary/50 border-b border-border last:border-0")}
+                onClick={() => { setOpen(false); navigate({ to: "/admin/vendedores" }); }}
+                className="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-secondary/50 border-b border-border last:border-0"
               >
-                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-                  n.kind === "order" ? "bg-gold/20 text-gold" : "bg-emerald-500/15 text-emerald-600")}>
-                  {n.kind === "order" ? <ShoppingBag className="w-4 h-4" /> : <Store className="w-4 h-4" />}
+                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-emerald-500/15 text-emerald-600">
+                  <Store className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-sm font-medium truncate">{n.title}</div>

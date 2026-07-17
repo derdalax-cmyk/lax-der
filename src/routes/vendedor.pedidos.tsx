@@ -122,7 +122,7 @@ function SellerPedidos() {
     <div>
       <div className="mb-5">
         <h1 className="font-display text-3xl">Pedidos</h1>
-        <p className="text-sm text-muted-foreground">Pedidos que incluem produtos da sua loja.</p>
+        <p className="text-sm text-muted-foreground">Pedidos enviados diretamente para a sua loja. Só vê e gere os seus próprios artigos.</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3 mb-6">

@@ -8,11 +8,13 @@ export type Conversation = {
   role: "buyer" | "seller";
   seller_id: string;
   product_id: string | null;
+  order_id: string | null;
   last_message: string | null;
   last_message_at: string | null;
   unread: number;
   name: string;
   avatar: string | null;
+  phone: string | null;
 };
 
 export type Message = {
@@ -29,6 +31,15 @@ export async function startConversation(sellerId: string, productId?: string | n
   const { data, error } = await supabase.rpc("start_conversation", {
     _seller_id: sellerId,
     _product_id: productId ?? undefined,
+  });
+  if (error) throw error;
+  return data as unknown as string;
+}
+
+export async function startOrderConversation(orderId: string, sellerId: string): Promise<string> {
+  const { data, error } = await supabase.rpc("start_order_conversation", {
+    _order_id: orderId,
+    _seller_id: sellerId,
   });
   if (error) throw error;
   return data as unknown as string;

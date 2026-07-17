@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Package, Users, ShoppingBag, Shield, Star, Store, BarChart3 } from "lucide-react";
+import { LayoutDashboard, Package, Users, Shield, Star, Store, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 
@@ -17,7 +17,6 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/categorias-destaque", label: "Destaques", icon: Star },
   { to: "/admin/vendedores", label: "Vendedores", icon: Store, exact: true },
   { to: "/admin/vendedores/dashboard", label: "Dash. Vendedores", icon: BarChart3 },
-  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/administradores", label: "Administradores", icon: Shield },
   { to: "/admin/utilizadores", label: "Utilizadores", icon: Users },
 ];
