@@ -47,7 +47,8 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | undefined>(undefined);
 const STORAGE_KEY = "derdalax_cart_v1";
-const SHIPPING_FEE = 100;
+// Fallback flat shipping (only used if no product-level shipping_fee is set on any item)
+const FALLBACK_SHIPPING_FEE = 100;
 const FREE_SHIPPING_THRESHOLD = 2500;
 
 type LocalRow = { product_id: string; variation_id: string | null; quantity: number };
