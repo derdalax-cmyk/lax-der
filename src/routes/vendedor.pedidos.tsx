@@ -170,8 +170,11 @@ function SellerPedidos() {
       ) : (
         <div className="bg-card border border-border rounded-xl overflow-hidden divide-y divide-border">
           {filtered.map((o) => {
-            const st = STATUS_LABEL[o.status] ?? { label: o.status, cls: "bg-secondary text-foreground" };
+            const sellerStatusKey = o.seller_status ?? "pending";
+            const st = SELLER_STATUS[sellerStatusKey] ?? { label: sellerStatusKey, cls: "bg-secondary text-foreground" };
             const open = expanded === o.id;
+            const trk = tracking[o.id] ?? o.tracking_code ?? "";
+            const nts = notes[o.id] ?? o.seller_notes ?? "";
             return (
               <div key={o.id}>
                 <button
@@ -225,11 +228,50 @@ function SellerPedidos() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="mt-4 border-t border-border pt-4">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5" /> Gestão do pedido
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <Input
+                          value={trk}
+                          onChange={(e) => setTracking((p) => ({ ...p, [o.id]: e.target.value }))}
+                          placeholder="Código de rastreio (opcional)"
+                        />
+                        <Select value={sellerStatusKey} onValueChange={(v) => updateStatus(o.id, v)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(SELLER_STATUS).map(([k, v]) => (
+                              <SelectItem key={k} value={k}>{v.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Textarea
+                        value={nts}
+                        onChange={(e) => setNotes((p) => ({ ...p, [o.id]: e.target.value }))}
+                        placeholder="Notas internas ou instruções para o cliente"
+                        rows={2}
+                        className="mt-2"
+                      />
+                      <div className="flex justify-end mt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => updateStatus(o.id, sellerStatusKey)}
+                          disabled={savingId === o.id}
+                          className="bg-ink text-gold hover:bg-ink/90"
+                        >
+                          {savingId === o.id ? "A guardar…" : "Guardar alterações"}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             );
           })}
+
         </div>
       )}
     </div>
