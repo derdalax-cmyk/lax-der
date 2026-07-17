@@ -144,20 +144,28 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       };
 
       let pid = product?.id;
+      const hasVariations = variations.length > 0;
+      // Determine effective status from the explicit select, honoring the "Em estoque" toggle for non-unique products.
+      let effectiveStatus: ProductStatus = status;
+      if (!isUnique) {
+        if (status === "available" && !inStock) effectiveStatus = "out_of_stock";
+        if (status === "out_of_stock" && inStock) effectiveStatus = "available";
+      }
+      const stockPayload = !isUnique && !hasVariations
+        ? { stock: Math.max(0, stock), stock_alert: Math.max(0, stockAlert) }
+        : {};
       if (product) {
-        // Preserve status on update — status is managed by the reserve/sold flow, not by this form.
-        // Only non-unique products can be toggled sold/available via the "Em estoque" checkbox.
         const updatePayload = !isUnique
-          ? { ...payload, status: inStock ? ("available" as const) : ("sold" as const) }
-          : payload;
+          ? { ...payload, ...stockPayload, status: effectiveStatus }
+          : { ...payload, status: effectiveStatus === "inactive" ? "inactive" as const : product.status };
         const { error } = await supabase.from("products").update(updatePayload).eq("id", product.id);
         if (error) throw error;
       } else {
-        // New products always start available — unique pieces enter the reserve flow from there.
-        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, status: "available" as const }).select("id").single();
+        const { data, error } = await supabase.from("products").insert({ id: productId, ...payload, ...stockPayload, status: isUnique ? "available" as const : effectiveStatus }).select("id").single();
         if (error) throw error;
         pid = data.id;
       }
+
 
       if (pid) {
         await supabase.from("product_variations").delete().eq("product_id", pid);
