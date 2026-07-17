@@ -250,11 +250,8 @@ function CheckoutPage() {
                   <Input id="neighborhood" value={address.neighborhood} onChange={(e) => setAddress({ ...address, neighborhood: e.target.value })} required />
                 </div>
                 <div>
-                  <Label>Cidade *</Label>
-                  <Select value={address.city} onValueChange={(v) => setAddress({ ...address, city: v })}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>{MZ_CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <Label htmlFor="city">Cidade *</Label>
+                  <Input id="city" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="Ex: Maputo" required />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
