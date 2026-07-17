@@ -90,6 +90,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       setTitle(product.title);
       setText(text);
       setPrice(Number(product.base_price));
+      setShippingFee(Number(product.shipping_fee ?? 0));
       setCategory(product.category ?? "");
       setGender(meta.gender ?? "");
       setMaterial(meta.material ?? "");
