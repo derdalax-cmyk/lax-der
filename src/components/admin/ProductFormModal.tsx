@@ -119,7 +119,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
-      supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id).then(({ data }) => {
+      let membershipQuery = supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id);
+      if (isSeller && sellerId) membershipQuery = membershipQuery.eq("seller_id", sellerId);
+      membershipQuery.then(({ data }) => {
         setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
       });
     } else {
