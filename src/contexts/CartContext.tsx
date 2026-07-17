@@ -248,7 +248,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return { subtotal: s, count: c };
   }, [items]);
 
-  const shipping = subtotal === 0 ? 0 : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shipping = useMemo(() => {
+    if (subtotal === 0) return 0;
+    if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
+    // Sum per-product shipping_fee across distinct products. If none set, use flat fallback.
+    const seen = new Set<string>();
+    let sum = 0;
+    let anySet = false;
+    for (const i of items) {
+      if (seen.has(i.product.id)) continue;
+      seen.add(i.product.id);
+      const fee = Number(i.product.shipping_fee ?? 0);
+      if (fee > 0) { sum += fee; anySet = true; }
+    }
+    return anySet ? sum : FALLBACK_SHIPPING_FEE;
+  }, [items, subtotal]);
   const total = subtotal + shipping;
 
   return (
