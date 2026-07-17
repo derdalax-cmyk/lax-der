@@ -219,6 +219,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
               <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
             </div>
             <div>
+              <Label>Frete de entrega (MT)</Label>
+              <Input type="number" min={0} step="0.01" value={shippingFee} onChange={(e) => setShippingFee(Number(e.target.value))} placeholder="0 = Grátis" />
+              <p className="text-[11px] text-muted-foreground mt-1">Deixe 0 (ou vazio) para <strong>Frete Grátis</strong>.</p>
+            </div>
+            <div>
               <Label>Categoria *</Label>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger><SelectValue placeholder="Selecionar…" /></SelectTrigger>
