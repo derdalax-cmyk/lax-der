@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -12,9 +12,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Store, Rocket, Smartphone, BadgePercent, Truck, CheckCircle2, Clock,
-  Loader2, Camera, ChevronRight,
+  Loader2, Camera, ChevronRight, Upload, X, Eye, EyeOff, FileText, CreditCard,
 } from "lucide-react";
 import { toast } from "sonner";
+import { isValidMzPhone } from "@/lib/validation";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/tornar-se-vendedor")({
   head: () => ({
@@ -37,12 +39,52 @@ const benefits = [
 
 const schema = z.object({
   full_name: z.string().trim().min(2, "Indique o seu nome completo").max(120),
-  phone: z.string().trim().min(6, "Indique um telefone válido").max(30),
+  phone: z.string().trim().refine(isValidMzPhone, "Telefone inválido (84/85/86/87 + 7 dígitos)"),
   store_name: z.string().trim().min(2, "Indique o nome da loja").max(120),
   province: z.string().trim().min(1, "Selecione a província"),
-  city: z.string().trim().max(120).optional(),
   description: z.string().trim().max(400).optional(),
+  document_type: z.enum(["BI", "PASSAPORTE"], { message: "Selecione o tipo de documento" }),
+  document_number: z.string().trim().min(4, "Número de documento inválido").max(50),
 });
+
+type DocKey = "front" | "back" | "selfie" | "face";
+const DOC_LABELS: Record<DocKey, { title: string; desc: string; bucket: "seller-documents" | "seller-photos" }> = {
+  front: { title: "Foto frontal do documento *", desc: "Frente do BI ou Passaporte", bucket: "seller-documents" },
+  back: { title: "Foto de trás do documento *", desc: "Verso do BI (para Passaporte pode reenviar a mesma página)", bucket: "seller-documents" },
+  selfie: { title: "Selfie a segurar o documento *", desc: "Rosto visível junto do documento", bucket: "seller-photos" },
+  face: { title: "Foto do rosto *", desc: "Foto tipo passe, boa iluminação", bucket: "seller-photos" },
+};
+
+function FileDrop({ label, desc, value, preview, onPick, onClear }: {
+  label: string; desc: string; value: File | null; preview: string | null;
+  onPick: (f: File) => void; onClear: () => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <div className="border border-dashed border-border rounded-2xl p-3">
+      <div className="text-sm font-medium">{label}</div>
+      <div className="text-xs text-muted-foreground mb-2">{desc}</div>
+      {preview ? (
+        <div className="relative">
+          <img src={preview} alt="" className="w-full h-40 object-cover rounded-xl" />
+          <button type="button" onClick={onClear}
+            className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-1 hover:bg-black">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ) : (
+        <button type="button" onClick={() => ref.current?.click()}
+          className="w-full h-40 rounded-xl bg-secondary flex flex-col items-center justify-center gap-2 hover:bg-secondary/70 transition">
+          <Upload className="w-6 h-6 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Clique para carregar</span>
+        </button>
+      )}
+      <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); e.currentTarget.value = ""; }} />
+      {value && <div className="text-[11px] text-muted-foreground mt-1 truncate">{value.name}</div>}
+    </div>
+  );
+}
 
 function TornarSeVendedor() {
   const { user } = useAuth();
@@ -50,15 +92,20 @@ function TornarSeVendedor() {
 
   const [form, setForm] = useState({
     full_name: "", email: "", password: "", confirm: "",
-    phone: "", store_name: "", province: "", city: "", description: "",
+    phone: "", store_name: "", province: "", description: "",
+    document_type: "" as "" | "BI" | "PASSAPORTE",
+    document_number: "",
+    emola_number: "", mpesa_number: "", bank_account: "", bank_name: "",
   });
+  const [showPw, setShowPw] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [docs, setDocs] = useState<Record<DocKey, File | null>>({ front: null, back: null, selfie: null, face: null });
+  const [docPreviews, setDocPreviews] = useState<Record<DocKey, string | null>>({ front: null, back: null, selfie: null, face: null });
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Existing seller record for the logged-in user
   const { data: existing, isLoading: loadingSeller } = useQuery({
     queryKey: ["my-seller", user?.id],
     enabled: !!user,
@@ -74,11 +121,27 @@ function TornarSeVendedor() {
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
+  const validateImage = (file: File) => {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return false; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem maior que 5MB"); return false; }
+    return true;
+  };
+
   const pickLogo = (file: File) => {
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem maior que 5MB"); return; }
+    if (!validateImage(file)) return;
     setLogoFile(file);
     setLogoPreview(URL.createObjectURL(file));
+  };
+
+  const pickDoc = (key: DocKey, file: File) => {
+    if (!validateImage(file)) return;
+    setDocs((d) => ({ ...d, [key]: file }));
+    setDocPreviews((p) => ({ ...p, [key]: URL.createObjectURL(file) }));
+  };
+
+  const clearDoc = (key: DocKey) => {
+    setDocs((d) => ({ ...d, [key]: null }));
+    setDocPreviews((p) => ({ ...p, [key]: null }));
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -94,11 +157,23 @@ function TornarSeVendedor() {
       if (!z.string().email().safeParse(form.email.trim()).success) { toast.error("Email inválido"); return; }
     }
 
+    // Required documents
+    const required: DocKey[] = ["front", "back", "selfie", "face"];
+    for (const k of required) {
+      if (!docs[k]) { toast.error(`Falta: ${DOC_LABELS[k].title.replace(" *", "")}`); return; }
+    }
+
+    // Check duplicate document number
+    {
+      const { data: dup } = await supabase.from("sellers")
+        .select("id").ilike("document_number", parsed.data.document_number.trim()).maybeSingle();
+      if (dup) { toast.error("Já existe um cadastro com este número de documento"); return; }
+    }
+
     setBusy(true);
     try {
       let uid = user?.id;
 
-      // Create account if not logged in
       if (!uid) {
         const { error: suErr } = await supabase.auth.signUp({
           email: form.email.trim(),
@@ -106,7 +181,6 @@ function TornarSeVendedor() {
           options: { emailRedirectTo: window.location.origin, data: { full_name: form.full_name } },
         });
         if (suErr) throw suErr;
-        // Try to sign in to obtain a session for the insert
         const { data: signIn, error: siErr } = await supabase.auth.signInWithPassword({
           email: form.email.trim(), password: form.password,
         });
@@ -119,13 +193,25 @@ function TornarSeVendedor() {
         uid = signIn.user.id;
       }
 
-      // Upload logo (optional)
+      // Upload logo (public bucket "products")
       let logo_url: string | null = null;
       if (logoFile && uid) {
         const ext = logoFile.name.split(".").pop();
         const path = `avatars/${uid}/seller-${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("products").upload(path, logoFile, { upsert: true });
         if (!upErr) logo_url = supabase.storage.from("products").getPublicUrl(path).data.publicUrl;
+      }
+
+      // Upload docs to private buckets, store `bucket/path`
+      const uploaded: Record<DocKey, string> = { front: "", back: "", selfie: "", face: "" };
+      for (const k of required) {
+        const file = docs[k]!;
+        const bucket = DOC_LABELS[k].bucket;
+        const ext = file.name.split(".").pop();
+        const path = `${uid}/${k}-${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+        if (upErr) throw upErr;
+        uploaded[k] = `${bucket}/${path}`;
       }
 
       const { error } = await supabase.from("sellers").insert({
@@ -135,10 +221,20 @@ function TornarSeVendedor() {
         phone: parsed.data.phone,
         store_name: parsed.data.store_name,
         province: parsed.data.province,
-        city: parsed.data.city || null,
+        city: null,
         description: parsed.data.description || null,
         logo_url,
         status: "pending",
+        document_type: parsed.data.document_type,
+        document_number: parsed.data.document_number.trim(),
+        document_front_url: uploaded.front,
+        document_back_url: uploaded.back,
+        document_selfie_url: uploaded.selfie,
+        face_photo_url: uploaded.face,
+        emola_number: form.emola_number.trim() || null,
+        mpesa_number: form.mpesa_number.trim() || null,
+        bank_account: form.bank_account.trim() || null,
+        bank_name: form.bank_name.trim() || null,
       });
       if (error) throw error;
 
@@ -151,7 +247,6 @@ function TornarSeVendedor() {
     }
   };
 
-  // Already a seller → show status
   if (user && !loadingSeller && existing) {
     return (
       <div className="max-w-2xl mx-auto px-5 py-16">
@@ -206,9 +301,10 @@ function TornarSeVendedor() {
     );
   }
 
+  const phoneInvalid = form.phone.length > 0 && !isValidMzPhone(form.phone);
+
   return (
     <div className="pb-8">
-      {/* Hero */}
       <section className="bg-ink text-white">
         <div className="max-w-[1100px] mx-auto px-5 py-14 md:py-20 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-gold mb-5">
@@ -234,99 +330,187 @@ function TornarSeVendedor() {
         </div>
       </section>
 
-      {/* Form */}
-      <section className="max-w-2xl mx-auto px-5 -mt-8">
-        <form onSubmit={submit} className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-sm space-y-5">
+      <section className="max-w-3xl mx-auto px-5 -mt-8">
+        <form onSubmit={submit} className="bg-card border border-border rounded-3xl p-6 sm:p-8 shadow-sm space-y-8">
           <div>
             <h2 className="font-display text-2xl font-bold">Cadastro de vendedor</h2>
             <p className="text-sm text-muted-foreground mt-1">Preencha os dados abaixo para começar.</p>
           </div>
 
-          {/* Logo */}
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => logoInput.current?.click()}
-              className="relative h-20 w-20 rounded-2xl bg-secondary flex items-center justify-center overflow-hidden shrink-0 hover:ring-2 hover:ring-gold transition"
-              aria-label="Carregar foto da loja"
-            >
-              {logoPreview ? (
-                <img src={logoPreview} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <Camera className="w-6 h-6 text-muted-foreground" />
+          {/* Secção 1 — Dados pessoais */}
+          <div className="space-y-4">
+            <SectionHeader n={1} title="Dados pessoais" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <Label className="text-xs">Nome completo *</Label>
+                <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
+              </div>
+              {!user && (
+                <>
+                  <div className="sm:col-span-2">
+                    <Label className="text-xs">Email (será o seu login) *</Label>
+                    <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Senha *</Label>
+                    <div className="relative">
+                      <Input type={showPw ? "text" : "password"} value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" className="pr-10" />
+                      <button type="button" onClick={() => setShowPw((s) => !s)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground">
+                        {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs">Confirmar senha *</Label>
+                    <Input type={showPw ? "text" : "password"} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
+                    {form.confirm && form.password !== form.confirm && (
+                      <p className="text-[11px] text-destructive mt-1">As senhas não coincidem</p>
+                    )}
+                  </div>
+                </>
               )}
-            </button>
-            <div className="text-sm text-muted-foreground">
-              <div className="font-medium text-foreground">Foto / logótipo da loja</div>
-              <div>Opcional — JPG, PNG ou WEBP (máx. 5MB)</div>
+              <div>
+                <Label className="text-xs">Telefone (WhatsApp) *</Label>
+                <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
+                {phoneInvalid && <p className="text-[11px] text-destructive mt-1">Formato inválido (84/85/86/87 + 7 dígitos)</p>}
+              </div>
+              <div>
+                <Label className="text-xs">Província *</Label>
+                <Select value={form.province} onValueChange={(v) => set("province", v)}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {MZ_PROVINCES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="sm:col-span-2">
+                <Label className="text-xs">Cidade da loja</Label>
+                <Input value="Definida após aprovação pelo admin" disabled readOnly />
+              </div>
             </div>
-            <input ref={logoInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
-              onChange={(e) => e.target.files?.[0] && pickLogo(e.target.files[0])} />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-              <Label className="text-xs">Nome completo *</Label>
-              <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
-            </div>
-
-            {!user && (
-              <>
-                <div className="sm:col-span-2">
-                  <Label className="text-xs">Email (será o seu login) *</Label>
-                  <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
-                </div>
-                <div>
-                  <Label className="text-xs">Senha *</Label>
-                  <Input type="password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" />
-                </div>
-                <div>
-                  <Label className="text-xs">Confirmar senha *</Label>
-                  <Input type="password" value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
-                </div>
-              </>
-            )}
-
-            <div>
-              <Label className="text-xs">Telefone (WhatsApp) *</Label>
-              <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+258 84 000 0000" />
+          {/* Secção 2 — Dados da loja */}
+          <div className="space-y-4">
+            <SectionHeader n={2} title="Dados da loja" />
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => logoInput.current?.click()}
+                className="relative h-20 w-20 rounded-2xl bg-secondary flex items-center justify-center overflow-hidden shrink-0 hover:ring-2 hover:ring-gold transition"
+                aria-label="Carregar foto da loja"
+              >
+                {logoPreview ? (
+                  <img src={logoPreview} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <Camera className="w-6 h-6 text-muted-foreground" />
+                )}
+              </button>
+              <div className="text-sm text-muted-foreground">
+                <div className="font-medium text-foreground">Foto / logótipo da loja</div>
+                <div>Opcional — JPG, PNG ou WEBP (máx. 5MB)</div>
+              </div>
+              <input ref={logoInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                onChange={(e) => e.target.files?.[0] && pickLogo(e.target.files[0])} />
             </div>
             <div>
               <Label className="text-xs">Nome da loja *</Label>
               <Input value={form.store_name} onChange={(e) => set("store_name", e.target.value)} placeholder="Ex: Moda da Maria" />
             </div>
             <div>
-              <Label className="text-xs">Província *</Label>
-              <Select value={form.province} onValueChange={(v) => set("province", v)}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  {MZ_PROVINCES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-xs">Cidade</Label>
-              <Input value="Definida após aprovação" disabled readOnly />
-              <p className="text-[11px] text-muted-foreground mt-1">A cidade da loja é atribuída pela administração.</p>
-            </div>
-            <div className="sm:col-span-2">
               <Label className="text-xs">Descrição da loja</Label>
               <Textarea value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Conte um pouco sobre a sua loja (opcional)" rows={3} />
             </div>
           </div>
 
-          <label className="flex items-start gap-3 text-sm cursor-pointer">
-            <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(!!v)} className="mt-0.5" />
-            <span className="text-muted-foreground">
-              Li e aceito os <Link to="/suporte" className="text-gold underline underline-offset-2">termos e políticas</Link> da DERDALAX.
-            </span>
-          </label>
+          {/* Secção 3 — Documentos */}
+          <div className="space-y-4">
+            <SectionHeader n={3} title="Documentos de identificação" icon={FileText} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs">Tipo de documento *</Label>
+                <Select value={form.document_type} onValueChange={(v) => set("document_type", v)}>
+                  <SelectTrigger><SelectValue placeholder="Selecionar" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BI">Bilhete de Identidade (BI)</SelectItem>
+                    <SelectItem value="PASSAPORTE">Passaporte</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs">Número do documento *</Label>
+                <Input value={form.document_number} onChange={(e) => set("document_number", e.target.value)} placeholder="Ex: 110101234567A" />
+              </div>
+              {(["front", "back", "selfie", "face"] as DocKey[]).map((k) => (
+                <FileDrop key={k}
+                  label={DOC_LABELS[k].title}
+                  desc={DOC_LABELS[k].desc}
+                  value={docs[k]} preview={docPreviews[k]}
+                  onPick={(f) => pickDoc(k, f)} onClear={() => clearDoc(k)}
+                />
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Os documentos são guardados de forma segura e só a administração pode visualizá-los.
+            </p>
+          </div>
+
+          {/* Secção 4 — Métodos de pagamento */}
+          <div className="space-y-4">
+            <SectionHeader n={4} title="Métodos de pagamento (para saques)" icon={CreditCard} optional />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-xs">Número de e-Mola</Label>
+                <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="86xxxxxxx" />
+              </div>
+              <div>
+                <Label className="text-xs">Número de M-Pesa</Label>
+                <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="84xxxxxxx" />
+              </div>
+              <div>
+                <Label className="text-xs">Conta bancária</Label>
+                <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="NIB / IBAN" />
+              </div>
+              {form.bank_account.trim() && (
+                <div>
+                  <Label className="text-xs">Nome do banco</Label>
+                  <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BCI, Millennium, BIM" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Secção 5 — Termos */}
+          <div>
+            <label className="flex items-start gap-3 text-sm cursor-pointer">
+              <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(!!v)} className="mt-0.5" />
+              <span className="text-muted-foreground">
+                Li e aceito os <Link to="/suporte" className="text-gold underline underline-offset-2">termos e políticas</Link> da DERDALAX.
+              </span>
+            </label>
+          </div>
 
           <Button type="submit" disabled={busy} className="w-full bg-gold text-ink hover:bg-gold/90 h-12 text-base font-semibold">
             {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A enviar…</> : "Enviar cadastro"}
           </Button>
         </form>
       </section>
+    </div>
+  );
+}
+
+function SectionHeader({ n, title, icon: Icon, optional }: {
+  n: number; title: string; icon?: React.ComponentType<{ className?: string }>; optional?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-3 border-b border-border pb-2">
+      <div className="h-8 w-8 rounded-lg bg-gold/15 text-ink flex items-center justify-center font-bold text-sm">{n}</div>
+      <h3 className="font-semibold flex items-center gap-2">
+        {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
+        {title}
+        {optional && <span className="text-xs text-muted-foreground font-normal">(opcional)</span>}
+      </h3>
     </div>
   );
 }
