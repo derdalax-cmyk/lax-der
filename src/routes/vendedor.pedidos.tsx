@@ -99,7 +99,7 @@ function SellerPedidos() {
 
   const filtered = useMemo(() => {
     return orders.filter((o) => {
-      if (status !== "all" && o.status !== status) return false;
+      if (status !== "all" && (o.seller_status ?? "pending") !== status) return false;
       if (search) {
         const q = search.toLowerCase();
         const hit =
