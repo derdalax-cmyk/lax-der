@@ -62,9 +62,27 @@ const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
 
 function SellerPedidos() {
   const { seller } = useSeller();
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [tracking, setTracking] = useState<Record<string, string>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const updateStatus = async (orderId: string, next: string, extra?: { tracking?: string; notes?: string }) => {
+    setSavingId(orderId);
+    const { error } = await supabase.rpc("set_order_seller_status", {
+      _order_id: orderId,
+      _status: next,
+      _tracking: extra?.tracking ?? tracking[orderId] ?? null,
+      _notes: extra?.notes ?? notes[orderId] ?? null,
+    });
+    setSavingId(null);
+    if (error) return toast.error(error.message);
+    toast.success("Pedido atualizado");
+    qc.invalidateQueries({ queryKey: ["seller-orders"] });
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["seller-orders", seller?.id],
