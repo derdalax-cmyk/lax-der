@@ -1,18 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSeller } from "@/hooks/useSeller";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  ShoppingBag, Search, TrendingUp, Clock, ChevronDown, Package, Loader2,
+  ShoppingBag, Search, TrendingUp, Clock, ChevronDown, Package, Loader2, Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,
 });
+
 
 type OrderItem = { title: string; quantity: number; price: number; size: string | null; color: string | null };
 type SellerOrder = {
