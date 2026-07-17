@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Bell, Store } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
 type Notif = { kind: "seller"; id: string; title: string; sub: string; at: string };
 
@@ -50,9 +49,9 @@ export function NotificationBell() {
               <button
                 key={n.kind + n.id}
                 onClick={() => { setOpen(false); navigate({ to: "/admin/vendedores" }); }}
-                className={cn("w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-secondary/50 border-b border-border last:border-0")}
+                className="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-secondary/50 border-b border-border last:border-0"
               >
-                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-emerald-500/15 text-emerald-600")}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-emerald-500/15 text-emerald-600">
                   <Store className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
