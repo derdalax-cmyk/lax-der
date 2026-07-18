@@ -343,18 +343,18 @@ function TornarSeVendedor() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <Label className="text-xs">Nome completo *</Label>
-                <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
+                <Input type="text" autoComplete="name" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
               </div>
               {!user && (
                 <>
                   <div className="sm:col-span-2">
                     <Label className="text-xs">Email (será o seu login) *</Label>
-                    <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
+                    <Input type="email" inputMode="email" autoComplete="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
                   </div>
                   <div>
                     <Label className="text-xs">Senha *</Label>
                     <div className="relative">
-                      <Input type={showPw ? "text" : "password"} value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" className="pr-10" />
+                      <Input type={showPw ? "text" : "password"} autoComplete="new-password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" className="pr-10" />
                       <button type="button" onClick={() => setShowPw((s) => !s)}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground">
                         {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -363,7 +363,7 @@ function TornarSeVendedor() {
                   </div>
                   <div>
                     <Label className="text-xs">Confirmar senha *</Label>
-                    <Input type={showPw ? "text" : "password"} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
+                    <Input type={showPw ? "text" : "password"} autoComplete="new-password" value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
                     {form.confirm && form.password !== form.confirm && (
                       <p className="text-[11px] text-destructive mt-1">As senhas não coincidem</p>
                     )}
@@ -372,7 +372,7 @@ function TornarSeVendedor() {
               )}
               <div>
                 <Label className="text-xs">Telefone (WhatsApp) *</Label>
-                <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
+                <Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
                 {phoneInvalid && <p className="text-[11px] text-destructive mt-1">Formato inválido (84/85/86/87 + 7 dígitos)</p>}
               </div>
               <div>
@@ -416,7 +416,7 @@ function TornarSeVendedor() {
             </div>
             <div>
               <Label className="text-xs">Nome da loja *</Label>
-              <Input value={form.store_name} onChange={(e) => set("store_name", e.target.value)} placeholder="Ex: Moda da Maria" />
+              <Input type="text" value={form.store_name} onChange={(e) => set("store_name", e.target.value)} placeholder="Ex: Moda da Maria" />
             </div>
             <div>
               <Label className="text-xs">Descrição da loja</Label>
@@ -440,7 +440,7 @@ function TornarSeVendedor() {
               </div>
               <div>
                 <Label className="text-xs">Número do documento *</Label>
-                <Input value={form.document_number} onChange={(e) => set("document_number", e.target.value)} placeholder="Ex: 110101234567A" />
+                <Input type="text" value={form.document_number} onChange={(e) => set("document_number", e.target.value)} placeholder="Ex: 110101234567A" />
               </div>
               {(["front", "back", "selfie", "face"] as DocKey[]).map((k) => (
                 <FileDrop key={k}
@@ -462,20 +462,20 @@ function TornarSeVendedor() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs">Número de e-Mola</Label>
-                <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="86xxxxxxx" />
+                <Input type="tel" inputMode="tel" value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="86xxxxxxx" />
               </div>
               <div>
                 <Label className="text-xs">Número de M-Pesa</Label>
-                <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="84xxxxxxx" />
+                <Input type="tel" inputMode="tel" value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="84xxxxxxx" />
               </div>
               <div>
                 <Label className="text-xs">Conta bancária</Label>
-                <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="NIB / IBAN" />
+                <Input type="text" inputMode="numeric" value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="NIB / IBAN" />
               </div>
               {form.bank_account.trim() && (
                 <div>
                   <Label className="text-xs">Nome do banco</Label>
-                  <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BCI, Millennium, BIM" />
+                  <Input type="text" value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BCI, Millennium, BIM" />
                 </div>
               )}
             </div>

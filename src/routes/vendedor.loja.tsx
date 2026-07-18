@@ -119,15 +119,15 @@ function SellerLoja() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="sm:col-span-2">
             <Label>Nome da loja *</Label>
-            <Input value={form.store_name} onChange={(e) => set("store_name", e.target.value)} />
+            <Input type="text" value={form.store_name} onChange={(e) => set("store_name", e.target.value)} />
           </div>
           <div>
             <Label>Responsável *</Label>
-            <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} />
+            <Input type="text" autoComplete="name" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} />
           </div>
           <div>
             <Label>Telefone / WhatsApp *</Label>
-            <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+            <Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
           </div>
           <div>
             <Label>Província *</Label>
@@ -140,7 +140,7 @@ function SellerLoja() {
           </div>
           <div>
             <Label>Cidade</Label>
-            <Input value={form.city} disabled readOnly placeholder="Definida pelo administrador" />
+            <Input type="text" value={form.city} disabled readOnly placeholder="Definida pelo administrador" />
             <p className="text-xs text-muted-foreground mt-1">A cidade da sua loja é definida pela administração. É por ela que os seus produtos aparecem no seletor de cidades.</p>
           </div>
           <div className="sm:col-span-2">
@@ -155,19 +155,19 @@ function SellerLoja() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label>Nº e-Mola</Label>
-              <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="+258 84 …" />
+              <Input type="tel" inputMode="tel" value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="+258 84 …" />
             </div>
             <div>
               <Label>Nº M-Pesa</Label>
-              <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="+258 82 …" />
+              <Input type="tel" inputMode="tel" value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="+258 82 …" />
             </div>
             <div>
               <Label>Banco</Label>
-              <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BIM, BCI, Standard Bank" />
+              <Input type="text" value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BIM, BCI, Standard Bank" />
             </div>
             <div>
               <Label>NIB / IBAN</Label>
-              <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="0000 0000 0000 0000" />
+              <Input type="text" inputMode="numeric" value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="0000 0000 0000 0000" />
             </div>
           </div>
         </div>

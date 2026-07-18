@@ -91,7 +91,7 @@ function SellerProdutos() {
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar por nome…" className="pl-9" />
+          <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar por nome…" className="pl-9" />
         </div>
         <Select value={cat} onValueChange={setCat}>
           <SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger>

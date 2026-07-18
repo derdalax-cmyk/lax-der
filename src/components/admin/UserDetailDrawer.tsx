@@ -136,10 +136,10 @@ export function UserDetailDrawer({ user, open, onOpenChange }: {
             </div>
             {editing ? (
               <div className="space-y-3">
-                <div><Label className="text-xs">Nome</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-                <div><Label className="text-xs">Telefone</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-                <div><Label className="text-xs">Cidade</Label><Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></div>
-                <div><Label className="text-xs">Documento (NR)</Label><Input value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} /></div>
+                <div><Label className="text-xs">Nome</Label><Input type="text" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+                <div><Label className="text-xs">Telefone</Label><Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
+                <div><Label className="text-xs">Cidade</Label><Input type="text" autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></div>
+                <div><Label className="text-xs">Documento (NR)</Label><Input type="text" value={form.document} onChange={(e) => setForm({ ...form, document: e.target.value })} /></div>
                 <div className="flex gap-2">
                   <Button size="sm" onClick={saveProfile}><Save className="w-4 h-4 mr-1" /> Guardar</Button>
                   <Button size="sm" variant="outline" onClick={() => setEditing(false)}>Cancelar</Button>
