@@ -32,8 +32,9 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
     <section className="py-6">
       <div className="max-w-[1400px] mx-auto px-5 flex items-end justify-between mb-4">
         <h2 className="font-display text-xl md:text-2xl flex items-center gap-2">
-          {icon && <span aria-hidden>{icon}</span>} {title}
+          {icon && <CategoryIcon icon={icon} className="w-6 h-6" />} {title}
         </h2>
+
         {seeMoreTo && (
           <Link
             to={seeMoreTo as "/produtos"}
