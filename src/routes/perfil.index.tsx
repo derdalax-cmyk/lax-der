@@ -9,8 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight, Store,
+  Heart, ShoppingBag, ChevronRight, Store, FileText, Instagram, Facebook, MessageCircle,
 } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useSeller } from "@/hooks/useSeller";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
