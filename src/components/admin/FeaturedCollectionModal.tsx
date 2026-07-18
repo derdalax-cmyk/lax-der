@@ -138,6 +138,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       setEndsAt(toLocalInput(collection.ends_at));
       setMaxPerSeller(collection.max_products_per_seller ?? 0);
       setIsActive(collection.is_active ?? true);
+      setAutoApprove(collection.auto_approve ?? false);
       setHiddenSellers(new Set(collection.hidden_sellers ?? []));
       (async () => {
         const { data: links } = await supabase
