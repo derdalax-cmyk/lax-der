@@ -44,9 +44,6 @@ export function Navbar() {
 
           <div className="flex items-center gap-4">
             <CitySelector compact className="sm:hidden" />
-            <Link to={user ? "/favoritos" : "/login"} className="hover:text-gold transition-colors" aria-label="Favoritos">
-              <Heart className="w-5 h-5" />
-            </Link>
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
               <ShoppingCart className="w-5 h-5" />
               {count > 0 && (
