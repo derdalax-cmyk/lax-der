@@ -462,20 +462,20 @@ function TornarSeVendedor() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label className="text-xs">Número de e-Mola</Label>
-                <Input value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="86xxxxxxx" />
+                <Input type="tel" inputMode="tel" value={form.emola_number} onChange={(e) => set("emola_number", e.target.value)} placeholder="86xxxxxxx" />
               </div>
               <div>
                 <Label className="text-xs">Número de M-Pesa</Label>
-                <Input value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="84xxxxxxx" />
+                <Input type="tel" inputMode="tel" value={form.mpesa_number} onChange={(e) => set("mpesa_number", e.target.value)} placeholder="84xxxxxxx" />
               </div>
               <div>
                 <Label className="text-xs">Conta bancária</Label>
-                <Input value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="NIB / IBAN" />
+                <Input type="text" inputMode="numeric" value={form.bank_account} onChange={(e) => set("bank_account", e.target.value)} placeholder="NIB / IBAN" />
               </div>
               {form.bank_account.trim() && (
                 <div>
                   <Label className="text-xs">Nome do banco</Label>
-                  <Input value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BCI, Millennium, BIM" />
+                  <Input type="text" value={form.bank_name} onChange={(e) => set("bank_name", e.target.value)} placeholder="Ex: BCI, Millennium, BIM" />
                 </div>
               )}
             </div>
