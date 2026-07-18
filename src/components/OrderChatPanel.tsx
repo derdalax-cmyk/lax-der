@@ -111,6 +111,10 @@ export function OrderChatPanel({ orderId, sellerId, mode = "buyer", title, heigh
       <div className={cn("flex-1 overflow-y-auto px-3 py-3 space-y-2", heightClass)}>
         {starting || isLoading ? (
           <div className="h-full grid place-items-center"><Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /></div>
+        ) : notReady ? (
+          <div className="h-full grid place-items-center text-xs text-muted-foreground text-center px-4">
+            O cliente ainda não iniciou o chat deste pedido.
+          </div>
         ) : messages.length === 0 ? (
           <div className="h-full grid place-items-center text-xs text-muted-foreground text-center px-4">Sem mensagens. Escreva a primeira!</div>
         ) : (
