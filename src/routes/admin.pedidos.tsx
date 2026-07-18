@@ -66,7 +66,7 @@ function AdminPedidos() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("id, customer_name, customer_phone, city, status, payment_status, payment_method, total, created_at")
+        .select("id, customer_name, customer_phone, shipping_address, status, payment_status, payment_method, total, created_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as OrderRow[];
