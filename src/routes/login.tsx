@@ -145,7 +145,7 @@ function LoginPage() {
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={submit} className="space-y-3">
-              <div><Label htmlFor="email">Email</Label><Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              <div><Label htmlFor="email">Email</Label><Input id="email" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div><Label htmlFor="password">Palavra-passe</Label>
                 <PasswordInput id="password" value={password} onChange={setPassword} />
               </div>
@@ -157,17 +157,17 @@ function LoginPage() {
           <TabsContent value="signup">
             <form onSubmit={submit} className="space-y-3">
               <div><Label htmlFor="name">Nome completo *</Label>
-                <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} /></div>
+                <Input id="name" type="text" autoComplete="name" required value={name} onChange={(e) => setName(e.target.value)} /></div>
               <div><Label htmlFor="email2">Email *</Label>
-                <Input id="email2" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+                <Input id="email2" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div><Label htmlFor="phone">Telefone (WhatsApp) *</Label>
-                <Input id="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="84xxxxxxx" />
+                <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="84xxxxxxx" />
                 {phone && !isValidMzPhone(phone) && (
                   <p className="text-xs text-destructive mt-1">Formato inválido — use 84/85/86/87 + 7 dígitos.</p>
                 )}
               </div>
               <div><Label htmlFor="city">Cidade *</Label>
-                <Input id="city" required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Maputo" />
+                <Input id="city" type="text" autoComplete="address-level2" required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Maputo" />
               </div>
               <div><Label htmlFor="password2">Palavra-passe *</Label>
                 <PasswordInput id="password2" value={password} onChange={setPassword} minLength={6} placeholder="Mínimo 6 caracteres" />
