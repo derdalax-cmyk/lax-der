@@ -323,28 +323,58 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
 
           <div>
             <Label className="mb-2 block">Ícone</Label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-14 h-14 rounded-xl bg-secondary grid place-items-center">
+                <CategoryIcon icon={icon || null} className="w-7 h-7" />
+              </div>
+              <div className="flex-1 text-xs text-muted-foreground">
+                {icon === "" ? "Sem ícone" : /^https?:\/\//.test(icon) ? "Ícone personalizado (upload)" : `Ícone: ${icon}`}
+              </div>
               <button
                 type="button"
                 onClick={() => setIcon("")}
-                className={cn("h-10 px-3 rounded-lg border text-xs font-medium flex items-center justify-center transition-colors",
+                className={cn("text-xs px-3 py-1.5 rounded-lg border transition-colors",
                   icon === "" ? "border-gold bg-gold/10" : "border-border hover:bg-secondary")}
               >
                 Sem ícone
               </button>
-              {FEATURED_ICONS.map((ic) => (
-                <button
-                  key={ic}
-                  type="button"
-                  onClick={() => setIcon(ic)}
-                  className={cn("w-10 h-10 rounded-lg border text-xl flex items-center justify-center transition-colors",
-                    icon === ic ? "border-gold bg-gold/10" : "border-border hover:bg-secondary")}
-                >
-                  {ic}
-                </button>
-              ))}
+              <label className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-secondary cursor-pointer">
+                <Upload className="w-3.5 h-3.5" /> {uploadingIcon ? "A enviar…" : "Enviar"}
+                <input
+                  type="file" accept="image/*" className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]; e.target.value = "";
+                    if (!file) return;
+                    if (file.size > 2 * 1024 * 1024) { toast.error("Ícone maior que 2MB"); return; }
+                    setUploadingIcon(true);
+                    try {
+                      const ext = file.name.split(".").pop();
+                      const path = `collections/icons/${crypto.randomUUID()}.${ext}`;
+                      const { error } = await supabase.storage.from("products").upload(path, file, { upsert: false });
+                      if (error) throw error;
+                      setIcon(supabase.storage.from("products").getPublicUrl(path).data.publicUrl);
+                    } catch (err) { toast.error((err as Error).message); }
+                    finally { setUploadingIcon(false); }
+                  }}
+                />
+              </label>
+            </div>
+            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-56 overflow-y-auto p-1">
+              {CATEGORY_ICONS.map((c) => {
+                const Ic = c.Icon;
+                return (
+                  <button
+                    key={c.name} type="button" onClick={() => setIcon(c.name)} title={c.label}
+                    className={cn("aspect-square rounded-lg border grid place-items-center transition-colors",
+                      icon === c.name ? "border-gold bg-gold/10" : "border-border hover:bg-secondary")}
+                  >
+                    <Ic className="w-5 h-5" strokeWidth={1.5} />
+                  </button>
+                );
+              })}
             </div>
           </div>
+
 
           {/* Scheduling + limit + active */}
           <div className="grid sm:grid-cols-2 gap-3">
