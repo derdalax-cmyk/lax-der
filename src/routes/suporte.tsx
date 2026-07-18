@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MessageCircle, Phone, Mail } from "lucide-react";
-import { SupportChat } from "@/components/SupportChat";
+import { FloatingSupportChat } from "@/components/FloatingSupportChat";
 
 export const Route = createFileRoute("/suporte")({
   head: () => ({ meta: [
