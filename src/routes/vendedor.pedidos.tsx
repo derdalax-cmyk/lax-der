@@ -20,12 +20,19 @@ export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,
 });
 
-type OrderItem = { title: string; quantity: number; price: number; size: string | null; color: string | null };
+type OrderItem = { title: string; quantity: number; price: number; size: string | null; color: string | null; images?: string[] | null };
+type ShippingAddress = { line1?: string; line2?: string; city?: string; province?: string; postal_code?: string; country?: string; reference?: string } | null;
 type SellerOrder = {
   id: string;
   customer_name: string | null;
   customer_phone: string | null;
   city: string | null;
+  shipping_address?: ShippingAddress;
+  notes?: string | null;
+  subtotal?: number | null;
+  shipping?: number | null;
+  total?: number | null;
+  payment_reference?: string | null;
   status: string;
   payment_status: string;
   payment_method: string | null;
