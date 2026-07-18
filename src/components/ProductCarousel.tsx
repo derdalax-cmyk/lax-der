@@ -3,6 +3,8 @@ import { ArrowRight, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatMZN, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
+import { CategoryIcon } from "@/lib/categoryIcons";
+
 
 function firstImage(images: unknown): string | null {
   if (Array.isArray(images) && images.length > 0) {
