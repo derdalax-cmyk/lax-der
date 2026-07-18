@@ -166,33 +166,8 @@ function SellerDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* RECENT ORDERS */}
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <h2 className="font-semibold">Pedidos recentes</h2>
-            <ShoppingBag className="w-4 h-4 text-muted-foreground" />
-          </div>
-          {(dash?.recent_orders ?? []).length === 0 ? (
-            <div className="px-4 py-12 text-center text-muted-foreground text-sm">Sem pedidos ainda.</div>
-          ) : (
-            <ul className="divide-y divide-border">
-              {dash!.recent_orders.map((o) => {
-                const st = STATUS_LABEL[o.status] ?? { label: o.status, cls: "bg-secondary text-foreground" };
-                return (
-                  <li key={o.id} className="flex items-center gap-3 px-4 py-3">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium truncate text-sm">{o.customer_name ?? "Cliente"}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString("pt-PT")}</p>
-                    </div>
-                    <span className="text-sm font-semibold shrink-0">{mzn(Number(o.total))}</span>
-                    <span className={`text-[11px] px-2 py-1 rounded-full shrink-0 ${st.cls}`}>{st.label}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
+      <div className="grid grid-cols-1 gap-4">
+
 
         {/* LOW STOCK */}
         <div className="bg-card border border-border rounded-xl overflow-hidden">
