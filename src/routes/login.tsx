@@ -73,7 +73,7 @@ function LoginPage() {
     if (!loading && user) navigate({ to: isAdmin ? "/admin" : "/" });
   }, [user, loading, isAdmin, navigate]);
 
-  const oauth = async (provider: "google" | "apple") => {
+  const oauth = async (provider: "google") => {
     setBusy(true);
     const res = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
     setBusy(false);
