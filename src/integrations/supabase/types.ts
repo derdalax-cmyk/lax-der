@@ -392,26 +392,35 @@ export type Database = {
       order_items: {
         Row: {
           id: string
+          image_snapshot: string | null
           order_id: string
           price: number
           product_id: string | null
           quantity: number
+          seller_id: string | null
+          title_snapshot: string | null
           variation_id: string | null
         }
         Insert: {
           id?: string
+          image_snapshot?: string | null
           order_id: string
           price: number
           product_id?: string | null
           quantity?: number
+          seller_id?: string | null
+          title_snapshot?: string | null
           variation_id?: string | null
         }
         Update: {
           id?: string
+          image_snapshot?: string | null
           order_id?: string
           price?: number
           product_id?: string | null
           quantity?: number
+          seller_id?: string | null
+          title_snapshot?: string | null
           variation_id?: string | null
         }
         Relationships: [
@@ -427,6 +436,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
             referencedColumns: ["id"]
           },
           {
