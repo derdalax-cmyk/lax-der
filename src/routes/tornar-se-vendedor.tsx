@@ -343,7 +343,7 @@ function TornarSeVendedor() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <Label className="text-xs">Nome completo *</Label>
-                <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
+                <Input type="text" autoComplete="name" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="O seu nome" />
               </div>
               {!user && (
                 <>
