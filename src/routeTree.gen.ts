@@ -40,6 +40,7 @@ import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizador
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
+import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$orderId'
 import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.vendedores_.dashboard'
@@ -199,6 +200,11 @@ const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
   path: '/categorias-destaque',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   id: '/administradores',
   path: '/administradores',
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
@@ -340,6 +349,7 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/produtos'
@@ -373,6 +383,7 @@ export interface FileRouteTypes {
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/produtos'
@@ -409,6 +420,7 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/produtos'
@@ -670,6 +682,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/categorias': {
+      id: '/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AdminCategoriasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/administradores': {
       id: '/admin/administradores'
       path: '/administradores'
@@ -696,6 +715,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdministradoresRoute: typeof AdminAdministradoresRoute
+  AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
   AdminConversasRoute: typeof AdminConversasRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
@@ -707,6 +727,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdministradoresRoute: AdminAdministradoresRoute,
+  AdminCategoriasRoute: AdminCategoriasRoute,
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
   AdminConversasRoute: AdminConversasRoute,
   AdminProdutosRoute: AdminProdutosRoute,
