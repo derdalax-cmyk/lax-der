@@ -123,7 +123,7 @@ function AppShell() {
           <Outlet />
         )}
       </main>
-      <Footer />
+      
       <BottomNav />
       <ProfileCompletionModal />
       <InstallAppPrompt />
