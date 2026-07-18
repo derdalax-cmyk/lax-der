@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CategoryIcon } from "@/lib/categoryIcons";
+
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,8 +42,9 @@ function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => 
           {row.cover_image ? (
             <img src={row.cover_image} alt="" className="w-8 h-8 rounded object-cover shrink-0" />
           ) : row.icon ? (
-            <span className="text-xl">{row.icon}</span>
+            <CategoryIcon icon={row.icon} className="w-6 h-6" />
           ) : null}
+
           <span className="font-medium">{row.name}</span>
           {row.is_active === false && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Inativo</span>

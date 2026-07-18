@@ -41,6 +41,10 @@ export function CategoryIcon({ icon, className = "w-6 h-6" }: { icon?: string | 
   if (/^https?:\/\//.test(icon)) {
     return <img src={icon} alt="" className={`${className} object-contain`} />;
   }
-  const Icon = MAP.get(icon) ?? Tag;
-  return <Icon className={className} strokeWidth={1.5} />;
+  const Icon = MAP.get(icon);
+  if (Icon) return <Icon className={className} strokeWidth={1.5} />;
+  // Fallback: legacy emoji strings render as text so old data stays readable.
+  if (icon.length <= 4) return <span className={`${className} inline-grid place-items-center leading-none`} aria-hidden>{icon}</span>;
+  return <Tag className={className} strokeWidth={1.5} />;
 }
+

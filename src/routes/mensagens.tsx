@@ -208,7 +208,7 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 bg-background/40">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-5 py-4 space-y-2 bg-[linear-gradient(180deg,#f7f4ee_0%,#efe9de_100%)]">
         {isLoading ? (
           <div className="py-10 grid place-items-center"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
         ) : messages.length === 0 ? (
@@ -220,12 +220,12 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
               <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
                 <div
                   className={cn(
-                    "max-w-[78%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed",
-                    mine ? "bg-ink text-gold rounded-br-sm" : "bg-secondary text-foreground rounded-bl-sm",
+                    "max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-sm",
+                    mine ? "bg-[#dcf8c6] text-ink rounded-br-sm" : "bg-white text-ink border border-black/5 rounded-bl-sm",
                   )}
                 >
                   <p className="whitespace-pre-wrap break-words">{m.body}</p>
-                  <span className={cn("block text-[10px] mt-0.5", mine ? "text-gold/60" : "text-muted-foreground")}>
+                  <span className="block text-[10px] mt-0.5 text-black/50 text-right">
                     {new Date(m.created_at).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
@@ -236,7 +236,8 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
         <div ref={bottomRef} />
       </div>
 
-      <div className="border-t border-border p-3 flex items-end gap-2">
+
+      <div className="border-t border-border p-2 flex items-end gap-2 bg-card">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -245,17 +246,18 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
           }}
           rows={1}
           placeholder="Escreva uma mensagem..."
-          className="flex-1 resize-none max-h-32 rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+          className="flex-1 resize-none max-h-28 rounded-2xl border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
         />
         <button
           onClick={send}
           disabled={!text.trim() || sending}
-          className="w-10 h-10 shrink-0 rounded-xl bg-ink text-gold grid place-items-center hover:bg-ink/90 disabled:opacity-40 transition-colors"
+          className="w-10 h-10 shrink-0 rounded-full bg-ink text-gold grid place-items-center hover:bg-ink/90 disabled:opacity-40 transition-colors"
           aria-label="Enviar"
         >
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
         </button>
       </div>
+
     </>
   );
 }
