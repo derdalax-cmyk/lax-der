@@ -9,13 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight, Store, FileText, Instagram, Facebook, MessageCircle,
+  Heart, ShoppingBag, ChevronRight, FileText, Instagram, Facebook, MessageCircle,
 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useSeller } from "@/hooks/useSeller";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 
 export const Route = createFileRoute("/perfil/")({
@@ -25,7 +24,6 @@ export const Route = createFileRoute("/perfil/")({
 
 function Perfil() {
   const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
-  const { isApproved: isSeller } = useSeller();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
