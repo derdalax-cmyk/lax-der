@@ -21,7 +21,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
       <div className="max-w-[1400px] mx-auto px-5">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <Link to="/" className="font-display text-2xl font-bold tracking-wider text-gold">
               DERDALAX
             </Link>
