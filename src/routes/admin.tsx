@@ -14,6 +14,7 @@ export const Route = createFileRoute("/admin")({
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
+  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/categorias-destaque", label: "Destaques", icon: Star },
   { to: "/admin/vendedores", label: "Vendedores", icon: Store, exact: true },
   { to: "/admin/vendedores/dashboard", label: "Dash. Vendedores", icon: BarChart3 },
