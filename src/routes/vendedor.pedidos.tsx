@@ -282,7 +282,7 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
       {/* Chat */}
       <section className="mt-4">
         <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 flex items-center gap-1.5"><MessageCircle className="w-3.5 h-3.5" /> Chat com o cliente</p>
-        <OrderChatPanel orderId={order.id} sellerId="__self__" title={order.customer_name ?? "Cliente"} />
+        <OrderChatPanel orderId={order.id} mode="seller" title={order.customer_name ?? "Cliente"} />
       </section>
 
       {/* Management */}
