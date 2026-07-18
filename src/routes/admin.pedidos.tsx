@@ -159,7 +159,7 @@ function AdminPedidos() {
                   <p className="font-medium truncate text-sm">{o.customer_name ?? "Cliente"}</p>
                   <p className="text-xs text-muted-foreground">
                     #{o.id.slice(0, 8)} · {new Date(o.created_at).toLocaleDateString("pt-PT")}
-                    {o.city ? ` · ${o.city}` : ""}
+                    {o.shipping_address?.city ? ` · ${o.shipping_address.city}` : ""}
                   </p>
                 </div>
                 <span className="text-sm font-semibold shrink-0">{mzn(Number(o.total))}</span>
@@ -230,7 +230,7 @@ function AdminOrderDetail({ order, onChanged }: { order: OrderRow; onChanged: ()
       <section className="bg-secondary/40 rounded-lg p-4 text-sm grid sm:grid-cols-2 gap-2">
         <p className="flex items-center gap-1.5"><UserIcon className="w-3.5 h-3.5" /> <strong>{order.customer_name ?? "—"}</strong></p>
         {order.customer_phone && <p className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {order.customer_phone}</p>}
-        {order.city && <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {order.city}</p>}
+        {order.shipping_address?.city && <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {order.shipping_address.city}</p>}
         <p className="text-muted-foreground">Pagamento: {order.payment_method ?? "—"} · <strong>{order.payment_status ?? "—"}</strong></p>
         <p className="sm:col-span-2 font-semibold">Total: {mzn(order.total)}</p>
       </section>
