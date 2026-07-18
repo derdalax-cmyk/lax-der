@@ -354,7 +354,7 @@ function TornarSeVendedor() {
                   <div>
                     <Label className="text-xs">Senha *</Label>
                     <div className="relative">
-                      <Input type={showPw ? "text" : "password"} value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" className="pr-10" />
+                      <Input type={showPw ? "text" : "password"} autoComplete="new-password" value={form.password} onChange={(e) => set("password", e.target.value)} placeholder="Mínimo 6 caracteres" className="pr-10" />
                       <button type="button" onClick={() => setShowPw((s) => !s)}
                         className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground">
                         {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
