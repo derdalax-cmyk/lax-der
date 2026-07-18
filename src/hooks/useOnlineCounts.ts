@@ -8,6 +8,8 @@ export function useOnlineCounts() {
   const [counts, setCounts] = useState({ total: 0, sellers: 0, buyers: 0 });
 
   useEffect(() => {
+    // Reuse the channel already subscribed by useOnlinePresence (mounted in __root).
+    // Adding presence listeners after subscribe() throws, so poll the state instead.
     const channel = supabase.channel(ONLINE_CHANNEL);
     const update = () => {
       const state = channel.presenceState<Presence>();
@@ -22,12 +24,9 @@ export function useOnlineCounts() {
       }
       setCounts({ total, sellers, buyers });
     };
-    channel
-      .on("presence", { event: "sync" }, update)
-      .on("presence", { event: "join" }, update)
-      .on("presence", { event: "leave" }, update)
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    update();
+    const id = window.setInterval(update, 5000);
+    return () => { window.clearInterval(id); };
   }, []);
 
   return counts;
