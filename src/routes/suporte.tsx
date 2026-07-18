@@ -74,6 +74,8 @@ function SuportePage() {
           </div>
         </aside>
       </div>
+      <FloatingSupportChat />
     </div>
+
   );
 }
