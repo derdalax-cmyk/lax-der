@@ -262,26 +262,55 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
             </a>
           )}
           {order.city && <p className="mt-1 text-muted-foreground inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {order.city}</p>}
-          <p className="mt-2 text-xs text-muted-foreground">Pagamento: {order.payment_method ?? "—"} · <strong>{order.payment_status}</strong></p>
+        </section>
+
+        {/* Shipping address */}
+        <section className="bg-secondary/40 rounded-lg p-4">
+          <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Endereço de entrega</p>
+          {order.shipping_address ? (
+            <div className="space-y-0.5">
+              {order.shipping_address.line1 && <p>{order.shipping_address.line1}</p>}
+              {order.shipping_address.line2 && <p className="text-muted-foreground">{order.shipping_address.line2}</p>}
+              <p className="text-muted-foreground">
+                {[order.shipping_address.city, order.shipping_address.province, order.shipping_address.postal_code].filter(Boolean).join(", ")}
+              </p>
+              {order.shipping_address.country && <p className="text-muted-foreground">{order.shipping_address.country}</p>}
+              {order.shipping_address.reference && <p className="text-xs text-muted-foreground mt-1">Ref: {order.shipping_address.reference}</p>}
+            </div>
+          ) : <p className="text-muted-foreground">Sem endereço registado.</p>}
+          {order.notes && (
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs font-semibold uppercase text-muted-foreground mb-1">Notas do cliente</p>
+              <p className="text-sm">{order.notes}</p>
+            </div>
+          )}
         </section>
 
         {/* Items */}
-        <section className="bg-secondary/40 rounded-lg p-4">
+        <section className="bg-secondary/40 rounded-lg p-4 md:col-span-2">
           <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 flex items-center gap-1.5"><Package className="w-3.5 h-3.5" /> Seus artigos</p>
-          <ul className="space-y-1.5">
-            {(order.items ?? []).map((it, i) => (
-              <li key={i} className="flex items-start gap-2">
-                <span className="flex-1">{it.title}
-                  <span className="text-muted-foreground"> × {it.quantity}
-                    {[it.size, it.color].filter(Boolean).length > 0 && ` · ${[it.size, it.color].filter(Boolean).join(" / ")}`}
+          <ul className="space-y-2">
+            {(order.items ?? []).map((it, i) => {
+              const img = Array.isArray(it.images) ? it.images[0] : undefined;
+              return (
+                <li key={i} className="flex items-start gap-3">
+                  {img && <img src={img} alt={it.title} className="w-12 h-12 rounded-md object-cover shrink-0" />}
+                  <span className="flex-1">{it.title}
+                    <span className="text-muted-foreground"> × {it.quantity}
+                      {[it.size, it.color].filter(Boolean).length > 0 && ` · ${[it.size, it.color].filter(Boolean).join(" / ")}`}
+                    </span>
                   </span>
-                </span>
-                <span className="font-medium shrink-0">{mzn(it.price * it.quantity)}</span>
-              </li>
-            ))}
+                  <span className="font-medium shrink-0">{mzn(it.price * it.quantity)}</span>
+                </li>
+              );
+            })}
           </ul>
-          <div className="flex justify-between border-t border-border mt-3 pt-2 font-semibold">
-            <span>Subtotal desta loja</span><span>{mzn(Number(order.seller_total))}</span>
+          <div className="border-t border-border mt-3 pt-2 space-y-1 text-sm">
+            <div className="flex justify-between"><span className="text-muted-foreground">Subtotal desta loja</span><span className="font-semibold">{mzn(Number(order.seller_total))}</span></div>
+            {order.shipping != null && <div className="flex justify-between text-muted-foreground"><span>Envio (pedido total)</span><span>{mzn(Number(order.shipping))}</span></div>}
+            {order.total != null && <div className="flex justify-between text-muted-foreground"><span>Total do pedido</span><span>{mzn(Number(order.total))}</span></div>}
+            <div className="flex justify-between text-muted-foreground"><span>Pagamento</span><span>{order.payment_method ?? "—"} · {order.payment_status}</span></div>
+            {order.payment_reference && <div className="flex justify-between text-muted-foreground"><span>Referência</span><span className="font-mono">{order.payment_reference}</span></div>}
           </div>
         </section>
       </div>
