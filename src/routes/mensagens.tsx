@@ -237,7 +237,7 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
       </div>
 
 
-      <div className="border-t border-border p-3 flex items-end gap-2">
+      <div className="border-t border-border p-2 flex items-end gap-2 bg-card">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -246,17 +246,18 @@ function Thread({ conversation, onBack }: { conversation: Conversation; onBack: 
           }}
           rows={1}
           placeholder="Escreva uma mensagem..."
-          className="flex-1 resize-none max-h-32 rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
+          className="flex-1 resize-none max-h-28 rounded-2xl border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-gold/40"
         />
         <button
           onClick={send}
           disabled={!text.trim() || sending}
-          className="w-10 h-10 shrink-0 rounded-xl bg-ink text-gold grid place-items-center hover:bg-ink/90 disabled:opacity-40 transition-colors"
+          className="w-10 h-10 shrink-0 rounded-full bg-ink text-gold grid place-items-center hover:bg-ink/90 disabled:opacity-40 transition-colors"
           aria-label="Enviar"
         >
           {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
         </button>
       </div>
+
     </>
   );
 }
