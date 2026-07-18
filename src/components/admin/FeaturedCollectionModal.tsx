@@ -445,7 +445,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
             <Label className="mb-2 block">Adicionar produtos (curadoria do admin)</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar produto…" className="pl-9" />
+              <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar produto…" className="pl-9" />
             </div>
             {results.length > 0 && (
               <div className="mt-2 border border-border rounded-lg divide-y divide-border overflow-hidden">

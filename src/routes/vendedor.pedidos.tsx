@@ -157,7 +157,7 @@ function SellerPedidos() {
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por cliente, telefone ou nº do pedido" className="pl-9" />
+          <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por cliente, telefone ou nº do pedido" className="pl-9" />
         </div>
         <Select value={stageFilter} onValueChange={(v) => setStageFilter(v as "all" | Stage)}>
           <SelectTrigger className="sm:w-56"><SelectValue placeholder="Etapa" /></SelectTrigger>

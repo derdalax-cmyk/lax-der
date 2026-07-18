@@ -90,7 +90,7 @@ function ExplorarPage() {
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar peças…" className="pl-9" />
+          <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar peças…" className="pl-9" />
         </div>
         <Select value={category} onValueChange={setCategory}>
           <SelectTrigger className="sm:w-44"><SelectValue placeholder="Categoria" /></SelectTrigger>
