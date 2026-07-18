@@ -21,6 +21,7 @@ import { InstallAppPrompt } from "@/components/InstallAppPrompt";
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useOnlinePresence } from "@/hooks/useOnlinePresence";
 
 
 function NotFoundComponent() {
@@ -110,6 +111,8 @@ function AppShell() {
     });
     return () => subscription.unsubscribe();
   }, [router]);
+
+  useOnlinePresence();
 
   const { loading } = useAuth();
   return (
