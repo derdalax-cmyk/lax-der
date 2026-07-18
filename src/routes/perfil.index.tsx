@@ -127,26 +127,9 @@ function Perfil() {
             </Link>
           )}
 
-          {/* Seller panel CTA — approved sellers only */}
-          {isSeller && (
-            <Link
-              to="/vendedor"
-              className="mt-3 group flex items-center justify-between gap-3 rounded-2xl bg-green text-white px-5 py-4 hover:bg-green/90 transition-colors"
-            >
-              <span className="flex items-center gap-3">
-                <span className="h-10 w-10 rounded-xl bg-white/15 flex items-center justify-center">
-                  <Store className="w-5 h-5 text-white" />
-                </span>
-                <span>
-                  <span className="block font-semibold">Painel do Vendedor</span>
-                  <span className="block text-xs text-white/70">Gerir os produtos da sua loja</span>
-                </span>
-              </span>
-              <ChevronRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform" />
-            </Link>
-          )}
         </div>
       </div>
+
 
       {/* Personal data */}
       <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
