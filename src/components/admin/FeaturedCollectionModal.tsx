@@ -7,9 +7,10 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FEATURED_ICONS } from "@/lib/categories";
+import { CATEGORY_ICONS, CategoryIcon } from "@/lib/categoryIcons";
 import { cn } from "@/lib/utils";
-import { GripVertical, X, Search, Plus, ImagePlus } from "lucide-react";
+import { GripVertical, X, Search, Plus, ImagePlus, Upload } from "lucide-react";
+
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
 } from "@dnd-kit/core";
