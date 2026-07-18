@@ -95,7 +95,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugEdited, setSlugEdited] = useState(false);
-  const [icon, setIcon] = useState<string>(FEATURED_ICONS[0]);
+  const [icon, setIcon] = useState<string>("tag");
   const [selected, setSelected] = useState<ProductLite[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -134,7 +134,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
     if (collection) {
       setName(collection.name);
       setSlug(collection.slug);
-      setIcon(collection.icon ?? FEATURED_ICONS[0]);
+      setIcon(collection.icon ?? "tag");
       setCoverImage(collection.cover_image ?? null);
       setStartsAt(toLocalInput(collection.starts_at));
       setEndsAt(toLocalInput(collection.ends_at));
@@ -155,7 +155,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
         setSelected(ids.map((id) => byId.get(id)).filter((p): p is ProductLite => !!p));
       })();
     } else {
-      setName(""); setSlug(""); setIcon(FEATURED_ICONS[0]); setSelected([]);
+      setName(""); setSlug(""); setIcon("tag"); setSelected([]);
       setCoverImage(null); setStartsAt(""); setEndsAt(""); setMaxPerSeller(0); setIsActive(true);
       setAutoApprove(false);
       setHiddenSellers(new Set());
