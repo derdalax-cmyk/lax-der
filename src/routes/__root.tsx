@@ -16,7 +16,7 @@ import { CityProvider } from "@/contexts/CityContext";
 import { Navbar } from "@/components/Navbar";
 import { CityAlert } from "@/components/CityAlert";
 import { BottomNav } from "@/components/BottomNav";
-import { Footer } from "@/components/Footer";
+
 import { InstallAppPrompt } from "@/components/InstallAppPrompt";
 import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
 import { Toaster } from "@/components/ui/sonner";
