@@ -112,6 +112,8 @@ function AppShell() {
     return () => subscription.unsubscribe();
   }, [router]);
 
+  useOnlinePresence();
+
   const { loading } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
