@@ -122,6 +122,39 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           buyer_id: string
@@ -272,6 +305,7 @@ export type Database = {
       }
       featured_collections: {
         Row: {
+          auto_approve: boolean
           cover_image: string | null
           created_at: string
           ends_at: string | null
@@ -287,6 +321,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_approve?: boolean
           cover_image?: string | null
           created_at?: string
           ends_at?: string | null
@@ -302,6 +337,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_approve?: boolean
           cover_image?: string | null
           created_at?: string
           ends_at?: string | null
@@ -881,6 +917,86 @@ export type Database = {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_admin: boolean
+          read: boolean
+          sender_id: string | null
+          thread_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_admin?: boolean
+          read?: boolean
+          sender_id?: string | null
+          thread_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_admin?: boolean
+          read?: boolean
+          sender_id?: string | null
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "support_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_threads: {
+        Row: {
+          admin_unread: number
+          created_at: string
+          id: string
+          last_message: string | null
+          last_message_at: string | null
+          resolved: boolean
+          updated_at: string
+          user_id: string
+          user_unread: number
+          welcomed: boolean
+        }
+        Insert: {
+          admin_unread?: number
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          resolved?: boolean
+          updated_at?: string
+          user_id: string
+          user_unread?: number
+          welcomed?: boolean
+        }
+        Update: {
+          admin_unread?: number
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          resolved?: boolean
+          updated_at?: string
+          user_id?: string
+          user_unread?: number
+          welcomed?: boolean
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -951,6 +1067,7 @@ export type Database = {
       current_seller_id: { Args: never; Returns: string }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
       get_admin_sellers_dashboard: { Args: never; Returns: Json }
+      get_admin_support_threads: { Args: never; Returns: Json }
       get_available_cities: {
         Args: never
         Returns: {
@@ -991,6 +1108,11 @@ export type Database = {
         Args: { _conversation_id: string }
         Returns: undefined
       }
+      mark_support_read: {
+        Args: { _side: string; _thread_id: string }
+        Returns: undefined
+      }
+      open_support_thread: { Args: never; Returns: string }
       promote_next_in_queue: {
         Args: { _product_id: string }
         Returns: undefined
