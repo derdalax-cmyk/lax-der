@@ -195,16 +195,16 @@ function CheckoutPage() {
               <h2 className="font-display text-xl">1. Informações pessoais</h2>
               <div>
                 <Label htmlFor="name">Nome completo</Label>
-                <Input id="name" value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} required />
+                <Input id="name" type="text" autoComplete="name" value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} required />
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} required />
+                  <Input id="email" type="email" inputMode="email" autoComplete="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} required />
                 </div>
                 <div>
                   <Label htmlFor="phone">Telefone</Label>
-                  <Input id="phone" placeholder="+258 84 000 0000" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} required />
+                  <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+258 84 000 0000" value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} required />
                 </div>
               </div>
               <div className="flex justify-end pt-2">
