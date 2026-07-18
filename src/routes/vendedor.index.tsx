@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSeller } from "@/hooks/useSeller";
 import {
-  Package, Clock, CheckCircle2, TrendingUp, Plus, Star, AlertTriangle,
+  Package, Clock, CheckCircle2, TrendingUp, Plus, ShoppingBag, Star, AlertTriangle,
 } from "lucide-react";
+
 
 import { Button } from "@/components/ui/button";
 import {
