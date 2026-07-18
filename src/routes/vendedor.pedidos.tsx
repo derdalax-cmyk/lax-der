@@ -107,8 +107,8 @@ function SellerPedidos() {
     const { error } = await supabase.rpc("set_order_seller_status", {
       _order_id: orderId,
       _status: next,
-      _tracking: extra?.tracking ?? null,
-      _notes: extra?.notes ?? null,
+      _tracking: extra?.tracking || undefined,
+      _notes: extra?.notes || undefined,
     });
     setSavingId(null);
     if (error) return toast.error(error.message);
