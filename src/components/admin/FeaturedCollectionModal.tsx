@@ -374,6 +374,14 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
             </div>
           </div>
 
+          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+            <div>
+              <p className="text-sm font-medium">Aprovação automática</p>
+              <p className="text-[11px] text-muted-foreground">Produtos submetidos por vendedores entram já aprovados neste destaque.</p>
+            </div>
+            <Switch checked={autoApprove} onCheckedChange={setAutoApprove} />
+          </div>
+
           {/* Hidden sellers */}
           <div>
             <Label className="mb-2 block">Ocultar para vendedores</Label>
