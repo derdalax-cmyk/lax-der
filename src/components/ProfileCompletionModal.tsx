@@ -57,15 +57,15 @@ export function ProfileCompletionModal() {
         <form onSubmit={submit} className="space-y-4">
           <div>
             <Label htmlFor="name">Nome completo</Label>
-            <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+            <Input id="name" type="text" autoComplete="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
           </div>
           <div>
             <Label htmlFor="phone">Telefone (+258)</Label>
-            <Input id="phone" placeholder="+258 84 000 0000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
+            <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+258 84 000 0000" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} required />
           </div>
           <div>
             <Label htmlFor="city">Cidade</Label>
-            <Input id="city" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Ex: Maputo" required />
+            <Input id="city" type="text" autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Ex: Maputo" required />
           </div>
           <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={saving}>
             {saving ? "A guardar..." : "Guardar e continuar"}
