@@ -349,7 +349,7 @@ function TornarSeVendedor() {
                 <>
                   <div className="sm:col-span-2">
                     <Label className="text-xs">Email (será o seu login) *</Label>
-                    <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
+                    <Input type="email" inputMode="email" autoComplete="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="voce@email.com" />
                   </div>
                   <div>
                     <Label className="text-xs">Senha *</Label>
