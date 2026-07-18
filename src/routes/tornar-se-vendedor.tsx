@@ -363,7 +363,7 @@ function TornarSeVendedor() {
                   </div>
                   <div>
                     <Label className="text-xs">Confirmar senha *</Label>
-                    <Input type={showPw ? "text" : "password"} value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
+                    <Input type={showPw ? "text" : "password"} autoComplete="new-password" value={form.confirm} onChange={(e) => set("confirm", e.target.value)} />
                     {form.confirm && form.password !== form.confirm && (
                       <p className="text-[11px] text-destructive mt-1">As senhas não coincidem</p>
                     )}
