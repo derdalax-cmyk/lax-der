@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -13,7 +12,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { initPaysuitePayment } from "@/lib/paysuite.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
@@ -42,7 +40,6 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
   const { items, subtotal, shipping, total, clear, loading: cartLoading } = useCart();
-  const initPayment = useServerFn(initPaysuitePayment);
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -172,29 +169,7 @@ function CheckoutPage() {
       const sellerIds = Array.from(new Set(items.map((item) => item.product.seller_id).filter((id): id is string => Boolean(id))));
       await clear();
 
-      // Initiate Paysuite payment
-      try {
-        const destination = sellerIds.length === 1
-          ? `/chat/order/${order.id}?seller=${sellerIds[0]}`
-          : `/perfil/pedidos?novo=${order.id}`;
-        sessionStorage.setItem(`derdalax_post_purchase_${order.id}`, destination);
-        const returnUrl = `${window.location.origin}/pedido/${order.id}`;
-        const result = await initPayment({
-          data: {
-            orderId: order.id,
-            method: payMethod === "e-mpesa" ? "mpesa" : "emola",
-            msisdn: payPhone,
-            returnUrl,
-          },
-        });
-        if (result?.checkoutUrl) {
-          window.location.href = result.checkoutUrl;
-          return;
-        }
-        toast.success("Pedido criado com sucesso! Pode acompanhar o envio e falar com a loja.");
-      } catch (payErr) {
-        toast.warning(`Pedido criado, mas pagamento falhou: ${payErr instanceof Error ? payErr.message : "erro"}`);
-      }
+      toast.success("Pedido criado com sucesso! Combine o pagamento com a loja pelo chat.");
       if (sellerIds.length === 1) {
         navigate({ to: "/chat/order/$orderId", params: { orderId: order.id }, search: { seller: sellerIds[0] } });
       } else {
