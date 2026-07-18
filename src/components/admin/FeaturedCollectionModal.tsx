@@ -235,6 +235,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
         max_products_per_seller: Number.isFinite(maxPerSeller) ? Math.max(0, maxPerSeller) : 0,
         hidden_sellers: [...hiddenSellers],
         is_active: isActive,
+        auto_approve: autoApprove,
       };
       let collectionId = collection?.id;
       if (collection) {
