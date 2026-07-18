@@ -301,7 +301,7 @@ function CheckoutPage() {
 
               <div>
                 <Label htmlFor="payPhone">Número {payMethod === "e-mpesa" ? "e-Mpesa" : "e-Mola"} para pagamento</Label>
-                <Input id="payPhone" placeholder="+258 84 000 0000" value={payPhone} onChange={(e) => setPayPhone(e.target.value)} />
+                <Input id="payPhone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+258 84 000 0000" value={payPhone} onChange={(e) => setPayPhone(e.target.value)} />
                 <p className="text-xs text-muted-foreground mt-1">Receberá instruções de pagamento após confirmar.</p>
               </div>
 
