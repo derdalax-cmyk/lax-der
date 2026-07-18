@@ -31,6 +31,7 @@ export type FeaturedCollection = {
   max_products_per_seller?: number;
   hidden_sellers?: string[];
   is_active?: boolean;
+  auto_approve?: boolean;
 };
 
 type ProductLite = { id: string; title: string; images: unknown; base_price: number };
