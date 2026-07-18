@@ -440,7 +440,7 @@ function TornarSeVendedor() {
               </div>
               <div>
                 <Label className="text-xs">Número do documento *</Label>
-                <Input value={form.document_number} onChange={(e) => set("document_number", e.target.value)} placeholder="Ex: 110101234567A" />
+                <Input type="text" value={form.document_number} onChange={(e) => set("document_number", e.target.value)} placeholder="Ex: 110101234567A" />
               </div>
               {(["front", "back", "selfie", "face"] as DocKey[]).map((k) => (
                 <FileDrop key={k}
