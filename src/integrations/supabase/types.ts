@@ -1066,6 +1066,7 @@ export type Database = {
     Functions: {
       current_seller_id: { Args: never; Returns: string }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
+      get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_admin_sellers_dashboard: { Args: never; Returns: Json }
       get_admin_support_threads: { Args: never; Returns: Json }
       get_available_cities: {
