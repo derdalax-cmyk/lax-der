@@ -101,6 +101,8 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
 
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingIcon, setUploadingIcon] = useState(false);
+
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [maxPerSeller, setMaxPerSeller] = useState(0);
