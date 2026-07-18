@@ -372,7 +372,7 @@ function TornarSeVendedor() {
               )}
               <div>
                 <Label className="text-xs">Telefone (WhatsApp) *</Label>
-                <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
+                <Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
                 {phoneInvalid && <p className="text-[11px] text-destructive mt-1">Formato inválido (84/85/86/87 + 7 dígitos)</p>}
               </div>
               <div>
