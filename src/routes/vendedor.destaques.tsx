@@ -110,12 +110,13 @@ function SellerDestaques() {
                   {c.cover_image ? (
                     <img src={c.cover_image} alt={c.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full grid place-items-center text-3xl">{c.icon || "✨"}</div>
+                    <div className="w-full h-full grid place-items-center"><CategoryIcon icon={c.icon} className="w-10 h-10" /></div>
                   )}
                 </div>
                 <div className="p-4">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-semibold">{c.icon ? `${c.icon} ` : ""}{c.name}</h3>
+                    <h3 className="font-semibold inline-flex items-center gap-2"><CategoryIcon icon={c.icon} className="w-4 h-4" />{c.name}</h3>
+
                     <span className="text-[11px] text-muted-foreground shrink-0">
                       {c.max_products_per_seller > 0 ? `${activeCount}/${c.max_products_per_seller}` : `${activeCount} produto(s)`}
                     </span>
