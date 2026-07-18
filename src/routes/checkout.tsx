@@ -1,5 +1,4 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -13,7 +12,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { initPaysuitePayment } from "@/lib/paysuite.functions";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
