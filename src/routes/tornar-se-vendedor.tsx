@@ -416,7 +416,7 @@ function TornarSeVendedor() {
             </div>
             <div>
               <Label className="text-xs">Nome da loja *</Label>
-              <Input value={form.store_name} onChange={(e) => set("store_name", e.target.value)} placeholder="Ex: Moda da Maria" />
+              <Input type="text" value={form.store_name} onChange={(e) => set("store_name", e.target.value)} placeholder="Ex: Moda da Maria" />
             </div>
             <div>
               <Label className="text-xs">Descrição da loja</Label>
