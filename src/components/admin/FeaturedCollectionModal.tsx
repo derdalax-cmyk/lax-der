@@ -103,6 +103,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
   const [endsAt, setEndsAt] = useState("");
   const [maxPerSeller, setMaxPerSeller] = useState(0);
   const [isActive, setIsActive] = useState(true);
+  const [autoApprove, setAutoApprove] = useState(false);
   const [hiddenSellers, setHiddenSellers] = useState<Set<string>>(new Set());
 
   const [search, setSearch] = useState("");
