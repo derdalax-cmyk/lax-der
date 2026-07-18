@@ -22,7 +22,7 @@ type OrderRow = {
   id: string;
   customer_name: string | null;
   customer_phone: string | null;
-  city: string | null;
+  shipping_address: Record<string, string> | null;
   status: string;
   payment_status: string | null;
   payment_method: string | null;
