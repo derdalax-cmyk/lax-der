@@ -9,38 +9,57 @@ import { toast } from "sonner";
 
 type Props = {
   orderId: string;
-  sellerId: string;
-  /** Optional label shown above the thread. */
+  /** For buyer mode: the seller store id. Ignored in seller mode. */
+  sellerId?: string;
+  /** "buyer" starts/reuses the conversation via RPC; "seller" looks up an existing one. */
+  mode?: "buyer" | "seller";
   title?: string;
-  /** Height class for the messages area. */
   heightClass?: string;
 };
 
-/**
- * Compact chat surface embedded inside an order detail view.
- * Sender messages sit on the right (ink/gold); recipient on the left (secondary).
- */
-export function OrderChatPanel({ orderId, sellerId, title, heightClass = "h-72" }: Props) {
+/** Compact chat surface embedded inside an order detail view. */
+export function OrderChatPanel({ orderId, sellerId, mode = "buyer", title, heightClass = "h-72" }: Props) {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [convId, setConvId] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [starting, setStarting] = useState(true);
+  const [notReady, setNotReady] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let alive = true;
     setStarting(true);
-    startOrderConversation(orderId, sellerId)
-      .then((id) => { if (alive) { setConvId(id); setStarting(false); } })
-      .catch((err) => {
-        if (!alive) return;
-        setStarting(false);
-        toast.error(err instanceof Error ? err.message : "Não foi possível abrir o chat");
-      });
+    setNotReady(false);
+    const load = async () => {
+      try {
+        if (mode === "seller") {
+          if (!user?.id) return;
+          const { data, error } = await supabase
+            .from("conversations")
+            .select("id")
+            .eq("order_id", orderId)
+            .eq("seller_user_id", user.id)
+            .maybeSingle();
+          if (error) throw error;
+          if (!alive) return;
+          if (data?.id) setConvId(data.id);
+          else setNotReady(true);
+        } else {
+          if (!sellerId) return;
+          const id = await startOrderConversation(orderId, sellerId);
+          if (alive) setConvId(id);
+        }
+      } catch (err) {
+        if (alive) toast.error(err instanceof Error ? err.message : "Não foi possível abrir o chat");
+      } finally {
+        if (alive) setStarting(false);
+      }
+    };
+    load();
     return () => { alive = false; };
-  }, [orderId, sellerId]);
+  }, [orderId, sellerId, mode, user?.id]);
 
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ["messages", convId],
