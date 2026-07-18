@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MessageCircle, Phone, Mail } from "lucide-react";
-import { SupportChat } from "@/components/SupportChat";
+import { FloatingSupportChat } from "@/components/FloatingSupportChat";
 
 export const Route = createFileRoute("/suporte")({
   head: () => ({ meta: [
@@ -31,14 +31,9 @@ function SuportePage() {
         <p className="text-muted-foreground mt-2 text-sm md:text-base">Fale diretamente connosco ou explore as perguntas frequentes.</p>
       </header>
 
-      <div className="grid lg:grid-cols-[1fr_360px] gap-6">
-        {/* Chat */}
-        <section aria-label="Chat de suporte">
-          <SupportChat />
-        </section>
-
-        {/* Sidebar with contacts + FAQ */}
+      <div className="grid gap-6">
         <aside className="space-y-6">
+
           <div className="grid grid-cols-1 gap-3">
             <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noopener noreferrer"
               className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3 hover:border-gold transition-colors">
@@ -79,6 +74,8 @@ function SuportePage() {
           </div>
         </aside>
       </div>
+      <FloatingSupportChat />
     </div>
+
   );
 }
