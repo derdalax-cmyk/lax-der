@@ -38,7 +38,9 @@ import { Route as LojaIdRouteImport } from './routes/loja.$id'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
+import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
+import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$orderId'
 import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.vendedores_.dashboard'
@@ -188,9 +190,19 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminConversasRoute = AdminConversasRouteImport.update({
+  id: '/conversas',
+  path: '/conversas',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
   id: '/categorias-destaque',
   path: '/categorias-destaque',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
+  id: '/categorias',
+  path: '/categorias',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
@@ -226,7 +238,9 @@ export interface FileRoutesByFullPath {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -258,7 +272,9 @@ export interface FileRoutesByTo {
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -294,7 +310,9 @@ export interface FileRoutesById {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/conversas': typeof AdminConversasRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -331,7 +349,9 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/conversas'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -363,7 +383,9 @@ export interface FileRouteTypes {
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/conversas'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -398,7 +420,9 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/conversas'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -644,11 +668,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProdutosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/conversas': {
+      id: '/admin/conversas'
+      path: '/conversas'
+      fullPath: '/admin/conversas'
+      preLoaderRoute: typeof AdminConversasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categorias-destaque': {
       id: '/admin/categorias-destaque'
       path: '/categorias-destaque'
       fullPath: '/admin/categorias-destaque'
       preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categorias': {
+      id: '/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AdminCategoriasRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/administradores': {
@@ -677,7 +715,9 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdministradoresRoute: typeof AdminAdministradoresRoute
+  AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
+  AdminConversasRoute: typeof AdminConversasRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
@@ -687,7 +727,9 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdministradoresRoute: AdminAdministradoresRoute,
+  AdminCategoriasRoute: AdminCategoriasRoute,
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
+  AdminConversasRoute: AdminConversasRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,

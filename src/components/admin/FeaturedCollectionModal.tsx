@@ -31,6 +31,7 @@ export type FeaturedCollection = {
   max_products_per_seller?: number;
   hidden_sellers?: string[];
   is_active?: boolean;
+  auto_approve?: boolean;
 };
 
 type ProductLite = { id: string; title: string; images: unknown; base_price: number };
@@ -103,6 +104,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
   const [endsAt, setEndsAt] = useState("");
   const [maxPerSeller, setMaxPerSeller] = useState(0);
   const [isActive, setIsActive] = useState(true);
+  const [autoApprove, setAutoApprove] = useState(false);
   const [hiddenSellers, setHiddenSellers] = useState<Set<string>>(new Set());
 
   const [search, setSearch] = useState("");
@@ -137,6 +139,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       setEndsAt(toLocalInput(collection.ends_at));
       setMaxPerSeller(collection.max_products_per_seller ?? 0);
       setIsActive(collection.is_active ?? true);
+      setAutoApprove(collection.auto_approve ?? false);
       setHiddenSellers(new Set(collection.hidden_sellers ?? []));
       (async () => {
         const { data: links } = await supabase
@@ -153,6 +156,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
     } else {
       setName(""); setSlug(""); setIcon(FEATURED_ICONS[0]); setSelected([]);
       setCoverImage(null); setStartsAt(""); setEndsAt(""); setMaxPerSeller(0); setIsActive(true);
+      setAutoApprove(false);
       setHiddenSellers(new Set());
     }
   }, [open, collection]);
@@ -231,6 +235,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
         max_products_per_seller: Number.isFinite(maxPerSeller) ? Math.max(0, maxPerSeller) : 0,
         hidden_sellers: [...hiddenSellers],
         is_active: isActive,
+        auto_approve: autoApprove,
       };
       let collectionId = collection?.id;
       if (collection) {
@@ -367,6 +372,14 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
               </div>
               <Switch checked={isActive} onCheckedChange={setIsActive} />
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+            <div>
+              <p className="text-sm font-medium">Aprovação automática</p>
+              <p className="text-[11px] text-muted-foreground">Produtos submetidos por vendedores entram já aprovados neste destaque.</p>
+            </div>
+            <Switch checked={autoApprove} onCheckedChange={setAutoApprove} />
           </div>
 
           {/* Hidden sellers */}
