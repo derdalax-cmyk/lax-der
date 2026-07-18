@@ -221,21 +221,21 @@ function CheckoutPage() {
               <div className="grid sm:grid-cols-[1fr_120px] gap-4">
                 <div>
                   <Label htmlFor="street">Rua / Avenida *</Label>
-                  <Input id="street" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} required />
+                  <Input id="street" type="text" autoComplete="address-line1" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} required />
                 </div>
                 <div>
                   <Label htmlFor="number">Número</Label>
-                  <Input id="number" value={address.number} onChange={(e) => setAddress({ ...address, number: e.target.value })} />
+                  <Input id="number" type="text" inputMode="numeric" value={address.number} onChange={(e) => setAddress({ ...address, number: e.target.value })} />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="neighborhood">Bairro *</Label>
-                  <Input id="neighborhood" value={address.neighborhood} onChange={(e) => setAddress({ ...address, neighborhood: e.target.value })} required />
+                  <Input id="neighborhood" type="text" autoComplete="address-level3" value={address.neighborhood} onChange={(e) => setAddress({ ...address, neighborhood: e.target.value })} required />
                 </div>
                 <div>
                   <Label htmlFor="city">Cidade *</Label>
-                  <Input id="city" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="Ex: Maputo" required />
+                  <Input id="city" type="text" autoComplete="address-level2" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="Ex: Maputo" required />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -248,17 +248,17 @@ function CheckoutPage() {
                 </div>
                 <div>
                   <Label htmlFor="reference">Ponto de referência</Label>
-                  <Input id="reference" placeholder="Ex: Próximo ao mercado" value={address.reference} onChange={(e) => setAddress({ ...address, reference: e.target.value })} />
+                  <Input id="reference" type="text" placeholder="Ex: Próximo ao mercado" value={address.reference} onChange={(e) => setAddress({ ...address, reference: e.target.value })} />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="building">Prédio (opcional)</Label>
-                  <Input id="building" value={address.building} onChange={(e) => setAddress({ ...address, building: e.target.value })} />
+                  <Input id="building" type="text" value={address.building} onChange={(e) => setAddress({ ...address, building: e.target.value })} />
                 </div>
                 <div>
                   <Label htmlFor="apartment">Apartamento (opcional)</Label>
-                  <Input id="apartment" value={address.apartment} onChange={(e) => setAddress({ ...address, apartment: e.target.value })} />
+                  <Input id="apartment" type="text" inputMode="numeric" value={address.apartment} onChange={(e) => setAddress({ ...address, apartment: e.target.value })} />
                 </div>
               </div>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
