@@ -156,6 +156,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
     } else {
       setName(""); setSlug(""); setIcon(FEATURED_ICONS[0]); setSelected([]);
       setCoverImage(null); setStartsAt(""); setEndsAt(""); setMaxPerSeller(0); setIsActive(true);
+      setAutoApprove(false);
       setHiddenSellers(new Set());
     }
   }, [open, collection]);
