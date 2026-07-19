@@ -277,6 +277,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       toast.success(collection ? "Categoria atualizada" : "Categoria criada");
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["featured-candidacies"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
