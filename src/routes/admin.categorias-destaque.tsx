@@ -135,6 +135,57 @@ function AdminFeaturedCollections() {
     qc.invalidateQueries({ queryKey: ["home-collections"] });
   };
 
+  const toggleAutoApprove = async (row: Row, next: boolean) => {
+    setAutoPending((prev) => new Set(prev).add(row.id));
+    // Optimistic UI
+    setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, auto_approve: next } : r)));
+    const loadingId = toast.loading(
+      next ? `A ativar aprovação automática em "${row.name}"…` : `A desativar aprovação automática em "${row.name}"…`,
+    );
+    try {
+      const { error } = await supabase
+        .from("featured_collections")
+        .update({ auto_approve: next })
+        .eq("id", row.id);
+      if (error) throw error;
+
+      let promoted = 0;
+      if (next) {
+        const { data: pending, error: pErr } = await supabase
+          .from("featured_collection_products")
+          .update({ status: "approved" })
+          .eq("collection_id", row.id)
+          .eq("status", "pending")
+          .select("product_id");
+        if (pErr) throw pErr;
+        promoted = pending?.length ?? 0;
+      }
+
+      toast.success(
+        next
+          ? promoted > 0
+            ? `Aprovação automática ativada. ${promoted} candidatura(s) pendente(s) foram aprovadas.`
+            : `Aprovação automática ativada em "${row.name}".`
+          : `Aprovação automática desativada em "${row.name}".`,
+        { id: loadingId },
+      );
+      qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
+      qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["featured-candidacies"] });
+    } catch (e) {
+      // Revert optimistic change on error
+      setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, auto_approve: !next } : r)));
+      toast.error(`Falha ao atualizar: ${(e as Error).message}`, { id: loadingId });
+    } finally {
+      setAutoPending((prev) => {
+        const nxt = new Set(prev);
+        nxt.delete(row.id);
+        return nxt;
+      });
+    }
+  };
+
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
