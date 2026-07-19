@@ -253,6 +253,15 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       }
 
       if (collectionId) {
+        // When auto-approve is on, promote any existing pending seller submissions immediately.
+        if (autoApprove) {
+          await supabase
+            .from("featured_collection_products")
+            .update({ status: "approved" })
+            .eq("collection_id", collectionId)
+            .eq("status", "pending");
+        }
+
         // Admin manages the curated (admin-added) products; keep seller submissions intact.
         await supabase.from("featured_collection_products")
           .delete().eq("collection_id", collectionId).is("submitted_by", null);
