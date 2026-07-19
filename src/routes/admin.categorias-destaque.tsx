@@ -25,7 +25,15 @@ export const Route = createFileRoute("/admin/categorias-destaque")({
 
 type Row = FeaturedCollection & { count: number };
 
-function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => void; onDelete: (r: Row) => void }) {
+function SortableRow({
+  row, onEdit, onDelete, onToggleAuto, autoPending,
+}: {
+  row: Row;
+  onEdit: (r: Row) => void;
+  onDelete: (r: Row) => void;
+  onToggleAuto: (r: Row, next: boolean) => void;
+  autoPending: boolean;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
   return (
     <tr
@@ -54,6 +62,17 @@ function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => 
       </td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.slug}</td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.count} produtos</td>
+      <td className="px-3 py-3">
+        <div className="flex items-center gap-2">
+          {autoPending && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />}
+          <Switch
+            checked={!!row.auto_approve}
+            disabled={autoPending}
+            onCheckedChange={(v) => onToggleAuto(row, v)}
+            aria-label="Aprovação automática"
+          />
+        </div>
+      </td>
       <td className="px-3 py-3">
         <div className="flex justify-end gap-1">
           <button onClick={() => onEdit(row)} className="p-2 hover:bg-secondary rounded-md" title="Editar"><Pencil className="w-4 h-4" /></button>
