@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, GripVertical, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { FeaturedCollectionModal, type FeaturedCollection } from "@/components/admin/FeaturedCollectionModal";
 import { PendingCandidacies } from "@/components/admin/PendingCandidacies";
@@ -24,7 +25,15 @@ export const Route = createFileRoute("/admin/categorias-destaque")({
 
 type Row = FeaturedCollection & { count: number };
 
-function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => void; onDelete: (r: Row) => void }) {
+function SortableRow({
+  row, onEdit, onDelete, onToggleAuto, autoPending,
+}: {
+  row: Row;
+  onEdit: (r: Row) => void;
+  onDelete: (r: Row) => void;
+  onToggleAuto: (r: Row, next: boolean) => void;
+  autoPending: boolean;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
   return (
     <tr
@@ -54,6 +63,17 @@ function SortableRow({ row, onEdit, onDelete }: { row: Row; onEdit: (r: Row) => 
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.slug}</td>
       <td className="px-3 py-3 text-muted-foreground text-sm">{row.count} produtos</td>
       <td className="px-3 py-3">
+        <div className="flex items-center gap-2">
+          {autoPending && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />}
+          <Switch
+            checked={!!row.auto_approve}
+            disabled={autoPending}
+            onCheckedChange={(v) => onToggleAuto(row, v)}
+            aria-label="Aprovação automática"
+          />
+        </div>
+      </td>
+      <td className="px-3 py-3">
         <div className="flex justify-end gap-1">
           <button onClick={() => onEdit(row)} className="p-2 hover:bg-secondary rounded-md" title="Editar"><Pencil className="w-4 h-4" /></button>
           <button onClick={() => onDelete(row)} className="p-2 hover:bg-destructive/10 text-destructive rounded-md" title="Eliminar"><Trash2 className="w-4 h-4" /></button>
@@ -69,6 +89,7 @@ function AdminFeaturedCollections() {
   const [editing, setEditing] = useState<FeaturedCollection | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Row | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
+  const [autoPending, setAutoPending] = useState<Set<string>>(new Set());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -77,7 +98,7 @@ function AdminFeaturedCollections() {
     queryFn: async () => {
       const { data: cols, error } = await supabase
         .from("featured_collections")
-        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active")
+        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active,auto_approve")
         .order("sort_order", { ascending: true });
       if (error) throw error;
       const { data: links } = await supabase.from("featured_collection_products").select("collection_id").eq("status", "approved");
@@ -114,6 +135,57 @@ function AdminFeaturedCollections() {
     qc.invalidateQueries({ queryKey: ["home-collections"] });
   };
 
+  const toggleAutoApprove = async (row: Row, next: boolean) => {
+    setAutoPending((prev) => new Set(prev).add(row.id));
+    // Optimistic UI
+    setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, auto_approve: next } : r)));
+    const loadingId = toast.loading(
+      next ? `A ativar aprovação automática em "${row.name}"…` : `A desativar aprovação automática em "${row.name}"…`,
+    );
+    try {
+      const { error } = await supabase
+        .from("featured_collections")
+        .update({ auto_approve: next })
+        .eq("id", row.id);
+      if (error) throw error;
+
+      let promoted = 0;
+      if (next) {
+        const { data: pending, error: pErr } = await supabase
+          .from("featured_collection_products")
+          .update({ status: "approved" })
+          .eq("collection_id", row.id)
+          .eq("status", "pending")
+          .select("product_id");
+        if (pErr) throw pErr;
+        promoted = pending?.length ?? 0;
+      }
+
+      toast.success(
+        next
+          ? promoted > 0
+            ? `Aprovação automática ativada. ${promoted} candidatura(s) pendente(s) foram aprovadas.`
+            : `Aprovação automática ativada em "${row.name}".`
+          : `Aprovação automática desativada em "${row.name}".`,
+        { id: loadingId },
+      );
+      qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
+      qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["featured-candidacies"] });
+    } catch (e) {
+      // Revert optimistic change on error
+      setRows((prev) => prev.map((r) => (r.id === row.id ? { ...r, auto_approve: !next } : r)));
+      toast.error(`Falha ao atualizar: ${(e as Error).message}`, { id: loadingId });
+    } finally {
+      setAutoPending((prev) => {
+        const nxt = new Set(prev);
+        nxt.delete(row.id);
+        return nxt;
+      });
+    }
+  };
+
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -135,17 +207,27 @@ function AdminFeaturedCollections() {
                 <th className="px-3 py-3">Categoria</th>
                 <th className="px-3 py-3">Slug</th>
                 <th className="px-3 py-3">Produtos</th>
+                <th className="px-3 py-3">Aprovação auto.</th>
                 <th className="px-3 py-3 text-right">Ações</th>
               </tr>
             </thead>
             <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
               <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
                 <tbody>
-                  {isLoading && <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
+                  {isLoading && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
                   {!isLoading && rows.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">Nenhuma categoria de destaque. Crie a primeira.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Nenhuma categoria de destaque. Crie a primeira.</td></tr>
                   )}
-                  {rows.map((r) => <SortableRow key={r.id} row={r} onEdit={openEdit} onDelete={setDeleteTarget} />)}
+                  {rows.map((r) => (
+                    <SortableRow
+                      key={r.id}
+                      row={r}
+                      onEdit={openEdit}
+                      onDelete={setDeleteTarget}
+                      onToggleAuto={toggleAutoApprove}
+                      autoPending={autoPending.has(r.id)}
+                    />
+                  ))}
                 </tbody>
               </SortableContext>
             </DndContext>
