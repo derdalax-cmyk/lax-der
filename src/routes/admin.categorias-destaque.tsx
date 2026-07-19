@@ -207,17 +207,27 @@ function AdminFeaturedCollections() {
                 <th className="px-3 py-3">Categoria</th>
                 <th className="px-3 py-3">Slug</th>
                 <th className="px-3 py-3">Produtos</th>
+                <th className="px-3 py-3">Aprovação auto.</th>
                 <th className="px-3 py-3 text-right">Ações</th>
               </tr>
             </thead>
             <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
               <SortableContext items={rows.map((r) => r.id)} strategy={verticalListSortingStrategy}>
                 <tbody>
-                  {isLoading && <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
+                  {isLoading && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">A carregar…</td></tr>}
                   {!isLoading && rows.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">Nenhuma categoria de destaque. Crie a primeira.</td></tr>
+                    <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Nenhuma categoria de destaque. Crie a primeira.</td></tr>
                   )}
-                  {rows.map((r) => <SortableRow key={r.id} row={r} onEdit={openEdit} onDelete={setDeleteTarget} />)}
+                  {rows.map((r) => (
+                    <SortableRow
+                      key={r.id}
+                      row={r}
+                      onEdit={openEdit}
+                      onDelete={setDeleteTarget}
+                      onToggleAuto={toggleAutoApprove}
+                      autoPending={autoPending.has(r.id)}
+                    />
+                  ))}
                 </tbody>
               </SortableContext>
             </DndContext>
