@@ -89,6 +89,7 @@ function AdminFeaturedCollections() {
   const [editing, setEditing] = useState<FeaturedCollection | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Row | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
+  const [autoPending, setAutoPending] = useState<Set<string>>(new Set());
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -97,7 +98,7 @@ function AdminFeaturedCollections() {
     queryFn: async () => {
       const { data: cols, error } = await supabase
         .from("featured_collections")
-        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active")
+        .select("id,name,slug,icon,sort_order,cover_image,starts_at,ends_at,max_products_per_seller,hidden_sellers,is_active,auto_approve")
         .order("sort_order", { ascending: true });
       if (error) throw error;
       const { data: links } = await supabase.from("featured_collection_products").select("collection_id").eq("status", "approved");
