@@ -253,6 +253,15 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       }
 
       if (collectionId) {
+        // When auto-approve is on, promote any existing pending seller submissions immediately.
+        if (autoApprove) {
+          await supabase
+            .from("featured_collection_products")
+            .update({ status: "approved" })
+            .eq("collection_id", collectionId)
+            .eq("status", "pending");
+        }
+
         // Admin manages the curated (admin-added) products; keep seller submissions intact.
         await supabase.from("featured_collection_products")
           .delete().eq("collection_id", collectionId).is("submitted_by", null);
@@ -268,6 +277,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       toast.success(collection ? "Categoria atualizada" : "Categoria criada");
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["featured-candidacies"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
