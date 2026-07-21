@@ -11,9 +11,7 @@ import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
   Heart, ShoppingBag, ChevronRight, FileText, Instagram, Facebook, MessageCircle,
 } from "lucide-react";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
-} from "@/components/ui/dialog";
+import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 
@@ -199,50 +197,22 @@ function Perfil() {
       <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
         <h2 className="font-display text-lg font-semibold mb-5">Sobre a DERDALAX</h2>
 
-        <Dialog>
-          <DialogTrigger asChild>
+        <PoliciesDialog
+          trigger={
             <button className="w-full group flex items-center justify-between gap-3 rounded-2xl border border-border px-4 py-3 hover:border-gold/60 transition-colors">
               <span className="flex items-center gap-3">
-                <span className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-ink" />
+                <span className="h-10 w-10 rounded-xl bg-gold/15 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-gold" />
                 </span>
-                <span className="font-medium">📜 Políticas e Termos</span>
+                <span className="text-left">
+                  <span className="block font-medium leading-tight">Políticas</span>
+                  <span className="block text-xs text-muted-foreground mt-0.5">Ver todas as políticas da DERDALAX</span>
+                </span>
               </span>
               <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
             </button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="font-display text-2xl">Políticas e Termos</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 text-sm leading-relaxed">
-              <section>
-                <h3 className="font-semibold text-base mb-2">Política de Privacidade</h3>
-                <p className="text-muted-foreground">
-                  A DERDALAX respeita a sua privacidade. Recolhemos apenas os dados necessários (nome, email,
-                  telefone, endereço) para processar encomendas e melhorar a experiência de compra. Os seus dados
-                  nunca são partilhados com terceiros sem consentimento, exceto quando exigido por lei.
-                </p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base mb-2">Termos e Condições de Uso</h3>
-                <p className="text-muted-foreground">
-                  Ao utilizar a plataforma DERDALAX, concorda em fornecer informações verdadeiras, respeitar
-                  vendedores e outros utilizadores, e efetuar pagamentos conforme combinado com cada loja.
-                  A DERDALAX atua como intermediária entre compradores e vendedores independentes.
-                </p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base mb-2">Política de Devoluções e Trocas</h3>
-                <p className="text-muted-foreground">
-                  Trocas e devoluções devem ser solicitadas em até 7 dias após a receção do produto, diretamente
-                  ao vendedor via chat do pedido. O produto deve estar em condições originais, sem uso.
-                  Custos de envio de devolução são, regra geral, por conta do comprador, salvo defeito comprovado.
-                </p>
-              </section>
-            </div>
-          </DialogContent>
-        </Dialog>
+          }
+        />
 
         <div className="mt-5">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Siga-nos</div>
