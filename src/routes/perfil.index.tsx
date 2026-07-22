@@ -9,11 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight, FileText, Instagram, Facebook, MessageCircle,
+  Heart, ShoppingBag, ChevronRight, FileText,
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
+import whatsappAsset from "@/assets/whatsapp.png.asset.json";
+import facebookAsset from "@/assets/facebook.png.asset.json";
+import instagramAsset from "@/assets/instagram.png.asset.json";
 
 export const Route = createFileRoute("/perfil/")({
   head: () => ({ meta: [{ title: "Perfil · DERDALAX" }, { name: "description", content: "O seu perfil." }] }),
