@@ -9,11 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight, FileText, Instagram, Facebook, MessageCircle,
+  Heart, ShoppingBag, ChevronRight, FileText,
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
+import whatsappAsset from "@/assets/whatsapp.png.asset.json";
+import facebookAsset from "@/assets/facebook.png.asset.json";
+import instagramAsset from "@/assets/instagram.png.asset.json";
 
 export const Route = createFileRoute("/perfil/")({
   head: () => ({ meta: [{ title: "Perfil · DERDALAX" }, { name: "description", content: "O seu perfil." }] }),
@@ -221,25 +224,25 @@ function Perfil() {
               href="https://instagram.com/derdalax"
               target="_blank" rel="noopener noreferrer"
               aria-label="Instagram"
-              className="h-11 w-11 rounded-full bg-gradient-to-tr from-pink-500 via-red-500 to-yellow-500 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
-              <Instagram className="w-5 h-5" />
+              <img src={instagramAsset.url} alt="Instagram" className="w-full h-full object-cover" />
             </a>
             <a
               href="https://facebook.com/derdalax"
               target="_blank" rel="noopener noreferrer"
               aria-label="Facebook"
-              className="h-11 w-11 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
-              <Facebook className="w-5 h-5" />
+              <img src={facebookAsset.url} alt="Facebook" className="w-full h-full object-cover" />
             </a>
             <a
               href="https://wa.me/258846023085"
               target="_blank" rel="noopener noreferrer"
               aria-label="WhatsApp"
-              className="h-11 w-11 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
-              <MessageCircle className="w-5 h-5" />
+              <img src={whatsappAsset.url} alt="WhatsApp" className="w-full h-full object-cover" />
             </a>
           </div>
         </div>
