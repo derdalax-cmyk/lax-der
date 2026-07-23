@@ -16,8 +16,8 @@ export const Route = createFileRoute("/suporte")({
   component: SuportePage,
 });
 
-const WHATSAPP = "258840000000";
-const PHONE = "+258 84 000 0000";
+const WHATSAPP = "258853529033";
+const PHONE = "+258 85 352 9033";
 const EMAIL = "suporte@derdalax.co.mz";
 
 const FAQ = [
