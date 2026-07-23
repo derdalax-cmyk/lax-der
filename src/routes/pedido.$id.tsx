@@ -116,7 +116,20 @@ function PedidoPage() {
         <p className="text-muted-foreground text-sm">Referência: <span className="font-mono font-medium text-foreground">{order.payment_reference}</span></p>
       </header>
 
-      {!isPaid && (
+      {!isPaid && order.payment_method === "entrega" && (
+        <section className="bg-card border border-gold/40 rounded-xl p-6 space-y-3">
+          <div className="flex items-center gap-3">
+            <Clock className="w-6 h-6 text-gold" />
+            <div>
+              <h2 className="font-display text-xl">Pagamento na entrega</h2>
+              <p className="text-sm text-muted-foreground mt-0.5">Você pagará <span className="font-medium text-foreground">{formatMZN(order.total)}</span> em dinheiro ou carteira móvel diretamente ao vendedor/estafeta no momento da entrega.</p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">Combine detalhes de entrega com a loja pelo chat abaixo. O vendedor confirmará o pagamento ao receber.</p>
+        </section>
+      )}
+
+      {!isPaid && order.payment_method !== "entrega" && (
         <section className="bg-card border border-gold/40 rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-3">
             <Smartphone className="w-6 h-6 text-gold" />
