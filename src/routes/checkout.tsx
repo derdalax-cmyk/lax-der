@@ -27,6 +27,7 @@ type Address = {
   building: string; apartment: string;
 };
 type PayMethod = "e-mpesa" | "e-mola";
+type PayTiming = "antecipado" | "entrega";
 
 const PROVINCES = ["Maputo Cidade", "Maputo Província", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Cabo Delgado", "Niassa"];
 
@@ -50,6 +51,7 @@ function CheckoutPage() {
     reference: "", building: "", apartment: "",
   });
   const [saveAddress, setSaveAddress] = useState(true);
+  const [payTiming, setPayTiming] = useState<PayTiming>("antecipado");
   const [payMethod, setPayMethod] = useState<PayMethod>("e-mpesa");
   const [payPhone, setPayPhone] = useState("");
 
@@ -101,7 +103,7 @@ function CheckoutPage() {
     () => address.street.trim() && address.neighborhood.trim() && address.city.trim() && address.province.trim(),
     [address],
   );
-  const canSubmit = canStep1 && canStep2 && payPhone.replace(/\D/g, "").length >= 9;
+  const canSubmit = canStep1 && canStep2 && (payTiming === "entrega" || payPhone.replace(/\D/g, "").length >= 9);
 
   if (authLoading || cartLoading) {
     return <div className="max-w-2xl mx-auto px-5 py-20 text-center text-muted-foreground">A carregar…</div>;
@@ -121,6 +123,7 @@ function CheckoutPage() {
     setSubmitting(true);
     try {
       const reference = genReference();
+      const finalMethod = payTiming === "entrega" ? "entrega" : payMethod;
       // Create order
       const { data: order, error: oErr } = await supabase
         .from("orders")
@@ -129,10 +132,10 @@ function CheckoutPage() {
           customer_name: contact.name,
           customer_phone: contact.phone,
           subtotal, shipping, total,
-          payment_method: payMethod,
+          payment_method: finalMethod as never,
           payment_status: "pending",
           payment_reference: reference,
-          payment_phone: payPhone,
+          payment_phone: payTiming === "entrega" ? contact.phone : payPhone,
           status: "pending",
           shipping_address: address,
         })
@@ -169,7 +172,7 @@ function CheckoutPage() {
       const sellerIds = Array.from(new Set(items.map((item) => item.product.seller_id).filter((id): id is string => Boolean(id))));
       await clear();
 
-      toast.success("Pedido criado com sucesso! Combine o pagamento com a loja pelo chat.");
+      toast.success(payTiming === "entrega" ? "Pedido criado! Pagará ao receber o produto." : "Pedido criado com sucesso! Combine o pagamento com a loja pelo chat.");
       if (sellerIds.length === 1) {
         navigate({ to: "/chat/order/$orderId", params: { orderId: order.id }, search: { seller: sellerIds[0] } });
       } else {
@@ -287,23 +290,49 @@ function CheckoutPage() {
               </div>
 
               <div>
-                <Label className="mb-2 block">Método de pagamento</Label>
-                <RadioGroup value={payMethod} onValueChange={(v) => setPayMethod(v as PayMethod)} className="grid sm:grid-cols-2 gap-3">
-                  {(["e-mpesa", "e-mola"] as const).map((m) => (
-                    <label key={m} className={`flex items-center gap-3 border rounded-lg p-4 cursor-pointer ${payMethod === m ? "border-gold bg-gold/5" : "border-border"}`}>
-                      <RadioGroupItem value={m} />
-                      <Smartphone className="w-5 h-5 text-gold" />
-                      <span className="font-medium uppercase tracking-wide text-sm">{m === "e-mpesa" ? "e-Mpesa" : "e-Mola"}</span>
-                    </label>
-                  ))}
+                <Label className="mb-2 block">Quando quer pagar?</Label>
+                <RadioGroup value={payTiming} onValueChange={(v) => setPayTiming(v as PayTiming)} className="grid sm:grid-cols-2 gap-3">
+                  <label className={`flex items-start gap-3 border rounded-lg p-4 cursor-pointer ${payTiming === "antecipado" ? "border-gold bg-gold/5" : "border-border"}`}>
+                    <RadioGroupItem value="antecipado" className="mt-0.5" />
+                    <Wallet className="w-5 h-5 text-gold shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm">Pagamento antecipado</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">Combine com a loja via chat (m-Pesa / e-Mola / transferência) antes do envio.</div>
+                    </div>
+                  </label>
+                  <label className={`flex items-start gap-3 border rounded-lg p-4 cursor-pointer ${payTiming === "entrega" ? "border-gold bg-gold/5" : "border-border"}`}>
+                    <RadioGroupItem value="entrega" className="mt-0.5" />
+                    <Truck className="w-5 h-5 text-gold shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm">Pagamento na entrega</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">Pague em dinheiro ou carteira móvel ao receber o produto.</div>
+                    </div>
+                  </label>
                 </RadioGroup>
               </div>
 
-              <div>
-                <Label htmlFor="payPhone">Número {payMethod === "e-mpesa" ? "e-Mpesa" : "e-Mola"} para pagamento</Label>
-                <Input id="payPhone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+258 84 000 0000" value={payPhone} onChange={(e) => setPayPhone(e.target.value)} />
-                <p className="text-xs text-muted-foreground mt-1">Receberá instruções de pagamento após confirmar.</p>
-              </div>
+              {payTiming === "antecipado" && (
+                <>
+                  <div>
+                    <Label className="mb-2 block">Método de pagamento</Label>
+                    <RadioGroup value={payMethod} onValueChange={(v) => setPayMethod(v as PayMethod)} className="grid sm:grid-cols-2 gap-3">
+                      {(["e-mpesa", "e-mola"] as const).map((m) => (
+                        <label key={m} className={`flex items-center gap-3 border rounded-lg p-4 cursor-pointer ${payMethod === m ? "border-gold bg-gold/5" : "border-border"}`}>
+                          <RadioGroupItem value={m} />
+                          <Smartphone className="w-5 h-5 text-gold" />
+                          <span className="font-medium uppercase tracking-wide text-sm">{m === "e-mpesa" ? "e-Mpesa" : "e-Mola"}</span>
+                        </label>
+                      ))}
+                    </RadioGroup>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="payPhone">Número {payMethod === "e-mpesa" ? "e-Mpesa" : "e-Mola"} para pagamento</Label>
+                    <Input id="payPhone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+258 84 000 0000" value={payPhone} onChange={(e) => setPayPhone(e.target.value)} />
+                    <p className="text-xs text-muted-foreground mt-1">Receberá instruções de pagamento após confirmar.</p>
+                  </div>
+                </>
+              )}
 
               <div>
                 <Label htmlFor="notes">Notas (opcional)</Label>
