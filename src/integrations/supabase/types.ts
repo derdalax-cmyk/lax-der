@@ -1294,7 +1294,7 @@ export type Database = {
         | "sent"
         | "delivered"
         | "cancelled"
-      payment_method: "e-mpesa" | "e-mola"
+      payment_method: "e-mpesa" | "e-mola" | "entrega"
       product_status:
         | "available"
         | "reserved"
@@ -1438,7 +1438,7 @@ export const Constants = {
         "delivered",
         "cancelled",
       ],
-      payment_method: ["e-mpesa", "e-mola"],
+      payment_method: ["e-mpesa", "e-mola", "entrega"],
       product_status: [
         "available",
         "reserved",
