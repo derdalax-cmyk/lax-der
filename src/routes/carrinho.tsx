@@ -258,7 +258,7 @@ function BuyerOrderDetails({ order }: { order: OrderHistory }) {
           <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(Number(order.subtotal))}</span></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Frete</span><span>{formatMZN(Number(order.shipping))}</span></div>
           <div className="flex justify-between font-semibold text-base pt-2"><span>Total</span><span>{formatMZN(Number(order.total))}</span></div>
-          <p className="text-xs text-muted-foreground pt-1">Pagamento: {order.payment_method ?? "—"} · {order.payment_status ?? "pending"}</p>
+          <p className="text-xs text-muted-foreground pt-1">Pagamento: {paymentLabel(order.payment_method, order.payment_status)}</p>
         </section>
       </div>
     </>
