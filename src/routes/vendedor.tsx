@@ -1,32 +1,34 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSeller } from "@/hooks/useSeller";
-import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, Sparkles, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, CalendarClock, MessageSquare, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SellerNotificationBell } from "@/components/vendedor/SellerNotificationBell";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/vendedor")({
   head: () => ({ meta: [{ title: "Painel do Vendedor · DERDALAX" }, { name: "description", content: "Gerir a sua loja na DERDALAX." }] }),
   component: SellerLayout,
 });
 
-const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
-  { to: "/vendedor", label: "Visão geral", icon: LayoutDashboard, exact: true },
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; soon?: boolean };
+const nav: NavItem[] = [
+  { to: "/vendedor", label: "Painel", icon: LayoutDashboard, exact: true },
   { to: "/vendedor/produtos", label: "Produtos", icon: Package },
   { to: "/vendedor/pedidos", label: "Pedidos", icon: ShoppingBag },
-  { to: "/vendedor/destaques", label: "Destaques", icon: Sparkles },
+  { to: "/vendedor/mensalidade", label: "Mensalidade", icon: CalendarClock, soon: true },
   { to: "/mensagens", label: "Mensagens", icon: MessageSquare },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
 ];
-
 
 function SellerLayout() {
   const { user, loading: authLoading } = useAuth();
   const { seller, isApproved, loading } = useSeller();
   const navigate = useNavigate();
   const loc = useLocation();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/login" });
@@ -40,7 +42,6 @@ function SellerLayout() {
     );
   }
 
-  // No seller record or not approved yet → show status card
   if (!seller || !isApproved) {
     return (
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
@@ -67,40 +68,64 @@ function SellerLayout() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 md:grid-cols-[230px_1fr] gap-6">
-      <aside className="md:sticky md:top-20 md:self-start bg-card border border-border rounded-xl p-3">
-        <div className="flex items-center gap-2.5 px-2 py-3 mb-1 border-b border-border">
-          <div className="w-10 h-10 rounded-lg bg-secondary overflow-hidden grid place-items-center shrink-0">
-            {seller.logo_url ? <img src={seller.logo_url} alt={seller.store_name} className="w-full h-full object-cover" /> : <Store className="w-5 h-5 text-muted-foreground" />}
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate">{seller.store_name}</p>
-            <p className="text-[11px] text-success">Loja ativa</p>
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button aria-label="Abrir menu" className="p-2 -ml-2 rounded-md hover:bg-secondary">
+                <Menu className="w-6 h-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[74vw] max-w-sm p-0">
+              <SheetHeader className="px-5 py-4 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-lg bg-secondary overflow-hidden grid place-items-center shrink-0">
+                    {seller.logo_url ? <img src={seller.logo_url} alt={seller.store_name} className="w-full h-full object-cover" /> : <Store className="w-5 h-5 text-muted-foreground" />}
+                  </div>
+                  <div className="min-w-0 text-left">
+                    <SheetTitle className="text-sm font-semibold truncate">{seller.store_name}</SheetTitle>
+                    <p className="text-[11px] text-success">Loja ativa</p>
+                  </div>
+                </div>
+              </SheetHeader>
+              <nav className="py-2">
+                {nav.map((n, idx) => {
+                  const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
+                  const Icon = n.icon;
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to as "/vendedor"}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-5 py-3.5 text-sm transition-colors",
+                        idx > 0 && "border-t border-border/60",
+                        active ? "bg-gold/10 text-gold font-semibold" : "text-foreground hover:bg-secondary",
+                      )}
+                    >
+                      <span className={cn("w-9 h-9 rounded-lg grid place-items-center shrink-0", active ? "bg-gold/20 text-gold" : "bg-secondary text-muted-foreground")}>
+                        <Icon className="w-4.5 h-4.5" />
+                      </span>
+                      <span className="flex-1">{n.label}</span>
+                      {n.soon && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-gold bg-gold/10 border border-gold/30 rounded-full px-2 py-0.5">
+                          em breve
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </SheetContent>
+          </Sheet>
+          <Link to="/vendedor" className="font-display text-lg tracking-[0.2em] text-gold">DERDALAX</Link>
+          <div className="ml-auto">
+            <SellerNotificationBell />
           </div>
         </div>
-        <nav className="flex md:flex-col gap-1 overflow-x-auto pt-2">
-          {nav.map((n) => {
-            const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
-            const Icon = n.icon;
-            return (
-              <Link
-                key={n.to}
-                to={n.to as "/vendedor"}
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-md text-sm whitespace-nowrap transition-colors",
-                  active ? "bg-ink text-gold" : "text-foreground hover:bg-secondary",
-                )}
-              >
-                <Icon className="w-4 h-4" /> {n.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
-      <section className="min-w-0">
-        <div className="flex items-center justify-end mb-3">
-          <SellerNotificationBell />
-        </div>
+      </header>
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 min-w-0">
         <Outlet />
       </section>
     </div>

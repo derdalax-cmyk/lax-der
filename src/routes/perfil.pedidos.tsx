@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CalendarDays, ChevronRight, Loader2, MessageCircle, Package, Phone, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
+import { paymentLabel } from "@/lib/paymentLabel";
 
 export const Route = createFileRoute("/perfil/pedidos")({
   validateSearch: (search: Record<string, unknown>): { novo?: string } => ({
@@ -220,7 +221,7 @@ function OrderDetails({ order, chatting, onChat }: { order: OrderHistory; chatti
             </div>
           ))}
         </section>
-        <section className="border-t border-border pt-4 space-y-1.5"><div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(Number(order.subtotal))}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Frete</span><span>{formatMZN(Number(order.shipping))}</span></div><div className="flex justify-between font-semibold text-base pt-2"><span>Total pago</span><span>{formatMZN(Number(order.total))}</span></div><p className="text-xs text-muted-foreground pt-2">Pagamento: {order.payment_method ?? "—"} · {order.payment_status ?? "pending"}</p></section>
+        <section className="border-t border-border pt-4 space-y-1.5"><div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(Number(order.subtotal))}</span></div><div className="flex justify-between"><span className="text-muted-foreground">Frete</span><span>{formatMZN(Number(order.shipping))}</span></div><div className="flex justify-between font-semibold text-base pt-2"><span>Total pago</span><span>{formatMZN(Number(order.total))}</span></div><p className="text-xs text-muted-foreground pt-2">Pagamento: {paymentLabel(order.payment_method, order.payment_status)}</p></section>
       </div>
     </>
   );

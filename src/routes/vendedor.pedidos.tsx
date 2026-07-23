@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { OrderChatPanel } from "@/components/OrderChatPanel";
+import { paymentLabel } from "@/lib/paymentLabel";
 
 export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,
@@ -309,7 +310,7 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
             <div className="flex justify-between"><span className="text-muted-foreground">Subtotal desta loja</span><span className="font-semibold">{mzn(Number(order.seller_total))}</span></div>
             {order.shipping != null && <div className="flex justify-between text-muted-foreground"><span>Envio (pedido total)</span><span>{mzn(Number(order.shipping))}</span></div>}
             {order.total != null && <div className="flex justify-between text-muted-foreground"><span>Total do pedido</span><span>{mzn(Number(order.total))}</span></div>}
-            <div className="flex justify-between text-muted-foreground"><span>Pagamento</span><span>{order.payment_method ?? "—"} · {order.payment_status}</span></div>
+            <div className="flex justify-between text-muted-foreground"><span>Pagamento</span><span>{paymentLabel(order.payment_method, order.payment_status)}</span></div>
             {order.payment_reference && <div className="flex justify-between text-muted-foreground"><span>Referência</span><span className="font-mono">{order.payment_reference}</span></div>}
           </div>
         </section>
