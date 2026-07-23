@@ -1,10 +1,10 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Package, Users, Shield, Star, Store, BarChart3, MessagesSquare, Tags } from "lucide-react";
+import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
-
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin · DERDALAX" }, { name: "description", content: "Painel administrativo." }] }),
@@ -13,20 +13,17 @@ export const Route = createFileRoute("/admin")({
 
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/vendedores", label: "Vendedores", icon: Store },
+  { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
-  { to: "/admin/categorias", label: "Categorias", icon: Tags },
-  { to: "/admin/categorias-destaque", label: "Destaques", icon: Star },
-  { to: "/admin/conversas", label: "Conversas", icon: MessagesSquare },
-  { to: "/admin/vendedores", label: "Vendedores", icon: Store, exact: true },
-  { to: "/admin/vendedores/dashboard", label: "Dash. Vendedores", icon: BarChart3 },
-  { to: "/admin/administradores", label: "Administradores", icon: Shield },
-  { to: "/admin/utilizadores", label: "Utilizadores", icon: Users },
+  { to: "/perfil", label: "Perfil", icon: UserCircle },
 ];
 
 function AdminLayout() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const loc = useLocation();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) navigate({ to: "/" });
@@ -35,35 +32,54 @@ function AdminLayout() {
   if (loading || !isAdmin) return null;
 
   return (
-    <div className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6">
-      <aside className="md:sticky md:top-20 md:self-start bg-card border border-border rounded-xl p-3">
-        <div className="px-3 py-2 text-xs uppercase tracking-wider text-muted-foreground">Painel</div>
-        <nav className="flex md:flex-col gap-1 overflow-x-auto">
-          {nav.map((n) => {
-            const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
-            const Icon = n.icon;
-            return (
-              <Link
-                key={n.to}
-                to={n.to as "/admin"}
-                className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-md text-sm whitespace-nowrap transition-colors",
-                  active ? "bg-ink text-gold" : "text-foreground hover:bg-secondary",
-                )}
-              >
-                <Icon className="w-4 h-4" /> {n.label}
-              </Link>
-            );
-          })}
-        </nav>
-      </aside>
-      <section className="min-w-0">
-        <div className="flex justify-end mb-2">
-          <NotificationBell />
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <button aria-label="Abrir menu" className="p-2 -ml-2 rounded-md hover:bg-secondary">
+                <Menu className="w-6 h-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[74vw] max-w-sm p-0">
+              <SheetHeader className="px-5 py-4 border-b border-border">
+                <SheetTitle className="font-display text-lg tracking-[0.2em] text-gold text-left">DERDALAX</SheetTitle>
+                <p className="text-xs text-muted-foreground text-left">Painel administrativo</p>
+              </SheetHeader>
+              <nav className="py-2">
+                {nav.map((n, idx) => {
+                  const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
+                  const Icon = n.icon;
+                  return (
+                    <Link
+                      key={n.to}
+                      to={n.to as "/admin"}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-5 py-3.5 text-sm transition-colors",
+                        idx > 0 && "border-t border-border/60",
+                        active ? "bg-gold/10 text-gold font-semibold" : "text-foreground hover:bg-secondary",
+                      )}
+                    >
+                      <span className={cn("w-9 h-9 rounded-lg grid place-items-center shrink-0", active ? "bg-gold/20 text-gold" : "bg-secondary text-muted-foreground")}>
+                        <Icon className="w-4.5 h-4.5" />
+                      </span>
+                      <span className="flex-1">{n.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </SheetContent>
+          </Sheet>
+          <Link to="/admin" className="font-display text-lg tracking-[0.2em] text-gold">DERDALAX</Link>
+          <div className="ml-auto">
+            <NotificationBell />
+          </div>
         </div>
+      </header>
+      <section className="max-w-[1500px] mx-auto px-4 sm:px-6 py-6 min-w-0">
         <Outlet />
       </section>
-
     </div>
   );
 }
