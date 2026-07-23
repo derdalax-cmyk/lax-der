@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { OrderChatPanel } from "@/components/OrderChatPanel";
+import { paymentLabel } from "@/lib/paymentLabel";
 
 export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,

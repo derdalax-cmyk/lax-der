@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/admin/StatusBadge";
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { OrderChatPanel } from "@/components/OrderChatPanel";
 import { cn } from "@/lib/utils";
+import { paymentLabel } from "@/lib/paymentLabel";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({ meta: [{ title: "Carrinho · DERDALAX" }, { name: "description", content: "O seu carrinho, pedidos em curso e histórico de compras." }] }),

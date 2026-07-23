@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CalendarDays, ChevronRight, Loader2, MessageCircle, Package, Phone, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
+import { paymentLabel } from "@/lib/paymentLabel";
 
 export const Route = createFileRoute("/perfil/pedidos")({
   validateSearch: (search: Record<string, unknown>): { novo?: string } => ({
