@@ -8,8 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Shield, LogOut, Pencil, Save, X, Phone, MapPin, Mail, Crown,
-  Heart, ShoppingBag, ChevronRight, FileText,
+  Shield,
+  LogOut,
+  Pencil,
+  Save,
+  X,
+  Phone,
+  MapPin,
+  Mail,
+  Crown,
+  Heart,
+  ShoppingBag,
+  ChevronRight,
+  FileText,
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { toast } from "sonner";
@@ -30,17 +41,15 @@ function Perfil() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", city: "" });
 
-  useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/login" });
+  }, [user, loading, navigate]);
 
   const { data: full, refetch } = useQuery({
     queryKey: ["my-profile-extra", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_vip, created_at")
-        .eq("id", user!.id)
-        .maybeSingle();
+      const { data } = await supabase.from("profiles").select("is_vip, created_at").eq("id", user!.id).maybeSingle();
       return data;
     },
   });
@@ -59,7 +68,10 @@ function Perfil() {
     setSaving(true);
     const { error } = await supabase.from("profiles").update(form).eq("id", user.id);
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Perfil atualizado");
     setEditing(false);
     await refreshProfile();
@@ -125,10 +137,8 @@ function Perfil() {
               <ChevronRight className="w-5 h-5 text-gold group-hover:translate-x-1 transition-transform" />
             </Link>
           )}
-
         </div>
       </div>
-
 
       {/* Personal data */}
       <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
@@ -154,15 +164,27 @@ function Perfil() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <Label className="text-xs">Nome completo</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="O seu nome" />
+              <Input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="O seu nome"
+              />
             </div>
             <div>
               <Label className="text-xs">Telefone</Label>
-              <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+258 84 000 0000" />
+              <Input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="+258 84 000 0000"
+              />
             </div>
             <div>
               <Label className="text-xs">Cidade</Label>
-              <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Ex: Maputo" />
+              <Input
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+                placeholder="Ex: Maputo"
+              />
             </div>
           </div>
         ) : (
@@ -176,7 +198,10 @@ function Perfil() {
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-        <Link to="/favoritos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
+        <Link
+          to="/favoritos"
+          className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+        >
           <span className="flex items-center gap-3">
             <span className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
               <Heart className="w-5 h-5 text-[#c44545]" />
@@ -185,7 +210,10 @@ function Perfil() {
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
-        <Link to="/perfil/pedidos" className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors">
+        <Link
+          to="/perfil/pedidos"
+          className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+        >
           <span className="flex items-center gap-3">
             <span className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-emerald-600" />
@@ -221,24 +249,27 @@ function Perfil() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Siga-nos</div>
           <div className="flex items-center gap-3">
             <a
-              href="https://instagram.com/derdalax"
-              target="_blank" rel="noopener noreferrer"
+              href="https://www.instagram.com/derdalax?igsh=MTRzYW9oNDR3NHIyMA=="
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
               <img src={instagramAsset.url} alt="Instagram" className="w-full h-full object-cover" />
             </a>
             <a
-              href="https://facebook.com/derdalax"
-              target="_blank" rel="noopener noreferrer"
+              href="https://www.facebook.com/share/1A9mauCsro/"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Facebook"
               className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
               <img src={facebookAsset.url} alt="Facebook" className="w-full h-full object-cover" />
             </a>
             <a
-              href="https://wa.me/258846023085"
-              target="_blank" rel="noopener noreferrer"
+              href="https://wa.me/258853529033"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="WhatsApp"
               className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
             >
