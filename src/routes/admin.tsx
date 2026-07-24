@@ -47,12 +47,12 @@ function AdminLayout() {
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[74vw] max-w-sm p-0">
-              <SheetHeader className="px-5 py-4 border-b border-border">
+            <SheetContent side="left" className="w-[74vw] max-w-sm p-0 flex flex-col">
+              <SheetHeader className="px-5 py-4 border-b border-border shrink-0">
                 <SheetTitle className="font-display text-lg tracking-[0.2em] text-gold text-left">DERDALAX</SheetTitle>
                 <p className="text-xs text-muted-foreground text-left">Painel administrativo</p>
               </SheetHeader>
-              <nav className="py-2">
+              <nav className="flex-1 overflow-y-auto py-1">
                 {nav.map((n, idx) => {
                   const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
                   const Icon = n.icon;
@@ -62,13 +62,13 @@ function AdminLayout() {
                       to={n.to as "/admin"}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 px-5 py-3.5 text-sm transition-colors",
+                        "flex items-center gap-3 px-5 py-2 text-sm transition-colors",
                         idx > 0 && "border-t border-border/60",
                         active ? "bg-gold/10 text-gold font-semibold" : "text-foreground hover:bg-secondary",
                       )}
                     >
-                      <span className={cn("w-9 h-9 rounded-lg grid place-items-center shrink-0", active ? "bg-gold/20 text-gold" : "bg-secondary text-muted-foreground")}>
-                        <Icon className="w-4.5 h-4.5" />
+                      <span className={cn("w-8 h-8 rounded-lg grid place-items-center shrink-0", active ? "bg-gold/20 text-gold" : "bg-secondary text-muted-foreground")}>
+                        <Icon className="w-4 h-4" />
                       </span>
                       <span className="flex-1">{n.label}</span>
                     </Link>
