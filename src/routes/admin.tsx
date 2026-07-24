@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu } from "lucide-react";
+import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, ShieldCheck, BarChart3, FolderTree, Sparkles, MessagesSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -13,9 +13,15 @@ export const Route = createFileRoute("/admin")({
 
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/utilizadores", label: "Utilizadores", icon: Users },
+  { to: "/admin/administradores", label: "Administradores", icon: ShieldCheck },
   { to: "/admin/vendedores", label: "Vendedores", icon: Store },
-  { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
+  { to: "/admin/vendedores/dashboard", label: "Dashboard de Vendedores", icon: BarChart3 },
+  { to: "/admin/categorias", label: "Categorias", icon: FolderTree },
+  { to: "/admin/categorias-destaque", label: "Categorias em Destaque", icon: Sparkles },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
+  { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
+  { to: "/admin/conversas", label: "Conversas", icon: MessagesSquare },
   { to: "/perfil", label: "Perfil", icon: UserCircle },
 ];
 
