@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Download, X, Share } from "lucide-react";
+import { Download, X, Share, Zap, Bell, Smartphone, WifiOff, ChevronUp } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -12,7 +12,6 @@ function isStandalone() {
   if (typeof window === "undefined") return false;
   return (
     window.matchMedia("(display-mode: standalone)").matches ||
-    // iOS Safari
     (window.navigator as unknown as { standalone?: boolean }).standalone === true
   );
 }
@@ -25,6 +24,7 @@ function isIOS() {
 export function InstallAppPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [showIosHelp, setShowIosHelp] = useState(false);
 
   useEffect(() => {
@@ -41,7 +41,6 @@ export function InstallAppPrompt() {
     const onInstalled = () => setVisible(false);
     window.addEventListener("appinstalled", onInstalled);
 
-    // iOS doesn't fire beforeinstallprompt — show manual hint
     if (isIOS()) setVisible(true);
 
     return () => {
@@ -73,16 +72,25 @@ export function InstallAppPrompt() {
 
   if (!visible) return null;
 
+  const benefits = [
+    { icon: Zap, text: "Mais rápido — abre num instante, sem browser" },
+    { icon: WifiOff, text: "Funciona mesmo com internet fraca" },
+    { icon: Bell, text: "Receba avisos de pedidos e novidades" },
+    { icon: Smartphone, text: "Atalho direto no ecrã inicial" },
+  ];
+
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 pointer-events-none">
       <div className="mx-auto max-w-md pointer-events-auto rounded-2xl border border-gold/30 bg-ink text-white shadow-elegant overflow-hidden">
         <div className="flex items-center gap-3 p-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold font-display text-2xl">
-            D
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold font-display text-2xl overflow-hidden">
+            <img src="/icon-192.png" alt="DERDALAX" className="h-full w-full object-cover" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-display text-sm leading-tight">Instalar app DERDALAX</p>
-            <p className="text-xs text-white/60 truncate">Acesso rápido, direto do ecrã inicial.</p>
+            <p className="text-xs text-white/60 truncate">
+              {expanded ? "Toque em Instalar para adicionar ao ecrã inicial." : "Mais rápido, offline e com notificações."}
+            </p>
           </div>
           <button
             onClick={install}
@@ -98,11 +106,31 @@ export function InstallAppPrompt() {
             <X className="h-4 w-4" />
           </button>
         </div>
+
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="w-full flex items-center justify-center gap-1 text-[11px] uppercase tracking-wider text-white/50 hover:text-gold py-1.5 border-t border-white/5 transition-colors"
+        >
+          {expanded ? "Ocultar detalhes" : "Porquê instalar?"}
+          <ChevronUp className={`h-3 w-3 transition-transform ${expanded ? "" : "rotate-180"}`} />
+        </button>
+
+        {expanded && (
+          <ul className="border-t border-white/10 px-4 py-3 space-y-2.5">
+            {benefits.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-start gap-2.5 text-xs text-white/80">
+                <Icon className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                <span>{text}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
         {showIosHelp && (
           <div className="border-t border-white/10 px-4 py-3 text-xs text-white/70">
             No iPhone/iPad: toque em{" "}
             <Share className="inline h-3.5 w-3.5 align-text-bottom text-gold" /> (Partilhar) e
-            escolha <span className="text-white">“Adicionar ao ecrã principal”</span>.
+            escolha <span className="text-white">"Adicionar ao ecrã principal"</span>.
           </div>
         )}
       </div>
