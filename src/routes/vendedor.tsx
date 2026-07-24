@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tansta
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSeller } from "@/hooks/useSeller";
-import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, CalendarClock, MessageSquare, Menu } from "lucide-react";
+import { LayoutDashboard, Package, Store, Clock, Loader2, ChevronRight, ShoppingBag, CalendarClock, MessageSquare, Menu, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SellerNotificationBell } from "@/components/vendedor/SellerNotificationBell";
@@ -18,6 +18,7 @@ const nav: NavItem[] = [
   { to: "/vendedor", label: "Painel", icon: LayoutDashboard, exact: true },
   { to: "/vendedor/produtos", label: "Produtos", icon: Package },
   { to: "/vendedor/pedidos", label: "Pedidos", icon: ShoppingBag },
+  { to: "/vendedor/destaques", label: "Destaques", icon: Sparkles },
   { to: "/vendedor/mensalidade", label: "Mensalidade", icon: CalendarClock, soon: true },
   { to: "/mensagens", label: "Mensagens", icon: MessageSquare },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
