@@ -6,7 +6,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "pwa-install-dismissed";
+const DISMISS_KEY = "pwa-install-dismissed-session";
 
 function isStandalone() {
   if (typeof window === "undefined") return false;
