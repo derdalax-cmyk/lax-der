@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_META } from "@/lib/categories";
+import { CategoryIcon } from "@/lib/categoryIcons";
 import { Search, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -96,7 +97,7 @@ function ExplorarPage() {
           <SelectTrigger className="sm:w-44"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {CATEGORY_META.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.icon} {c.label}</SelectItem>)}
+            {CATEGORY_META.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>

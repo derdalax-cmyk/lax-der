@@ -188,7 +188,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       await persistAdd(productId, variationId, 1);
       await refresh();
-      toast.success("✅ Peça reservada por 15 minutos");
+      toast.success("Peça reservada por 15 minutos");
       return true;
     }
 

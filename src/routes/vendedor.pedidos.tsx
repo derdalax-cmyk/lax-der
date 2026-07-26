@@ -359,7 +359,7 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
           {stage === "done" && (
             <div className="w-full">
               <div className={cn("rounded-lg border px-4 py-3 text-sm font-medium", currentStatus === "cancelled" ? "bg-destructive/10 text-destructive border-destructive/30" : "bg-success/10 text-success border-success/30")}>
-                {currentStatus === "cancelled" ? "Este pedido foi rejeitado." : "Venda confirmada com sucesso 🎉"}
+                {currentStatus === "cancelled" ? "Este pedido foi rejeitado." : "Venda confirmada com sucesso."}
               </div>
             </div>
           )}

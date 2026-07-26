@@ -161,12 +161,12 @@ function OrdersHistoryPage() {
       <Dialog open={tourOpen} onOpenChange={(open) => !open && dismissTour()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-2xl">📦 Acompanhe os seus pedidos</DialogTitle>
+            <DialogTitle className="font-display text-2xl">Acompanhe os seus pedidos</DialogTitle>
             <DialogDescription>Aqui está o histórico de todas as suas compras na DERDALAX.</DialogDescription>
           </DialogHeader>
           <div className="text-sm space-y-3">
             <p>Em cada pedido, pode:</p>
-            <ul className="space-y-1.5"><li>✅ Ver os detalhes da compra</li><li>✅ Conversar com o vendedor da loja</li><li>✅ Obter o número de contacto do vendedor</li><li>✅ Acompanhar o status da entrega</li></ul>
+            <ul className="space-y-1.5"><li>Ver os detalhes da compra</li><li>Conversar com o vendedor da loja</li><li>Obter o número de contacto do vendedor</li><li>Acompanhar o status da entrega</li></ul>
             <p className="text-muted-foreground">Se tiver dúvidas, fale diretamente com o vendedor através do chat.</p>
           </div>
           <Button onClick={dismissTour} className="bg-gold text-ink hover:bg-gold/90">Entendi, vamos começar!</Button>

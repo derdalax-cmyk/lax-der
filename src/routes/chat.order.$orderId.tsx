@@ -30,7 +30,7 @@ function OrderChatRedirect() {
           const { error } = await supabase.from("messages").insert({
             conversation_id: id,
             sender_id: user.id,
-            body: `Olá! 👋\n\nAcabei de fazer um pedido na sua loja (Pedido #${orderId.slice(0, 8).toUpperCase()}).\nAguardo informações sobre o envio. Obrigado!`,
+            body: `Olá!\n\nAcabei de fazer um pedido na sua loja (Pedido #${orderId.slice(0, 8).toUpperCase()}).\nAguardo informações sobre o envio. Obrigado!`,
           });
           if (error) throw error;
         }

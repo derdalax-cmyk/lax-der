@@ -106,7 +106,7 @@ function Home() {
 
         <div className="relative max-w-[1400px] mx-auto px-5 py-14 md:py-24 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/40 text-gold text-xs uppercase tracking-widest mb-5 animate-fade-in">
-            <Sparkles className="w-3.5 h-3.5" /> Nova coleção
+            Nova coleção
           </div>
           <h1 className="font-display text-3xl sm:text-4xl md:text-6xl leading-[1.05] mb-4 text-white animate-fade-in">
             Moda com <span className="text-gold italic">história</span>, estilo com futuro.
@@ -133,7 +133,6 @@ function Home() {
           <div className="pt-8">
             <ProductCarousel
               title="Destaques da semana"
-              icon="⭐"
               products={featured}
               seeMoreTo="/explorar"
               seeMoreLabel="Ver tudo"
@@ -159,7 +158,7 @@ function Home() {
         <div className="max-w-[1400px] mx-auto px-5 grid md:grid-cols-3 gap-8">
           {[
             { icon: Truck, title: "Entrega rápida", desc: "Em todas as principais cidades de Moçambique." },
-            { icon: ShieldCheck, title: "Pagamento seguro", desc: "e-Mpesa e e-Mola integrados." },
+            { icon: ShieldCheck, title: "Pagamento flexível", desc: "Combine com o vendedor via chat ou pague na entrega." },
             { icon: Sparkles, title: "Peças únicas", desc: "Coleções limitadas que ninguém mais terá." },
           ].map((f) => (
             <div key={f.title} className="flex gap-4 items-start">
