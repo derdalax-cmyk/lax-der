@@ -6,7 +6,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "pwa-install-dismissed";
+const DISMISS_KEY = "pwa-install-dismissed-session";
 
 function isStandalone() {
   if (typeof window === "undefined") return false;
@@ -29,7 +29,7 @@ export function InstallAppPrompt() {
 
   useEffect(() => {
     if (isStandalone()) return;
-    if (typeof window !== "undefined" && localStorage.getItem(DISMISS_KEY) === "1") return;
+    if (typeof window !== "undefined" && sessionStorage.getItem(DISMISS_KEY) === "1") return;
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
@@ -53,7 +53,7 @@ export function InstallAppPrompt() {
     setVisible(false);
     setShowIosHelp(false);
     try {
-      localStorage.setItem(DISMISS_KEY, "1");
+      sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
       /* ignore */
     }
