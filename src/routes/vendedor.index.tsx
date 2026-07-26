@@ -78,7 +78,7 @@ function SellerDashboard() {
     { label: "Faturamento do mês", value: mzn(dash?.month_revenue ?? 0), icon: TrendingUp, cls: "bg-green/10 text-green" },
     { label: "Pedidos do mês", value: dash?.month_orders ?? 0, icon: ShoppingBag, cls: "bg-ink/5 text-ink" },
     { label: "Pedidos pendentes", value: dash?.pending_orders ?? 0, icon: Clock, cls: "bg-gold/15 text-gold" },
-    { label: "Avaliação", value: dash?.avg_rating ? `${Number(dash.avg_rating).toFixed(1)} ★` : "—", icon: Star, cls: "bg-gold/15 text-gold" },
+    { label: "Avaliação", value: dash?.avg_rating ? `${Number(dash.avg_rating).toFixed(1)}` : "—", icon: Star, cls: "bg-gold/15 text-gold" },
     { label: "Produtos ativos", value: `${approved}/${total}`, icon: Package, cls: "bg-success/10 text-success" },
   ];
 
@@ -86,7 +86,7 @@ function SellerDashboard() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
-          <h1 className="font-display text-3xl">Olá, {seller?.full_name?.split(" ")[0] ?? "vendedor"} 👋</h1>
+          <h1 className="font-display text-3xl">Olá, {seller?.full_name?.split(" ")[0] ?? "vendedor"}</h1>
           <p className="text-sm text-muted-foreground">Visão geral da sua loja <strong>{seller?.store_name}</strong>.</p>
         </div>
         <Button asChild className="bg-gold text-ink hover:bg-gold/90">

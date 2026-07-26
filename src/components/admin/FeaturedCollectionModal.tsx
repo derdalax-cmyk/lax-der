@@ -442,7 +442,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
                       className={cn("px-3 py-1.5 rounded-full border text-xs font-medium transition-colors",
                         hidden ? "border-destructive bg-destructive/10 text-destructive" : "border-border hover:bg-secondary")}
                     >
-                      {hidden ? "🚫 " : ""}{s.store_name}
+                      {hidden ? "Oculto: " : ""}{s.store_name}
                     </button>
                   );
                 })}

@@ -246,11 +246,11 @@ function ProdutoDetalhe() {
             {Number(product.shipping_fee ?? 0) > 0 ? (
               <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-green font-medium">🚚 Frete Grátis</span>
+              <span className="inline-flex items-center gap-1 text-green font-medium">Frete Grátis</span>
             )}
           </p>
           {reservedByOther && (
-            <p className="mt-2 text-sm text-destructive font-medium">🔴 Indisponível temporariamente — reservado por outro cliente.</p>
+            <p className="mt-2 text-sm text-destructive font-medium">Indisponível temporariamente — reservado por outro cliente.</p>
           )}
           {reservedByMe && product.reserved_until && (
             <p className="mt-2 text-sm text-gold font-medium">
