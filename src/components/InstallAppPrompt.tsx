@@ -29,7 +29,7 @@ export function InstallAppPrompt() {
 
   useEffect(() => {
     if (isStandalone()) return;
-    if (typeof window !== "undefined" && localStorage.getItem(DISMISS_KEY) === "1") return;
+    if (typeof window !== "undefined" && sessionStorage.getItem(DISMISS_KEY) === "1") return;
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
