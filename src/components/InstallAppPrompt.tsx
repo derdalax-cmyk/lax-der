@@ -53,7 +53,7 @@ export function InstallAppPrompt() {
     setVisible(false);
     setShowIosHelp(false);
     try {
-      localStorage.setItem(DISMISS_KEY, "1");
+      sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
       /* ignore */
     }
