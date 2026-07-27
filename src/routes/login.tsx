@@ -88,9 +88,11 @@ function LoginPage() {
     setBusy(true);
     try {
       if (tab === "signup") {
+        if (!acceptedTerms) { toast.error("É necessário aceitar os Termos e Condições para criar uma conta"); setBusy(false); return; }
         if (password !== confirm) { toast.error("As senhas não coincidem"); setBusy(false); return; }
         const parsed = signupSchema.safeParse({ name, email, phone, city, password });
         if (!parsed.success) { toast.error(parsed.error.issues[0].message); setBusy(false); return; }
+
 
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(), password,
