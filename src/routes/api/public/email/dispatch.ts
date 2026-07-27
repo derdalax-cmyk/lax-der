@@ -40,7 +40,15 @@ function renderEmail(title: string, body: string, linkUrl: string) {
 </body></html>`;
 }
 
-const ALLOWED_TYPES = new Set(["order", "order_status", "new_seller"]);
+const ALLOWED_TYPES = new Set([
+  "order",
+  "order_status",
+  "new_seller",
+  "welcome",
+  "seller_pending",
+  "seller_approved",
+  "report",
+]);
 
 export const Route = createFileRoute("/api/public/email/dispatch")({
   server: {
@@ -83,8 +91,13 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
 
         const rawPrefs = (profile as { notification_preferences?: unknown } | null)?.notification_preferences;
         const prefs = (rawPrefs && typeof rawPrefs === "object" ? rawPrefs : {}) as {
+          email_enabled?: boolean;
           email?: Record<string, boolean>;
         };
+        // New shape: single email_enabled flag. Legacy shape kept as compat.
+        if (prefs.email_enabled === false) {
+          return Response.json({ skipped: "email_disabled" });
+        }
         if (prefs.email && prefs.email[type] === false) {
           return Response.json({ skipped: "pref_off" });
         }
