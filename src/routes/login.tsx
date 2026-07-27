@@ -69,6 +69,7 @@ function LoginPage() {
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
