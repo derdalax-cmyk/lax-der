@@ -123,6 +123,7 @@ function CheckoutPage() {
   const handleSubmit = async () => {
     if (!user) return;
     if (!canSubmit) { toast.error("Preencha todos os campos obrigatórios"); return; }
+    if (!acceptedTerms) { toast.error("É necessário aceitar os Termos e Condições para concluir o pedido"); return; }
     setSubmitting(true);
     try {
       const reference = genReference();
