@@ -11,6 +11,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { isValidMzPhone } from "@/lib/validation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
