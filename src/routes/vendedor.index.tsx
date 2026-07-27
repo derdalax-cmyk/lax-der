@@ -8,6 +8,7 @@ import {
 
 
 import { Button } from "@/components/ui/button";
+import { PushNotificationBanner } from "@/components/PushNotificationBanner";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
@@ -84,6 +85,7 @@ function SellerDashboard() {
 
   return (
     <div>
+      <PushNotificationBanner />
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="font-display text-3xl">Olá, {seller?.full_name?.split(" ")[0] ?? "vendedor"}</h1>

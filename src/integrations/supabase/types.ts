@@ -851,6 +851,36 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          keys: Json
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          keys: Json
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          keys?: Json
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       seller_reviews: {
         Row: {
           comment: string | null
@@ -1241,6 +1271,16 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      notify_push: {
+        Args: {
+          _body: string
+          _tag: string
+          _title: string
+          _url: string
+          _user_id: string
+        }
+        Returns: undefined
       }
       open_support_thread: { Args: never; Returns: string }
       promote_next_in_queue: {

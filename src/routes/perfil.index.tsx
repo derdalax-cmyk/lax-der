@@ -23,6 +23,7 @@ import {
   FileText,
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
+import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
@@ -227,6 +228,7 @@ function Perfil() {
       {/* Sobre a DERDALAX */}
       <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
         <h2 className="font-display text-lg font-semibold mb-5">Sobre a DERDALAX</h2>
+        <PushSettingsRow />
 
         <PoliciesDialog
           trigger={
