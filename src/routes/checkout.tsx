@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
@@ -44,6 +46,7 @@ function CheckoutPage() {
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [contact, setContact] = useState<Contact>({ name: "", email: "", phone: "" });
   const [address, setAddress] = useState<Address>({
@@ -120,6 +123,7 @@ function CheckoutPage() {
   const handleSubmit = async () => {
     if (!user) return;
     if (!canSubmit) { toast.error("Preencha todos os campos obrigatórios"); return; }
+    if (!acceptedTerms) { toast.error("É necessário aceitar os Termos e Condições para concluir o pedido"); return; }
     setSubmitting(true);
     try {
       const reference = genReference();
@@ -339,9 +343,20 @@ function CheckoutPage() {
                 <Textarea id="notes" rows={2} placeholder="Instruções para entrega…" />
               </div>
 
+              <label className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer pt-1">
+                <Checkbox
+                  checked={acceptedTerms}
+                  onCheckedChange={(v) => setAcceptedTerms(!!v)}
+                  className="mt-0.5"
+                />
+                <span>
+                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da DERDALAX.
+                </span>
+              </label>
+
               <div className="flex justify-between pt-2">
                 <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}><ChevronLeft className="w-4 h-4 mr-1" /> Voltar</Button>
-                <Button disabled={!canSubmit || submitting} onClick={handleSubmit} className="bg-gold text-ink hover:bg-gold/90 min-w-[180px]">
+                <Button disabled={!canSubmit || submitting || !acceptedTerms} onClick={handleSubmit} className="bg-gold text-ink hover:bg-gold/90 min-w-[180px]">
                   {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A processar…</> : <>Confirmar pedido</>}
                 </Button>
               </div>

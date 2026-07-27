@@ -23,8 +23,18 @@ function renderEmail(title: string, body: string, linkUrl: string) {
       <p style="color:#4a4a4a;font-size:15px;line-height:1.6;margin:0 0 26px">${safeBody}</p>
       <a href="${linkUrl}" style="display:inline-block;background:#0a0a0a;color:#e4b363;text-decoration:none;padding:13px 30px;border-radius:999px;font-weight:600;letter-spacing:1px;font-size:13px">Abrir DERDALAX</a>
     </div>
-    <div style="padding:18px;text-align:center;color:#8a8a8a;font-size:11px;border-top:1px solid #eee">
-      DERDALAX · <a href="https://derdalax.co.mz" style="color:#8a8a8a;text-decoration:none">derdalax.co.mz</a>
+    <div style="padding:20px 18px;text-align:center;color:#8a8a8a;font-size:11px;line-height:1.6;border-top:1px solid #eee;background:#faf9f6">
+      <div style="font-family:'Playfair Display',Georgia,serif;color:#0a0a0a;letter-spacing:4px;font-size:14px;margin-bottom:4px">DERDALAX</div>
+      <div>Moda e estilo, feitos em Moçambique.</div>
+      <div style="margin-top:8px">
+        <a href="https://derdalax.co.mz/suporte" style="color:#8a8a8a;text-decoration:underline">Termos e Condições</a>
+        &middot;
+        <a href="https://derdalax.co.mz/suporte" style="color:#8a8a8a;text-decoration:underline">Política de Privacidade</a>
+      </div>
+      <div style="margin-top:6px">
+        Dúvidas? Responda este email ou escreva para
+        <a href="mailto:suporte@derdalax.co.mz" style="color:#8a8a8a;text-decoration:underline">suporte@derdalax.co.mz</a>
+      </div>
     </div>
   </div>
 </body></html>`;
@@ -98,6 +108,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             message_id: messageId,
             to: email,
             from: "DERDALAX <noreply@derdalax.co.mz>",
+            reply_to: "suporte@derdalax.co.mz",
             sender_domain: "notify.derdalax.co.mz",
             subject: title,
             html,

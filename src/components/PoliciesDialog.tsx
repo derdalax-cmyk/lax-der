@@ -1,18 +1,31 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import { POLICIES, type Policy } from "@/lib/policies";
 
-export function PoliciesDialog({ trigger }: { trigger: ReactNode }) {
+export function PoliciesDialog({
+  trigger,
+  initialSlug,
+}: {
+  trigger: ReactNode;
+  initialSlug?: string;
+}) {
+  const initial = initialSlug ? POLICIES.find((p) => p.slug === initialSlug) ?? null : null;
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Policy | null>(null);
+  const [selected, setSelected] = useState<Policy | null>(initial);
+
+  useEffect(() => {
+    if (open && initialSlug) {
+      setSelected(POLICIES.find((x) => x.slug === initialSlug) ?? null);
+    }
+  }, [open, initialSlug]);
 
   return (
     <Dialog
       open={open}
       onOpenChange={(v) => {
         setOpen(v);
-        if (!v) setTimeout(() => setSelected(null), 150);
+        if (!v) setTimeout(() => setSelected(initial), 150);
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>

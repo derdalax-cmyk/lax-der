@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { TermsLink } from "@/components/TermsLink";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Store, Rocket, Smartphone, BadgePercent, Truck, CheckCircle2, Clock,
@@ -486,7 +487,7 @@ function TornarSeVendedor() {
             <label className="flex items-start gap-3 text-sm cursor-pointer">
               <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(!!v)} className="mt-0.5" />
               <span className="text-muted-foreground">
-                Li e aceito os <Link to="/suporte" className="text-gold underline underline-offset-2">termos e políticas</Link> da DERDALAX.
+                Li e aceito os <TermsLink /> da DERDALAX.
               </span>
             </label>
           </div>

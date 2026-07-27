@@ -11,6 +11,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { isValidMzPhone } from "@/lib/validation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -67,6 +69,7 @@ function LoginPage() {
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -85,9 +88,11 @@ function LoginPage() {
     setBusy(true);
     try {
       if (tab === "signup") {
+        if (!acceptedTerms) { toast.error("É necessário aceitar os Termos e Condições para criar uma conta"); setBusy(false); return; }
         if (password !== confirm) { toast.error("As senhas não coincidem"); setBusy(false); return; }
         const parsed = signupSchema.safeParse({ name, email, phone, city, password });
         if (!parsed.success) { toast.error(parsed.error.issues[0].message); setBusy(false); return; }
+
 
         const { data, error } = await supabase.auth.signUp({
           email: email.trim(), password,
@@ -127,11 +132,14 @@ function LoginPage() {
           <p className="text-sm text-muted-foreground mt-1">Bem-vindo de volta</p>
         </div>
 
-        <div className="space-y-3 mb-6">
+        <div className="space-y-3 mb-3">
           <Button type="button" variant="outline" className="w-full" disabled={busy} onClick={() => oauth("google")}>
             <GoogleIcon /> <span className="ml-2">Continuar com Google</span>
           </Button>
         </div>
+        <p className="text-[11px] text-muted-foreground text-center leading-relaxed mb-3">
+          Ao continuar, você aceita os <TermsLink className="text-gold underline underline-offset-2" /> e a <PrivacyLink className="text-gold underline underline-offset-2" /> da DERDALAX.
+        </p>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
@@ -178,7 +186,17 @@ function LoginPage() {
                   <p className="text-xs text-destructive mt-1">As senhas não coincidem</p>
                 )}
               </div>
-              <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy}>
+              <label className="flex items-start gap-2 text-xs text-muted-foreground pt-1 cursor-pointer">
+                <Checkbox
+                  checked={acceptedTerms}
+                  onCheckedChange={(v) => setAcceptedTerms(!!v)}
+                  className="mt-0.5"
+                />
+                <span>
+                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da DERDALAX.
+                </span>
+              </label>
+              <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy || !acceptedTerms}>
                 {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A criar...</> : "Criar conta"}
               </Button>
             </form>
