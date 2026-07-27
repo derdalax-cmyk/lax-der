@@ -186,13 +186,13 @@ export function BrandLayout({
             <Text style={brand.footerBrand}>DERDALAX</Text>
             <Text style={brand.footerTagline}>Moda e estilo, feitos em Moçambique.</Text>
             <Text style={{ ...brand.footerTagline, marginTop: '10px' }}>
-              <a href="https://derdalax.co.mz/suporte" style={{ color: '#8a8a8a', textDecoration: 'underline' }}>Termos e Condições</a>
+              <a href="https://derdalax.co.mz/politicas/termos-condicoes" style={{ color: '#e4b363', textDecoration: 'underline', fontWeight: 600 }}>Termos e Condições</a>
               {' · '}
-              <a href="https://derdalax.co.mz/suporte" style={{ color: '#8a8a8a', textDecoration: 'underline' }}>Política de Privacidade</a>
+              <a href="https://derdalax.co.mz/politicas/privacidade-dados" style={{ color: '#e4b363', textDecoration: 'underline', fontWeight: 600 }}>Política de Privacidade</a>
             </Text>
             <Text style={{ ...brand.footerTagline, marginTop: '8px' }}>
               Dúvidas? Responda este email ou escreva para{' '}
-              <a href="mailto:suporte@derdalax.co.mz" style={{ color: '#8a8a8a', textDecoration: 'underline' }}>suporte@derdalax.co.mz</a>
+              <a href="mailto:suporte@derdalax.co.mz" style={{ color: '#e4b363', textDecoration: 'underline', fontWeight: 600 }}>suporte@derdalax.co.mz</a>
             </Text>
           </Section>
         </Container>
