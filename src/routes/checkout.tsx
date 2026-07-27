@@ -46,6 +46,7 @@ function CheckoutPage() {
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const [contact, setContact] = useState<Contact>({ name: "", email: "", phone: "" });
   const [address, setAddress] = useState<Address>({
