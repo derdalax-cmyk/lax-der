@@ -230,6 +230,7 @@ function Perfil() {
       <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
         <h2 className="font-display text-lg font-semibold mb-5">Sobre a DERDALAX</h2>
         <PushSettingsRow />
+        <NotificationPreferences />
 
         <PoliciesDialog
           trigger={
