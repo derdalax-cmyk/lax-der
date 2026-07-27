@@ -32,6 +32,7 @@ import { Route as VendedorMensalidadeRouteImport } from './routes/vendedor.mensa
 import { Route as VendedorLojaRouteImport } from './routes/vendedor.loja'
 import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
+import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
@@ -167,6 +168,11 @@ const ProdutoIdRoute = ProdutoIdRouteImport.update({
   path: '/produto/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PoliticasSlugRoute = PoliticasSlugRouteImport.update({
+  id: '/politicas/$slug',
+  path: '/politicas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerfilPedidosRoute = PerfilPedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -292,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
@@ -378,6 +386,7 @@ export interface FileRoutesById {
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/loja': typeof VendedorLojaRoute
@@ -424,6 +433,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
     | '/vendedor/loja'
@@ -465,6 +475,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
     | '/vendedor/loja'
@@ -509,6 +520,7 @@ export interface FileRouteTypes {
     | '/pedido/$id'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
     | '/vendedor/loja'
@@ -544,6 +556,7 @@ export interface RootRouteChildren {
   VendedorRoute: typeof VendedorRouteWithChildren
   LojaIdRoute: typeof LojaIdRoute
   PedidoIdRoute: typeof PedidoIdRoute
+  PoliticasSlugRoute: typeof PoliticasSlugRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
@@ -714,6 +727,13 @@ declare module '@tanstack/react-router' {
       path: '/produto/$id'
       fullPath: '/produto/$id'
       preLoaderRoute: typeof ProdutoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politicas/$slug': {
+      id: '/politicas/$slug'
+      path: '/politicas/$slug'
+      fullPath: '/politicas/$slug'
+      preLoaderRoute: typeof PoliticasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil/pedidos': {
@@ -934,6 +954,7 @@ const rootRouteChildren: RootRouteChildren = {
   VendedorRoute: VendedorRouteWithChildren,
   LojaIdRoute: LojaIdRoute,
   PedidoIdRoute: PedidoIdRoute,
+  PoliticasSlugRoute: PoliticasSlugRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,

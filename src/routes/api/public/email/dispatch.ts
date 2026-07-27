@@ -27,13 +27,13 @@ function renderEmail(title: string, body: string, linkUrl: string) {
       <div style="font-family:'Playfair Display',Georgia,serif;color:#0a0a0a;letter-spacing:4px;font-size:14px;margin-bottom:4px">DERDALAX</div>
       <div>Moda e estilo, feitos em Moçambique.</div>
       <div style="margin-top:8px">
-        <a href="https://derdalax.co.mz/suporte" style="color:#8a8a8a;text-decoration:underline">Termos e Condições</a>
+        <a href="https://derdalax.co.mz/politicas/termos-condicoes" style="color:#e4b363;text-decoration:underline;font-weight:600">Termos e Condições</a>
         &middot;
-        <a href="https://derdalax.co.mz/suporte" style="color:#8a8a8a;text-decoration:underline">Política de Privacidade</a>
+        <a href="https://derdalax.co.mz/politicas/privacidade-dados" style="color:#e4b363;text-decoration:underline;font-weight:600">Política de Privacidade</a>
       </div>
       <div style="margin-top:6px">
         Dúvidas? Responda este email ou escreva para
-        <a href="mailto:suporte@derdalax.co.mz" style="color:#8a8a8a;text-decoration:underline">suporte@derdalax.co.mz</a>
+        <a href="mailto:suporte@derdalax.co.mz" style="color:#e4b363;text-decoration:underline;font-weight:600">suporte@derdalax.co.mz</a>
       </div>
     </div>
   </div>
