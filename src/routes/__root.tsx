@@ -131,6 +131,7 @@ function AppShell() {
       <BottomNav />
       <ProfileCompletionModal />
       <InstallAppPrompt />
+      <PushAutoPrompt />
       <Toaster richColors position="top-right" />
     </div>
   );
