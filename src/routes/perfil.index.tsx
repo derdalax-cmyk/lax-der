@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
+import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
