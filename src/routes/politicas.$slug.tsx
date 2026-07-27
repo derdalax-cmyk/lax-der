@@ -27,7 +27,7 @@ export const Route = createFileRoute("/politicas/$slug")({
 });
 
 function PolicyPage() {
-  const { policy } = Route.useLoaderData();
+  const { policy } = Route.useLoaderData() as { policy: Policy };
   const Icon = policy.icon;
   return (
     <div className="min-h-screen bg-background">
