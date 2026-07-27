@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
