@@ -5,50 +5,34 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Switch } from "@/components/ui/switch";
 
-type Channel = "push" | "email";
-
 type Prefs = {
-  push: Record<string, boolean>;
-  email: Record<string, boolean>;
+  push_enabled: boolean;
+  email_enabled: boolean;
 };
 
-const DEFAULT_PREFS: Prefs = {
-  push: { order: true, order_status: true, new_seller: true, message: true, default: true },
-  email: { order: true, order_status: true, new_seller: true },
-};
-
-const ROWS: { key: string; label: string; description: string; channels: Channel[] }[] = [
-  {
-    key: "order",
-    label: "Novo pedido",
-    description: "Quando recebe um pedido na sua loja.",
-    channels: ["push", "email"],
-  },
-  {
-    key: "order_status",
-    label: "Atualizações do pedido",
-    description: "Quando o estado do seu pedido muda (processando, enviado, entregue).",
-    channels: ["push", "email"],
-  },
-  {
-    key: "new_seller",
-    label: "Novo vendedor",
-    description: "Quando um novo vendedor se cadastra (admins).",
-    channels: ["push", "email"],
-  },
-  {
-    key: "message",
-    label: "Mensagens",
-    description: "Novas mensagens no chat.",
-    channels: ["push"],
-  },
-];
+const DEFAULT_PREFS: Prefs = { push_enabled: true, email_enabled: true };
 
 function mergePrefs(raw: unknown): Prefs {
-  const src = (raw && typeof raw === "object" ? raw : {}) as Partial<Prefs>;
+  const src = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  // Compat: if the legacy shape (push:{...}, email:{...}) is present, consider the channel enabled
+  // if any sub-flag was truthy.
+  const legacyChannelOn = (channel: "push" | "email") => {
+    const v = src[channel];
+    if (v && typeof v === "object") {
+      const vals = Object.values(v as Record<string, unknown>);
+      if (vals.length > 0) return vals.some((x) => x !== false);
+    }
+    return undefined;
+  };
   return {
-    push: { ...DEFAULT_PREFS.push, ...(src.push ?? {}) },
-    email: { ...DEFAULT_PREFS.email, ...(src.email ?? {}) },
+    push_enabled:
+      typeof src.push_enabled === "boolean"
+        ? (src.push_enabled as boolean)
+        : legacyChannelOn("push") ?? DEFAULT_PREFS.push_enabled,
+    email_enabled:
+      typeof src.email_enabled === "boolean"
+        ? (src.email_enabled as boolean)
+        : legacyChannelOn("email") ?? DEFAULT_PREFS.email_enabled,
   };
 }
 
@@ -74,9 +58,10 @@ export function NotificationPreferences() {
     return () => { mounted = false; };
   }, [user]);
 
-  const update = async (channel: Channel, key: string, value: boolean) => {
+  const update = async (key: keyof Prefs, value: boolean) => {
     if (!user) return;
-    const next: Prefs = { ...prefs, [channel]: { ...prefs[channel], [key]: value } };
+    const prev = prefs;
+    const next: Prefs = { ...prefs, [key]: value };
     setPrefs(next);
     setSaving(true);
     const { error } = await supabase
@@ -86,7 +71,7 @@ export function NotificationPreferences() {
     setSaving(false);
     if (error) {
       toast.error("Não foi possível guardar a preferência.");
-      setPrefs(prefs);
+      setPrefs(prev);
     }
   };
 
@@ -103,40 +88,49 @@ export function NotificationPreferences() {
       <div className="mb-3 flex items-center justify-between">
         <div>
           <div className="font-medium leading-tight">Preferências de notificação</div>
-          <div className="text-xs text-muted-foreground mt-0.5">Escolha o que quer receber e por onde.</div>
+          <div className="text-xs text-muted-foreground mt-0.5">
+            Ative ou desative todas as notificações por canal.
+          </div>
         </div>
         {saving && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
       </div>
 
       <div className="divide-y divide-border">
-        {ROWS.map((row) => (
-          <div key={row.key} className="py-3 flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="text-sm font-medium leading-tight">{row.label}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">{row.description}</div>
+        <div className="py-3 flex items-start justify-between gap-3">
+          <div className="min-w-0 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-muted grid place-items-center shrink-0">
+              <Bell className="h-4 w-4" />
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              {row.channels.includes("push") && (
-                <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Bell className="h-3.5 w-3.5" />
-                  <Switch
-                    checked={prefs.push[row.key] !== false}
-                    onCheckedChange={(v) => update("push", row.key, v)}
-                  />
-                </label>
-              )}
-              {row.channels.includes("email") && (
-                <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Mail className="h-3.5 w-3.5" />
-                  <Switch
-                    checked={prefs.email[row.key] !== false}
-                    onCheckedChange={(v) => update("email", row.key, v)}
-                  />
-                </label>
-              )}
+            <div className="min-w-0">
+              <div className="text-sm font-medium leading-tight">Notificações Push</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Alertas em tempo real no seu dispositivo, mesmo com o site fechado.
+              </div>
             </div>
           </div>
-        ))}
+          <Switch
+            checked={prefs.push_enabled}
+            onCheckedChange={(v) => update("push_enabled", v)}
+          />
+        </div>
+
+        <div className="py-3 flex items-start justify-between gap-3">
+          <div className="min-w-0 flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-muted grid place-items-center shrink-0">
+              <Mail className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-medium leading-tight">Notificações por Email</div>
+              <div className="text-xs text-muted-foreground mt-0.5">
+                Resumo dos eventos importantes (pedidos, cadastros, denúncias, boas-vindas).
+              </div>
+            </div>
+          </div>
+          <Switch
+            checked={prefs.email_enabled}
+            onCheckedChange={(v) => update("email_enabled", v)}
+          />
+        </div>
       </div>
     </div>
   );
