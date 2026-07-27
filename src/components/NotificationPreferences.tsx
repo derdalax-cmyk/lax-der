@@ -81,8 +81,7 @@ export function NotificationPreferences() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .update({ notification_preferences: next as any })
+      .update({ notification_preferences: next } as never)
       .eq("id", user.id);
     setSaving(false);
     if (error) {
