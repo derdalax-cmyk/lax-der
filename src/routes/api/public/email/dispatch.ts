@@ -40,7 +40,15 @@ function renderEmail(title: string, body: string, linkUrl: string) {
 </body></html>`;
 }
 
-const ALLOWED_TYPES = new Set(["order", "order_status", "new_seller"]);
+const ALLOWED_TYPES = new Set([
+  "order",
+  "order_status",
+  "new_seller",
+  "welcome",
+  "seller_pending",
+  "seller_approved",
+  "report",
+]);
 
 export const Route = createFileRoute("/api/public/email/dispatch")({
   server: {
