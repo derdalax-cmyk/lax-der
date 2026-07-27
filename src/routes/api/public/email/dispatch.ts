@@ -108,6 +108,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             message_id: messageId,
             to: email,
             from: "DERDALAX <noreply@derdalax.co.mz>",
+            reply_to: "suporte@derdalax.co.mz",
             sender_domain: "notify.derdalax.co.mz",
             subject: title,
             html,
