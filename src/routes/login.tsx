@@ -132,11 +132,14 @@ function LoginPage() {
           <p className="text-sm text-muted-foreground mt-1">Bem-vindo de volta</p>
         </div>
 
-        <div className="space-y-3 mb-6">
+        <div className="space-y-3 mb-3">
           <Button type="button" variant="outline" className="w-full" disabled={busy} onClick={() => oauth("google")}>
             <GoogleIcon /> <span className="ml-2">Continuar com Google</span>
           </Button>
         </div>
+        <p className="text-[11px] text-muted-foreground text-center leading-relaxed mb-3">
+          Ao continuar, você aceita os <TermsLink className="text-gold underline underline-offset-2" /> e a <PrivacyLink className="text-gold underline underline-offset-2" /> da DERDALAX.
+        </p>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
