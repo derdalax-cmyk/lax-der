@@ -50,6 +50,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
+import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
 const VendedorRoute = VendedorRouteImport.update({
   id: '/vendedor',
@@ -258,6 +259,11 @@ const ApiPublicPushSendRoute = ApiPublicPushSendRouteImport.update({
   path: '/api/public/push/send',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
+  id: '/api/public/email/dispatch',
+  path: '/api/public/email/dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -297,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -337,6 +344,7 @@ export interface FileRoutesByTo {
   '/vendedor': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -381,6 +389,7 @@ export interface FileRoutesById {
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -426,6 +435,7 @@ export interface FileRouteTypes {
     | '/vendedor/'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
+    | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -466,6 +476,7 @@ export interface FileRouteTypes {
     | '/vendedor'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
+    | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -509,6 +520,7 @@ export interface FileRouteTypes {
     | '/vendedor/'
     | '/admin/vendedores_/dashboard'
     | '/chat/order/$orderId'
+    | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -534,6 +546,7 @@ export interface RootRouteChildren {
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
+  ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -829,6 +842,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPushSendRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email/dispatch': {
+      id: '/api/public/email/dispatch'
+      path: '/api/public/email/dispatch'
+      fullPath: '/api/public/email/dispatch'
+      preLoaderRoute: typeof ApiPublicEmailDispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -916,6 +936,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidoIdRoute: PedidoIdRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
+  ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
