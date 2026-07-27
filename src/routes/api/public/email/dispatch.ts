@@ -48,6 +48,7 @@ const ALLOWED_TYPES = new Set([
   "seller_pending",
   "seller_approved",
   "report",
+  "support",
 ]);
 
 export const Route = createFileRoute("/api/public/email/dispatch")({
