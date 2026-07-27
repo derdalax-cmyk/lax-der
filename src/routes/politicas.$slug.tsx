@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { POLICIES } from "@/lib/policies";
+import { POLICIES, type Policy } from "@/lib/policies";
 
 export const Route = createFileRoute("/politicas/$slug")({
   head: ({ params }) => {
