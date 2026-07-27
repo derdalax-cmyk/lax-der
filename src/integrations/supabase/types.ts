@@ -818,6 +818,7 @@ export type Database = {
           id: string
           is_vip: boolean
           name: string | null
+          notification_preferences: Json
           phone: string | null
           updated_at: string
         }
@@ -832,6 +833,7 @@ export type Database = {
           id: string
           is_vip?: boolean
           name?: string | null
+          notification_preferences?: Json
           phone?: string | null
           updated_at?: string
         }
@@ -846,6 +848,7 @@ export type Database = {
           id?: string
           is_vip?: boolean
           name?: string | null
+          notification_preferences?: Json
           phone?: string | null
           updated_at?: string
         }
@@ -1271,6 +1274,16 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      notify_email: {
+        Args: {
+          _body: string
+          _link: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
+        Returns: undefined
       }
       notify_push: {
         Args: {
