@@ -27,8 +27,10 @@ export const Route = createFileRoute("/api/public/push/send")({
         if (error) return new Response(error.message, { status: 500 });
         if (!subs || subs.length === 0) return new Response(JSON.stringify({ sent: 0 }), { status: 200 });
 
-        const webpushMod = await import("web-push");
-        const webpush = (webpushMod as { default?: typeof webpushMod }).default ?? webpushMod;
+        const webpushMod = (await import("web-push")) as unknown as {
+          default?: typeof import("web-push");
+        } & typeof import("web-push");
+        const webpush = webpushMod.default ?? webpushMod;
         webpush.setVapidDetails(
           process.env.VAPID_SUBJECT || "mailto:suporte@derdalax.co.mz",
           process.env.VAPID_PUBLIC_KEY!,
