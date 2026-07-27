@@ -183,7 +183,17 @@ function LoginPage() {
                   <p className="text-xs text-destructive mt-1">As senhas não coincidem</p>
                 )}
               </div>
-              <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy}>
+              <label className="flex items-start gap-2 text-xs text-muted-foreground pt-1 cursor-pointer">
+                <Checkbox
+                  checked={acceptedTerms}
+                  onCheckedChange={(v) => setAcceptedTerms(!!v)}
+                  className="mt-0.5"
+                />
+                <span>
+                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da DERDALAX.
+                </span>
+              </label>
+              <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy || !acceptedTerms}>
                 {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> A criar...</> : "Criar conta"}
               </Button>
             </form>
