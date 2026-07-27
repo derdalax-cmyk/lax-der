@@ -22,6 +22,7 @@ import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useOnlinePresence } from "@/hooks/useOnlinePresence";
+import { PushAutoPrompt } from "@/components/PushAutoPrompt";
 
 
 function NotFoundComponent() {
