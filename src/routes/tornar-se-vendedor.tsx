@@ -486,7 +486,7 @@ function TornarSeVendedor() {
             <label className="flex items-start gap-3 text-sm cursor-pointer">
               <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(!!v)} className="mt-0.5" />
               <span className="text-muted-foreground">
-                Li e aceito os <Link to="/suporte" className="text-gold underline underline-offset-2">termos e políticas</Link> da DERDALAX.
+                Li e aceito os <TermsLink /> da DERDALAX.
               </span>
             </label>
           </div>
