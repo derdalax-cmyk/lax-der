@@ -178,6 +178,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             message_id: messageId,
             to: payload.data.email,
             from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+            reply_to: 'suporte@derdalax.co.mz',
             sender_domain: SENDER_DOMAIN,
             subject: EMAIL_SUBJECTS[emailType] || 'Notification',
             html,
