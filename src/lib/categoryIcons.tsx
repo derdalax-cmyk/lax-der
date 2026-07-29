@@ -1,6 +1,6 @@
 import {
   Shirt, Footprints, HardHat, Scissors, Watch, Gem, Glasses, Backpack,
-  ShoppingBag, Tag, Sparkles, Crown, Baby, Heart, Star, Package,
+  ShoppingBag, Tag, Diamond, Crown, Baby, Heart, Star, Package,
   Umbrella, Sun, Snowflake, Flame, Feather, Layers, Palette, Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -20,7 +20,7 @@ export const CATEGORY_ICONS: { name: string; label: string; Icon: LucideIcon }[]
   { name: "backpack", label: "Mochila", Icon: Backpack },
   { name: "bag", label: "Bolsa", Icon: ShoppingBag },
   { name: "tag", label: "Etiqueta", Icon: Tag },
-  { name: "sparkles", label: "Novo", Icon: Sparkles },
+  { name: "sparkles", label: "Novo", Icon: Diamond },
   { name: "crown", label: "Premium", Icon: Crown },
   { name: "baby", label: "Infantil", Icon: Baby },
   { name: "heart", label: "Favorito", Icon: Heart },

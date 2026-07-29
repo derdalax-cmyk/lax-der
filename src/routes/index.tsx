@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, Truck, ShieldCheck } from "lucide-react";
+import { Gem, Truck, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
@@ -159,7 +159,7 @@ function Home() {
           {[
             { icon: Truck, title: "Entrega rápida", desc: "Em todas as principais cidades de Moçambique." },
             { icon: ShieldCheck, title: "Pagamento flexível", desc: "Combine com o vendedor via chat ou pague na entrega." },
-            { icon: Sparkles, title: "Peças únicas", desc: "Coleções limitadas que ninguém mais terá." },
+            { icon: Gem, title: "Peças únicas", desc: "Coleções limitadas que ninguém mais terá." },
           ].map((f) => (
             <div key={f.title} className="flex gap-4 items-start">
               <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center shrink-0">
