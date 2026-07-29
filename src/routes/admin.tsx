@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, ShieldCheck, BarChart3, FolderTree, Sparkles, MessagesSquare } from "lucide-react";
+import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -18,7 +18,7 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/vendedores", label: "Vendedores", icon: Store },
   { to: "/admin/vendedores/dashboard", label: "Dashboard de Vendedores", icon: BarChart3 },
   { to: "/admin/categorias", label: "Categorias", icon: FolderTree },
-  { to: "/admin/categorias-destaque", label: "Categorias em Destaque", icon: Sparkles },
+  { to: "/admin/categorias-destaque", label: "Categorias em Destaque", icon: Flame },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
   { to: "/admin/conversas", label: "Conversas", icon: MessagesSquare },

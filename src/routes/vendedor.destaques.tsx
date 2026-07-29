@@ -7,7 +7,7 @@ import { useSeller } from "@/hooks/useSeller";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
-  Sparkles, Loader2, Plus, Check, Clock, XCircle, CheckCircle2, ImageOff, X,
+  Flame, Loader2, Plus, Check, Clock, XCircle, CheckCircle2, ImageOff, X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -96,7 +96,7 @@ function SellerDestaques() {
         <div className="h-56 grid place-items-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
       ) : collections.length === 0 ? (
         <div className="bg-card border border-border rounded-xl px-4 py-16 text-center text-muted-foreground">
-          <Sparkles className="w-8 h-8 mx-auto mb-3 opacity-40" />
+          <Flame className="w-8 h-8 mx-auto mb-3 opacity-40" />
           <p className="text-sm">Não há destaques disponíveis para a sua loja neste momento.</p>
         </div>
       ) : (
