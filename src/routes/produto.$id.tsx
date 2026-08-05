@@ -263,7 +263,10 @@ function ProdutoDetalhe() {
 
         <div>
           <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
-          <p className="mt-2 text-2xl font-medium">{formatMZN(Number(effectivePrice))}</p>
+          <p className="mt-2 text-2xl font-medium">
+            {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
+            {formatMZN(Number(effectivePrice))}
+          </p>
           <p className="mt-1 text-sm">
             {Number(product.shipping_fee ?? 0) > 0 ? (
               <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>
