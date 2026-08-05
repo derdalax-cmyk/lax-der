@@ -323,7 +323,7 @@ function ProdutoDetalhe() {
               <h3 className="text-sm font-medium mb-2">Cor</h3>
               <div className="flex flex-wrap gap-2">
                 {colors.map((c) => {
-                  const stock = variations.filter((v) => v.color === c && (sizes.length === 0 || v.size === size)).reduce((a, v) => a + v.stock, 0);
+                  const stock = variations.filter((v) => v.color === c && (!size || v.size === size)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
                     <button key={c} disabled={disabled} onClick={() => setColor(c)}
