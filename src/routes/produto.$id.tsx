@@ -258,7 +258,7 @@ function ProdutoDetalhe() {
           {imgs.length > 1 && (
             <div className="flex gap-2 mt-3 overflow-x-auto">
               {imgs.map((src, i) => (
-                <button key={i} onClick={() => setImgIdx(i)} className={cn("flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-transparent")}>
+                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => setImgIdx(i)} className={cn("flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-transparent")}>
                   <img src={src} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -355,9 +355,9 @@ function ProdutoDetalhe() {
             <h3 className="text-sm font-medium mb-2">Quantidade</h3>
             <div className="flex items-center gap-3">
               <div className="flex items-center border border-border rounded">
-                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-10 h-10 flex items-center justify-center"><Minus className="w-4 h-4" /></button>
+                <button aria-label="Diminuir quantidade" onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-10 h-10 flex items-center justify-center"><Minus className="w-4 h-4" /></button>
                 <span className="w-10 text-center font-medium">{qty}</span>
-                <button onClick={() => setQty((q) => Math.min(stockAvailable || 1, q + 1))} className="w-10 h-10 flex items-center justify-center"><Plus className="w-4 h-4" /></button>
+                <button aria-label="Aumentar quantidade" onClick={() => setQty((q) => Math.min(stockAvailable || 1, q + 1))} className="w-10 h-10 flex items-center justify-center"><Plus className="w-4 h-4" /></button>
               </div>
               {stockAvailable > 0 && stockAvailable < 10 && variations.length > 0 && (
                 <span className="text-sm text-muted-foreground">Restam {stockAvailable}</span>
@@ -430,7 +430,7 @@ function ProdutoDetalhe() {
 
       {zoom && imgs[imgIdx] && (
         <div onClick={() => setZoom(false)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out">
-          <button onClick={() => setZoom(false)} className="absolute top-4 right-4 text-white"><X className="w-6 h-6" /></button>
+          <button aria-label="Fechar zoom" onClick={() => setZoom(false)} className="absolute top-4 right-4 text-white"><X className="w-6 h-6" /></button>
           <img src={imgs[imgIdx]} alt={product.title} className="max-w-full max-h-full object-contain" />
         </div>
       )}
