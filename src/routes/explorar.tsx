@@ -106,7 +106,7 @@ function ExplorarPage() {
           <SelectTrigger className="sm:w-44"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {CATEGORY_META.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
+            {cats.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
