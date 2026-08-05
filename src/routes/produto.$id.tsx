@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight } from "lucide-react";
@@ -145,11 +145,16 @@ function ProdutoDetalhe() {
   const sizes = useMemo(() => Array.from(new Set(variations.map((v) => v.size).filter(Boolean) as string[])), [variations]);
   const colors = useMemo(() => Array.from(new Set(variations.map((v) => v.color).filter(Boolean) as string[])), [variations]);
 
-  // Auto-seleciona quando só existe uma opção
+  // Auto-seleciona quando só existe uma opção (apenas na carga inicial das variações)
+  const autoPicked = useRef<string | null>(null);
   useEffect(() => {
-    if (sizes.length === 1 && !size) setSize(sizes[0]);
-    if (colors.length === 1 && !color) setColor(colors[0]);
-  }, [sizes, colors, size, color]);
+    const key = variations.map((v) => v.id).join(",");
+    if (!variations.length || autoPicked.current === key) return;
+    autoPicked.current = key;
+    if (sizes.length === 1) setSize(sizes[0]);
+    if (colors.length === 1) setColor(colors[0]);
+  }, [variations, sizes, colors]);
+
 
   // Variações compatíveis com a seleção atual (dimensões não escolhidas não filtram)
   const matching = useMemo(() => variations.filter((v) =>
@@ -307,11 +312,15 @@ function ProdutoDetalhe() {
                   const stock = variations.filter((v) => v.size === s && (!color || v.color === color)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
-                    <button key={s} disabled={disabled} onClick={() => setSize(s)}
-                      className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
-                        size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
-                        disabled && "opacity-40 line-through cursor-not-allowed")}
-                    >{s}</button>
+                    <div key={s} className="flex flex-col items-center gap-1">
+                      <button disabled={disabled} onClick={() => setSize((prev) => (prev === s ? null : s))}
+                        title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
+                        className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
+                          size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
+                          disabled && "opacity-40 line-through cursor-not-allowed")}
+                      >{s}</button>
+                      <span className="text-[11px] leading-none text-muted-foreground">{disabled ? "esgotado" : `${stock} disp.`}</span>
+                    </div>
                   );
                 })}
               </div>
@@ -326,16 +335,21 @@ function ProdutoDetalhe() {
                   const stock = variations.filter((v) => v.color === c && (!size || v.size === size)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
-                    <button key={c} disabled={disabled} onClick={() => setColor(c)}
-                      className={cn("px-3 h-10 rounded border text-sm capitalize",
-                        color === c ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
-                        disabled && "opacity-40 line-through cursor-not-allowed")}
-                    >{c}</button>
+                    <div key={c} className="flex flex-col items-center gap-1">
+                      <button disabled={disabled} onClick={() => setColor((prev) => (prev === c ? null : c))}
+                        title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
+                        className={cn("px-3 h-10 rounded border text-sm capitalize",
+                          color === c ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
+                          disabled && "opacity-40 line-through cursor-not-allowed")}
+                      >{c}</button>
+                      <span className="text-[11px] leading-none text-muted-foreground">{disabled ? "esgotado" : `${stock} disp.`}</span>
+                    </div>
                   );
                 })}
               </div>
             </div>
           )}
+
 
           <div className="mt-6">
             <h3 className="text-sm font-medium mb-2">Quantidade</h3>
