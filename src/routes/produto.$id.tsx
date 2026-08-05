@@ -250,8 +250,8 @@ function ProdutoDetalhe() {
             )}
             {imgs.length > 1 && (
               <>
-                <button onClick={() => setImgIdx((i) => (i - 1 + imgs.length) % imgs.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/90 flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
-                <button onClick={() => setImgIdx((i) => (i + 1) % imgs.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/90 flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
+                <button aria-label="Imagem anterior" onClick={() => setImgIdx((i) => (i - 1 + imgs.length) % imgs.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/90 flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
+                <button aria-label="Imagem seguinte" onClick={() => setImgIdx((i) => (i + 1) % imgs.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/90 flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
               </>
             )}
           </div>
