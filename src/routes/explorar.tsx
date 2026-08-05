@@ -7,7 +7,7 @@ import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CATEGORY_META } from "@/lib/categories";
+import { useQuery } from "@tanstack/react-query";
 import { CategoryIcon } from "@/lib/categoryIcons";
 import { Search, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
