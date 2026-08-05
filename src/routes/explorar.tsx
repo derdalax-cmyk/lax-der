@@ -7,7 +7,7 @@ import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CATEGORY_META } from "@/lib/categories";
+import { useQuery } from "@tanstack/react-query";
 import { CategoryIcon } from "@/lib/categoryIcons";
 import { Search, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,15 @@ function firstImage(images: unknown): string | null {
 
 function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
+  const { data: cats = [] } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories")
+        .select("id,slug,label,icon,sort_order").eq("is_active", true).order("sort_order");
+      if (error) throw error;
+      return (data ?? []) as { id: string; slug: string; label: string; icon: string | null }[];
+    },
+  });
   const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,7 +106,7 @@ function ExplorarPage() {
           <SelectTrigger className="sm:w-44"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {CATEGORY_META.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
+            {cats.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
