@@ -307,11 +307,15 @@ function ProdutoDetalhe() {
                   const stock = variations.filter((v) => v.size === s && (!color || v.color === color)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
-                    <button key={s} disabled={disabled} onClick={() => setSize(s)}
-                      className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
-                        size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
-                        disabled && "opacity-40 line-through cursor-not-allowed")}
-                    >{s}</button>
+                    <div key={s} className="flex flex-col items-center gap-1">
+                      <button disabled={disabled} onClick={() => setSize((prev) => (prev === s ? null : s))}
+                        title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
+                        className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
+                          size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
+                          disabled && "opacity-40 line-through cursor-not-allowed")}
+                      >{s}</button>
+                      <span className="text-[11px] leading-none text-muted-foreground">{disabled ? "esgotado" : `${stock} disp.`}</span>
+                    </div>
                   );
                 })}
               </div>
@@ -326,16 +330,21 @@ function ProdutoDetalhe() {
                   const stock = variations.filter((v) => v.color === c && (!size || v.size === size)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
-                    <button key={c} disabled={disabled} onClick={() => setColor(c)}
-                      className={cn("px-3 h-10 rounded border text-sm capitalize",
-                        color === c ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
-                        disabled && "opacity-40 line-through cursor-not-allowed")}
-                    >{c}</button>
+                    <div key={c} className="flex flex-col items-center gap-1">
+                      <button disabled={disabled} onClick={() => setColor((prev) => (prev === c ? null : c))}
+                        title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
+                        className={cn("px-3 h-10 rounded border text-sm capitalize",
+                          color === c ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
+                          disabled && "opacity-40 line-through cursor-not-allowed")}
+                      >{c}</button>
+                      <span className="text-[11px] leading-none text-muted-foreground">{disabled ? "esgotado" : `${stock} disp.`}</span>
+                    </div>
                   );
                 })}
               </div>
             </div>
           )}
+
 
           <div className="mt-6">
             <h3 className="text-sm font-medium mb-2">Quantidade</h3>
