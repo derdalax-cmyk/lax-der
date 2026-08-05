@@ -313,7 +313,10 @@ function ProdutoDetalhe() {
                   const disabled = stock === 0;
                   return (
                     <div key={s} className="flex flex-col items-center gap-1">
-                      <button disabled={disabled} onClick={() => setSize((prev) => (prev === s ? null : s))}
+                      <button
+                        disabled={disabled}
+                        onClick={() => setSize((prev) => (prev === s ? null : s))}
+                        aria-label={`Tamanho ${s}${disabled ? ", esgotado" : `, ${stock} disponível${stock === 1 ? "" : "is"}`}`}
                         title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
                         className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
                           size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
@@ -336,7 +339,10 @@ function ProdutoDetalhe() {
                   const disabled = stock === 0;
                   return (
                     <div key={c} className="flex flex-col items-center gap-1">
-                      <button disabled={disabled} onClick={() => setColor((prev) => (prev === c ? null : c))}
+                      <button
+                        disabled={disabled}
+                        onClick={() => setColor((prev) => (prev === c ? null : c))}
+                        aria-label={`Cor ${c}${disabled ? ", esgotado" : `, ${stock} disponível${stock === 1 ? "" : "is"}`}`}
                         title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
                         className={cn("px-3 h-10 rounded border text-sm capitalize",
                           color === c ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
@@ -372,7 +378,11 @@ function ProdutoDetalhe() {
             <Button onClick={async () => { const ok = await handleAddToCart(); if (ok) navigate({ to: "/carrinho" }); }} disabled={!canBuy || adding} className="flex-1 bg-gold text-ink hover:bg-gold/90">
               Comprar agora
             </Button>
-            <button onClick={() => toggle(product.id)} aria-label="Favoritar" className="h-10 w-10 flex items-center justify-center border border-border rounded">
+            <button
+              onClick={() => toggle(product.id)}
+              aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+              className="h-10 w-10 flex items-center justify-center border border-border rounded"
+            >
               <Heart className={cn("w-5 h-5", isFavorite(product.id) ? "fill-destructive text-destructive" : "")} />
             </button>
           </div>
