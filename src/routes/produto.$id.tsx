@@ -145,16 +145,38 @@ function ProdutoDetalhe() {
   const sizes = useMemo(() => Array.from(new Set(variations.map((v) => v.size).filter(Boolean) as string[])), [variations]);
   const colors = useMemo(() => Array.from(new Set(variations.map((v) => v.color).filter(Boolean) as string[])), [variations]);
 
-  const selectedVariation = useMemo(() => variations.find((v) =>
-    (sizes.length === 0 || v.size === size) && (colors.length === 0 || v.color === color)
-  ), [variations, sizes, colors, size, color]);
+  // Auto-seleciona quando só existe uma opção
+  useEffect(() => {
+    if (sizes.length === 1 && !size) setSize(sizes[0]);
+    if (colors.length === 1 && !color) setColor(colors[0]);
+  }, [sizes, colors, size, color]);
+
+  // Variações compatíveis com a seleção atual (dimensões não escolhidas não filtram)
+  const matching = useMemo(() => variations.filter((v) =>
+    (!size || v.size === size) && (!color || v.color === color)
+  ), [variations, size, color]);
+
+  const selectedVariation = useMemo(() => {
+    if (sizes.length > 0 && !size) return undefined;
+    if (colors.length > 0 && !color) return undefined;
+    return matching[0];
+  }, [matching, sizes, colors, size, color]);
 
   const stockAvailable = useMemo(() => {
     if (variations.length === 0) return product?.status === "available" ? 99 : 0;
-    return selectedVariation?.stock ?? 0;
-  }, [variations, selectedVariation, product]);
+    if (selectedVariation) return selectedVariation.stock;
+    return matching.reduce((a, v) => a + v.stock, 0);
+  }, [variations, matching, selectedVariation, product]);
 
-  const effectivePrice = selectedVariation?.price ?? product?.base_price ?? 0;
+  const basePrice = Number(product?.base_price ?? 0);
+  const candidatePrices = useMemo(
+    () => (matching.length > 0 ? matching : variations).map((v) => Number(v.price ?? basePrice)),
+    [matching, variations, basePrice],
+  );
+  const minPrice = candidatePrices.length > 0 ? Math.min(...candidatePrices) : basePrice;
+  const hasPriceRange = candidatePrices.length > 1 && Math.max(...candidatePrices) !== minPrice;
+  const effectivePrice = selectedVariation ? Number(selectedVariation.price ?? basePrice) : minPrice;
+  const showFromPrice = !selectedVariation && hasPriceRange;
 
   const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
   const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
@@ -241,7 +263,10 @@ function ProdutoDetalhe() {
 
         <div>
           <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
-          <p className="mt-2 text-2xl font-medium">{formatMZN(Number(effectivePrice))}</p>
+          <p className="mt-2 text-2xl font-medium">
+            {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
+            {formatMZN(Number(effectivePrice))}
+          </p>
           <p className="mt-1 text-sm">
             {Number(product.shipping_fee ?? 0) > 0 ? (
               <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>
@@ -279,7 +304,7 @@ function ProdutoDetalhe() {
               <h3 className="text-sm font-medium mb-2">Tamanho</h3>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((s) => {
-                  const stock = variations.filter((v) => v.size === s && (colors.length === 0 || v.color === color)).reduce((a, v) => a + v.stock, 0);
+                  const stock = variations.filter((v) => v.size === s && (!color || v.color === color)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
                     <button key={s} disabled={disabled} onClick={() => setSize(s)}
@@ -298,7 +323,7 @@ function ProdutoDetalhe() {
               <h3 className="text-sm font-medium mb-2">Cor</h3>
               <div className="flex flex-wrap gap-2">
                 {colors.map((c) => {
-                  const stock = variations.filter((v) => v.color === c && (sizes.length === 0 || v.size === size)).reduce((a, v) => a + v.stock, 0);
+                  const stock = variations.filter((v) => v.color === c && (!size || v.size === size)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
                     <button key={c} disabled={disabled} onClick={() => setColor(c)}
