@@ -304,7 +304,7 @@ function ProdutoDetalhe() {
               <h3 className="text-sm font-medium mb-2">Tamanho</h3>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((s) => {
-                  const stock = variations.filter((v) => v.size === s && (colors.length === 0 || v.color === color)).reduce((a, v) => a + v.stock, 0);
+                  const stock = variations.filter((v) => v.size === s && (!color || v.color === color)).reduce((a, v) => a + v.stock, 0);
                   const disabled = stock === 0;
                   return (
                     <button key={s} disabled={disabled} onClick={() => setSize(s)}
