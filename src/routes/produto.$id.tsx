@@ -145,11 +145,16 @@ function ProdutoDetalhe() {
   const sizes = useMemo(() => Array.from(new Set(variations.map((v) => v.size).filter(Boolean) as string[])), [variations]);
   const colors = useMemo(() => Array.from(new Set(variations.map((v) => v.color).filter(Boolean) as string[])), [variations]);
 
-  // Auto-seleciona quando só existe uma opção
+  // Auto-seleciona quando só existe uma opção (apenas na carga inicial das variações)
+  const autoPicked = useRef<string | null>(null);
   useEffect(() => {
-    if (sizes.length === 1 && !size) setSize(sizes[0]);
-    if (colors.length === 1 && !color) setColor(colors[0]);
-  }, [sizes, colors, size, color]);
+    const key = variations.map((v) => v.id).join(",");
+    if (!variations.length || autoPicked.current === key) return;
+    autoPicked.current = key;
+    if (sizes.length === 1) setSize(sizes[0]);
+    if (colors.length === 1) setColor(colors[0]);
+  }, [variations, sizes, colors]);
+
 
   // Variações compatíveis com a seleção atual (dimensões não escolhidas não filtram)
   const matching = useMemo(() => variations.filter((v) =>
