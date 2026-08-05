@@ -313,7 +313,10 @@ function ProdutoDetalhe() {
                   const disabled = stock === 0;
                   return (
                     <div key={s} className="flex flex-col items-center gap-1">
-                      <button disabled={disabled} onClick={() => setSize((prev) => (prev === s ? null : s))}
+                      <button
+                        disabled={disabled}
+                        onClick={() => setSize((prev) => (prev === s ? null : s))}
+                        aria-label={`Tamanho ${s}${disabled ? ", esgotado" : `, ${stock} disponível${stock === 1 ? "" : "is"}`}`}
                         title={disabled ? "Sem estoque" : `${stock} disponível${stock === 1 ? "" : "is"}`}
                         className={cn("min-w-12 h-10 px-3 rounded border text-sm transition",
                           size === s ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground",
