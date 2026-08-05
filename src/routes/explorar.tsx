@@ -34,6 +34,15 @@ function firstImage(images: unknown): string | null {
 
 function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
+  const { data: cats = [] } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories")
+        .select("id,slug,label,icon,sort_order").eq("is_active", true).order("sort_order");
+      if (error) throw error;
+      return (data ?? []) as { id: string; slug: string; label: string; icon: string | null }[];
+    },
+  });
   const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
