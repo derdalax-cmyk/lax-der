@@ -10,10 +10,10 @@ import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DERDALAX · Moda com história, estilo com futuro" },
+      { title: "DERDALAX" },
       { name: "description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
-      { property: "og:title", content: "DERDALAX · Moda com história, estilo com futuro" },
-      { property: "og:description", content: "Peças únicas, selecionadas para você." },
+      { property: "og:title", content: "DERDALAX" },
+      { property: "og:description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
     ],
   }),
   component: Home,
