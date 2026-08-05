@@ -378,7 +378,11 @@ function ProdutoDetalhe() {
             <Button onClick={async () => { const ok = await handleAddToCart(); if (ok) navigate({ to: "/carrinho" }); }} disabled={!canBuy || adding} className="flex-1 bg-gold text-ink hover:bg-gold/90">
               Comprar agora
             </Button>
-            <button onClick={() => toggle(product.id)} aria-label="Favoritar" className="h-10 w-10 flex items-center justify-center border border-border rounded">
+            <button
+              onClick={() => toggle(product.id)}
+              aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+              className="h-10 w-10 flex items-center justify-center border border-border rounded"
+            >
               <Heart className={cn("w-5 h-5", isFavorite(product.id) ? "fill-destructive text-destructive" : "")} />
             </button>
           </div>
