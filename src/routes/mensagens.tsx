@@ -109,10 +109,11 @@ function MensagensPage() {
 }
 
 function Avatar({ name, avatar, role }: { name: string; avatar: string | null; role: string }) {
+  const src = usePrivateUrl(avatar);
   return (
     <div className="w-11 h-11 rounded-full bg-secondary overflow-hidden grid place-items-center shrink-0">
-      {avatar ? (
-        <img src={avatar} alt={name} className="w-full h-full object-cover" />
+      {src ? (
+        <img src={src} alt={name} className="w-full h-full object-cover" />
       ) : role === "buyer" ? (
         <Store className="w-5 h-5 text-muted-foreground" />
       ) : (

@@ -78,7 +78,7 @@ function AdminConversas() {
                 active?.id === t.id && "bg-secondary",
               )}>
               <div className="w-10 h-10 rounded-full bg-secondary grid place-items-center overflow-hidden shrink-0">
-                {t.avatar ? <img src={t.avatar} alt="" className="w-full h-full object-cover" /> : <span className="text-sm font-semibold">{(t.name?.[0] ?? "?").toUpperCase()}</span>}
+                {t.avatar ? <ThreadAvatar value={t.avatar} /> : <span className="text-sm font-semibold">{(t.name?.[0] ?? "?").toUpperCase()}</span>}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
@@ -133,10 +133,10 @@ function AdminThreadPane({ thread, onBack, onChanged }: { thread: AdminThread; o
     try {
       if (pendingImage) {
         const ext = pendingImage.name.split(".").pop();
-        const path = `support/admin/${Date.now()}.${ext}`;
-        const { error } = await supabase.storage.from("products").upload(path, pendingImage, { upsert: false });
+        const path = `support/${thread.user_id}/admin-${Date.now()}.${ext}`;
+        const { error } = await supabase.storage.from(PRIVATE_BUCKET).upload(path, pendingImage, { upsert: false });
         if (error) throw error;
-        image_url = supabase.storage.from("products").getPublicUrl(path).data.publicUrl;
+        image_url = privateRef(path);
       }
       const { error } = await supabase.from("support_messages").insert({
         thread_id: thread.id, sender_id: user.id, is_admin: true, body: body || null, image_url,
@@ -160,7 +160,7 @@ function AdminThreadPane({ thread, onBack, onChanged }: { thread: AdminThread; o
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div className="w-10 h-10 rounded-full bg-secondary grid place-items-center overflow-hidden">
-          {thread.avatar ? <img src={thread.avatar} alt="" className="w-full h-full object-cover" /> : <span className="font-semibold">{(thread.name?.[0] ?? "?").toUpperCase()}</span>}
+          {thread.avatar ? <ThreadAvatar value={thread.avatar} /> : <span className="font-semibold">{(thread.name?.[0] ?? "?").toUpperCase()}</span>}
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold truncate">{thread.name}</p>
@@ -182,11 +182,7 @@ function AdminThreadPane({ thread, onBack, onChanged }: { thread: AdminThread; o
             <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
               <div className={cn("max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-sm",
                 mine ? "bg-[#dcf8c6] text-ink rounded-br-sm" : "bg-white text-ink border border-black/5 rounded-bl-sm")}>
-                {m.image_url && (
-                  <a href={m.image_url} target="_blank" rel="noopener noreferrer">
-                    <img src={m.image_url} alt="anexo" className="max-w-[220px] rounded-lg mb-1" />
-                  </a>
-                )}
+                {m.image_url && <Attachment value={m.image_url} />}
                 {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
                 <span className="flex items-center gap-1 justify-end text-[10px] text-black/50 mt-0.5">
                   {new Date(m.created_at).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}

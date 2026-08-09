@@ -51,9 +51,9 @@ export function SupportChat() {
       if (pendingImage) {
         const ext = pendingImage.name.split(".").pop();
         const path = `support/${user.id}/${Date.now()}.${ext}`;
-        const { error } = await supabase.storage.from("products").upload(path, pendingImage, { upsert: false });
+        const { error } = await supabase.storage.from(PRIVATE_BUCKET).upload(path, pendingImage, { upsert: false });
         if (error) throw error;
-        image_url = supabase.storage.from("products").getPublicUrl(path).data.publicUrl;
+        image_url = privateRef(path);
       }
       const { error } = await supabase.from("support_messages").insert({
         thread_id: threadId, sender_id: user.id, is_admin: false, body: body || null, image_url,
@@ -99,11 +99,7 @@ export function SupportChat() {
                 "max-w-[82%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-sm",
                 mine ? "bg-[#dcf8c6] text-ink rounded-br-sm" : "bg-white text-ink border border-black/5 rounded-bl-sm",
               )}>
-                {m.image_url && (
-                  <a href={m.image_url} target="_blank" rel="noopener noreferrer">
-                    <img src={m.image_url} alt="anexo" className="max-w-[220px] rounded-lg mb-1" />
-                  </a>
-                )}
+                {m.image_url && <Attachment value={m.image_url} />}
                 {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
                 <span className="flex items-center gap-1 justify-end text-[10px] text-black/50 mt-0.5">
                   {new Date(m.created_at).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
