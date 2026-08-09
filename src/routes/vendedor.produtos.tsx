@@ -66,8 +66,11 @@ function SellerProdutos() {
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     const p = deleteTarget;
-    const { data: files } = await supabase.storage.from("products").list(p.id);
-    if (files?.length) await supabase.storage.from("products").remove(files.map((f) => `${p.id}/${f.name}`));
+    const folders = [p.id, ...(seller?.user_id ? [`sellers/${seller.user_id}/${p.id}`] : [])];
+    for (const folder of folders) {
+      const { data: files } = await supabase.storage.from("products").list(folder);
+      if (files?.length) await supabase.storage.from("products").remove(files.map((f) => `${folder}/${f.name}`));
+    }
     await supabase.from("product_variations").delete().eq("product_id", p.id);
     const { error } = await supabase.from("products").delete().eq("id", p.id);
     if (error) toast.error(error.message);
