@@ -3,6 +3,8 @@ import { Camera, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PRIVATE_BUCKET, privateRef } from "@/lib/privateStorage";
+import { usePrivateUrl } from "@/hooks/usePrivateUrl";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
@@ -25,6 +27,7 @@ function initials(name: string | null, email: string | null) {
 export function AvatarUploader({ userId, avatarUrl, name, email, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const src = usePrivateUrl(avatarUrl);
 
   const upload = async (file: File) => {
     if (!ACCEPTED.includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return; }
@@ -32,10 +35,9 @@ export function AvatarUploader({ userId, avatarUrl, name, email, onChange }: Pro
     setUploading(true);
     const ext = file.name.split(".").pop();
     const path = `avatars/${userId}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("products").upload(path, file, { upsert: true });
+    const { error } = await supabase.storage.from(PRIVATE_BUCKET).upload(path, file, { upsert: true });
     if (error) { toast.error(error.message); setUploading(false); return; }
-    const { data } = supabase.storage.from("products").getPublicUrl(path);
-    const url = data.publicUrl;
+    const url = privateRef(path);
     const { error: upErr } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
     if (upErr) { toast.error(upErr.message); setUploading(false); return; }
     onChange(url);
@@ -51,8 +53,8 @@ export function AvatarUploader({ userId, avatarUrl, name, email, onChange }: Pro
           "h-28 w-28 rounded-full ring-4 ring-background overflow-hidden bg-ink flex items-center justify-center cursor-pointer shadow-xl select-none",
         )}
       >
-        {avatarUrl ? (
-          <img src={avatarUrl} alt="Foto de perfil" className="h-full w-full object-cover" />
+        {src ? (
+          <img src={src} alt="Foto de perfil" className="h-full w-full object-cover" />
         ) : (
           <span className="font-display text-3xl font-bold text-gold">{initials(name, email)}</span>
         )}

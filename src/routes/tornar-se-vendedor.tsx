@@ -198,7 +198,7 @@ function TornarSeVendedor() {
       let logo_url: string | null = null;
       if (logoFile && uid) {
         const ext = logoFile.name.split(".").pop();
-        const path = `avatars/${uid}/seller-${crypto.randomUUID()}.${ext}`;
+        const path = `sellers/${uid}/logo-${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("products").upload(path, logoFile, { upsert: true });
         if (!upErr) logo_url = supabase.storage.from("products").getPublicUrl(path).data.publicUrl;
       }

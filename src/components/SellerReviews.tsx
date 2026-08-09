@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { usePrivateUrl } from "@/hooks/usePrivateUrl";
 import { useAuth } from "@/contexts/AuthContext";
 import { StarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
@@ -232,11 +233,7 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
             <li key={r.id} className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-9 h-9 rounded-full bg-secondary overflow-hidden grid place-items-center shrink-0 text-sm font-semibold">
-                  {r.reviewer_avatar ? (
-                    <img src={r.reviewer_avatar} alt={r.reviewer_name} className="w-full h-full object-cover" />
-                  ) : (
-                    r.reviewer_name.charAt(0).toUpperCase()
-                  )}
+                  <ReviewerAvatar value={r.reviewer_avatar} name={r.reviewer_name} />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate">{r.reviewer_name}</p>
@@ -251,4 +248,10 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
       )}
     </div>
   );
+}
+
+function ReviewerAvatar({ value, name }: { value: string | null; name: string }) {
+  const src = usePrivateUrl(value);
+  if (!src) return <>{name.charAt(0).toUpperCase()}</>;
+  return <img src={src} alt={name} className="w-full h-full object-cover" />;
 }
