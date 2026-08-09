@@ -7,6 +7,8 @@ import { useSupportMessages } from "@/hooks/useSupport";
 import { Loader2, Send, ImagePlus, X, CheckCheck, Check, MessagesSquare, ChevronLeft, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PRIVATE_BUCKET, privateRef } from "@/lib/privateStorage";
+import { usePrivateUrl } from "@/hooks/usePrivateUrl";
 
 export const Route = createFileRoute("/admin/conversas")({
   component: AdminConversas,
@@ -219,4 +221,20 @@ function AdminThreadPane({ thread, onBack, onChanged }: { thread: AdminThread; o
       </div>
     </>
   );
+}
+
+function Attachment({ value }: { value: string }) {
+  const src = usePrivateUrl(value);
+  if (!src) return <div className="w-[220px] h-32 rounded-lg mb-1 bg-black/5 animate-pulse" />;
+  return (
+    <a href={src} target="_blank" rel="noopener noreferrer">
+      <img src={src} alt="anexo" className="max-w-[220px] rounded-lg mb-1" />
+    </a>
+  );
+}
+
+function ThreadAvatar({ value }: { value: string }) {
+  const src = usePrivateUrl(value);
+  if (!src) return null;
+  return <img src={src} alt="" className="w-full h-full object-cover" />;
 }

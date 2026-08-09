@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useConversations, type Conversation, type Message } from "@/hooks/useMessaging";
 import { Store, Send, Loader2, MessageSquare, ChevronLeft, User as UserIcon, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePrivateUrl } from "@/hooks/usePrivateUrl";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/mensagens")({

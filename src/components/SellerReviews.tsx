@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { usePrivateUrl } from "@/hooks/usePrivateUrl";
 import { useAuth } from "@/contexts/AuthContext";
 import { StarRating } from "@/components/StarRating";
 import { Button } from "@/components/ui/button";
@@ -247,4 +248,10 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
       )}
     </div>
   );
+}
+
+function ReviewerAvatar({ value, name }: { value: string | null; name: string }) {
+  const src = usePrivateUrl(value);
+  if (!src) return <>{name.charAt(0).toUpperCase()}</>;
+  return <img src={src} alt={name} className="w-full h-full object-cover" />;
 }
