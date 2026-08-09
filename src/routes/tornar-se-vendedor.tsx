@@ -259,8 +259,8 @@ function TornarSeVendedor() {
               </div>
               <h1 className="font-display text-2xl font-bold mb-1">A sua loja está ativa</h1>
               <p className="text-muted-foreground mb-6">{existing.store_name} já pode vender na DERDALAX.</p>
-              <Link to="/perfil" className="inline-flex items-center gap-2 bg-gold text-ink font-semibold px-5 py-3 rounded-xl hover:bg-gold/90 transition-colors">
-                Ir para o meu perfil <ChevronRight className="w-4 h-4" />
+              <Link to="/vendedor" className="inline-flex items-center gap-2 bg-gold text-ink font-semibold px-5 py-3 rounded-xl hover:bg-gold/90 transition-colors">
+                Ir para o meu painel <ChevronRight className="w-4 h-4" />
               </Link>
             </>
           ) : existing.status === "rejected" ? (
