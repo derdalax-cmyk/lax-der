@@ -11,6 +11,7 @@ import { VariationsTable, type Variation } from "./VariationsTable";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const CATEGORIES = ["camisas", "calcas", "sapatos", "chapeus", "calcoes", "casacos"] as const;
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
@@ -60,6 +61,7 @@ function packMeta(text: string, meta: Meta): string {
 
 export function ProductFormModal({ open, onOpenChange, product, sellerId }: Props) {
   const isSeller = !!sellerId;
+  const { user } = useAuth();
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
   const [title, setTitle] = useState("");
@@ -393,7 +395,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
 
           <div>
             <Label className="mb-2 block">Imagens</Label>
-            <ImageUploader productId={productId} value={images} onChange={setImages} />
+            <ImageUploader productId={productId} pathPrefix={isSeller && user ? `sellers/${user.id}` : undefined} value={images} onChange={setImages} />
           </div>
 
           <div>

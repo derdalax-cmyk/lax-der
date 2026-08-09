@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   productId: string; // use a temp UUID for new products
+  pathPrefix?: string; // e.g. "sellers/<uid>" so uploads land in a folder the seller owns
   value: string[];
   onChange: (urls: string[]) => void;
 };
@@ -13,7 +14,7 @@ type Props = {
 const MAX_SIZE = 5 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
-export function ImageUploader({ productId, value, onChange }: Props) {
+export function ImageUploader({ productId, pathPrefix, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -32,7 +33,7 @@ export function ImageUploader({ productId, value, onChange }: Props) {
         continue;
       }
       const ext = file.name.split(".").pop();
-      const path = `${productId}/${crypto.randomUUID()}.${ext}`;
+      const path = `${pathPrefix ? `${pathPrefix}/` : ""}${productId}/${crypto.randomUUID()}.${ext}`;
       const { error } = await supabase.storage.from("products").upload(path, file, { upsert: false });
       if (error) {
         toast.error(`Erro: ${error.message}`);
