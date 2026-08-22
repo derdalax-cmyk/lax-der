@@ -198,6 +198,10 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
         <div className="bg-card border border-border rounded-xl p-5 mb-6 text-sm text-muted-foreground">
           <Link to="/login" className="text-gold font-medium hover:underline">Inicie sessão</Link> para avaliar esta loja.
         </div>
+      ) : !mine && !eligibleOrderId ? (
+        <div className="bg-card border border-border rounded-xl p-5 mb-6 text-sm text-muted-foreground">
+          Só pode avaliar esta loja depois de fazer um pedido com produtos dela.
+        </div>
       ) : editing || !mine ? (
         <div className="bg-card border border-border rounded-xl p-5 mb-6">
           <h3 className="font-semibold mb-4">{mine ? "Editar a sua avaliação" : "Avaliar esta loja"}</h3>
