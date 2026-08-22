@@ -126,7 +126,18 @@ function ExplorarPage() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground">Nenhuma peça encontrada.</div>
+        city ? (
+          <div className="text-center py-20">
+            <p className="text-lg font-medium">Nenhuma peça encontrada em {city}.</p>
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
+              <CitySelector className="px-3 py-2 text-sm" />
+              <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-20 text-muted-foreground">Nenhuma peça encontrada.</div>
+        )
+
       ) : (
         <>
           <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
