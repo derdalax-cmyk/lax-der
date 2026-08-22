@@ -131,7 +131,7 @@ function ExplorarPage() {
           <div className="text-center py-20">
             <p className="text-lg font-medium">Nenhuma peça encontrada em {city}.</p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
-              <CitySelector className="px-3 py-2 text-sm border-border bg-secondary text-foreground hover:border-gold hover:text-foreground" />
+              <CitySelector tone="light" className="px-3 py-2 text-sm" />
               <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
             </div>
           </div>
