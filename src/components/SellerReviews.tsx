@@ -74,6 +74,24 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     },
   });
 
+  // Só compradores desta loja podem avaliar (a base de dados também exige isto).
+  const { data: eligibleOrderId } = useQuery({
+    queryKey: ["review-eligible-order", sellerId, user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("order_items")
+        .select("order_id, orders!inner(user_id,status)")
+        .eq("seller_id", sellerId)
+        .eq("orders.user_id", user!.id)
+        .neq("orders.status", "cancelled")
+        .limit(1);
+      return (data?.[0]?.order_id as string | undefined) ?? null;
+    },
+  });
+
+
+
   const startEdit = () => {
     setScores({
       quality: mine?.rating_quality ?? mine?.rating ?? 0,
@@ -90,10 +108,15 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
       toast.error("Classifique as três categorias de 1 a 5 estrelas.");
       return;
     }
+    if (!eligibleOrderId) {
+      toast.error("Só pode avaliar esta loja depois de fazer um pedido com produtos dela.");
+      return;
+    }
     setSaving(true);
     const payload = {
       seller_id: sellerId,
       user_id: user.id,
+      order_id: eligibleOrderId,
       rating_quality: scores.quality,
       rating_delivery: scores.delivery,
       rating_service: scores.service,
@@ -174,6 +197,10 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
       {!user ? (
         <div className="bg-card border border-border rounded-xl p-5 mb-6 text-sm text-muted-foreground">
           <Link to="/login" className="text-gold font-medium hover:underline">Inicie sessão</Link> para avaliar esta loja.
+        </div>
+      ) : !mine && !eligibleOrderId ? (
+        <div className="bg-card border border-border rounded-xl p-5 mb-6 text-sm text-muted-foreground">
+          Só pode avaliar esta loja depois de fazer um pedido com produtos dela.
         </div>
       ) : editing || !mine ? (
         <div className="bg-card border border-border rounded-xl p-5 mb-6">

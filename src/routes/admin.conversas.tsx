@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PRIVATE_BUCKET, privateRef } from "@/lib/privateStorage";
 import { usePrivateUrl } from "@/hooks/usePrivateUrl";
+import { DOC_ACCEPT, validateUpload } from "@/lib/uploadLimits";
 
 export const Route = createFileRoute("/admin/conversas")({
   component: AdminConversas,
@@ -207,8 +208,14 @@ function AdminThreadPane({ thread, onBack, onChanged }: { thread: AdminThread; o
       <div className="border-t border-border p-2 flex items-end gap-2 bg-card">
         <label className="w-10 h-10 shrink-0 rounded-full grid place-items-center cursor-pointer hover:bg-secondary" title="Anexar imagem">
           <ImagePlus className="w-5 h-5 text-muted-foreground" />
-          <input type="file" accept="image/*" className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) setPendingImage(f); e.target.value = ""; }} />
+          <input type="file" accept={DOC_ACCEPT} className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0]; e.target.value = "";
+              if (!f) return;
+              const err = validateUpload(f, "document");
+              if (err) { toast.error(err); return; }
+              setPendingImage(f);
+            }} />
         </label>
         <textarea value={text} onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}

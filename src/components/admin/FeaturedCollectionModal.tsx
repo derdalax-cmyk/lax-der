@@ -19,6 +19,7 @@ import {
   SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { validateUpload } from "@/lib/uploadLimits";
 
 export type FeaturedCollection = {
   id: string;
@@ -355,6 +356,8 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
                   onChange={async (e) => {
                     const file = e.target.files?.[0]; e.target.value = "";
                     if (!file) return;
+                    const verr = validateUpload(file, "image");
+                    if (verr) { toast.error(verr); return; }
                     if (file.size > 2 * 1024 * 1024) { toast.error("Ícone maior que 2MB"); return; }
                     setUploadingIcon(true);
                     try {
