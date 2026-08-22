@@ -90,10 +90,15 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
       toast.error("Classifique as três categorias de 1 a 5 estrelas.");
       return;
     }
+    if (!eligibleOrderId) {
+      toast.error("Só pode avaliar esta loja depois de fazer um pedido com produtos dela.");
+      return;
+    }
     setSaving(true);
     const payload = {
       seller_id: sellerId,
       user_id: user.id,
+      order_id: eligibleOrderId,
       rating_quality: scores.quality,
       rating_delivery: scores.delivery,
       rating_service: scores.service,
