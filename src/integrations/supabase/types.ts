@@ -1347,6 +1347,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recalc_order_totals: { Args: { _order_id: string }; Returns: undefined }
       release_expired_reservations: { Args: never; Returns: number }
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
