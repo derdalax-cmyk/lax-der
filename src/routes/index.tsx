@@ -129,7 +129,7 @@ function Home() {
             Experimente escolher outra cidade no seletor ou ver todas as cidades.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-            <CitySelector className="px-3 py-2 text-sm" />
+            <CitySelector className="px-3 py-2 text-sm border-border bg-secondary text-foreground hover:border-gold hover:text-foreground" />
             <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
           </div>
         </div>
