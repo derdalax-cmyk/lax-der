@@ -5,9 +5,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PRIVATE_BUCKET, privateRef } from "@/lib/privateStorage";
 import { usePrivateUrl } from "@/hooks/usePrivateUrl";
+import { IMAGE_ACCEPT, validateUpload } from "@/lib/uploadLimits";
 
-const MAX_SIZE = 5 * 1024 * 1024;
-const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
 type Props = {
   userId: string;
