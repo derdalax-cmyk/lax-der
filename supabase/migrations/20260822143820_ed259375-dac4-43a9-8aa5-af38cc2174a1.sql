@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users upload own support images" ON storage.objects;
