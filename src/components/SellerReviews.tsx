@@ -74,6 +74,24 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     },
   });
 
+  // Só compradores desta loja podem avaliar (a base de dados também exige isto).
+  const { data: eligibleOrderId } = useQuery({
+    queryKey: ["review-eligible-order", sellerId, user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("order_items")
+        .select("order_id, orders!inner(user_id,status)")
+        .eq("seller_id", sellerId)
+        .eq("orders.user_id", user!.id)
+        .neq("orders.status", "cancelled")
+        .limit(1);
+      return (data?.[0]?.order_id as string | undefined) ?? null;
+    },
+  });
+
+
+
   const startEdit = () => {
     setScores({
       quality: mine?.rating_quality ?? mine?.rating ?? 0,
