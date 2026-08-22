@@ -3,6 +3,7 @@ import { Upload, X, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { IMAGE_ACCEPT, validateUpload } from "@/lib/uploadLimits";
 
 type Props = {
   productId: string; // use a temp UUID for new products
@@ -10,9 +11,6 @@ type Props = {
   value: string[];
   onChange: (urls: string[]) => void;
 };
-
-const MAX_SIZE = 5 * 1024 * 1024;
-const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
 export function ImageUploader({ productId, pathPrefix, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,12 +22,9 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
     setUploading(true);
     const uploaded: string[] = [];
     for (const file of arr) {
-      if (!ACCEPTED.includes(file.type)) {
-        toast.error(`${file.name}: formato inválido`);
-        continue;
-      }
-      if (file.size > MAX_SIZE) {
-        toast.error(`${file.name}: maior que 5MB`);
+      const invalid = validateUpload(file, "image");
+      if (invalid) {
+        toast.error(invalid);
         continue;
       }
       const ext = file.name.split(".").pop();
@@ -85,7 +80,7 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
           ref={inputRef}
           type="file"
           multiple
-          accept="image/jpeg,image/png,image/webp"
+          accept={IMAGE_ACCEPT}
           className="hidden"
           onChange={(e) => e.target.files && uploadFiles(e.target.files)}
         />
