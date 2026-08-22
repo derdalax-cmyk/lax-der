@@ -22,7 +22,7 @@ export function CityAlert() {
             ? `A cidade ${city} ainda não tem produtos disponíveis. Escolha outra cidade.`
             : "Selecione a sua cidade para ver os produtos disponíveis perto de si."}
         </span>
-        <CitySelector tone="light" />
+        <CitySelector tone="light" compact />
       </div>
     </div>
   );
