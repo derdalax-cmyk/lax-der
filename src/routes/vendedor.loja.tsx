@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Store, Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { IMAGE_ACCEPT, validateUpload } from "@/lib/uploadLimits";
 
 export const Route = createFileRoute("/vendedor/loja")({
   component: SellerLoja,
@@ -52,8 +53,8 @@ function SellerLoja() {
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const uploadLogo = async (file: File) => {
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem maior que 5MB"); return; }
+    const invalid = validateUpload(file, "image");
+    if (invalid) { toast.error(invalid); return; }
     if (!user) return;
     setUploading(true);
     try {
@@ -107,7 +108,7 @@ function SellerLoja() {
             {logoUrl ? <img src={logoUrl} alt="Logótipo" className="w-full h-full object-cover" /> : <Store className="w-8 h-8 text-muted-foreground" />}
           </div>
           <div>
-            <input ref={logoInput} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
+            <input ref={logoInput} type="file" accept={IMAGE_ACCEPT} hidden onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
             <Button variant="outline" size="sm" onClick={() => logoInput.current?.click()} disabled={uploading}>
               {uploading ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Camera className="w-4 h-4 mr-1" />}
               Alterar logótipo

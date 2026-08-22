@@ -5,9 +5,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PRIVATE_BUCKET, privateRef } from "@/lib/privateStorage";
 import { usePrivateUrl } from "@/hooks/usePrivateUrl";
+import { IMAGE_ACCEPT, validateUpload } from "@/lib/uploadLimits";
 
-const MAX_SIZE = 5 * 1024 * 1024;
-const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
 type Props = {
   userId: string;
@@ -30,8 +29,8 @@ export function AvatarUploader({ userId, avatarUrl, name, email, onChange }: Pro
   const src = usePrivateUrl(avatarUrl);
 
   const upload = async (file: File) => {
-    if (!ACCEPTED.includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return; }
-    if (file.size > MAX_SIZE) { toast.error("Imagem maior que 5MB"); return; }
+    const invalid = validateUpload(file, "image");
+    if (invalid) { toast.error(invalid); return; }
     setUploading(true);
     const ext = file.name.split(".").pop();
     const path = `avatars/${userId}/${crypto.randomUUID()}.${ext}`;
@@ -73,7 +72,7 @@ export function AvatarUploader({ userId, avatarUrl, name, email, onChange }: Pro
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept={IMAGE_ACCEPT}
         className="hidden"
         onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
       />
