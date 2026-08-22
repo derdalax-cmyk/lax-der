@@ -53,10 +53,10 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
           return (
             <div
               key={p.id}
-              className="snap-start shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%] group relative"
+              className="snap-start shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%] group relative bg-card border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
               <Link to="/produto/$id" params={{ id: p.id }} className="block">
-                <div className="relative aspect-square bg-secondary overflow-hidden rounded-lg border border-border">
+                <div className="relative aspect-square bg-secondary overflow-hidden">
                   {img ? (
                     <img src={img} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
@@ -66,11 +66,12 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
                     <span className="absolute top-1.5 left-1.5 bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>
                   )}
                 </div>
-                <div className="pt-1.5">
+                <div className="p-2">
                   <h3 className="font-medium text-xs line-clamp-1">{p.title}</h3>
                   <p className="text-xs text-gold font-semibold mt-0.5">{formatMZN(Number(p.base_price))}</p>
                 </div>
               </Link>
+
               <button
                 type="button"
                 aria-label="Favoritar"
