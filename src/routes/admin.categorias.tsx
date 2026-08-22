@@ -18,6 +18,7 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { validateUpload } from "@/lib/uploadLimits";
 
 export const Route = createFileRoute("/admin/categorias")({
   component: AdminCategoriasPage,
@@ -207,6 +208,8 @@ function CategoryModal({ open, onOpenChange, category, nextOrder }:
   useEffect(() => { if (!slugEdited) setSlug(slugify(label)); }, [label, slugEdited]);
 
   const uploadIcon = async (file: File) => {
+    const err = validateUpload(file, "image");
+    if (err) { toast.error(err); return; }
     if (file.size > 2 * 1024 * 1024) { toast.error("Ícone maior que 2MB"); return; }
     setUploading(true);
     try {

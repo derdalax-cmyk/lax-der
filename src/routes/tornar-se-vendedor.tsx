@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner";
 import { isValidMzPhone } from "@/lib/validation";
 import { cn } from "@/lib/utils";
+import { validateUpload } from "@/lib/uploadLimits";
 
 export const Route = createFileRoute("/tornar-se-vendedor")({
   head: () => ({
@@ -135,7 +136,8 @@ function TornarSeVendedor() {
   };
 
   const pickDoc = (key: DocKey, file: File) => {
-    if (!validateImage(file)) return;
+    const err = validateUpload(file, "document");
+    if (err) { toast.error(err); return; }
     setDocs((d) => ({ ...d, [key]: file }));
     setDocPreviews((p) => ({ ...p, [key]: URL.createObjectURL(file) }));
   };
