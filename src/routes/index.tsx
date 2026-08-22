@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
+import { CitySelector } from "@/components/CitySelector";
+import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/")({
 const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
 function Home() {
-  const { city } = useCity();
+  const { city, clearCity } = useCity();
 
 
 
@@ -126,6 +128,10 @@ function Home() {
           <p className="text-muted-foreground mt-2">
             Experimente escolher outra cidade no seletor ou ver todas as cidades.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <CitySelector className="px-3 py-2 text-sm" />
+            <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
+          </div>
         </div>
       ) : (
         <>

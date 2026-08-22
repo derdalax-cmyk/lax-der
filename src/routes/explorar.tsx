@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type ProductCardData, formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCity } from "@/contexts/CityContext";
+import { CitySelector } from "@/components/CitySelector";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ function ExplorarPage() {
       return (data ?? []) as { id: string; slug: string; label: string; icon: string | null }[];
     },
   });
-  const { city } = useCity();
+  const { city, clearCity } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
