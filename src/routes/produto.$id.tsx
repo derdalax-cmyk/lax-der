@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight } from "lucide-react";
+import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight, Share2 } from "lucide-react";
 import { StarRating } from "@/components/StarRating";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCart } from "@/contexts/CartContext";
@@ -194,6 +194,26 @@ function ProdutoDetalhe() {
     setProduct(p as Product | null);
   };
 
+  const handleShare = async () => {
+    if (!product) return;
+    const url = `https://derdalax.co.mz/produto/${product.id}`;
+    const payload = {
+      title: product.title,
+      text: `Vê isto na DERDALAX: ${product.title}`,
+      url,
+    };
+    try {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        await navigator.share(payload);
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copiado!");
+    } catch {
+      // cancelamento ou falha silenciosa
+    }
+  };
+
   const handleAddToCart = async (): Promise<boolean> => {
     if (!product) return false;
     if (reservedByOther) { toast.error("Peça indisponível"); return false; }
@@ -379,12 +399,21 @@ function ProdutoDetalhe() {
               Comprar agora
             </Button>
             <button
+              onClick={handleShare}
+              aria-label="Partilhar produto"
+              className="h-10 px-3 inline-flex items-center justify-center gap-2 border border-border rounded text-sm hover:border-foreground transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              Partilhar
+            </button>
+            <button
               onClick={() => toggle(product.id)}
               aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
               className="h-10 w-10 flex items-center justify-center border border-border rounded"
             >
               <Heart className={cn("w-5 h-5", isFavorite(product.id) ? "fill-destructive text-destructive" : "")} />
             </button>
+
           </div>
 
           {reservedByOther && (
