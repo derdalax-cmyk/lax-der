@@ -21,6 +21,7 @@ import {
   ShoppingBag,
   ChevronRight,
   FileText,
+  Trash2,
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
