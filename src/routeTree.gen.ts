@@ -47,6 +47,7 @@ import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.cate
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$orderId'
+import { Route as ApiPublicTmpDeletionTestRouteImport } from './routes/api/public/tmp-deletion-test'
 import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.vendedores_.dashboard'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -244,6 +245,12 @@ const ChatOrderOrderIdRoute = ChatOrderOrderIdRouteImport.update({
   path: '/chat/order/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTmpDeletionTestRoute =
+  ApiPublicTmpDeletionTestRouteImport.update({
+    id: '/api/public/tmp-deletion-test',
+    path: '/api/public/tmp-deletion-test',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminVendedoresDashboardRoute =
   AdminVendedoresDashboardRouteImport.update({
     id: '/vendedores_/dashboard',
@@ -316,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/perfil/': typeof PerfilIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
+  '/api/public/tmp-deletion-test': typeof ApiPublicTmpDeletionTestRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
@@ -359,6 +367,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilIndexRoute
   '/vendedor': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
+  '/api/public/tmp-deletion-test': typeof ApiPublicTmpDeletionTestRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
@@ -406,6 +415,7 @@ export interface FileRoutesById {
   '/perfil/': typeof PerfilIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
+  '/api/public/tmp-deletion-test': typeof ApiPublicTmpDeletionTestRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/perfil/'
     | '/vendedor/'
     | '/admin/vendedores/dashboard'
+    | '/api/public/tmp-deletion-test'
     | '/chat/order/$orderId'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
@@ -497,6 +508,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/vendedor'
     | '/admin/vendedores/dashboard'
+    | '/api/public/tmp-deletion-test'
     | '/chat/order/$orderId'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
@@ -543,6 +555,7 @@ export interface FileRouteTypes {
     | '/perfil/'
     | '/vendedor/'
     | '/admin/vendedores_/dashboard'
+    | '/api/public/tmp-deletion-test'
     | '/chat/order/$orderId'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
@@ -570,6 +583,7 @@ export interface RootRouteChildren {
   PedidoIdRoute: typeof PedidoIdRoute
   PoliticasSlugRoute: typeof PoliticasSlugRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
+  ApiPublicTmpDeletionTestRoute: typeof ApiPublicTmpDeletionTestRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
@@ -846,6 +860,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatOrderOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/tmp-deletion-test': {
+      id: '/api/public/tmp-deletion-test'
+      path: '/api/public/tmp-deletion-test'
+      fullPath: '/api/public/tmp-deletion-test'
+      preLoaderRoute: typeof ApiPublicTmpDeletionTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/vendedores_/dashboard': {
       id: '/admin/vendedores_/dashboard'
       path: '/vendedores/dashboard'
@@ -977,6 +998,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidoIdRoute: PedidoIdRoute,
   PoliticasSlugRoute: PoliticasSlugRoute,
   ProdutoIdRoute: ProdutoIdRoute,
+  ApiPublicTmpDeletionTestRoute: ApiPublicTmpDeletionTestRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
