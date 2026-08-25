@@ -35,6 +35,7 @@ import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
+import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-conta'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
@@ -183,6 +184,11 @@ const PerfilFavoritosRoute = PerfilFavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => PerfilRoute,
 } as any)
+const PerfilExcluirContaRoute = PerfilExcluirContaRouteImport.update({
+  id: '/excluir-conta',
+  path: '/excluir-conta',
+  getParentRoute: () => PerfilRoute,
+} as any)
 const PedidoIdRoute = PedidoIdRouteImport.update({
   id: '/pedido/$id',
   path: '/pedido/$id',
@@ -296,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByTo {
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
@@ -384,6 +392,7 @@ export interface FileRoutesById {
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/admin/vendedores'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
     | '/politicas/$slug'
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/admin/vendedores'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
     | '/politicas/$slug'
@@ -518,6 +529,7 @@ export interface FileRouteTypes {
     | '/admin/vendedores'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
     | '/politicas/$slug'
@@ -750,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilFavoritosRouteImport
       parentRoute: typeof PerfilRoute
     }
+    '/perfil/excluir-conta': {
+      id: '/perfil/excluir-conta'
+      path: '/excluir-conta'
+      fullPath: '/perfil/excluir-conta'
+      preLoaderRoute: typeof PerfilExcluirContaRouteImport
+      parentRoute: typeof PerfilRoute
+    }
     '/pedido/$id': {
       id: '/pedido/$id'
       path: '/pedido/$id'
@@ -901,12 +920,14 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface PerfilRouteChildren {
+  PerfilExcluirContaRoute: typeof PerfilExcluirContaRoute
   PerfilFavoritosRoute: typeof PerfilFavoritosRoute
   PerfilPedidosRoute: typeof PerfilPedidosRoute
   PerfilIndexRoute: typeof PerfilIndexRoute
 }
 
 const PerfilRouteChildren: PerfilRouteChildren = {
+  PerfilExcluirContaRoute: PerfilExcluirContaRoute,
   PerfilFavoritosRoute: PerfilFavoritosRoute,
   PerfilPedidosRoute: PerfilPedidosRoute,
   PerfilIndexRoute: PerfilIndexRoute,

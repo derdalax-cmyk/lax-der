@@ -283,10 +283,16 @@ function Perfil() {
         </div>
       </div>
 
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex flex-col items-center gap-1">
         <Button variant="ghost" className="text-muted-foreground" onClick={() => signOut()}>
           <LogOut className="w-4 h-4 mr-1.5" /> Terminar sessão
         </Button>
+        <Link
+          to="/perfil/excluir-conta"
+          className="inline-flex items-center gap-1.5 text-xs text-destructive/80 hover:text-destructive underline underline-offset-4 py-2"
+        >
+          <Trash2 className="w-3.5 h-3.5" /> Excluir conta
+        </Link>
       </div>
     </div>
   );
