@@ -26,6 +26,8 @@ import {
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { AccountDeletionFlow } from "@/components/profile/AccountDeletionFlow";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
@@ -42,6 +44,7 @@ function Perfil() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", city: "" });
 
   useEffect(() => {
@@ -288,12 +291,16 @@ function Perfil() {
         <Button variant="ghost" className="text-muted-foreground" onClick={() => signOut()}>
           <LogOut className="w-4 h-4 mr-1.5" /> Terminar sessão
         </Button>
-        <Link
-          to="/perfil/excluir-conta"
-          className="inline-flex items-center gap-1.5 text-xs text-destructive/80 hover:text-destructive underline underline-offset-4 py-2"
-        >
-          <Trash2 className="w-3.5 h-3.5" /> Excluir conta
-        </Link>
+        <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <DialogTrigger asChild>
+            <Button variant="link" className="h-auto gap-1.5 px-0 py-2 text-xs text-destructive/80 hover:text-destructive">
+              <Trash2 className="w-3.5 h-3.5" /> Excluir conta
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-3xl p-5 sm:p-8">
+            <AccountDeletionFlow onDeleted={() => setDeleteOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
