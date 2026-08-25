@@ -8,6 +8,53 @@ export const MAX_CODE_ATTEMPTS = 5;
 
 export type DeletionBlocker = { kind: "order" | "seller_order"; reference: string };
 
+function generateSixDigitCode() {
+  const values = new Uint32Array(1);
+  crypto.getRandomValues(values);
+  return String(100000 + (values[0] % 900000));
+}
+
+async function hashDeletionCode(code: string, salt: string) {
+  const data = new TextEncoder().encode(`${salt}:${code}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  const hex = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${salt}:${hex}`;
+}
+
+async function codeMatches(stored: string, submitted: string) {
+  if (/^\d{6}$/.test(stored)) return stored === submitted;
+  const [salt] = stored.split(":");
+  if (!salt) return false;
+  return (await hashDeletionCode(submitted, salt)) === stored;
+}
+
+async function removeStoragePrefix(db: Awaited<ReturnType<typeof admin>>, bucket: string, prefix: string) {
+  const cleanPrefix = prefix.replace(/^\/+|\/+$/g, "");
+  if (!cleanPrefix) return;
+
+  const paths: string[] = [];
+  const collect = async (current: string) => {
+    const { data } = await db.storage.from(bucket).list(current, { limit: 1000 });
+    for (const entry of data ?? []) {
+      const path = `${current}/${entry.name}`;
+      if ((entry as { id?: string | null }).id) {
+        paths.push(path);
+      } else {
+        await collect(path);
+      }
+    }
+  };
+
+  try {
+    await collect(cleanPrefix);
+    for (let i = 0; i < paths.length; i += 100) {
+      await db.storage.from(bucket).remove(paths.slice(i, i + 100));
+    }
+  } catch {
+    // Storage cleanup is best-effort; database erasure must continue.
+  }
+}
+
 async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
@@ -49,13 +96,16 @@ export async function findOpenDisputes(userId: string): Promise<DeletionBlocker[
 
 export async function createAndSendDeletionCode(userId: string, email: string) {
   const db = await admin();
-  const code = String(Math.floor(100000 + Math.random() * 900000));
+  const code = generateSixDigitCode();
+  const salt = crypto.randomUUID().replace(/-/g, "");
+  const codeHash = await hashDeletionCode(code, salt);
   const expiresAt = new Date(Date.now() + CODE_TTL_MINUTES * 60 * 1000).toISOString();
+  const now = new Date().toISOString();
 
   const { error } = await db
     .from("account_deletion_codes")
     .upsert(
-      { user_id: userId, code, attempts: 0, expires_at: expiresAt, updated_at: new Date().toISOString() },
+      { user_id: userId, code: codeHash, attempts: 0, expires_at: expiresAt, created_at: now, updated_at: now },
       { onConflict: "user_id" },
     );
   if (error) throw new Error("Não foi possível gerar o código. Tente novamente.");
@@ -138,7 +188,7 @@ export async function verifyDeletionCode(userId: string, code: string): Promise<
     await db.from("account_deletion_codes").delete().eq("user_id", userId);
     return { ok: false, reason: "expired" };
   }
-  if (row.code !== code) {
+  if (!(await codeMatches(row.code, code))) {
     const attempts = row.attempts + 1;
     await db.from("account_deletion_codes").update({ attempts }).eq("user_id", userId);
     if (attempts >= MAX_CODE_ATTEMPTS) return { ok: false, reason: "too_many" };
@@ -154,6 +204,11 @@ export async function verifyDeletionCode(userId: string, code: string): Promise<
  */
 export async function purgeAccount(userId: string) {
   const db = await admin();
+  const [{ data: profile }, { data: authUser }] = await Promise.all([
+    db.from("profiles").select("email, avatar_url").eq("id", userId).maybeSingle(),
+    db.auth.admin.getUserById(userId),
+  ]);
+  const emails = Array.from(new Set([profile?.email, authUser?.user?.email].filter((email): email is string => !!email)));
 
   // 1. Personal, non-fiscal data — removed entirely.
   await db.from("cart_items").delete().eq("user_id", userId);
@@ -164,13 +219,32 @@ export async function purgeAccount(userId: string) {
   await db.from("notifications").delete().eq("user_id", userId);
   await db.from("seller_reviews").delete().eq("user_id", userId);
   await db.from("reports").delete().eq("reporter_id", userId);
+  await db.from("support_threads").delete().eq("user_id", userId);
+  await db.from("conversations").delete().or(`buyer_id.eq.${userId},seller_user_id.eq.${userId}`);
+
+  for (const email of emails) {
+    await db.from("email_unsubscribe_tokens").delete().eq("email", email);
+    await db.from("suppressed_emails").delete().eq("email", email);
+    await db
+      .from("email_send_log")
+      .update({ recipient_email: "deleted-account@derdalax.invalid", error_message: null })
+      .eq("recipient_email", email);
+  }
 
   // 2. Seller store: published products removed, store row anonymized so past
   //    order splits keep their integrity.
   const { data: sellers } = await db.from("sellers").select("id").eq("user_id", userId);
   for (const s of sellers ?? []) {
+    const { data: products } = await db.from("products").select("id").eq("seller_id", s.id);
+    for (const product of products ?? []) {
+      await removeStoragePrefix(db, "products", `${product.id}`);
+      await removeStoragePrefix(db, "products", `sellers/${userId}/${product.id}`);
+    }
     await db.from("featured_collection_products").delete().eq("seller_id", s.id);
     await db.from("products").delete().eq("seller_id", s.id);
+    await removeStoragePrefix(db, "products", `sellers/${userId}`);
+    await removeStoragePrefix(db, "seller-documents", userId);
+    await removeStoragePrefix(db, "seller-photos", userId);
     await db
       .from("sellers")
       .update({
@@ -209,13 +283,9 @@ export async function purgeAccount(userId: string) {
     .eq("user_id", userId);
 
   // 4. Best-effort removal of private uploads.
-  try {
-    const { data: files } = await db.storage.from("user-private").list(`${userId}`, { limit: 1000 });
-    const paths = (files ?? []).map((f) => `${userId}/${f.name}`);
-    if (paths.length > 0) await db.storage.from("user-private").remove(paths);
-  } catch {
-    // ignore storage cleanup failures
-  }
+  await removeStoragePrefix(db, "user-private", userId);
+  await removeStoragePrefix(db, "user-private", `avatars/${userId}`);
+  await removeStoragePrefix(db, "user-private", `support/${userId}`);
 
   // 5. Consume the code and delete the auth identity (cascades profile, roles,
   //    conversations, messages and support threads).
