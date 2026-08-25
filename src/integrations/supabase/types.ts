@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_codes: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          expires_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          expires_at: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       addresses: {
         Row: {
           apartment: string | null
@@ -646,7 +673,7 @@ export type Database = {
           subtotal: number
           total: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -665,7 +692,7 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -684,7 +711,7 @@ export type Database = {
           subtotal?: number
           total?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1009,7 +1036,7 @@ export type Database = {
           store_name: string
           total_reviews: number
           updated_at: string
-          user_id: string
+          user_id: string | null
           verified_at: string | null
         }
         Insert: {
@@ -1040,7 +1067,7 @@ export type Database = {
           store_name: string
           total_reviews?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           verified_at?: string | null
         }
         Update: {
@@ -1071,7 +1098,7 @@ export type Database = {
           store_name?: string
           total_reviews?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           verified_at?: string | null
         }
         Relationships: []
