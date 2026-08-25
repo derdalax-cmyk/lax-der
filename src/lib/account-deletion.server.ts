@@ -74,6 +74,12 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
     status: "pending",
   });
 
+  // The email provider requires an unsubscribe token on transactional sends.
+  const unsubscribeToken = crypto.randomUUID().replace(/-/g, "");
+  await db.from("email_unsubscribe_tokens").insert({ token: unsubscribeToken, email });
+
+
+
   try {
     await sendLovableEmail(
       {
