@@ -61,6 +61,7 @@ function AdminUtilizadores() {
       const now = Date.now();
       const agg = new Map<string, { count: number; spent: number; last: string | null }>();
       (orders ?? []).forEach((o) => {
+        if (!o.user_id) return; // conta apagada — pedido anonimizado
         const cur = agg.get(o.user_id) ?? { count: 0, spent: 0, last: null };
         cur.count += 1;
         const paid = o.payment_status === "paid" || o.status === "paid" || o.status === "delivered";
