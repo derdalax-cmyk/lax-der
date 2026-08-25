@@ -25,7 +25,7 @@ export const Route = createFileRoute("/perfil/excluir-conta")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: ExcluirConta;
+  component: ExcluirConta,
 });
 
 type Blocker = { kind: "order" | "seller_order"; reference: string };
