@@ -87,6 +87,7 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
         purpose: "transactional",
         label: "account_deletion_code",
         message_id: messageId,
+        idempotency_key: messageId,
       } as Parameters<typeof sendLovableEmail>[0],
       { apiKey, sendUrl: process.env["LOVABLE_SEND_URL"] },
     );
