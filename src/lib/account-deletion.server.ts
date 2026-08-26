@@ -1,6 +1,5 @@
 import * as React from "react";
 import { render } from "@react-email/render";
-import { sendLovableEmail } from "@lovable.dev/email-js";
 import { AccountDeletionEmail } from "./email-templates/account-deletion";
 
 const CODE_TTL_MINUTES = 10;
@@ -110,9 +109,6 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
     );
   if (error) throw new Error("Não foi possível gerar o código. Tente novamente.");
 
-  const apiKey = process.env["LOVABLE_API_KEY"];
-  if (!apiKey) throw new Error("Serviço de email indisponível. Tente mais tarde.");
-
   const html = await render(React.createElement(AccountDeletionEmail, { token: code }));
   const text = `O seu código para apagar a conta DERDALAX é ${code}. Expira em ${CODE_TTL_MINUTES} minutos.`;
   const messageId = crypto.randomUUID();
@@ -128,44 +124,35 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
   const unsubscribeToken = crypto.randomUUID().replace(/-/g, "");
   await db.from("email_unsubscribe_tokens").insert({ token: unsubscribeToken, email });
 
+  const { error: enqueueError } = await db.rpc("enqueue_email", {
+    queue_name: "transactional_emails",
+    payload: {
+      message_id: messageId,
+      to: email,
+      from: "DERDALAX <noreply@derdalax.co.mz>",
+      reply_to: "suporte@derdalax.co.mz",
+      sender_domain: "notify.derdalax.co.mz",
+      subject: "Código para apagar a sua conta DERDALAX",
+      html,
+      text,
+      purpose: "transactional",
+      label: "account_deletion_code",
+      idempotency_key: messageId,
+      unsubscribe_token: unsubscribeToken,
+      queued_at: new Date().toISOString(),
+    },
+  });
 
-
-  try {
-    await sendLovableEmail(
-      {
-        to: email,
-        from: "DERDALAX <noreply@derdalax.co.mz>",
-        reply_to: "suporte@derdalax.co.mz",
-        sender_domain: "notify.derdalax.co.mz",
-        subject: "Código para apagar a sua conta DERDALAX",
-        html,
-        text,
-        purpose: "transactional",
-        label: "account_deletion_code",
-        message_id: messageId,
-        idempotency_key: messageId,
-        unsubscribe_token: unsubscribeToken,
-      } as Parameters<typeof sendLovableEmail>[0],
-      { apiKey, sendUrl: process.env["LOVABLE_SEND_URL"] },
-    );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+  if (enqueueError) {
     await db.from("email_send_log").insert({
       message_id: messageId,
       template_name: "account_deletion_code",
       recipient_email: email,
       status: "failed",
-      error_message: message.slice(0, 1000),
+      error_message: enqueueError.message.slice(0, 1000),
     });
     throw new Error("Não conseguimos enviar o email com o código. Tente novamente.");
   }
-
-  await db.from("email_send_log").insert({
-    message_id: messageId,
-    template_name: "account_deletion_code",
-    recipient_email: email,
-    status: "sent",
-  });
 
   return { expiresAt };
 }
