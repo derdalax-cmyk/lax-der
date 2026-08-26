@@ -27,7 +27,7 @@ import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { AccountDeletionFlow } from "@/components/profile/AccountDeletionFlow";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
@@ -298,6 +298,7 @@ function Perfil() {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-3xl p-5 sm:p-8">
+            <DialogTitle className="sr-only">Excluir conta</DialogTitle>
             <AccountDeletionFlow onDeleted={() => setDeleteOpen(false)} />
           </DialogContent>
         </Dialog>
