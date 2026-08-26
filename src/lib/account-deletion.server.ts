@@ -120,9 +120,24 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
     status: "pending",
   });
 
-  // The email provider requires an unsubscribe token on transactional sends.
+  // The email provider requires an unsubscribe token and the table stores one token per email address.
   const unsubscribeToken = crypto.randomUUID().replace(/-/g, "");
-  await db.from("email_unsubscribe_tokens").insert({ token: unsubscribeToken, email });
+  const { data: tokenRow, error: tokenError } = await db
+    .from("email_unsubscribe_tokens")
+    .upsert({ token: unsubscribeToken, email, used_at: null }, { onConflict: "email" })
+    .select("token")
+    .single();
+
+  if (tokenError || !tokenRow?.token) {
+    await db.from("email_send_log").insert({
+      message_id: messageId,
+      template_name: "account_deletion_code",
+      recipient_email: email,
+      status: "failed",
+      error_message: (tokenError?.message ?? "Não foi possível preparar o envio do email.").slice(0, 1000),
+    });
+    throw new Error("Não conseguimos enviar o email com o código. Tente novamente.");
+  }
 
   const { error: enqueueError } = await db.rpc("enqueue_email", {
     queue_name: "transactional_emails",
@@ -138,7 +153,7 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
       purpose: "transactional",
       label: "account_deletion_code",
       idempotency_key: messageId,
-      unsubscribe_token: unsubscribeToken,
+      unsubscribe_token: tokenRow.token,
       queued_at: new Date().toISOString(),
     },
   });
