@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CategoryIcon } from "@/lib/categoryIcons";
 import { Search, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { thumbUrl } from "@/lib/imageUrl";
 
 export const Route = createFileRoute("/explorar")({
   head: () => ({ meta: [
