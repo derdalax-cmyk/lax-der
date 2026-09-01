@@ -12,8 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCategories } from "@/hooks/useCategories";
 
-export const CATEGORIES = ["camisas", "calcas", "sapatos", "chapeus", "calcoes", "casacos"] as const;
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
 type ProductStatus = "available" | "reserved" | "sold" | "out_of_stock" | "inactive";
