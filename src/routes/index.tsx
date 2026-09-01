@@ -44,7 +44,7 @@ function Home() {
     },
   });
 
-  const { data: collections = [] } = useQuery({
+  const { data: collections = [], isPending: collectionsPending } = useQuery({
     queryKey: ["home-collections", city],
     queryFn: async () => {
       const nowIso = new Date().toISOString();
