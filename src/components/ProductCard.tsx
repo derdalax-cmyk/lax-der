@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { thumbUrl } from "@/lib/imageUrl";
 
 export type ProductCardData = {
   id: string;
@@ -38,7 +39,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
       <Link to="/produto/$id" params={{ id: product.id }} className="block">
         <div className="relative aspect-[3/4] bg-secondary overflow-hidden">
           {img ? (
-            <img src={img} alt={product.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
           )}

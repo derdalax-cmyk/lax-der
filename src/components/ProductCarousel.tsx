@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { thumbUrl } from "@/lib/imageUrl";
 import { formatMZN, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { CategoryIcon } from "@/lib/categoryIcons";
@@ -58,7 +59,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
               <Link to="/produto/$id" params={{ id: p.id }} className="block">
                 <div className="relative aspect-square bg-secondary overflow-hidden">
                   {img ? (
-                    <img src={img} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                   )}

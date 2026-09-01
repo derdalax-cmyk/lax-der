@@ -75,7 +75,7 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
       >
         <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
         <p className="text-sm font-medium">{uploading ? "A enviar…" : "Arraste imagens ou clique para escolher"}</p>
-        <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP — máx 5MB cada</p>
+        <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP — máx 10MB cada</p>
         <input
           ref={inputRef}
           type="file"

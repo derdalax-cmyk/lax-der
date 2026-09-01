@@ -11,6 +11,7 @@ import { ProductCard, type ProductCardData, formatMZN } from "@/components/Produ
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
+import { largeUrl, thumbUrl } from "@/lib/imageUrl";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 
@@ -258,7 +259,7 @@ function ProdutoDetalhe() {
           <div className="relative aspect-square bg-secondary rounded-xl overflow-hidden">
             {imgs[imgIdx] ? (
               <img
-                src={imgs[imgIdx]} alt={product.title}
+                src={largeUrl(imgs[imgIdx])} alt={product.title}
                 onClick={() => setZoom(true)}
                 className="w-full h-full object-cover cursor-zoom-in"
               />
@@ -279,7 +280,7 @@ function ProdutoDetalhe() {
             <div className="flex gap-2 mt-3 overflow-x-auto">
               {imgs.map((src, i) => (
                 <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => setImgIdx(i)} className={cn("flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-transparent")}>
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={thumbUrl(src)} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -470,7 +471,7 @@ function ProdutoDetalhe() {
       {zoom && imgs[imgIdx] && (
         <div onClick={() => setZoom(false)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out">
           <button aria-label="Fechar zoom" onClick={() => setZoom(false)} className="absolute top-4 right-4 text-white"><X className="w-6 h-6" /></button>
-          <img src={imgs[imgIdx]} alt={product.title} className="max-w-full max-h-full object-contain" />
+          <img src={largeUrl(imgs[imgIdx])} alt={product.title} className="max-w-full max-h-full object-contain" />
         </div>
       )}
     </div>

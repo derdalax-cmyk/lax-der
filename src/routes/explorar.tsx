@@ -150,7 +150,7 @@ function ExplorarPage() {
                   <Link to="/produto/$id" params={{ id: p.id }} className="block rounded-xl overflow-hidden border border-border bg-card">
                     <div className="relative bg-secondary overflow-hidden">
                       {img ? (
-                        <img src={img} alt={p.title} loading="lazy" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className="aspect-[3/4] w-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                       )}

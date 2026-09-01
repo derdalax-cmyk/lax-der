@@ -206,7 +206,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
 
   const uploadCover = async (file: File) => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Formato inválido"); return; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem maior que 5MB"); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Imagem maior que 10MB"); return; }
     setUploadingCover(true);
     const ext = file.name.split(".").pop();
     const path = `collections/${crypto.randomUUID()}.${ext}`;
