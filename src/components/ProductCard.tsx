@@ -39,7 +39,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
       <Link to="/produto/$id" params={{ id: product.id }} className="block">
         <div className="relative aspect-square bg-secondary overflow-hidden">
           {img ? (
-            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="absolute inset-0 w-full h-full object-contain p-1.5" />
+            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
           )}
