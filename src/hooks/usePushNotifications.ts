@@ -2,8 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/vapid";
-
-const SW_URL = "/sw.js";
+import { ensureServiceWorker, SW_URL } from "@/lib/serviceWorker";
 
 export type PushStatus = "unsupported" | "denied" | "granted" | "default" | "loading";
 
@@ -32,10 +31,9 @@ export function usePushNotifications() {
   useEffect(() => { refresh(); }, [refresh]);
 
   const registerSw = useCallback(async () => {
-    if (!("serviceWorker" in navigator)) throw new Error("Service Worker não suportado");
-    const existing = await navigator.serviceWorker.getRegistration(SW_URL);
-    if (existing) return existing;
-    return navigator.serviceWorker.register(SW_URL, { scope: "/" });
+    const reg = await ensureServiceWorker();
+    if (!reg) throw new Error("Service Worker não suportado");
+    return reg;
   }, []);
 
   const subscribe = useCallback(async () => {
