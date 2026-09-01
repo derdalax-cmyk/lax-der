@@ -21,7 +21,8 @@ export function imageUrl(url: string | null | undefined, opts: Opts = {}): strin
 }
 
 /** Miniatura para cartões de produto (home, carrosséis, /explorar). */
-export const thumbUrl = (url: string | null | undefined) => imageUrl(url, { width: 400, quality: 75 });
+export const thumbUrl = (url: string | null | undefined) =>
+  imageUrl(url, { width: 500, quality: 78, resize: "contain" });
 
 /** Imagem grande para a página de detalhe do produto. */
 export const largeUrl = (url: string | null | undefined) => imageUrl(url, { width: 1200, quality: 80 });

@@ -141,11 +141,11 @@ function ExplorarPage() {
               return (
                 <div key={p.id} className="mb-4 break-inside-avoid group relative">
                   <Link to="/produto/$id" params={{ id: p.id }} className="block rounded-xl overflow-hidden border border-border bg-card">
-                    <div className="relative bg-secondary overflow-hidden">
+                    <div className="relative aspect-square bg-secondary overflow-hidden">
                       {img ? (
-                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-contain p-1.5" />
                       ) : (
-                        <div className="aspect-[3/4] w-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
+                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                       )}
                       {p.is_unique && (
                         <span className="absolute top-2 left-2 bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>

@@ -59,7 +59,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
               <Link to="/produto/$id" params={{ id: p.id }} className="block">
                 <div className="relative aspect-square bg-secondary overflow-hidden">
                   {img ? (
-                    <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-contain p-1.5" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                   )}
