@@ -287,7 +287,13 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger><SelectValue placeholder="Selecionar…" /></SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+                  {categories.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
+                  {category && !categories.some((c) => c.slug === category) && (
+                    <SelectItem value={category} className="capitalize">{category} (removida)</SelectItem>
+                  )}
+                  {categories.length === 0 && !category && (
+                    <div className="px-2 py-3 text-xs text-muted-foreground">Nenhuma categoria ativa. Crie uma em Admin → Categorias.</div>
+                  )}
                 </SelectContent>
               </Select>
             </div>
