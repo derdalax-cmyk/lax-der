@@ -220,6 +220,24 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
               }
             }
 
+            // App emails require an unsubscribe token; backfill for legacy payloads.
+            let unsubscribeToken = payload.unsubscribe_token as string | undefined
+            if (!unsubscribeToken && payload.purpose === 'transactional' && payload.to) {
+              const { data: tokenRow, error: tokenError } = await supabase
+                .from('email_unsubscribe_tokens')
+                .upsert(
+                  { token: crypto.randomUUID().replace(/-/g, ''), email: payload.to, used_at: null },
+                  { onConflict: 'email' }
+                )
+                .select('token')
+                .single()
+              if (tokenError) {
+                console.error('Failed to backfill unsubscribe token', { to: payload.to, error: tokenError })
+              }
+              unsubscribeToken = tokenRow?.token
+
+            }
+
             try {
               await sendLovableEmail(
                 {
@@ -233,9 +251,16 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                   text: payload.text,
                   purpose: payload.purpose,
                   label: payload.label,
-                  idempotency_key: payload.idempotency_key,
-                  unsubscribe_token: payload.unsubscribe_token,
-                  message_id: payload.message_id,
+                  idempotency_key:
+                    payload.purpose === 'transactional' && !payload.run_id
+                      ? `${payload.idempotency_key ?? payload.message_id}${failedAttempts > 0 ? `-r${failedAttempts}` : ''}`
+                      : payload.idempotency_key,
+                  unsubscribe_token: unsubscribeToken,
+                  // The provider rejects reusing the identity of a failed run, so retries
+                  // send a per-attempt id while local logging keeps the original message_id.
+                  message_id:
+                    failedAttempts > 0 ? `${payload.message_id}-r${failedAttempts}` : payload.message_id,
+
                 },
                 { apiKey, sendUrl: process.env.LOVABLE_SEND_URL }
               )
@@ -297,6 +322,15 @@ export const Route = createFileRoute("/lovable/email/queue/process")({
                 await moveToDlq(supabase, queue, msg, errorMsg.slice(0, 1000))
                 return Response.json({ processed: totalProcessed, stopped: 'forbidden' })
               }
+
+              // The provider refuses to replay a run that already failed with identical
+              // content (409 run_failed). Retrying is pointless: park it in the DLQ so the
+              // app can trigger a brand-new send instead of looping until TTL.
+              if (errorMsg.includes('run_failed')) {
+                await moveToDlq(supabase, queue, msg, errorMsg.slice(0, 1000))
+                continue
+              }
+
 
               // Log non-429 failures to track real retry attempts.
               await supabase.from('email_send_log').insert({
