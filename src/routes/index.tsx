@@ -28,7 +28,7 @@ function Home() {
 
 
 
-  const { data: featured = [] } = useQuery({
+  const { data: featured = [], isPending: featuredPending } = useQuery({
     queryKey: ["home-featured", city],
     queryFn: async () => {
       let q = supabase
