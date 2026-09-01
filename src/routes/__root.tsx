@@ -23,6 +23,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useOnlinePresence } from "@/hooks/useOnlinePresence";
 import { PushAutoPrompt } from "@/components/PushAutoPrompt";
+import { useServiceWorker } from "@/hooks/useServiceWorker";
 
 
 function NotFoundComponent() {
@@ -137,6 +138,8 @@ function AppShell() {
   }, [router]);
 
   useOnlinePresence();
+  useServiceWorker();
+
 
   const { loading } = useAuth();
   return (
