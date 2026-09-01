@@ -113,7 +113,7 @@ function SellerLoja() {
               {uploading ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Camera className="w-4 h-4 mr-1" />}
               Alterar logótipo
             </Button>
-            <p className="text-xs text-muted-foreground mt-1">JPG, PNG ou WEBP, até 5MB.</p>
+            <p className="text-xs text-muted-foreground mt-1">JPG, PNG ou WEBP, até 10MB.</p>
           </div>
         </div>
 

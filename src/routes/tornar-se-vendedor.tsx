@@ -125,7 +125,7 @@ function TornarSeVendedor() {
 
   const validateImage = (file: File) => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Formato inválido (JPG, PNG ou WEBP)"); return false; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Imagem maior que 5MB"); return false; }
+    if (file.size > 10 * 1024 * 1024) { toast.error("Imagem maior que 10MB"); return false; }
     return true;
   };
 
@@ -412,7 +412,7 @@ function TornarSeVendedor() {
               </button>
               <div className="text-sm text-muted-foreground">
                 <div className="font-medium text-foreground">Foto / logótipo da loja</div>
-                <div>Opcional — JPG, PNG ou WEBP (máx. 5MB)</div>
+                <div>Opcional — JPG, PNG ou WEBP (máx. 10MB)</div>
               </div>
               <input ref={logoInput} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
                 onChange={(e) => e.target.files?.[0] && pickLogo(e.target.files[0])} />

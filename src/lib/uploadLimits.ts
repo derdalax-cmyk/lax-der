@@ -2,7 +2,7 @@
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const DOC_TYPES = [...IMAGE_TYPES, "application/pdf"] as const;
 
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
 export const MAX_DOC_BYTES = 10 * 1024 * 1024; // 10MB
 
 type Kind = "image" | "document";

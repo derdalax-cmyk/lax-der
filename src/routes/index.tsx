@@ -28,7 +28,7 @@ function Home() {
 
 
 
-  const { data: featured = [] } = useQuery({
+  const { data: featured = [], isPending: featuredPending } = useQuery({
     queryKey: ["home-featured", city],
     queryFn: async () => {
       let q = supabase
@@ -44,7 +44,7 @@ function Home() {
     },
   });
 
-  const { data: collections = [] } = useQuery({
+  const { data: collections = [], isPending: collectionsPending } = useQuery({
     queryKey: ["home-collections", city],
     queryFn: async () => {
       const nowIso = new Date().toISOString();
@@ -89,8 +89,12 @@ function Home() {
     },
   });
 
+  const productsLoading = featuredPending || collectionsPending;
   const noCityProducts =
-    !!city && featured.length === 0 && collections.every((c) => c.products.length === 0);
+    !!city &&
+    !productsLoading &&
+    featured.length === 0 &&
+    collections.every((c) => c.products.length === 0);
 
   return (
 
@@ -122,7 +126,20 @@ function Home() {
         </div>
       </section>
 
-      {noCityProducts ? (
+      {productsLoading ? (
+        <div className="max-w-[1400px] mx-auto px-5 pt-10">
+          <div className="h-7 w-52 bg-secondary animate-pulse rounded mb-4" />
+          <div className="flex gap-3 overflow-hidden">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%]">
+                <div className="aspect-square bg-secondary animate-pulse rounded-lg" />
+                <div className="h-3 bg-secondary animate-pulse rounded mt-2" />
+                <div className="h-3 w-2/3 bg-secondary animate-pulse rounded mt-1.5" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : noCityProducts ? (
         <div className="max-w-[1400px] mx-auto px-5 py-16 text-center">
           <p className="text-lg font-medium">Ainda não há produtos em {city}.</p>
           <p className="text-muted-foreground mt-2">
