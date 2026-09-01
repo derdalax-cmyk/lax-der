@@ -12,8 +12,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCategories } from "@/hooks/useCategories";
 
-export const CATEGORIES = ["camisas", "calcas", "sapatos", "chapeus", "calcoes", "casacos"] as const;
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
 type ProductStatus = "available" | "reserved" | "sold" | "out_of_stock" | "inactive";
@@ -69,6 +69,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [price, setPrice] = useState<number>(0);
   const [shippingFee, setShippingFee] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
+  const { categories } = useCategories();
   const [gender, setGender] = useState<string>("");
   const [material, setMaterial] = useState("");
   const [color, setColor] = useState("");
@@ -286,7 +287,13 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger><SelectValue placeholder="Selecionar…" /></SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+                  {categories.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
+                  {category && !categories.some((c) => c.slug === category) && (
+                    <SelectItem value={category} className="capitalize">{category} (removida)</SelectItem>
+                  )}
+                  {categories.length === 0 && !category && (
+                    <div className="px-2 py-3 text-xs text-muted-foreground">Nenhuma categoria ativa. Crie uma em Admin → Categorias.</div>
+                  )}
                 </SelectContent>
               </Select>
             </div>

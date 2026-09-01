@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Search, Pencil, Trash2, ImageOff, Clock, CheckCircle2, XCircle, CircleCheck, CircleOff, BadgeCheck } from "lucide-react";
-import { ProductFormModal, CATEGORIES, type ProductRow } from "@/components/admin/ProductFormModal";
+import { ProductFormModal, type ProductRow } from "@/components/admin/ProductFormModal";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/vendedor/produtos")({
@@ -32,6 +33,7 @@ const PRODUCT_STATUS: Record<string, { label: string; cls: string; icon: typeof 
 };
 
 function SellerProdutos() {
+  const { categories: catList, labelOf } = useCategories();
   const { seller } = useSeller();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
@@ -100,7 +102,7 @@ function SellerProdutos() {
           <SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas categorias</SelectItem>
-            {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+            {catList.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={appr} onValueChange={setAppr}>
@@ -152,7 +154,7 @@ function SellerProdutos() {
                         <p className="text-[11px] text-destructive mt-0.5 max-w-[240px]">Motivo: {p.rejection_reason}</p>
                       )}
                     </td>
-                    <td className="px-4 py-2 capitalize text-muted-foreground">{p.category ?? "—"}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{labelOf(p.category)}</td>
                     <td className="px-4 py-2 font-medium">{Number(p.base_price).toLocaleString("pt-PT")} MT</td>
                     <td className="px-4 py-2">
                       <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${ap.cls}`}>

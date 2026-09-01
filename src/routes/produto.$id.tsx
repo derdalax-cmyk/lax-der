@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { largeUrl, thumbUrl } from "@/lib/imageUrl";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
+import { useCategories } from "@/hooks/useCategories";
 
 export const Route = createFileRoute("/produto/$id")({
   head: () => ({ meta: [{ title: "Produto · DERDALAX" }] }),
@@ -79,6 +80,7 @@ function parseMeta(desc: string | null): { text: string; meta: Meta } {
 }
 
 function ProdutoDetalhe() {
+  const { labelOf } = useCategories();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
@@ -251,7 +253,11 @@ function ProdutoDetalhe() {
     <div className="max-w-[1200px] mx-auto px-5 py-10 md:py-14">
       <nav className="text-sm text-muted-foreground mb-6">
         <Link to="/produtos" className="hover:text-foreground">Produtos</Link>
-        {product.category && <> <span className="mx-1">/</span> <span className="capitalize">{product.category}</span></>}
+        {product.category && (
+          <> <span className="mx-1">/</span>
+            <Link to="/produtos" search={{ categoria: product.category }} className="hover:text-foreground">{labelOf(product.category)}</Link>
+          </>
+        )}
       </nav>
 
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">

@@ -9,7 +9,7 @@ import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES } from "@/components/admin/ProductFormModal";
+import { useCategories } from "@/hooks/useCategories";
 import { Search } from "lucide-react";
 
 const searchSchema = z.object({
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/produtos")({
 const PAGE_SIZE = 10;
 
 function ProdutosPage() {
+  const { categories: catList } = useCategories();
   const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
   const { city } = useCity();
@@ -104,7 +105,7 @@ function ProdutosPage() {
           <SelectTrigger className="md:w-48"><SelectValue placeholder="Categoria" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+            {catList.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <div className="flex gap-2">
