@@ -89,8 +89,12 @@ function Home() {
     },
   });
 
+  const productsLoading = featuredPending || collectionsPending;
   const noCityProducts =
-    !!city && featured.length === 0 && collections.every((c) => c.products.length === 0);
+    !!city &&
+    !productsLoading &&
+    featured.length === 0 &&
+    collections.every((c) => c.products.length === 0);
 
   return (
 
