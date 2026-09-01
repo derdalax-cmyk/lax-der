@@ -80,6 +80,7 @@ function parseMeta(desc: string | null): { text: string; meta: Meta } {
 }
 
 function ProdutoDetalhe() {
+  const { labelOf } = useCategories();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { isFavorite, toggle } = useFavorites();
