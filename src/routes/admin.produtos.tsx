@@ -40,6 +40,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 function AdminProdutos() {
+  const { categories: catList } = useCategories();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");

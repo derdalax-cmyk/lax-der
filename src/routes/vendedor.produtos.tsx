@@ -33,6 +33,7 @@ const PRODUCT_STATUS: Record<string, { label: string; cls: string; icon: typeof 
 };
 
 function SellerProdutos() {
+  const { categories: catList } = useCategories();
   const { seller } = useSeller();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");

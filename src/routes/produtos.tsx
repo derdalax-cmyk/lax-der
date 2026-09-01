@@ -28,6 +28,7 @@ export const Route = createFileRoute("/produtos")({
 const PAGE_SIZE = 10;
 
 function ProdutosPage() {
+  const { categories: catList } = useCategories();
   const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
   const { city } = useCity();
