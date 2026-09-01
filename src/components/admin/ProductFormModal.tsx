@@ -69,6 +69,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [price, setPrice] = useState<number>(0);
   const [shippingFee, setShippingFee] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
+  const { categories } = useCategories();
   const [gender, setGender] = useState<string>("");
   const [material, setMaterial] = useState("");
   const [color, setColor] = useState("");
