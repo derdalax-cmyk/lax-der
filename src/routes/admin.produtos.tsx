@@ -40,7 +40,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 function AdminProdutos() {
-  const { categories: catList } = useCategories();
+  const { categories: catList, labelOf } = useCategories();
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("all");
   const [search, setSearch] = useState("");
@@ -255,7 +255,7 @@ function AdminProdutos() {
                         <span className="text-xs bg-ink text-gold px-2 py-0.5 rounded">DERDALAX</span>
                       )}
                     </td>
-                    <td className="px-4 py-2 capitalize text-muted-foreground">{p.category ?? "—"}</td>
+                    <td className="px-4 py-2 text-muted-foreground">{labelOf(p.category)}</td>
                     <td className="px-4 py-2 font-medium">{Number(p.base_price).toLocaleString("pt-PT")} MT</td>
                     <td className="px-4 py-2"><Badge className={ap.cls}>{ap.label}</Badge></td>
                     <td className="px-4 py-2"><Badge className={st.cls}>{st.label}</Badge></td>
