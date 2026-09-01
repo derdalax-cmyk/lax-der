@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useCity } from "@/contexts/CityContext";
 import { CategoryIcon } from "@/lib/categoryIcons";
+import { useCategories } from "@/hooks/useCategories";
 
 export const Route = createFileRoute("/categorias")({
   head: () => ({ meta: [
@@ -12,20 +13,10 @@ export const Route = createFileRoute("/categorias")({
   component: CategoriasPage,
 });
 
-type Cat = { id: string; slug: string; label: string; icon: string | null; sort_order: number };
-
 function CategoriasPage() {
   const { city } = useCity();
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ["public-categories"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("categories")
-        .select("id,slug,label,icon,sort_order").eq("is_active", true).order("sort_order");
-      if (error) throw error;
-      return (data ?? []) as Cat[];
-    },
-  });
+  const { categories } = useCategories();
 
   const { data: counts = {} } = useQuery({
     queryKey: ["category-counts", city, categories.map((c) => c.slug).join(",")],
