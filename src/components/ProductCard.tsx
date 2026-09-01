@@ -37,9 +37,9 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   return (
     <div className="group relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} className="block">
-        <div className="relative aspect-[3/4] bg-secondary overflow-hidden">
+        <div className="relative aspect-square bg-secondary overflow-hidden">
           {img ? (
-            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="absolute inset-0 w-full h-full object-contain p-1.5" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
           )}
