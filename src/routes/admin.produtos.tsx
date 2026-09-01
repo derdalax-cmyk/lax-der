@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Search, Pencil, Trash2, Copy, ImageOff, Store, Check, X } from "lucide-react";
-import { ProductFormModal, CATEGORIES, type ProductRow } from "@/components/admin/ProductFormModal";
+import { ProductFormModal, type ProductRow } from "@/components/admin/ProductFormModal";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -194,7 +195,7 @@ function AdminProdutos() {
           <SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas categorias</SelectItem>
-            {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+            {catList.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={setStatus}>

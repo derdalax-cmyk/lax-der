@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Search, Pencil, Trash2, ImageOff, Clock, CheckCircle2, XCircle, CircleCheck, CircleOff, BadgeCheck } from "lucide-react";
-import { ProductFormModal, CATEGORIES, type ProductRow } from "@/components/admin/ProductFormModal";
+import { ProductFormModal, type ProductRow } from "@/components/admin/ProductFormModal";
+import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/vendedor/produtos")({
@@ -100,7 +101,7 @@ function SellerProdutos() {
           <SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas categorias</SelectItem>
-            {CATEGORIES.map((c) => <SelectItem key={c} value={c} className="capitalize">{c}</SelectItem>)}
+            {catList.map((c) => <SelectItem key={c.slug} value={c.slug}>{c.label}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={appr} onValueChange={setAppr}>
