@@ -116,6 +116,27 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           status: "pending",
         });
 
+        // Provider requires an unsubscribe token on app emails; one token per address.
+        const { data: tokenRow, error: tokenError } = await supabaseAdmin
+          .from("email_unsubscribe_tokens")
+          .upsert(
+            { token: crypto.randomUUID().replace(/-/g, ""), email, used_at: null },
+            { onConflict: "email" },
+          )
+          .select("token")
+          .single();
+
+        if (tokenError || !tokenRow?.token) {
+          await supabaseAdmin.from("email_send_log").insert({
+            message_id: messageId,
+            template_name: `notif_${type}`,
+            recipient_email: email,
+            status: "failed",
+            error_message: (tokenError?.message ?? "no unsubscribe token").slice(0, 1000),
+          });
+          return new Response("Unsubscribe token error", { status: 500 });
+        }
+
         const { error: enqueueError } = await supabaseAdmin.rpc("enqueue_email", {
           queue_name: "transactional_emails",
           payload: {
@@ -129,9 +150,12 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             text,
             purpose: "transactional",
             label: `notif_${type}`,
+            idempotency_key: messageId,
+            unsubscribe_token: tokenRow.token,
             queued_at: new Date().toISOString(),
           },
         });
+
 
         if (enqueueError) {
           await supabaseAdmin.from("email_send_log").insert({
