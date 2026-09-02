@@ -23,7 +23,6 @@ export const Route = createFileRoute("/explorar")({
 });
 
 const PAGE_SIZE = 24;
-type SortKey = "recent" | "price_asc" | "price_desc";
 
 function firstImage(images: unknown): string | null {
   if (Array.isArray(images) && images.length > 0) {
@@ -46,7 +45,6 @@ function ExplorarPage() {
   const [searchDebounced, setSearchDebounced] = useState("");
   const [category, setCategory] = useState("all");
   const [gender, setGender] = useState("all");
-  const [sort, setSort] = useState<SortKey>("recent");
 
 
   useEffect(() => {
@@ -54,7 +52,7 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, gender, sort, city]);
+  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, gender, city]);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,9 +67,7 @@ function ExplorarPage() {
       if (category !== "all") q = q.eq("category", category);
       if (gender !== "all") q = q.ilike("description", `%"gender":"${gender}"%`);
       if (city) q = q.or(`city.eq.${city},city.is.null`);
-      if (sort === "recent") q = q.order("created_at", { ascending: false });
-      if (sort === "price_asc") q = q.order("base_price", { ascending: true });
-      if (sort === "price_desc") q = q.order("base_price", { ascending: false });
+      q = q.order("created_at", { ascending: false });
 
       const from = page * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
@@ -85,7 +81,7 @@ function ExplorarPage() {
     };
     run();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, gender, sort, city]);
+  }, [page, searchDebounced, category, gender, city]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">
@@ -107,14 +103,6 @@ function ExplorarPage() {
               {cats.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-            <SelectTrigger aria-label="Ordenar" className="w-auto min-w-[7.5rem]"><SelectValue /></SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="recent">Recentes</SelectItem>
-              <SelectItem value="price_asc">Preço ↑</SelectItem>
-              <SelectItem value="price_desc">Preço ↓</SelectItem>
-            </SelectContent>
-          </Select>
           <Select value={gender} onValueChange={setGender}>
             <SelectTrigger aria-label="Filtrar por sexo" className="w-auto min-w-[7.5rem]"><SelectValue /></SelectTrigger>
             <SelectContent align="end">
@@ -129,7 +117,7 @@ function ExplorarPage() {
 
 
       {loading && items.length === 0 ? (
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
+        <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="mb-4 bg-secondary animate-pulse rounded-xl" style={{ height: 180 + (i % 4) * 60 }} />
           ))}
@@ -149,18 +137,18 @@ function ExplorarPage() {
 
       ) : (
         <>
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
+          <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
             {items.map((p) => {
               const img = firstImage(p.images);
               const fav = isFavorite(p.id);
               return (
                 <div key={p.id} className="mb-4 break-inside-avoid group relative">
                   <Link to="/produto/$id" params={{ id: p.id }} className="block rounded-xl overflow-hidden border border-border bg-card">
-                    <div className="relative aspect-square bg-secondary overflow-hidden">
+                    <div className="relative w-full overflow-hidden bg-secondary">
                       {img ? (
-                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
+                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="block w-full h-auto" />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
+                        <div className="w-full aspect-square flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                       )}
                       {p.is_unique && (
                         <span className="absolute top-2 left-2 bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>

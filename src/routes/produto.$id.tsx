@@ -265,7 +265,7 @@ function ProdutoDetalhe() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="min-w-0">
           <div
-            className="relative w-full max-w-full aspect-square bg-secondary rounded-xl overflow-hidden select-none touch-pan-y"
+            className="relative w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y flex items-center justify-center"
             onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
             onTouchEnd={(e) => {
               if (touchX.current === null || imgs.length < 2) return;
@@ -281,10 +281,10 @@ function ProdutoDetalhe() {
                 src={largeUrl(imgs[imgIdx])} alt={product.title}
                 onClick={() => setZoom(true)}
                 style={{ transform: `rotate(${rotation}deg)` }}
-                className="absolute inset-0 w-full h-full object-contain cursor-zoom-in transition-transform duration-300"
+                className="block w-full h-auto max-h-[75vh] object-contain cursor-zoom-in transition-transform duration-300"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">Sem imagem</div>
+              <div className="w-full aspect-square bg-secondary flex items-center justify-center text-muted-foreground">Sem imagem</div>
             )}
             {product.is_unique && (
               <span className="absolute top-3 left-3 bg-gold text-ink text-[10px] sm:text-xs tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded font-semibold">PEÇA ÚNICA</span>
@@ -306,8 +306,8 @@ function ProdutoDetalhe() {
           {imgs.length > 1 && (
             <div className="flex gap-2 mt-3 overflow-x-auto max-w-full pb-1">
               {imgs.map((src, i) => (
-                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2 bg-secondary", i === imgIdx ? "border-gold" : "border-transparent")}>
-                  <img src={thumbUrl(src)} alt="" className="absolute inset-0 w-full h-full object-contain" />
+                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-border")}>
+                  <img src={thumbUrl(src)} alt="" className="absolute inset-0 w-full h-full object-cover" />
                 </button>
               ))}
             </div>
