@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight, Share2 } from "lucide-react";
+import { Heart, Minus, Plus, X, ChevronLeft, ChevronRight, Store, ChevronRight as ChevRight, Share2, RotateCw } from "lucide-react";
 import { StarRating } from "@/components/StarRating";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCart } from "@/contexts/CartContext";
@@ -92,6 +92,8 @@ function ProdutoDetalhe() {
   const [loading, setLoading] = useState(true);
   const [imgIdx, setImgIdx] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const touchX = useRef<number | null>(null);
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
@@ -110,7 +112,7 @@ function ProdutoDetalhe() {
       if (cancelled) return;
       setProduct(p as Product | null);
       setVariations((v ?? []) as Variation[]);
-      setImgIdx(0); setSize(null); setColor(null); setQty(1);
+      setImgIdx(0); setRotation(0); setSize(null); setColor(null); setQty(1);
       setSeller(null);
       const sellerId = (p as Product | null)?.seller_id;
       if (sellerId) {
@@ -250,7 +252,7 @@ function ProdutoDetalhe() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-5 py-10 md:py-14">
+    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-5 py-10 md:py-14 overflow-x-hidden">
       <nav className="text-sm text-muted-foreground mb-6">
         <Link to="/produtos" className="hover:text-foreground">Produtos</Link>
         {product.category && (
@@ -313,8 +315,8 @@ function ProdutoDetalhe() {
         </div>
 
 
-        <div>
-          <h1 className="font-display text-3xl md:text-4xl">{product.title}</h1>
+        <div className="min-w-0">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl break-words">{product.title}</h1>
           <p className="mt-2 text-2xl font-medium">
             {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
             {formatMZN(Number(effectivePrice))}
@@ -497,7 +499,7 @@ function ProdutoDetalhe() {
       {zoom && imgs[imgIdx] && (
         <div onClick={() => setZoom(false)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out">
           <button aria-label="Fechar zoom" onClick={() => setZoom(false)} className="absolute top-4 right-4 text-white"><X className="w-6 h-6" /></button>
-          <img src={largeUrl(imgs[imgIdx])} alt={product.title} className="max-w-full max-h-full object-contain" />
+          <img src={largeUrl(imgs[imgIdx])} alt={product.title} style={{ transform: `rotate(${rotation}deg)` }} className="max-w-full max-h-full object-contain transition-transform duration-300" />
         </div>
       )}
     </div>
