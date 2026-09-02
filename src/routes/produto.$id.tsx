@@ -281,10 +281,10 @@ function ProdutoDetalhe() {
                 src={largeUrl(imgs[imgIdx])} alt={product.title}
                 onClick={() => setZoom(true)}
                 style={{ transform: `rotate(${rotation}deg)` }}
-                className="absolute inset-0 w-full h-full object-contain cursor-zoom-in transition-transform duration-300"
+                className="block w-full h-auto max-h-[75vh] object-contain cursor-zoom-in transition-transform duration-300"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">Sem imagem</div>
+              <div className="w-full aspect-square bg-secondary flex items-center justify-center text-muted-foreground">Sem imagem</div>
             )}
             {product.is_unique && (
               <span className="absolute top-3 left-3 bg-gold text-ink text-[10px] sm:text-xs tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded font-semibold">PEÇA ÚNICA</span>
