@@ -45,7 +45,9 @@ function ExplorarPage() {
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [category, setCategory] = useState("all");
+  const [gender, setGender] = useState("all");
   const [sort, setSort] = useState<SortKey>("recent");
+
 
   useEffect(() => {
     const t = setTimeout(() => setSearchDebounced(search), 300);
