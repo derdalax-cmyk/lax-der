@@ -54,7 +54,7 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, sort, city]);
+  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, gender, sort, city]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,6 +67,7 @@ function ExplorarPage() {
 
       if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
       if (category !== "all") q = q.eq("category", category);
+      if (gender !== "all") q = q.ilike("description", `%"gender":"${gender}"%`);
       if (city) q = q.or(`city.eq.${city},city.is.null`);
       if (sort === "recent") q = q.order("created_at", { ascending: false });
       if (sort === "price_asc") q = q.order("base_price", { ascending: true });
@@ -84,7 +85,7 @@ function ExplorarPage() {
     };
     run();
     return () => { cancelled = true; };
-  }, [page, searchDebounced, category, sort, city]);
+  }, [page, searchDebounced, category, gender, sort, city]);
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">
@@ -93,27 +94,39 @@ function ExplorarPage() {
         <p className="text-muted-foreground mt-2">Um mural de peças para descobrir.</p>
       </header>
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-8">
-        <div className="flex-1 relative">
+      <div className="flex flex-col gap-3 mb-8">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Pesquisar peças…" className="pl-9" />
         </div>
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger className="sm:w-44"><SelectValue placeholder="Categoria" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas as categorias</SelectItem>
-            {cats.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-          <SelectTrigger className="sm:w-44"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recent">Mais recentes</SelectItem>
-            <SelectItem value="price_asc">Preço: menor</SelectItem>
-            <SelectItem value="price_desc">Preço: maior</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-auto min-w-[9rem]"><SelectValue placeholder="Categoria" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as categorias</SelectItem>
+              {cats.map((c) => <SelectItem key={c.slug} value={c.slug}><CategoryIcon icon={c.icon} className="w-4 h-4 mr-1 inline" /> {c.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+            <SelectTrigger aria-label="Ordenar" className="w-auto min-w-[7.5rem]"><SelectValue /></SelectTrigger>
+            <SelectContent align="start">
+              <SelectItem value="recent">Recentes</SelectItem>
+              <SelectItem value="price_asc">Preço ↑</SelectItem>
+              <SelectItem value="price_desc">Preço ↓</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={gender} onValueChange={setGender}>
+            <SelectTrigger aria-label="Filtrar por sexo" className="w-auto min-w-[7.5rem]"><SelectValue /></SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">Ver todos</SelectItem>
+              <SelectItem value="unissex">Unissex</SelectItem>
+              <SelectItem value="masculino">Masculino</SelectItem>
+              <SelectItem value="feminino">Feminino</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+
 
       {loading && items.length === 0 ? (
         <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
