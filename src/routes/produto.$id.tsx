@@ -306,8 +306,8 @@ function ProdutoDetalhe() {
           {imgs.length > 1 && (
             <div className="flex gap-2 mt-3 overflow-x-auto max-w-full pb-1">
               {imgs.map((src, i) => (
-                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2 bg-secondary", i === imgIdx ? "border-gold" : "border-transparent")}>
-                  <img src={thumbUrl(src)} alt="" className="absolute inset-0 w-full h-full object-contain" />
+                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-border")}>
+                  <img src={thumbUrl(src)} alt="" className="absolute inset-0 w-full h-full object-cover" />
                 </button>
               ))}
             </div>
