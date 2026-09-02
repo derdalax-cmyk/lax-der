@@ -265,7 +265,7 @@ function ProdutoDetalhe() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="min-w-0">
           <div
-            className="relative w-full max-w-full aspect-square bg-secondary rounded-xl overflow-hidden select-none touch-pan-y"
+            className="relative w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y flex items-center justify-center"
             onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
             onTouchEnd={(e) => {
               if (touchX.current === null || imgs.length < 2) return;
