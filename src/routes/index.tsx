@@ -17,9 +17,13 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "DERDALAX" },
       { property: "og:description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
     ],
+    links: [
+      { rel: "preload", as: "image", href: heroBg.url, fetchPriority: "high" },
+    ],
   }),
   component: Home,
 });
+
 
 const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
@@ -104,8 +108,11 @@ function Home() {
         <img
           src={heroBg.url}
           alt="Arara de roupas DERDALAX com iluminação quente"
+          fetchPriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
+
         {/* overlay de cor sólida transparente para legibilidade */}
         <div className="absolute inset-0 bg-ink/65" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
