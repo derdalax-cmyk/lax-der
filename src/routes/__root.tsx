@@ -94,6 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "serviceworker", href: "/sw.js" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
@@ -106,6 +107,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&display=swap" },
     ],
     scripts: [
+      {
+        children:
+          "if('serviceWorker' in navigator){try{navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){});}catch(e){}}",
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify({
