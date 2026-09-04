@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -17,13 +17,23 @@ import { Navbar } from "@/components/Navbar";
 import { CityAlert } from "@/components/CityAlert";
 import { BottomNav } from "@/components/BottomNav";
 
-import { InstallAppPrompt } from "@/components/InstallAppPrompt";
-import { ProfileCompletionModal } from "@/components/ProfileCompletionModal";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useOnlinePresence } from "@/hooks/useOnlinePresence";
-import { PushAutoPrompt } from "@/components/PushAutoPrompt";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
+
+// Non-critical, client-only UI: kept out of the initial bundle so it does not
+// block the first render. Behaviour is unchanged, only the load moment differs.
+const InstallAppPrompt = lazy(() =>
+  import("@/components/InstallAppPrompt").then((m) => ({ default: m.InstallAppPrompt })),
+);
+const ProfileCompletionModal = lazy(() =>
+  import("@/components/ProfileCompletionModal").then((m) => ({ default: m.ProfileCompletionModal })),
+);
+const PushAutoPrompt = lazy(() =>
+  import("@/components/PushAutoPrompt").then((m) => ({ default: m.PushAutoPrompt })),
+);
+
 
 
 function NotFoundComponent() {
@@ -88,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&display=swap" },
     ],
     scripts: [
       {
@@ -155,10 +165,13 @@ function AppShell() {
       </main>
       
       <BottomNav />
-      <ProfileCompletionModal />
-      <InstallAppPrompt />
-      <PushAutoPrompt />
+      <Suspense fallback={null}>
+        <ProfileCompletionModal />
+        <InstallAppPrompt />
+        <PushAutoPrompt />
+      </Suspense>
       <Toaster richColors position="top-right" />
+
     </div>
   );
 }
