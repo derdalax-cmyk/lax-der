@@ -42,7 +42,7 @@ function AdminEquipe() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["admin-team"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_seller_collaborators", { _seller_id: undefined });
+      const { data, error } = await supabase.rpc("get_seller_collaborators", {});
       if (error) throw error;
       return (data ?? []) as unknown as CollaboratorRow[];
     },
