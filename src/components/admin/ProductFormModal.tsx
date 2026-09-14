@@ -404,6 +404,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                 : "Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo)."}
             </p>
           </div>
+          )}
 
           <div>
             <Label className="mb-2 block">Imagens</Label>
