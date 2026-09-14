@@ -40,6 +40,7 @@ import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-conta'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
+import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
@@ -212,6 +213,11 @@ const LojaIdRoute = LojaIdRouteImport.update({
   path: '/loja/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColaboradorSellerIdRoute = ColaboradorSellerIdRouteImport.update({
+  id: '/$sellerId',
+  path: '/$sellerId',
+  getParentRoute: () => ColaboradorRoute,
+} as any)
 const AdminVendedoresRoute = AdminVendedoresRouteImport.update({
   id: '/vendedores',
   path: '/vendedores',
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
@@ -365,6 +372,7 @@ export interface FileRoutesByTo {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
@@ -466,6 +475,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
     | '/perfil/excluir-conta'
@@ -511,6 +521,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
     | '/perfil/excluir-conta'
@@ -560,6 +571,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
     | '/perfil/excluir-conta'
@@ -832,6 +844,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LojaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/colaborador/$sellerId': {
+      id: '/colaborador/$sellerId'
+      path: '/$sellerId'
+      fullPath: '/colaborador/$sellerId'
+      preLoaderRoute: typeof ColaboradorSellerIdRouteImport
+      parentRoute: typeof ColaboradorRoute
+    }
     '/admin/vendedores': {
       id: '/admin/vendedores'
       path: '/vendedores'
@@ -978,10 +997,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ColaboradorRouteChildren {
+  ColaboradorSellerIdRoute: typeof ColaboradorSellerIdRoute
   ColaboradorIndexRoute: typeof ColaboradorIndexRoute
 }
 
 const ColaboradorRouteChildren: ColaboradorRouteChildren = {
+  ColaboradorSellerIdRoute: ColaboradorSellerIdRoute,
   ColaboradorIndexRoute: ColaboradorIndexRoute,
 }
 

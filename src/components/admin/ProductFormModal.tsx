@@ -40,6 +40,7 @@ type Props = {
   onOpenChange: (o: boolean) => void;
   product: ProductRow | null; // null = create
   sellerId?: string | null; // when set, runs in seller mode (products go pending)
+  collaborator?: boolean; // collaborator of the store: no featured collections, owner fixed
 };
 
 type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
@@ -59,8 +60,9 @@ function packMeta(text: string, meta: Meta): string {
   return `${text}\n<!--META:${JSON.stringify(meta)}-->`;
 }
 
-export function ProductFormModal({ open, onOpenChange, product, sellerId }: Props) {
+export function ProductFormModal({ open, onOpenChange, product, sellerId, collaborator }: Props) {
   const isSeller = !!sellerId;
+  const isCollab = !!collaborator;
   const { user } = useAuth();
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
