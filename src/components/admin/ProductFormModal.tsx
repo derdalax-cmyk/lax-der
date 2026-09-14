@@ -90,7 +90,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || isCollab) return;
     let query = supabase.from("featured_collections").select("id,name,icon").order("sort_order");
     if (isSeller && sellerId) {
       query = query.eq("is_active", true).not("hidden_sellers", "cs", `{${sellerId}}`);
@@ -212,7 +212,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
         }
       }
 
-      if (pid && isSeller) {
+      if (pid && isSeller && !isCollab) {
         const { data: currentRows, error: currentError } = await supabase
           .from("featured_collection_products")
           .select("collection_id,status")
@@ -250,6 +250,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["collab-products"] });
+      qc.invalidateQueries({ queryKey: ["my-collaborations"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
