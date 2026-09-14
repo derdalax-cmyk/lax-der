@@ -1,60 +1,90 @@
-## Reestruturação DERDALAX
+# Colaboradores por loja (Equipe DERDALAX)
 
-Plano cobrindo as Etapas 1–5 em detalhe. A Etapa 6 ficou cortada na tua mensagem — incluo uma proposta base e confirmo contigo no fim.
+## Como entendi o pedido
 
----
+A DERDALAX precisa de várias pessoas a cadastrar produtos ao mesmo tempo, cada uma com a sua própria conta, sem partilhar login de administrador e sem acesso a vendas, pagamentos, pedidos ou ao painel admin. O Administrador Superior atribui pessoas já registadas a lojas específicas, com uma função (hoje: "Gestor de Cadastro de Produtos"), e pode suspender ou remover esse acesso a qualquer momento. Tudo o que o colaborador faz fica registado (quem, quando, o quê, valor antigo e novo).
 
-### ETAPA 1 — Navegação (menu inferior)
+O que já existe e vai ser reaproveitado: contas e login, lojas/vendedores, produtos com variações e fotos, formulário de produto, painel do vendedor, painel admin e a página de cada loja no admin. Nada disso será duplicado nem alterado no aspeto visual.
 
-- Novo componente `BottomNav.tsx`: barra fixa no fundo (mobile-first), 4 itens — Início (`/`), Explorar (`/explorar`), Categorias (`/categorias`), Suporte (`/suporte`). Ícone ativo a dourado (#e4b363 / token `gold`).
-- No desktop (`md:`), a barra inferior esconde-se e os mesmos 4 links aparecem no header (atualizar `Navbar.tsx`).
-- Header mantém ícones de **Carrinho** e **Perfil/Conta** (acesso a `/carrinho`, `/perfil`/`/login`).
-- Adicionar `padding-bottom` ao layout no mobile para o conteúdo não ficar tapado pela barra.
+## Onde ficam as novas opções
 
-### ETAPA 2 — Página inicial (`/`)
+Na lista de vendedores do admin, dentro da ficha de cada loja — exatamente ao lado de onde hoje se define a "Cidade de venda":
 
-- **Hero**: título "Moda com história, estilo com futuro", subtítulo "Peças únicas, selecionadas para você", botão "Explorar coleção" → `/explorar`.
-- **Carrosséis horizontais** (scroll-x livre, sem dots, snap; card ~70% no mobile / ~22% no desktop):
-  - ⭐ Destaques da semana → produtos `featured = true`.
-  - Secções dinâmicas vindas da tabela de **categorias de destaque** (ver Etapa 3), ex.: 👕 Camisas, 👖 Calças, 👟 Sapatos.
-- Botão "Ver mais …" no fim de cada secção → `/produtos?categoria=<slug>`.
-- Componente reutilizável `ProductCarousel.tsx` + card compacto.
+```text
+ Ficha da loja (admin > Vendedores > ver detalhes)
+ ┌──────────────────────────────────────────────────────────┐
+ │ [logo]  Loja Maria                        (Aprovado)     │
+ │ Responsável / Email / Telefone / Localização             │
+ │                                                          │
+ │ CIDADE DE VENDA (só admin)                               │
+ │ [ Maputo                     ]  [ Guardar ]              │
+ │                                                          │
+ │ COLABORADORES (só admin)              ← NOVO             │
+ │ • joao@email.com  Gestor de Cadastro  ATIVO   [⋯]        │
+ │ • ana@email.com   Gestor de Cadastro  SUSPENSO[⋯]        │
+ │ [ + Adicionar colaborador ]                              │
+ └──────────────────────────────────────────────────────────┘
+```
 
-### ETAPA 3 — Admin: categorias de destaque
+"Adicionar colaborador" abre uma janela simples: e-mail da pessoa (conta já existente) + função + permissões pré-marcadas. Se o e-mail não tiver conta DERDALAX, avisamos e pedimos que a pessoa se registe primeiro — nunca criamos conta nova.
 
-**Base de dados** (migração):
-- `featured_collections` (id, name, slug, icon, sort_order, created_at) — secções de destaque.
-- `featured_collection_products` (collection_id, product_id, sort_order) — associação N:N com ordem manual.
-- GRANTs + RLS: leitura pública (`anon`/`authenticated`), escrita só admin via `has_role`.
+Nova página no menu do admin, "Equipe", com a visão global:
 
-**UI** (`/admin/categorias-destaque`):
-- Lista com nome, slug, nº de produtos, ações; reordenar por drag&drop (lib `@dnd-kit`).
-- Modal "Nova categoria de destaque": nome, slug auto-gerado, escolha de ícone (emoji).
-- Editar: adicionar/remover produtos e reordená-los (drag&drop).
-- No `ProductFormModal`: multiselect "Categorias de destaque" para escolher onde o produto aparece.
+```text
+ Admin > Equipe
+ ┌──────────────────────────────────────────────────────────┐
+ │ [pesquisar pessoa ou loja]   [função ▾] [estado ▾]       │
+ │──────────────────────────────────────────────────────────│
+ │ João   joao@email.com   Loja Maria   Cadastro   ATIVO    │
+ │ Pedro  pedro@email.com  Loja Maria   Cadastro   ATIVO    │
+ │ Ana    ana@email.com    Loja X       Cadastro   SUSPENSO │
+ │        (suspender · reativar · remover · ver produtos)   │
+ └──────────────────────────────────────────────────────────┘
+```
 
-### ETAPA 4 — Explorar e Categorias
+Do lado do colaborador, no perfil dele aparece um bloco novo:
 
-- **`/explorar`**: grid masonry (estilo Pinterest) com todos os produtos, barra de busca, filtro por categoria, ordenação (recentes/preço asc/desc) e "Ver mais" (load more).
-- **`/categorias`**: lista das categorias fixas (camisas, calças, sapatos, chapéus, calções, casacos) com ícone, nome e contagem de produtos → `/produtos?categoria=<slug>`.
-- `/produtos` passa a ler `?categoria=` via search params para pré-filtrar.
+```text
+ Perfil > Minhas responsabilidades
+ ┌───────────────────────────────────────────┐
+ │ [logo] Loja Maria                         │
+ │        Gestor de Cadastro de Produtos     │
+ │        25 produtos · 3 em revisão         │
+ │                            [ ACESSAR ]    │
+ └───────────────────────────────────────────┘
+```
 
-### ETAPA 5 — Suporte (`/suporte`)
+E o ambiente de trabalho dele, enxuto e só com o que a função permite:
 
-- FAQ (acordeão), contactos (WhatsApp, telefone, email com links), e secção de localização.
+```text
+ DERDALAX · Loja Maria — Gestor de Cadastro de Produtos
+ ┌──────────────────────────────────────────────────────────┐
+ │ Cadastrados: 25   Em revisão: 3   Aprovados: 22          │
+ │ [ + CADASTRAR PRODUTO ]                                  │
+ │──────────────────────────────────────────────────────────│
+ │ Camisola Quarter-Zip Creme   900 MT  em revisão [editar] │
+ │ Calça Cargo Preta            750 MT  aprovado  [editar]  │
+ └──────────────────────────────────────────────────────────┘
+```
 
-### ETAPA 6 — Serviços de pagamento (proposta — confirmar)
+Sem menu de pedidos, vendas, pagamentos, mensalidade nem botão de apagar.
 
-Como o texto ficou cortado, proponho: criar `src/services/payment/` com uma interface comum `PaymentProvider` e um adaptador Paysuite a apontar para a server function/webhook já existentes, deixando preparado para outros provedores (e-Mpesa/e-Mola). **Confirma o conteúdo exato que pretendias aqui.**
+## Detalhes técnicos
 
----
+**Base de dados (migração)**
+- `collaborator_roles`: catálogo de funções (`slug`, `label`, `default_permissions text[]`), semeado com `product_manager` → `products.create`, `products.update`, `products.view`, `seller.view_basic`.
+- `seller_collaborators`: `user_id`, `seller_id`, `role_slug`, `permissions text[]`, `status` enum (`active|suspended|removed`), `invited_by`, timestamps + trigger `set_updated_at`; único por (user_id, seller_id). GRANT a `authenticated`/`service_role`; RLS: o próprio vê as suas linhas, admin gere tudo.
+- `activity_logs`: `actor_id`, `actor_email`, `seller_id`, `entity_type`, `entity_id`, `action`, `changes jsonb`, `created_at`. Só admin lê; escrita por função `security definer` (`log_activity`).
+- Funções `security definer`: `has_seller_permission(_seller_id uuid, _perm text)` (ativo + permissão na lista, ou admin) e `my_collaborations()` (lojas + função + contadores de produtos para o perfil).
+- RLS de `products`/`product_variations`: às políticas atuais de vendedor junta-se `has_seller_permission(seller_id,'products.create'|'products.update'|'products.view')` em INSERT/UPDATE/SELECT. DELETE fica restrito a dono da loja e admin — colaborador nunca apaga. Trigger `BEFORE UPDATE` em `products` impede colaborador de mudar `seller_id` (transferir loja) e trigger `AFTER INSERT/UPDATE` grava em `activity_logs` incluindo preço antigo/novo.
+- Gestão de associações via funções `security definer` só-admin: `add_seller_collaborator(_email, _seller_id, _role, _permissions)`, `set_collaborator_status`, `set_collaborator_role` — resolvem o e-mail em `profiles`/`auth.users` e devolvem erro claro se não existir conta.
 
-### Notas técnicas
+**Frontend**
+- `src/hooks/useCollaborations.ts` — lojas do utilizador atual com função e permissões.
+- `CollaboratorsSection.tsx` + `AddCollaboratorModal.tsx` dentro da ficha da loja em `src/routes/admin.vendedores.tsx` (ao lado do `CityEditor`).
+- Nova rota `src/routes/admin.equipe.tsx` + item no menu do admin.
+- Bloco "Minhas responsabilidades" em `src/routes/perfil.index.tsx`.
+- Novas rotas `src/routes/colaborador.tsx` (layout com verificação de acesso), `colaborador.$sellerId.tsx` (painel) e reutilização de `ProductFormModal` em modo colaborador: `seller_id` fixo pela associação, sem apagar, sem campos financeiros.
+- Segurança real no backend (RLS + funções), a UI apenas espelha; acesso direto por URL a `/admin` ou `/vendedor` continua bloqueado para colaboradores.
 
-- Rotas novas: `src/routes/explorar.tsx`, `admin.categorias-destaque.tsx`; reescrever `categorias.tsx` e `suporte.tsx`.
-- `produtos.tsx` migra para `validateSearch` (zod) para o filtro `categoria`.
-- Drag&drop: adicionar `@dnd-kit/core` + `@dnd-kit/sortable`.
-- Leituras públicas das coleções de destaque via cliente browser (RLS com SELECT para `anon`).
-- Sem alterações ao fluxo de checkout/pagamento já funcional, apenas a camada de organização da Etapa 6.
-
-Confirmas este plano (e o conteúdo da Etapa 6) para eu começar a construir?
+**Verificação**: testes com dados reais confirmando que o colaborador cria e edita produtos da loja atribuída, não apaga, não altera outra loja, perde acesso ao ser suspenso, e que cada ação aparece no registo de atividades.
