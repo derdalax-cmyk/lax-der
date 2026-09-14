@@ -32,6 +32,7 @@ import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos
 import { Route as VendedorPedidosRouteImport } from './routes/vendedor.pedidos'
 import { Route as VendedorMensalidadeRouteImport } from './routes/vendedor.mensalidade'
 import { Route as VendedorLojaRouteImport } from './routes/vendedor.loja'
+import { Route as VendedorEquipeRouteImport } from './routes/vendedor.equipe'
 import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
@@ -171,6 +172,11 @@ const VendedorMensalidadeRoute = VendedorMensalidadeRouteImport.update({
 const VendedorLojaRoute = VendedorLojaRouteImport.update({
   id: '/loja',
   path: '/loja',
+  getParentRoute: () => VendedorRoute,
+} as any)
+const VendedorEquipeRoute = VendedorEquipeRouteImport.update({
+  id: '/equipe',
+  path: '/equipe',
   getParentRoute: () => VendedorRoute,
 } as any)
 const VendedorDestaquesRoute = VendedorDestaquesRouteImport.update({
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
+  '/vendedor/equipe': typeof VendedorEquipeRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/mensalidade': typeof VendedorMensalidadeRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
+  '/vendedor/equipe': typeof VendedorEquipeRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/mensalidade': typeof VendedorMensalidadeRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
+  '/vendedor/equipe': typeof VendedorEquipeRoute
   '/vendedor/loja': typeof VendedorLojaRoute
   '/vendedor/mensalidade': typeof VendedorMensalidadeRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
@@ -484,6 +493,7 @@ export interface FileRouteTypes {
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
+    | '/vendedor/equipe'
     | '/vendedor/loja'
     | '/vendedor/mensalidade'
     | '/vendedor/pedidos'
@@ -530,6 +540,7 @@ export interface FileRouteTypes {
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
+    | '/vendedor/equipe'
     | '/vendedor/loja'
     | '/vendedor/mensalidade'
     | '/vendedor/pedidos'
@@ -580,6 +591,7 @@ export interface FileRouteTypes {
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
+    | '/vendedor/equipe'
     | '/vendedor/loja'
     | '/vendedor/mensalidade'
     | '/vendedor/pedidos'
@@ -786,6 +798,13 @@ declare module '@tanstack/react-router' {
       path: '/loja'
       fullPath: '/vendedor/loja'
       preLoaderRoute: typeof VendedorLojaRouteImport
+      parentRoute: typeof VendedorRoute
+    }
+    '/vendedor/equipe': {
+      id: '/vendedor/equipe'
+      path: '/equipe'
+      fullPath: '/vendedor/equipe'
+      preLoaderRoute: typeof VendedorEquipeRouteImport
       parentRoute: typeof VendedorRoute
     }
     '/vendedor/destaques': {
@@ -1029,6 +1048,7 @@ const PerfilRouteWithChildren =
 
 interface VendedorRouteChildren {
   VendedorDestaquesRoute: typeof VendedorDestaquesRoute
+  VendedorEquipeRoute: typeof VendedorEquipeRoute
   VendedorLojaRoute: typeof VendedorLojaRoute
   VendedorMensalidadeRoute: typeof VendedorMensalidadeRoute
   VendedorPedidosRoute: typeof VendedorPedidosRoute
@@ -1038,6 +1058,7 @@ interface VendedorRouteChildren {
 
 const VendedorRouteChildren: VendedorRouteChildren = {
   VendedorDestaquesRoute: VendedorDestaquesRoute,
+  VendedorEquipeRoute: VendedorEquipeRoute,
   VendedorLojaRoute: VendedorLojaRoute,
   VendedorMensalidadeRoute: VendedorMensalidadeRoute,
   VendedorPedidosRoute: VendedorPedidosRoute,

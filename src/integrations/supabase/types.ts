@@ -1420,6 +1420,11 @@ export type Database = {
       }
       get_my_conversations: { Args: never; Returns: Json }
       get_my_order_history: { Args: never; Returns: Json }
+      get_my_team: { Args: never; Returns: Json }
+      get_my_team_activity: {
+        Args: { _limit?: number; _user_id: string }
+        Returns: Json
+      }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_collaborators: { Args: { _seller_id?: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
@@ -1509,6 +1514,13 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      seller_set_collaborator_status: {
+        Args: {
+          _id: string
+          _status: Database["public"]["Enums"]["collaborator_status"]
+        }
+        Returns: undefined
+      }
       set_collaborator_role: {
         Args: { _id: string; _permissions?: string[]; _role_slug: string }
         Returns: undefined
