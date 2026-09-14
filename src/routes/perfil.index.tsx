@@ -47,6 +47,8 @@ function Perfil() {
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", city: "" });
+  const { collaborations } = useCollaborations();
+  const activeCollaborations = collaborations.filter((c) => c.status === "active");
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
