@@ -1452,6 +1452,7 @@ export type Database = {
         Args: { _perm: string; _seller_id: string }
         Returns: boolean
       }
+      is_active_collaborator: { Args: never; Returns: boolean }
       mark_conversation_read: {
         Args: { _conversation_id: string }
         Returns: undefined
