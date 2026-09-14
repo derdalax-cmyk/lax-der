@@ -143,6 +143,29 @@ function Perfil() {
               <ChevronRight className="w-5 h-5 text-gold group-hover:translate-x-1 transition-transform" />
             </Link>
           )}
+
+          {/* Store responsibilities — collaborators only */}
+          {activeCollaborations.length > 0 && (
+            <div className="mt-5">
+              <h2 className="font-display text-base font-semibold mb-2">Minhas responsabilidades</h2>
+              <div className="space-y-2">
+                {activeCollaborations.map((c) => (
+                  <div key={c.seller_id} className="flex items-center gap-3 rounded-2xl border border-border bg-secondary/40 px-4 py-3">
+                    <div className="h-10 w-10 rounded-xl bg-secondary overflow-hidden flex items-center justify-center shrink-0">
+                      {c.logo_url ? <img src={c.logo_url} alt={c.store_name} className="w-full h-full object-cover" /> : <Shield className="w-4 h-4 text-muted-foreground" />}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold truncate">{c.store_name}</div>
+                      <div className="text-xs text-muted-foreground truncate">{c.role_label}</div>
+                    </div>
+                    <Link to="/colaborador/$sellerId" params={{ sellerId: c.seller_id }}>
+                      <Button size="sm" className="bg-gold text-ink hover:bg-gold/90">Acessar</Button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
