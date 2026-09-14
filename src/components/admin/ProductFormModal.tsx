@@ -40,6 +40,7 @@ type Props = {
   onOpenChange: (o: boolean) => void;
   product: ProductRow | null; // null = create
   sellerId?: string | null; // when set, runs in seller mode (products go pending)
+  collaborator?: boolean; // collaborator of the store: no featured collections, owner fixed
 };
 
 type Meta = { gender?: string; material?: string; color?: string; brand?: string; default_size?: string; in_stock?: boolean };
@@ -59,8 +60,9 @@ function packMeta(text: string, meta: Meta): string {
   return `${text}\n<!--META:${JSON.stringify(meta)}-->`;
 }
 
-export function ProductFormModal({ open, onOpenChange, product, sellerId }: Props) {
+export function ProductFormModal({ open, onOpenChange, product, sellerId, collaborator }: Props) {
   const isSeller = !!sellerId;
+  const isCollab = !!collaborator;
   const { user } = useAuth();
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
@@ -88,7 +90,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || isCollab) return;
     let query = supabase.from("featured_collections").select("id,name,icon").order("sort_order");
     if (isSeller && sellerId) {
       query = query.eq("is_active", true).not("hidden_sellers", "cs", `{${sellerId}}`);
@@ -210,7 +212,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
         }
       }
 
-      if (pid && isSeller) {
+      if (pid && isSeller && !isCollab) {
         const { data: currentRows, error: currentError } = await supabase
           .from("featured_collection_products")
           .select("collection_id,status")
@@ -248,6 +250,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
       qc.invalidateQueries({ queryKey: ["seller-products"] });
       qc.invalidateQueries({ queryKey: ["admin-featured-collections"] });
       qc.invalidateQueries({ queryKey: ["home-collections"] });
+      qc.invalidateQueries({ queryKey: ["collab-products"] });
+      qc.invalidateQueries({ queryKey: ["my-collaborations"] });
       onOpenChange(false);
     } catch (e) {
       toast.error((e as Error).message);
@@ -368,6 +372,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
 
 
 
+          {!isCollab && (
           <div>
             <Label className="mb-2 block">{isSeller ? "Adicionar a Destaques" : "Categorias de destaque"}</Label>
             {collections.length === 0 ? (
@@ -399,6 +404,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId }: Prop
                 : "Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo)."}
             </p>
           </div>
+          )}
 
           <div>
             <Label className="mb-2 block">Imagens</Label>
