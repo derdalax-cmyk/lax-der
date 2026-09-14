@@ -41,6 +41,42 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          changes: Json
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          seller_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          seller_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          seller_id?: string | null
+        }
+        Relationships: []
+      }
       addresses: {
         Row: {
           apartment: string | null
@@ -179,6 +215,33 @@ export type Database = {
           slug?: string
           sort_order?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      collaborator_roles: {
+        Row: {
+          created_at: string
+          default_permissions: string[]
+          description: string | null
+          label: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          default_permissions?: string[]
+          description?: string | null
+          label: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          default_permissions?: string[]
+          description?: string | null
+          label?: string
+          slug?: string
+          sort_order?: number
         }
         Relationships: []
       }
@@ -950,6 +1013,57 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_collaborators: {
+        Row: {
+          created_at: string
+          id: string
+          invited_by: string | null
+          permissions: string[]
+          role_slug: string
+          seller_id: string
+          status: Database["public"]["Enums"]["collaborator_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          permissions?: string[]
+          role_slug: string
+          seller_id: string
+          status?: Database["public"]["Enums"]["collaborator_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_by?: string | null
+          permissions?: string[]
+          role_slug?: string
+          seller_id?: string
+          status?: Database["public"]["Enums"]["collaborator_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_collaborators_role_slug_fkey"
+            columns: ["role_slug"]
+            isOneToOne: false
+            referencedRelation: "collaborator_roles"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "seller_collaborators_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seller_reviews: {
         Row: {
           comment: string | null
@@ -1274,6 +1388,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_seller_collaborator: {
+        Args: {
+          _email: string
+          _permissions?: string[]
+          _role_slug: string
+          _seller_id: string
+        }
+        Returns: Json
+      }
       current_seller_id: { Args: never; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -1298,6 +1421,7 @@ export type Database = {
       get_my_conversations: { Args: never; Returns: Json }
       get_my_order_history: { Args: never; Returns: Json }
       get_public_seller: { Args: { _id: string }; Returns: Json }
+      get_seller_collaborators: { Args: { _seller_id?: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_featured_collections: { Args: never; Returns: Json }
       get_seller_orders: { Args: never; Returns: Json }
@@ -1324,6 +1448,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_seller_permission: {
+        Args: { _perm: string; _seller_id: string }
+        Returns: boolean
+      }
       mark_conversation_read: {
         Args: { _conversation_id: string }
         Returns: undefined
@@ -1341,6 +1469,7 @@ export type Database = {
         }
         Returns: number
       }
+      my_collaborations: { Args: never; Returns: Json }
       notify_email: {
         Args: {
           _body: string
@@ -1379,6 +1508,17 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      set_collaborator_role: {
+        Args: { _id: string; _permissions?: string[]; _role_slug: string }
+        Returns: undefined
+      }
+      set_collaborator_status: {
+        Args: {
+          _id: string
+          _status: Database["public"]["Enums"]["collaborator_status"]
+        }
+        Returns: undefined
+      }
       set_order_seller_status: {
         Args: {
           _notes?: string
@@ -1407,6 +1547,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client"
+      collaborator_status: "active" | "suspended" | "removed"
       order_status:
         | "pending"
         | "paid"
@@ -1550,6 +1691,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client"],
+      collaborator_status: ["active", "suspended", "removed"],
       order_status: [
         "pending",
         "paid",
