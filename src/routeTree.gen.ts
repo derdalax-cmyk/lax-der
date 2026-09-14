@@ -18,6 +18,7 @@ import { Route as MensagensRouteImport } from './routes/mensagens'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ExplorarRouteImport } from './routes/explorar'
+import { Route as ColaboradorRouteImport } from './routes/colaborador'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
@@ -25,6 +26,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendedorIndexRouteImport } from './routes/vendedor.index'
 import { Route as PerfilIndexRouteImport } from './routes/perfil.index'
+import { Route as ColaboradorIndexRouteImport } from './routes/colaborador.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos'
 import { Route as VendedorPedidosRouteImport } from './routes/vendedor.pedidos'
@@ -41,6 +43,7 @@ import { Route as LojaIdRouteImport } from './routes/loja.$id'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
+import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
 import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
@@ -99,6 +102,11 @@ const ExplorarRoute = ExplorarRouteImport.update({
   path: '/explorar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColaboradorRoute = ColaboradorRouteImport.update({
+  id: '/colaborador',
+  path: '/colaborador',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -133,6 +141,11 @@ const PerfilIndexRoute = PerfilIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PerfilRoute,
+} as any)
+const ColaboradorIndexRoute = ColaboradorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ColaboradorRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -214,6 +227,11 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEquipeRoute = AdminEquipeRouteImport.update({
+  id: '/equipe',
+  path: '/equipe',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDenunciasRoute = AdminDenunciasRouteImport.update({
   id: '/denuncias',
   path: '/denuncias',
@@ -283,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/categorias': typeof CategoriasRoute
   '/checkout': typeof CheckoutRoute
+  '/colaborador': typeof ColaboradorRouteWithChildren
   '/explorar': typeof ExplorarRoute
   '/favoritos': typeof FavoritosRoute
   '/login': typeof LoginRoute
@@ -297,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
+  '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -313,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
+  '/colaborador/': typeof ColaboradorIndexRoute
   '/perfil/': typeof PerfilIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
@@ -340,6 +361,7 @@ export interface FileRoutesByTo {
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
+  '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -356,6 +378,7 @@ export interface FileRoutesByTo {
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin': typeof AdminIndexRoute
+  '/colaborador': typeof ColaboradorIndexRoute
   '/perfil': typeof PerfilIndexRoute
   '/vendedor': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
@@ -373,6 +396,7 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/categorias': typeof CategoriasRoute
   '/checkout': typeof CheckoutRoute
+  '/colaborador': typeof ColaboradorRouteWithChildren
   '/explorar': typeof ExplorarRoute
   '/favoritos': typeof FavoritosRoute
   '/login': typeof LoginRoute
@@ -387,6 +411,7 @@ export interface FileRoutesById {
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
+  '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
@@ -403,6 +428,7 @@ export interface FileRoutesById {
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
   '/admin/': typeof AdminIndexRoute
+  '/colaborador/': typeof ColaboradorIndexRoute
   '/perfil/': typeof PerfilIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
@@ -421,6 +447,7 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/categorias'
     | '/checkout'
+    | '/colaborador'
     | '/explorar'
     | '/favoritos'
     | '/login'
@@ -435,6 +462,7 @@ export interface FileRouteTypes {
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/denuncias'
+    | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -451,6 +479,7 @@ export interface FileRouteTypes {
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
     | '/admin/'
+    | '/colaborador/'
     | '/perfil/'
     | '/vendedor/'
     | '/admin/vendedores/dashboard'
@@ -478,6 +507,7 @@ export interface FileRouteTypes {
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/denuncias'
+    | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -494,6 +524,7 @@ export interface FileRouteTypes {
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
     | '/admin'
+    | '/colaborador'
     | '/perfil'
     | '/vendedor'
     | '/admin/vendedores/dashboard'
@@ -510,6 +541,7 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/categorias'
     | '/checkout'
+    | '/colaborador'
     | '/explorar'
     | '/favoritos'
     | '/login'
@@ -524,6 +556,7 @@ export interface FileRouteTypes {
     | '/admin/categorias-destaque'
     | '/admin/conversas'
     | '/admin/denuncias'
+    | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/utilizadores'
     | '/admin/vendedores'
@@ -540,6 +573,7 @@ export interface FileRouteTypes {
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
     | '/admin/'
+    | '/colaborador/'
     | '/perfil/'
     | '/vendedor/'
     | '/admin/vendedores_/dashboard'
@@ -557,6 +591,7 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   CategoriasRoute: typeof CategoriasRoute
   CheckoutRoute: typeof CheckoutRoute
+  ColaboradorRoute: typeof ColaboradorRouteWithChildren
   ExplorarRoute: typeof ExplorarRoute
   FavoritosRoute: typeof FavoritosRoute
   LoginRoute: typeof LoginRoute
@@ -643,6 +678,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExplorarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/colaborador': {
+      id: '/colaborador'
+      path: '/colaborador'
+      fullPath: '/colaborador'
+      preLoaderRoute: typeof ColaboradorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -691,6 +733,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/perfil/'
       preLoaderRoute: typeof PerfilIndexRouteImport
       parentRoute: typeof PerfilRoute
+    }
+    '/colaborador/': {
+      id: '/colaborador/'
+      path: '/'
+      fullPath: '/colaborador/'
+      preLoaderRoute: typeof ColaboradorIndexRouteImport
+      parentRoute: typeof ColaboradorRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -804,6 +853,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProdutosRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/equipe': {
+      id: '/admin/equipe'
+      path: '/equipe'
+      fullPath: '/admin/equipe'
+      preLoaderRoute: typeof AdminEquipeRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/denuncias': {
       id: '/admin/denuncias'
       path: '/denuncias'
@@ -897,6 +953,7 @@ interface AdminRouteChildren {
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
   AdminConversasRoute: typeof AdminConversasRoute
   AdminDenunciasRoute: typeof AdminDenunciasRoute
+  AdminEquipeRoute: typeof AdminEquipeRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
@@ -910,6 +967,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
   AdminConversasRoute: AdminConversasRoute,
   AdminDenunciasRoute: AdminDenunciasRoute,
+  AdminEquipeRoute: AdminEquipeRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
@@ -918,6 +976,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface ColaboradorRouteChildren {
+  ColaboradorIndexRoute: typeof ColaboradorIndexRoute
+}
+
+const ColaboradorRouteChildren: ColaboradorRouteChildren = {
+  ColaboradorIndexRoute: ColaboradorIndexRoute,
+}
+
+const ColaboradorRouteWithChildren = ColaboradorRoute._addFileChildren(
+  ColaboradorRouteChildren,
+)
 
 interface PerfilRouteChildren {
   PerfilExcluirContaRoute: typeof PerfilExcluirContaRoute
@@ -964,6 +1034,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   CategoriasRoute: CategoriasRoute,
   CheckoutRoute: CheckoutRoute,
+  ColaboradorRoute: ColaboradorRouteWithChildren,
   ExplorarRoute: ExplorarRoute,
   FavoritosRoute: FavoritosRoute,
   LoginRoute: LoginRoute,
