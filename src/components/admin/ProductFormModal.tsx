@@ -372,6 +372,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
 
 
 
+          {!isCollab && (
           <div>
             <Label className="mb-2 block">{isSeller ? "Adicionar a Destaques" : "Categorias de destaque"}</Label>
             {collections.length === 0 ? (
