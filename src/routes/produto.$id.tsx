@@ -329,7 +329,8 @@ function ProdutoDetalhe() {
                 src={largeUrl(imgs[imgIdx])} alt={product.title}
                 loading="eager"
                 className="h-full w-full cursor-zoom-in"
-                imageClassName={cn(rotation === 90 && "rotate-90", rotation === 180 && "rotate-180", rotation === 270 && "-rotate-90")}
+                rotation={rotation}
+                onClick={() => setZoom(true)}
               />
             ) : (
               <div className="w-full aspect-square bg-secondary flex items-center justify-center text-muted-foreground">Sem imagem</div>
@@ -552,7 +553,7 @@ function ProdutoDetalhe() {
             loading="eager"
             margin={0.04}
             className="h-full w-full"
-            imageClassName={cn(rotation === 90 && "rotate-90", rotation === 180 && "rotate-180", rotation === 270 && "-rotate-90")}
+            rotation={rotation}
           />
         </div>
       )}

@@ -10,6 +10,8 @@ type Props = {
   imageClassName?: string;
   loading?: "eager" | "lazy";
   margin?: number;
+  rotation?: number;
+  onClick?: () => void;
 };
 
 const FULL_IMAGE: Bounds = { left: 0, top: 0, right: 1, bottom: 1 };
@@ -101,6 +103,8 @@ export function AutoFramedProductImage({
   imageClassName,
   loading = "lazy",
   margin = 0.1,
+  rotation = 0,
+  onClick,
 }: Props) {
   const frameRef = useRef<HTMLDivElement>(null);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -148,7 +152,7 @@ export function AutoFramedProductImage({
     const subjectY = (bounds.top + bounds.bottom) * 0.5 * renderedHeight + (fh - renderedHeight) * 0.5;
     const translateX = -scale * (subjectX - fw * 0.5);
     const translateY = -scale * (subjectY - fh * 0.5);
-    return `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    return `translate(${translateX}px, ${translateY}px) scale(${scale}) rotate(${rotation}deg)`;
   })();
 
   return (
@@ -158,6 +162,7 @@ export function AutoFramedProductImage({
         alt={alt}
         crossOrigin="anonymous"
         loading={loading}
+        onClick={onClick}
         onLoad={(event) => handleLoad(event.currentTarget)}
         style={{ transform }}
         className={cn("absolute inset-0 h-full w-full object-contain object-center transition-transform duration-300", imageClassName)}
