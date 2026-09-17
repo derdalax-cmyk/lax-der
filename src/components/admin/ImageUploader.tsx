@@ -1,9 +1,21 @@
 import { useRef, useState } from "react";
-import { Upload, X, Star } from "lucide-react";
+import { Upload, X, Star, Eye, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { IMAGE_ACCEPT, validateUpload } from "@/lib/uploadLimits";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { ImageEditorDialog } from "./ImageEditorDialog";
 
 type Props = {
   productId: string; // use a temp UUID for new products
@@ -12,10 +24,18 @@ type Props = {
   onChange: (urls: string[]) => void;
 };
 
+const storagePath = (url: string) => {
+  const match = url.match(/\/products\/(.+?)(\?|$)/);
+  return match ? decodeURIComponent(match[1]) : null;
+};
+
 export function ImageUploader({ productId, pathPrefix, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
 
   const uploadFiles = async (files: FileList | File[]) => {
     const arr = Array.from(files);
@@ -45,12 +65,27 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
   };
 
   const remove = async (url: string) => {
-    // Extract path from public URL
-    const match = url.match(/\/products\/(.+)$/);
-    if (match) {
-      await supabase.storage.from("products").remove([match[1]]);
-    }
+    const path = storagePath(url);
+    if (path) await supabase.storage.from("products").remove([path]);
     onChange(value.filter((u) => u !== url));
+    toast.success("Imagem removida");
+  };
+
+  /** Guarda a versão editada como novo ficheiro e substitui a original na mesma posição. */
+  const replaceEdited = async (url: string, blob: Blob) => {
+    const path = `${pathPrefix ? `${pathPrefix}/` : ""}${productId}/${crypto.randomUUID()}.jpg`;
+    const { error } = await supabase.storage
+      .from("products")
+      .upload(path, blob, { upsert: false, contentType: "image/jpeg" });
+    if (error) {
+      toast.error(`Erro: ${error.message}`);
+      return;
+    }
+    const { data } = supabase.storage.from("products").getPublicUrl(path);
+    onChange(value.map((u) => (u === url ? data.publicUrl : u)));
+    const old = storagePath(url);
+    if (old) await supabase.storage.from("products").remove([old]);
+    toast.success("Imagem atualizada");
   };
 
   const setPrimary = (url: string) => {
@@ -87,39 +122,99 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
       </div>
 
       {value.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {value.map((url, idx) => (
-            <div key={url} className="relative group aspect-square rounded-md overflow-hidden border border-border bg-secondary">
-              <img src={url} alt="" className="w-full h-full object-cover" />
-              {idx === 0 && (
-                <div className="absolute top-1 left-1 bg-gold text-ink text-[10px] px-1.5 py-0.5 rounded font-semibold flex items-center gap-1">
-                  <Star className="w-2.5 h-2.5 fill-current" /> Principal
-                </div>
-              )}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+            <div key={url} className="rounded-md border border-border overflow-hidden bg-secondary">
+              <div className="relative aspect-square">
+                <img src={url} alt="" className="w-full h-full object-cover" />
+                {idx === 0 && (
+                  <div className="absolute top-1 left-1 bg-gold text-ink text-[10px] px-1.5 py-0.5 rounded font-semibold flex items-center gap-1">
+                    <Star className="w-2.5 h-2.5 fill-current" /> Principal
+                  </div>
+                )}
                 {idx !== 0 && (
                   <button
                     type="button"
                     onClick={() => setPrimary(url)}
-                    className="bg-gold text-ink rounded-full p-1.5 hover:scale-110 transition"
+                    className="absolute top-1 right-1 bg-gold text-ink rounded-full p-1.5 hover:scale-110 transition"
                     title="Definir como principal"
+                    aria-label="Definir como imagem principal"
                   >
                     <Star className="w-3.5 h-3.5" />
                   </button>
                 )}
+              </div>
+              <div className="flex items-stretch divide-x divide-border border-t border-border text-[11px]">
                 <button
                   type="button"
-                  onClick={() => remove(url)}
-                  className="bg-destructive text-destructive-foreground rounded-full p-1.5 hover:scale-110 transition"
-                  title="Remover"
+                  onClick={() => setPreview(url)}
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 hover:bg-secondary/70 transition"
+                  aria-label="Visualizar imagem"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <Eye className="w-3.5 h-3.5" /> Ver
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditing(url)}
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 hover:bg-secondary/70 transition"
+                  aria-label="Editar imagem"
+                >
+                  <Pencil className="w-3.5 h-3.5" /> Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmRemove(url)}
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 text-destructive hover:bg-destructive/10 transition"
+                  aria-label="Remover imagem"
+                >
+                  <X className="w-3.5 h-3.5" /> Remover
                 </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl">Imagem do produto</DialogTitle>
+          </DialogHeader>
+          {preview && <img src={preview} alt="" className="w-full max-h-[65vh] object-contain rounded-md" />}
+        </DialogContent>
+      </Dialog>
+
+      {editing && (
+        <ImageEditorDialog
+          open
+          onOpenChange={(o) => !o && setEditing(null)}
+          url={editing}
+          onSave={(blob) => replaceEdited(editing, blob)}
+        />
+      )}
+
+      <AlertDialog open={!!confirmRemove} onOpenChange={(o) => !o && setConfirmRemove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover esta imagem?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A imagem deixa de aparecer no produto e não será usada na análise com IA.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                const url = confirmRemove!;
+                setConfirmRemove(null);
+                void remove(url);
+              }}
+            >
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
