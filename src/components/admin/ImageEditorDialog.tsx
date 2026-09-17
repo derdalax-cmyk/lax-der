@@ -30,10 +30,12 @@ type Props = {
 export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [rotation, setRotation] = useState(0);
   const [ratio, setRatio] = useState<number | null>(null);
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [swapTick, setSwapTick] = useState(0);
 
   useEffect(() => {
     if (!open) return;
