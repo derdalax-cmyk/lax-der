@@ -261,7 +261,14 @@ function SellerTeamPage() {
         </div>
       )}
 
+      {seller?.id && (
+        <div className="mt-8">
+          <SellerAuditSection sellerId={seller.id} />
+        </div>
+      )}
+
       <HistoryDialog member={openMember} onClose={() => setOpenMember(null)} />
+
     </div>
   );
 }
