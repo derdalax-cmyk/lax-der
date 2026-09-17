@@ -171,7 +171,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
           </div>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          O recorte é feito ao centro. A versão guardada substitui a original no produto e é a que a IA analisa.
+          O recorte é feito ao centro. Pode trocar a foto mantendo a mesma posição na lista. A versão guardada substitui a original no produto e é a que a IA analisa.
         </p>
 
         <DialogFooter>
