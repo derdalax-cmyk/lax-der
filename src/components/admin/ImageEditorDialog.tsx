@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, RotateCw, Loader2 } from "lucide-react";
+import { RotateCcw, RotateCw, Loader2, ImagePlus } from "lucide-react";
+import { toast } from "sonner";
+import { validateUpload, IMAGE_ACCEPT } from "@/lib/uploadLimits";
 import { cn } from "@/lib/utils";
 
 type Ratio = { label: string; value: number | null };
