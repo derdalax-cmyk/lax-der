@@ -15,7 +15,7 @@ Analisa as fotografias e responde em JSON (português de Portugal) com exactamen
 Regras:
 - nome: curto e comercial (máx. 60 caracteres), sem preços nem marcas inventadas.
 - descricao: 1 a 2 frases (máx. 300 caracteres) apenas sobre o que é visível na peça.
-- material: só se houver etiqueta legível ou evidência clara. Caso contrário escreve exactamente "Não identificado".
+- material: apenas se existir etiqueta legível na foto. Caso contrário escreve exactamente "Não identificado". Nunca uses suposições como "geralmente", "provavelmente" ou "pode incluir".
 - Nunca inventes informação. Não incluas categoria, cor, tamanho, preço, stock ou marca no JSON.
 Responde apenas com o objecto JSON.`;
 
@@ -54,7 +54,8 @@ export async function generateProductData(dataUrls: string[]): Promise<AiProduct
     },
     body: JSON.stringify({
       model,
-      max_completion_tokens: 500,
+      max_completion_tokens: 900,
+      reasoning_effort: "minimal",
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
