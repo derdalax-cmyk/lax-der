@@ -137,6 +137,53 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_generation_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          images_count: number
+          model: string
+          product_id: string | null
+          result: Json | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          images_count?: number
+          model: string
+          product_id?: string | null
+          result?: Json | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          images_count?: number
+          model?: string
+          product_id?: string | null
+          result?: Json | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_generation_logs_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -1124,6 +1171,7 @@ export type Database = {
       sellers: {
         Row: {
           admin_notes: string | null
+          ai_generator_enabled: boolean
           approved_at: string | null
           bank_account: string | null
           bank_name: string | null
@@ -1155,6 +1203,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          ai_generator_enabled?: boolean
           approved_at?: string | null
           bank_account?: string | null
           bank_name?: string | null
@@ -1186,6 +1235,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          ai_generator_enabled?: boolean
           approved_at?: string | null
           bank_account?: string | null
           bank_name?: string | null
@@ -1397,6 +1447,7 @@ export type Database = {
         }
         Returns: Json
       }
+      can_use_ai_generator: { Args: { _seller_id: string }; Returns: boolean }
       current_seller_id: { Args: never; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -1540,6 +1591,10 @@ export type Database = {
           _tracking?: string
         }
         Returns: undefined
+      }
+      set_seller_ai_generator: {
+        Args: { _enabled: boolean; _seller_id: string }
+        Returns: boolean
       }
       start_conversation: {
         Args: { _product_id?: string; _seller_id: string }

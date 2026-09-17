@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Search, Store, Clock, CheckCircle2, XCircle, Check, X, Eye, Inbox,
-  Phone, Mail, MapPin, Calendar, Loader2, BarChart3,
+  Phone, Mail, MapPin, Calendar, Loader2, BarChart3, Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -176,7 +176,15 @@ function AdminVendedores() {
                       <div className="w-9 h-9 rounded-lg bg-secondary overflow-hidden flex items-center justify-center shrink-0">
                         {s.logo_url ? <img src={s.logo_url} alt="" className="w-full h-full object-cover" /> : <Store className="w-4 h-4 text-muted-foreground" />}
                       </div>
-                      <div className="font-medium truncate max-w-[180px]">{s.store_name}</div>
+                      <div className="min-w-0">
+                        <div className="font-medium truncate max-w-[180px]">{s.store_name}</div>
+                        {s.ai_generator_enabled && (
+                          <div className="inline-flex items-center gap-1 text-[10px] text-gold font-medium">
+                            <Sparkles className="w-3 h-3" /> IA ativada
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </td>
                   <td className="px-4 py-3">
@@ -240,7 +248,12 @@ function AdminVendedores() {
                 <DetailRow icon={Phone} label="Telefone / WhatsApp" value={detail.phone} />
                 <DetailRow icon={MapPin} label="Localização" value={`${detail.province}${detail.city ? " · " + detail.city : ""}`} />
                 <CityEditor seller={detail} onSaved={(city) => { setDetail({ ...detail, city }); qc.invalidateQueries({ queryKey: ["admin-sellers"] }); }} />
+                <AiGeneratorEditor
+                  seller={detail}
+                  onSaved={(enabled) => { setDetail({ ...detail, ai_generator_enabled: enabled }); qc.invalidateQueries({ queryKey: ["admin-sellers"] }); }}
+                />
                 <CollaboratorsSection sellerId={detail.id} storeName={detail.store_name} />
+
                 <DetailRow icon={Calendar} label="Cadastro" value={new Date(detail.created_at).toLocaleString("pt-PT")} />
                 {detail.description && (
                   <div className="bg-secondary/40 rounded-xl px-4 py-3">
@@ -348,6 +361,51 @@ function CityEditor({ seller, onSaved }: { seller: Seller; onSaved: (city: strin
     </div>
   );
 }
+
+function AiGeneratorEditor({ seller, onSaved }: { seller: Seller; onSaved: (enabled: boolean) => void }) {
+  const [saving, setSaving] = useState(false);
+  const enabled = seller.ai_generator_enabled;
+
+  const toggle = async () => {
+    setSaving(true);
+    const { error } = await supabase.rpc("set_seller_ai_generator", { _seller_id: seller.id, _enabled: !enabled });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message.includes("forbidden") ? "Apenas o administrador pode alterar esta opção" : error.message);
+      return;
+    }
+    toast.success(!enabled ? "Gerador com IA ativado" : "Gerador com IA desativado");
+    onSaved(!enabled);
+  };
+
+  return (
+    <div className="bg-secondary/40 rounded-xl px-4 py-3">
+      <div className="flex items-start gap-3">
+        <Sparkles className={cn("w-4 h-4 mt-0.5 shrink-0", enabled ? "text-gold" : "text-muted-foreground")} />
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Gerador de produtos com IA (só admin)</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={cn(
+              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
+              enabled ? "bg-success/15 text-success border-success/30" : "bg-secondary text-muted-foreground border-border",
+            )}>
+              {enabled ? "Ativado" : "Desativado"}
+            </span>
+            <Button size="sm" variant="outline" className="h-8" onClick={toggle} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : enabled ? "Desativar" : "Ativar"}
+            </Button>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            {enabled
+              ? "Disponível para o vendedor e para os Gestores de Cadastro desta loja: gera nome, descrição e material a partir das fotos."
+              : "A loja não pode usar o gerador de nome, descrição e material com IA."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 function StatCard({ label, value, icon: Icon, accent }: {
   label: string; value: number | string; icon: React.ComponentType<{ className?: string }>; accent?: boolean;

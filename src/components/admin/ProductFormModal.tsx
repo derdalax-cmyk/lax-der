@@ -10,6 +10,8 @@ import { ImageUploader } from "./ImageUploader";
 import { VariationsTable, type Variation } from "./VariationsTable";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Sparkles, Loader2 } from "lucide-react";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCategories } from "@/hooks/useCategories";
@@ -86,8 +88,41 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [stock, setStock] = useState<number>(0);
   const [stockAlert, setStockAlert] = useState<number>(5);
   const [saving, setSaving] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiUsed, setAiUsed] = useState(false);
+  const [aiAllowed, setAiAllowed] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!open || !sellerId) { setAiAllowed(false); return; }
+    setAiUsed(false);
+    supabase.rpc("can_use_ai_generator", { _seller_id: sellerId }).then(({ data }) => {
+      setAiAllowed(data === true);
+    });
+  }, [open, sellerId]);
+
+  const runAi = async () => {
+    if (!sellerId || images.length === 0) return;
+    setAiLoading(true);
+    try {
+      const { generateProductFields } = await import("@/lib/ai-product.functions");
+      const res = await generateProductFields({
+        data: { sellerId, images, productId: product?.id ?? null },
+      });
+      if (!res.ok) { toast.error(res.error); return; }
+      setTitle(res.data.nome);
+      setText(res.data.descricao);
+      setMaterial(res.data.material);
+      setAiUsed(true);
+      toast.success("Dados gerados. Reveja antes de guardar.");
+    } catch {
+      toast.error("Não foi possível gerar os dados neste momento. Tente novamente.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!open || isCollab) return;
@@ -407,9 +442,30 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           )}
 
           <div>
-            <Label className="mb-2 block">Imagens</Label>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <Label className="block">Imagens</Label>
+              {aiAllowed && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-gold/50 text-ink hover:bg-gold/10"
+                  disabled={aiLoading || images.length === 0}
+                  onClick={runAi}
+                >
+                  {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-gold" />}
+                  {aiLoading ? "A analisar fotos…" : aiUsed ? "Gerar novamente" : "Gerar dados com IA"}
+                </Button>
+              )}
+            </div>
+            {aiAllowed && (
+              <p className="text-[11px] text-muted-foreground mb-2">
+                A IA preenche apenas <strong>título, descrição e material</strong> a partir das fotos. Reveja antes de guardar.
+              </p>
+            )}
             <ImageUploader productId={productId} pathPrefix={isSeller && user ? `sellers/${user.id}` : undefined} value={images} onChange={setImages} />
           </div>
+
 
           <div>
             <Label className="mb-2 block">Variações</Label>
