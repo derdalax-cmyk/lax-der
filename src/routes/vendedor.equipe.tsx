@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Users, Loader2, PauseCircle, PlayCircle, History, Package } from "lucide-react";
 import { toast } from "sonner";
+import { SellerAuditSection } from "@/components/admin/SellerAuditSection";
+
 
 export const Route = createFileRoute("/vendedor/equipe")({
   head: () => ({

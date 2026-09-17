@@ -338,9 +338,8 @@ function ProdutoDetalhe() {
           )}
 
 
-          {descText && (
-            <p className="mt-5 text-muted-foreground whitespace-pre-line leading-relaxed">{descText}</p>
-          )}
+          {descText && <ProductDescription text={descText} />}
+
 
           {specs.length > 0 && (
             <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm border-t border-border pt-5">
