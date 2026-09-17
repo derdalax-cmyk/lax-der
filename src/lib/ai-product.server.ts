@@ -2,7 +2,8 @@
 // Só corre no servidor: a chave da IA nunca chega ao navegador.
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MAX_IMAGES = 3;
+const MAX_IMAGES = 5;
+export const AI_MAX_IMAGES = MAX_IMAGES;
 
 /** Modelo configurável no servidor (variável de ambiente), sem tocar no frontend. */
 export function aiProductModel(): string {
@@ -10,12 +11,28 @@ export function aiProductModel(): string {
 }
 
 const SYSTEM_PROMPT = `És um catalogador de vestuário de uma loja em Moçambique.
-Analisa as fotografias e responde em JSON (português de Portugal) com exactamente estas chaves:
+REGRA ABSOLUTA: todas as fotografias que recebes são vistas diferentes da MESMA peça única
+(frente, costas, lateral, gola, mangas, fechos, estampas, etiqueta, detalhe).
+Nunca as trates como produtos diferentes. Combina-as numa única compreensão da peça:
+usa cada vista como informação complementar e não repitas a mesma característica só porque
+aparece em várias fotos.
+Ordem de raciocínio: 1) que peça é; 2) características visíveis (corte, mangas, gola, fecho,
+botões, estampa, padrão, textura visível, detalhes de construção); 3) existe evidência escrita
+do material (etiqueta/composição legível)?; 4) escrever nome; 5) escrever descrição factual;
+6) indicar material só com evidência.
+Responde em JSON (português de Portugal) com exactamente estas chaves:
 {"nome": "...", "descricao": "...", "material": "..."}
 Regras:
-- nome: curto e comercial (máx. 60 caracteres), sem preços nem marcas inventadas.
-- descricao: 1 a 2 frases (máx. 300 caracteres) apenas sobre o que é visível na peça.
-- material: apenas se existir etiqueta legível na foto. Caso contrário escreve exactamente "Não identificado". Nunca uses suposições como "geralmente", "provavelmente" ou "pode incluir".
+- nome: identifica o tipo de peça e as características visíveis mais relevantes, ex. "Camisola
+  Quarter-Zip Creme", "Camisa Social Azul de Manga Longa". Máx. 60 caracteres. Nunca uses nomes
+  genéricos como "Roupa bonita", "Peça de roupa" ou "Produto de vestuário" quando é possível
+  identificar o tipo de peça.
+- descricao: 1 a 3 frases (máx. 300 caracteres), natural e adequada a uma loja online, apenas
+  sobre o que é observável nas fotos. Sem exageros nem linguagem publicitária vazia.
+- material: apenas se houver etiqueta ou composição legível nas fotos. Caso contrário escreve
+  exactamente "Não identificado". Nunca deduzas o material pela aparência do tecido e nunca uses
+  "geralmente", "provavelmente" ou "pode incluir".
+- Precisão acima de completude: é melhor "Não identificado" do que inventar.
 - Nunca inventes informação. Não incluas categoria, cor, tamanho, preço, stock ou marca no JSON.
 Responde apenas com o objecto JSON.`;
 
@@ -62,8 +79,17 @@ export async function generateProductData(dataUrls: string[]): Promise<AiProduct
         {
           role: "user",
           content: [
-            { type: "text", text: "Gera o JSON com nome, descricao e material desta peça de roupa." },
-            ...dataUrls.map((url) => ({ type: "image_url" as const, image_url: { url } })),
+            {
+              type: "text",
+              text:
+                dataUrls.length === 1
+                  ? "Segue 1 fotografia de uma única peça de roupa. Gera o JSON com nome, descricao e material."
+                  : `Seguem ${dataUrls.length} fotografias da MESMA peça de roupa (vistas/ângulos diferentes da mesma peça, podendo incluir a etiqueta). Analisa-as em conjunto como um só produto e gera um único JSON com nome, descricao e material.`,
+            },
+            ...dataUrls.flatMap((url, i) => [
+              { type: "text" as const, text: `Vista ${i + 1} da mesma peça:` },
+              { type: "image_url" as const, image_url: { url } },
+            ]),
           ],
         },
       ],
