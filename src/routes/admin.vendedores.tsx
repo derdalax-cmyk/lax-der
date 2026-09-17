@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Search, Store, Clock, CheckCircle2, XCircle, Check, X, Eye, Inbox,
-  Phone, Mail, MapPin, Calendar, Loader2, BarChart3,
+  Phone, Mail, MapPin, Calendar, Loader2, BarChart3, Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -176,7 +176,15 @@ function AdminVendedores() {
                       <div className="w-9 h-9 rounded-lg bg-secondary overflow-hidden flex items-center justify-center shrink-0">
                         {s.logo_url ? <img src={s.logo_url} alt="" className="w-full h-full object-cover" /> : <Store className="w-4 h-4 text-muted-foreground" />}
                       </div>
-                      <div className="font-medium truncate max-w-[180px]">{s.store_name}</div>
+                      <div className="min-w-0">
+                        <div className="font-medium truncate max-w-[180px]">{s.store_name}</div>
+                        {s.ai_generator_enabled && (
+                          <div className="inline-flex items-center gap-1 text-[10px] text-gold font-medium">
+                            <Sparkles className="w-3 h-3" /> IA ativada
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </td>
                   <td className="px-4 py-3">
