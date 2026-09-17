@@ -78,7 +78,31 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
     ctx.rotate((rotation * Math.PI) / 180);
     ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
     ctx.restore();
-  }, [ready, rotation, ratio]);
+  }, [ready, rotation, ratio, swapTick]);
+
+  /** Substitui a imagem por um novo ficheiro escolhido no dispositivo (mesma posição na lista). */
+  const swap = (file: File | undefined) => {
+    if (!file) return;
+    const invalid = validateUpload(file, "image");
+    if (invalid) {
+      toast.error(invalid);
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      imgRef.current = img;
+      setRotation(0);
+      setRatio(null);
+      setReady(true);
+      setSwapTick((t) => t + 1);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      toast.error("Não foi possível ler esta imagem. Tente outra fotografia.");
+    };
+    img.src = URL.createObjectURL(file);
+  };
 
   const save = async () => {
     const canvas = canvasRef.current;
