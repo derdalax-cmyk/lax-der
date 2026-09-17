@@ -79,7 +79,47 @@ function parseMeta(desc: string | null): { text: string; meta: Meta } {
   }
 }
 
+function ProductDescription({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const [clamped, setClamped] = useState(false);
+  const ref = useRef<HTMLParagraphElement | null>(null);
+
+  useEffect(() => {
+    const check = () => {
+      const el = ref.current;
+      if (!el) return;
+      setClamped(el.scrollHeight - el.clientHeight > 2);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [text]);
+
+  return (
+    <div className="mt-5">
+      <p
+        ref={ref}
+        className={cn(
+          "text-muted-foreground whitespace-pre-line leading-relaxed",
+          !expanded && "line-clamp-2",
+        )}
+      >
+        {text}
+      </p>
+      {(clamped || expanded) && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-1 text-sm font-medium text-gold hover:underline"
+        >
+          {expanded ? "Ver menos" : "Ver mais"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ProdutoDetalhe() {
+
   const { labelOf } = useCategories();
   const { id } = Route.useParams();
   const navigate = useNavigate();
