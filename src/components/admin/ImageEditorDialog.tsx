@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, RotateCw, Loader2 } from "lucide-react";
+import { RotateCcw, RotateCw, Loader2, ImagePlus } from "lucide-react";
+import { toast } from "sonner";
+import { validateUpload, IMAGE_ACCEPT } from "@/lib/uploadLimits";
 import { cn } from "@/lib/utils";
 
 type Ratio = { label: string; value: number | null };
@@ -28,10 +30,12 @@ type Props = {
 export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [rotation, setRotation] = useState(0);
   const [ratio, setRatio] = useState<number | null>(null);
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [swapTick, setSwapTick] = useState(0);
 
   useEffect(() => {
     if (!open) return;
@@ -74,7 +78,31 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
     ctx.rotate((rotation * Math.PI) / 180);
     ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
     ctx.restore();
-  }, [ready, rotation, ratio]);
+  }, [ready, rotation, ratio, swapTick]);
+
+  /** Substitui a imagem por um novo ficheiro escolhido no dispositivo (mesma posição na lista). */
+  const swap = (file: File | undefined) => {
+    if (!file) return;
+    const invalid = validateUpload(file, "image");
+    if (invalid) {
+      toast.error(invalid);
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      imgRef.current = img;
+      setRotation(0);
+      setRatio(null);
+      setReady(true);
+      setSwapTick((t) => t + 1);
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      toast.error("Não foi possível ler esta imagem. Tente outra fotografia.");
+    };
+    img.src = URL.createObjectURL(file);
+  };
 
   const save = async () => {
     const canvas = canvasRef.current;
@@ -107,6 +135,19 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => fileRef.current?.click()}>
+            <ImagePlus className="w-4 h-4" /> Trocar imagem
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept={IMAGE_ACCEPT}
+            className="hidden"
+            onChange={(e) => {
+              swap(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
           <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => setRotation((r) => (r + 270) % 360)}>
             <RotateCcw className="w-4 h-4" /> Rodar
           </Button>
@@ -130,7 +171,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
           </div>
         </div>
         <p className="text-[11px] text-muted-foreground">
-          O recorte é feito ao centro. A versão guardada substitui a original no produto e é a que a IA analisa.
+          O recorte é feito ao centro. Pode trocar a foto mantendo a mesma posição na lista. A versão guardada substitui a original no produto e é a que a IA analisa.
         </p>
 
         <DialogFooter>
