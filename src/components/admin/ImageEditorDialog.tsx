@@ -135,6 +135,19 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => fileRef.current?.click()}>
+            <ImagePlus className="w-4 h-4" /> Trocar imagem
+          </Button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept={IMAGE_ACCEPT}
+            className="hidden"
+            onChange={(e) => {
+              swap(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
           <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => setRotation((r) => (r + 270) % 360)}>
             <RotateCcw className="w-4 h-4" /> Rodar
           </Button>
