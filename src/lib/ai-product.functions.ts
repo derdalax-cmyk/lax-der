@@ -17,7 +17,8 @@ export const generateProductFields = createServerFn({ method: "POST" })
   .inputValidator((data: Input) => {
     const sellerId = String(data?.sellerId ?? "").trim();
     if (!/^[0-9a-f-]{36}$/i.test(sellerId)) throw new Error("forbidden");
-    const images = Array.isArray(data?.images) ? data.images.filter((u) => typeof u === "string").slice(0, 3) : [];
+    // Todas as fotos da mesma peça (até 5) são analisadas numa só chamada.
+    const images = Array.isArray(data?.images) ? data.images.filter((u) => typeof u === "string").slice(0, 5) : [];
     const productId = data?.productId ? String(data.productId) : null;
     return { sellerId, images, productId };
   })
