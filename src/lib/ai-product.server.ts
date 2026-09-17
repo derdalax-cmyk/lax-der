@@ -79,8 +79,17 @@ export async function generateProductData(dataUrls: string[]): Promise<AiProduct
         {
           role: "user",
           content: [
-            { type: "text", text: "Gera o JSON com nome, descricao e material desta peça de roupa." },
-            ...dataUrls.map((url) => ({ type: "image_url" as const, image_url: { url } })),
+            {
+              type: "text",
+              text:
+                dataUrls.length === 1
+                  ? "Segue 1 fotografia de uma única peça de roupa. Gera o JSON com nome, descricao e material."
+                  : `Seguem ${dataUrls.length} fotografias da MESMA peça de roupa (vistas/ângulos diferentes da mesma peça, podendo incluir a etiqueta). Analisa-as em conjunto como um só produto e gera um único JSON com nome, descricao e material.`,
+            },
+            ...dataUrls.flatMap((url, i) => [
+              { type: "text" as const, text: `Vista ${i + 1} da mesma peça:` },
+              { type: "image_url" as const, image_url: { url } },
+            ]),
           ],
         },
       ],
