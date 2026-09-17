@@ -15,9 +15,17 @@ import { largeUrl, thumbUrl } from "@/lib/imageUrl";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
+import { AutoFramedProductImage } from "@/components/product/AutoFramedProductImage";
 
 export const Route = createFileRoute("/produto/$id")({
-  head: () => ({ meta: [{ title: "Produto · DERDALAX" }] }),
+  head: () => ({ meta: [
+    { title: "Produto · DERDALAX" },
+    { name: "description", content: "Veja detalhes, imagens, preço e opções deste produto na DERDALAX." },
+    { property: "og:title", content: "Produto · DERDALAX" },
+    { property: "og:description", content: "Veja detalhes, imagens, preço e opções deste produto na DERDALAX." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: ProdutoDetalhe,
 });
 
@@ -305,7 +313,7 @@ function ProdutoDetalhe() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="min-w-0">
           <div
-            className="relative w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y flex items-center justify-center"
+            className="relative aspect-square w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y bg-secondary/30"
             onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
             onTouchEnd={(e) => {
               if (touchX.current === null || imgs.length < 2) return;
@@ -317,11 +325,11 @@ function ProdutoDetalhe() {
             }}
           >
             {imgs[imgIdx] ? (
-              <img
+              <AutoFramedProductImage
                 src={largeUrl(imgs[imgIdx])} alt={product.title}
-                onClick={() => setZoom(true)}
-                style={{ transform: `rotate(${rotation}deg)` }}
-                className="block w-full h-auto max-h-[75vh] object-contain cursor-zoom-in transition-transform duration-300"
+                loading="eager"
+                className="h-full w-full cursor-zoom-in"
+                imageClassName={cn(rotation === 90 && "rotate-90", rotation === 180 && "rotate-180", rotation === 270 && "-rotate-90")}
               />
             ) : (
               <div className="w-full aspect-square bg-secondary flex items-center justify-center text-muted-foreground">Sem imagem</div>
@@ -346,8 +354,8 @@ function ProdutoDetalhe() {
           {imgs.length > 1 && (
             <div className="flex gap-2 mt-3 overflow-x-auto max-w-full pb-1">
               {imgs.map((src, i) => (
-                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2", i === imgIdx ? "border-gold" : "border-border")}>
-                  <img src={thumbUrl(src)} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2 bg-secondary/30", i === imgIdx ? "border-gold" : "border-border")}>
+                  <AutoFramedProductImage src={thumbUrl(src)} alt="" className="h-full w-full" margin={0.08} />
                 </button>
               ))}
             </div>
@@ -538,7 +546,14 @@ function ProdutoDetalhe() {
       {zoom && imgs[imgIdx] && (
         <div onClick={() => setZoom(false)} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out">
           <button aria-label="Fechar zoom" onClick={() => setZoom(false)} className="absolute top-4 right-4 text-white"><X className="w-6 h-6" /></button>
-          <img src={largeUrl(imgs[imgIdx])} alt={product.title} style={{ transform: `rotate(${rotation}deg)` }} className="max-w-full max-h-full object-contain transition-transform duration-300" />
+          <AutoFramedProductImage
+            src={largeUrl(imgs[imgIdx])}
+            alt={product.title}
+            loading="eager"
+            margin={0.04}
+            className="h-full w-full"
+            imageClassName={cn(rotation === 90 && "rotate-90", rotation === 180 && "rotate-180", rotation === 270 && "-rotate-90")}
+          />
         </div>
       )}
     </div>
