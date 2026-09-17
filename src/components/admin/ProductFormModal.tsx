@@ -407,9 +407,30 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           )}
 
           <div>
-            <Label className="mb-2 block">Imagens</Label>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <Label className="block">Imagens</Label>
+              {aiAllowed && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-gold/50 text-ink hover:bg-gold/10"
+                  disabled={aiLoading || images.length === 0}
+                  onClick={runAi}
+                >
+                  {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-gold" />}
+                  {aiLoading ? "A analisar fotos…" : aiUsed ? "Gerar novamente" : "Gerar dados com IA"}
+                </Button>
+              )}
+            </div>
+            {aiAllowed && (
+              <p className="text-[11px] text-muted-foreground mb-2">
+                A IA preenche apenas <strong>título, descrição e material</strong> a partir das fotos. Reveja antes de guardar.
+              </p>
+            )}
             <ImageUploader productId={productId} pathPrefix={isSeller && user ? `sellers/${user.id}` : undefined} value={images} onChange={setImages} />
           </div>
+
 
           <div>
             <Label className="mb-2 block">Variações</Label>
