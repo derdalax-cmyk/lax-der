@@ -1477,6 +1477,10 @@ export type Database = {
         Returns: Json
       }
       get_public_seller: { Args: { _id: string }; Returns: Json }
+      get_seller_audit_logs: {
+        Args: { _limit?: number; _seller_id: string }
+        Returns: Json
+      }
       get_seller_collaborators: { Args: { _seller_id?: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
       get_seller_featured_collections: { Args: never; Returns: Json }
