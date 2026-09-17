@@ -460,7 +460,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
             </div>
             {aiAllowed && (
               <p className="text-[11px] text-muted-foreground mb-2">
-                A IA preenche apenas <strong>título, descrição e material</strong> a partir das fotos. Reveja antes de guardar.
+                Todas as fotos são analisadas em conjunto como <strong>a mesma peça</strong> e a IA preenche apenas <strong>título, descrição e material</strong>. Reveja antes de guardar.
               </p>
             )}
             <ImageUploader productId={productId} pathPrefix={isSeller && user ? `sellers/${user.id}` : undefined} value={images} onChange={setImages} />
