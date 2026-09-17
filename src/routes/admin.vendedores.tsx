@@ -354,6 +354,51 @@ function CityEditor({ seller, onSaved }: { seller: Seller; onSaved: (city: strin
   );
 }
 
+function AiGeneratorEditor({ seller, onSaved }: { seller: Seller; onSaved: (enabled: boolean) => void }) {
+  const [saving, setSaving] = useState(false);
+  const enabled = seller.ai_generator_enabled;
+
+  const toggle = async () => {
+    setSaving(true);
+    const { error } = await supabase.rpc("set_seller_ai_generator", { _seller_id: seller.id, _enabled: !enabled });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message.includes("forbidden") ? "Apenas o administrador pode alterar esta opção" : error.message);
+      return;
+    }
+    toast.success(!enabled ? "Gerador com IA ativado" : "Gerador com IA desativado");
+    onSaved(!enabled);
+  };
+
+  return (
+    <div className="bg-secondary/40 rounded-xl px-4 py-3">
+      <div className="flex items-start gap-3">
+        <Sparkles className={cn("w-4 h-4 mt-0.5 shrink-0", enabled ? "text-gold" : "text-muted-foreground")} />
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1">Gerador de produtos com IA (só admin)</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={cn(
+              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
+              enabled ? "bg-success/15 text-success border-success/30" : "bg-secondary text-muted-foreground border-border",
+            )}>
+              {enabled ? "Ativado" : "Desativado"}
+            </span>
+            <Button size="sm" variant="outline" className="h-8" onClick={toggle} disabled={saving}>
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : enabled ? "Desativar" : "Ativar"}
+            </Button>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            {enabled
+              ? "Disponível para o vendedor e para os Gestores de Cadastro desta loja: gera nome, descrição e material a partir das fotos."
+              : "A loja não pode usar o gerador de nome, descrição e material com IA."}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function StatCard({ label, value, icon: Icon, accent }: {
   label: string; value: number | string; icon: React.ComponentType<{ className?: string }>; accent?: boolean;
 }) {
