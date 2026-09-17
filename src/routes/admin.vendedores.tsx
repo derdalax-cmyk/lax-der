@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Tables } from "@/integrations/supabase/types";
 import { CollaboratorsSection } from "@/components/admin/CollaboratorsSection";
+import { SellerAuditSection } from "@/components/admin/SellerAuditSection";
+
 
 type Seller = Tables<"sellers">;
 
@@ -253,6 +255,8 @@ function AdminVendedores() {
                   onSaved={(enabled) => { setDetail({ ...detail, ai_generator_enabled: enabled }); qc.invalidateQueries({ queryKey: ["admin-sellers"] }); }}
                 />
                 <CollaboratorsSection sellerId={detail.id} storeName={detail.store_name} />
+                <SellerAuditSection sellerId={detail.id} />
+
 
                 <DetailRow icon={Calendar} label="Cadastro" value={new Date(detail.created_at).toLocaleString("pt-PT")} />
                 {detail.description && (
