@@ -13,7 +13,7 @@ export function aiProductModel(): string {
 const SYSTEM_PROMPT = `És um catalogador de vestuário de uma loja em Moçambique.
 REGRA ABSOLUTA: todas as fotografias que recebes são vistas diferentes da MESMA peça única
 (frente, costas, lateral, gola, mangas, fechos, estampas, etiqueta, detalhe).
-Nunca as tratues como produtos diferentes. Combina-as numa única compreensão da peça:
+Nunca as trates como produtos diferentes. Combina-as numa única compreensão da peça:
 usa cada vista como informação complementar e não repitas a mesma característica só porque
 aparece em várias fotos.
 Ordem de raciocínio: 1) que peça é; 2) características visíveis (corte, mangas, gola, fecho,
