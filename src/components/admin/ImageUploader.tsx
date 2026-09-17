@@ -125,8 +125,8 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {value.map((url, idx) => (
             <div key={url} className="rounded-md border border-border overflow-hidden bg-secondary">
-              <div className="relative aspect-square">
-                <img src={url} alt="" className="w-full h-full object-cover" />
+              <div className="relative aspect-square flex items-center justify-center bg-background/70 p-2">
+                <img src={url} alt="" className="w-full h-full object-contain object-center" />
                 {idx === 0 && (
                   <div className="absolute top-1 left-1 bg-gold text-ink text-[10px] px-1.5 py-0.5 rounded font-semibold flex items-center gap-1">
                     <Star className="w-2.5 h-2.5 fill-current" /> Principal
@@ -180,7 +180,11 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
           <DialogHeader>
             <DialogTitle className="font-display text-xl">Imagem do produto</DialogTitle>
           </DialogHeader>
-          {preview && <img src={preview} alt="" className="w-full max-h-[65vh] object-contain rounded-md" />}
+          {preview && (
+            <div className="flex h-[65vh] max-h-[680px] w-full items-center justify-center rounded-md bg-secondary/40 p-3">
+              <img src={preview} alt="" className="h-full w-full object-contain object-center" />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

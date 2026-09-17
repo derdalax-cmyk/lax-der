@@ -126,9 +126,9 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
           <DialogTitle className="font-display text-xl">Editar imagem</DialogTitle>
         </DialogHeader>
 
-        <div className="flex items-center justify-center rounded-lg border border-border bg-secondary/40 p-3 min-h-[220px]">
+        <div className="flex h-[45vh] min-h-[220px] max-h-[560px] items-center justify-center overflow-hidden rounded-lg border border-border bg-secondary/40 p-3">
           {ready ? (
-            <canvas ref={canvasRef} className="max-h-[45vh] max-w-full object-contain" />
+            <canvas ref={canvasRef} className="max-h-full max-w-full object-contain object-center" />
           ) : (
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
           )}
