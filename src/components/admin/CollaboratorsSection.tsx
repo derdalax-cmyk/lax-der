@@ -206,8 +206,12 @@ export const PERM_LABEL: Record<string, string> = {
   "products.view": "Ver produtos",
   "products.create": "Cadastrar produtos",
   "products.update": "Editar produtos",
+  "products.feature": "Candidatar a destaques",
   "seller.view_basic": "Ver dados da loja",
 };
+
+export const OPTIONAL_PERMS = ["products.feature"] as const;
+
 
 export function CollaboratorsSection({ sellerId, storeName }: { sellerId: string; storeName: string }) {
   const [addOpen, setAddOpen] = useState(false);
