@@ -138,16 +138,32 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   };
 
 
+  // Admin: lista simples de coleções de destaque
   useEffect(() => {
-    if (!open || isCollab) return;
-    let query = supabase.from("featured_collections").select("id,name,icon").order("sort_order");
-    if (isSeller && sellerId) {
-      query = query.eq("is_active", true).not("hidden_sellers", "cs", `{${sellerId}}`);
-    }
-    query.then(({ data }) => {
+    if (!open || isSeller) return;
+    supabase.from("featured_collections").select("id,name,icon").order("sort_order").then(({ data }) => {
       setCollections(data ?? []);
     });
+  }, [open, isSeller]);
+
+  // Vendedor / colaborador com permissão products.feature: destaques disponíveis + candidaturas
+  useEffect(() => {
+    if (!open || !isSeller || !sellerId) { setSellerCollections([]); return; }
+    supabase.rpc("get_seller_featured_collections", { _seller_id: sellerId }).then(({ data }) => {
+      setSellerCollections((data ?? []) as unknown as SellerCollection[]);
+    });
   }, [open, isSeller, sellerId]);
+
+  // Seleção inicial dos destaques deste produto (lado vendedor/colaborador)
+  useEffect(() => {
+    if (!isSeller) return;
+    if (!product) { setSelectedCollections(new Set()); return; }
+    const mine = sellerCollections
+      .filter((c) => (c.submissions ?? []).some((s) => s.product_id === product.id && s.status !== "rejected"))
+      .map((c) => c.id);
+    setSelectedCollections(new Set(mine));
+  }, [isSeller, product, sellerCollections]);
+
 
   useEffect(() => {
     if (!open) return;
