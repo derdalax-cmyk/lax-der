@@ -102,7 +102,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [aiUsed, setAiUsed] = useState(false);
   const [aiAllowed, setAiAllowed] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const [sellerCollections, setSellerCollections] = useState<SellerCollection[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
+  const productApproved = (product?.approval_status ?? "approved") === "approved" && !!product;
+  const canFeatureHere = isSeller && productApproved && sellerCollections.length > 0;
+
 
   useEffect(() => {
     if (!open || !sellerId) { setAiAllowed(false); return; }
