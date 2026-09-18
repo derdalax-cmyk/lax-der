@@ -325,11 +325,11 @@ function ProdutoDetalhe() {
             }}
           >
             {imgs[imgIdx] ? (
-              <AutoFramedProductImage
+              <img
                 src={largeUrl(imgs[imgIdx])} alt={product.title}
                 loading="eager"
-                className="h-full w-full cursor-zoom-in"
-                rotation={rotation}
+                className="absolute inset-0 w-full h-full object-cover object-center cursor-zoom-in"
+                style={{ transform: `rotate(${rotation}deg)` }}
                 onClick={() => setZoom(true)}
               />
             ) : (
@@ -356,7 +356,7 @@ function ProdutoDetalhe() {
             <div className="flex gap-2 mt-3 overflow-x-auto max-w-full pb-1">
               {imgs.map((src, i) => (
                 <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2 bg-secondary/30", i === imgIdx ? "border-gold" : "border-border")}>
-                  <AutoFramedProductImage src={thumbUrl(src)} alt="" className="h-full w-full" margin={0.08} />
+                  <img src={thumbUrl(src)} alt="" loading="lazy" className="h-full w-full object-cover object-center" />
                 </button>
               ))}
             </div>

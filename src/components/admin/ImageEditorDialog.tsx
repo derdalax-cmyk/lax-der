@@ -32,7 +32,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [rotation, setRotation] = useState(0);
-  const [ratio, setRatio] = useState<number | null>(null);
+  const [ratio, setRatio] = useState<number | null>(1);
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
   const [swapTick, setSwapTick] = useState(0);
@@ -40,7 +40,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
   useEffect(() => {
     if (!open) return;
     setRotation(0);
-    setRatio(null);
+    setRatio(1);
     setReady(false);
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -92,7 +92,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
     img.onload = () => {
       imgRef.current = img;
       setRotation(0);
-      setRatio(null);
+      setRatio(1);
       setReady(true);
       setSwapTick((t) => t + 1);
       URL.revokeObjectURL(img.src);
