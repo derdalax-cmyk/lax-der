@@ -33,7 +33,17 @@ type ProductRow = {
   status: ProductStatus;
   stock?: number | null;
   stock_alert?: number | null;
+  approval_status?: string | null;
 };
+
+type SellerCollection = {
+  id: string;
+  name: string;
+  icon: string | null;
+  max_products_per_seller: number;
+  submissions: { product_id: string; status: string }[];
+};
+
 
 
 
