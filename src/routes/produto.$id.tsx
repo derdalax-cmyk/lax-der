@@ -326,7 +326,7 @@ function ProdutoDetalhe() {
           >
             {imgs[imgIdx] ? (
               <img
-                src={largeUrl(imgs[imgIdx])} alt={product.title}
+                src={mainUrl(imgs[imgIdx])} alt={product.title}
                 loading="eager"
                 className="absolute inset-0 w-full h-full object-cover object-center cursor-zoom-in"
                 style={{ transform: `rotate(${rotation}deg)` }}
