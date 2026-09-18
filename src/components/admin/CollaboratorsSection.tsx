@@ -128,11 +128,6 @@ export function CollaboratorActionsMenu({
   );
 }
 
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
-
 export function AddCollaboratorModal({
   sellerId, storeName, open, onOpenChange, onAdded,
 }: {
