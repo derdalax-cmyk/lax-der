@@ -11,7 +11,7 @@ import { ProductCard, type ProductCardData, formatMZN } from "@/components/Produ
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { WaitingListButton } from "@/components/cart/WaitingListButton";
 import { cn } from "@/lib/utils";
-import { largeUrl, thumbUrl } from "@/lib/imageUrl";
+import { largeUrl, mainUrl, thumbUrl } from "@/lib/imageUrl";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
@@ -326,7 +326,7 @@ function ProdutoDetalhe() {
           >
             {imgs[imgIdx] ? (
               <img
-                src={largeUrl(imgs[imgIdx])} alt={product.title}
+                src={mainUrl(imgs[imgIdx])} alt={product.title}
                 loading="eager"
                 className="absolute inset-0 w-full h-full object-cover object-center cursor-zoom-in"
                 style={{ transform: `rotate(${rotation}deg)` }}
