@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Users, UserPlus, MoreHorizontal, Loader2, PauseCircle, PlayCircle, UserMinus } from "lucide-react";
+import { Users, UserPlus, MoreHorizontal, Loader2, PauseCircle, PlayCircle, UserMinus, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -67,13 +67,14 @@ export function useCollaboratorActions(invalidateKeys: unknown[][]) {
   });
 
   const setRole = useMutation({
-    mutationFn: async ({ id, role }: { id: string; role: string }) => {
-      const { error } = await supabase.rpc("set_collaborator_role", { _id: id, _role_slug: role, _permissions: undefined });
+    mutationFn: async ({ id, role, permissions }: { id: string; role: string; permissions?: string[] }) => {
+      const { error } = await supabase.rpc("set_collaborator_role", { _id: id, _role_slug: role, _permissions: permissions });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Função atualizada"); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   return { setStatus, setRole, invalidate };
 }
@@ -83,9 +84,14 @@ export function CollaboratorActionsMenu({
 }: {
   row: CollaboratorRow;
   onStatus: (status: "active" | "suspended" | "removed") => void;
-  onRole: (role: string) => void;
+  onRole: (role: string, permissions?: string[]) => void;
   roles: { slug: string; label: string }[];
 }) {
+  const hasFeature = (row.permissions ?? []).includes("products.feature");
+  const toggleFeature = () => {
+    const base = (row.permissions ?? []).filter((p) => p !== "products.feature");
+    onRole(row.role_slug, hasFeature ? base : [...base, "products.feature"]);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -104,6 +110,9 @@ export function CollaboratorActionsMenu({
             <PauseCircle className="w-4 h-4 mr-2" /> Suspender acesso
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem onClick={toggleFeature}>
+          <Flame className="w-4 h-4 mr-2" /> {hasFeature ? "Retirar permissão de destaques" : "Permitir candidatar a destaques"}
+        </DropdownMenuItem>
         {row.status !== "removed" && (
           <DropdownMenuItem className="text-destructive" onClick={() => onStatus("removed")}>
             <UserMinus className="w-4 h-4 mr-2" /> Remover da loja
@@ -114,6 +123,11 @@ export function CollaboratorActionsMenu({
             Alterar função para {r.label}
           </DropdownMenuItem>
         ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
       </DropdownMenuContent>
     </DropdownMenu>
   );
