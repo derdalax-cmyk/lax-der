@@ -189,11 +189,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
-      let membershipQuery = supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id);
-      if (isSeller && sellerId) membershipQuery = membershipQuery.eq("seller_id", sellerId);
-      membershipQuery.then(({ data }) => {
-        setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
-      });
+      if (!isSeller) {
+        supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id).then(({ data }) => {
+          setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
+        });
+      }
+
     } else {
       setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
