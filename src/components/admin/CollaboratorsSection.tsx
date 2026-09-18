@@ -145,17 +145,21 @@ export function AddCollaboratorModal({
   const { data: roles } = useCollaboratorRoles();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("product_manager");
+  const [canFeature, setCanFeature] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
     if (!email.trim()) { toast.error("Indique o e-mail do colaborador"); return; }
+    const base = (roles ?? []).find((r) => r.slug === role)?.default_permissions ?? [];
+    const perms = canFeature ? [...base.filter((p) => p !== "products.feature"), "products.feature"] : base;
     setSaving(true);
     const { error } = await supabase.rpc("add_seller_collaborator", {
       _email: email.trim(),
       _seller_id: sellerId,
       _role_slug: role,
-      _permissions: undefined,
+      _permissions: canFeature ? perms : undefined,
     });
+
     setSaving(false);
     if (error) {
       if (error.message.includes("no_account")) toast.error("Não existe conta DERDALAX com esse e-mail. Peça à pessoa para se registar primeiro.");
