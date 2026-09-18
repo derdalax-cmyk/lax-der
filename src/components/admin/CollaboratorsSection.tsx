@@ -208,6 +208,18 @@ export function AddCollaboratorModal({
               </div>
             </div>
           )}
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5 accent-[hsl(var(--gold))]"
+              checked={canFeature}
+              onChange={(e) => setCanFeature(e.target.checked)}
+            />
+            <span>
+              Candidatar produtos a destaques <span className="text-[11px] text-muted-foreground">(opcional)</span>
+            </span>
+          </label>
+
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancelar</Button>
