@@ -438,9 +438,48 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
 
 
 
-          {!isCollab && (
+          {isSeller ? (
+            <>
+              {canFeatureHere && (
+                <div>
+                  <Label className="mb-2 block">Destaques</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {sellerCollections.map((c) => {
+                      const sub = (c.submissions ?? []).find((s) => s.product_id === product?.id && s.status !== "rejected");
+                      const locked = sub?.status === "approved";
+                      const checked = selectedCollections.has(c.id);
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          disabled={locked}
+                          onClick={() => setSelectedCollections((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
+                            return next;
+                          })}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"} ${locked ? "opacity-70 cursor-not-allowed" : ""}`}
+                        >
+                          <span>{c.icon}</span> {c.name}
+                          {sub && <span className="text-[10px] text-muted-foreground">({sub.status === "approved" ? "aprovado" : "pendente"})</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente. Candidaturas já aprovadas só a administração pode retirar.
+                  </p>
+                </div>
+              )}
+              {!product && (
+                <p className="text-xs text-muted-foreground">
+                  Depois de aprovado, você poderá candidatar este produto a um destaque na edição.
+                </p>
+              )}
+            </>
+          ) : (
           <div>
-            <Label className="mb-2 block">{isSeller ? "Adicionar a Destaques" : "Categorias de destaque"}</Label>
+            <Label className="mb-2 block">Categorias de destaque</Label>
             {collections.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
             ) : (
@@ -465,12 +504,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              {isSeller
-                ? "A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente."
-                : "Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo)."}
+              Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).
             </p>
           </div>
           )}
+
 
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
