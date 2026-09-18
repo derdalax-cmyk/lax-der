@@ -53,7 +53,7 @@ function SellerDestaques() {
     queryKey: ["seller-featured-collections", seller?.id],
     enabled: !!seller?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_seller_featured_collections");
+      const { data, error } = await supabase.rpc("get_seller_featured_collections", { _seller_id: seller!.id });
       if (error) throw error;
       return (data ?? []) as unknown as SellerCollection[];
     },
@@ -79,7 +79,9 @@ function SellerDestaques() {
     const { error } = await supabase.rpc("withdraw_product_from_collection", {
       _collection_id: collectionId,
       _product_id: productId,
+      _seller_id: seller!.id,
     });
+
     if (error) return toast.error(error.message);
     toast.success("Produto retirado do destaque");
     qc.invalidateQueries({ queryKey: ["seller-featured-collections", seller?.id] });
@@ -174,21 +176,25 @@ function SellerDestaques() {
       <AddProductsDialog
         collection={addFor}
         products={myProducts}
+        sellerId={seller?.id}
         onClose={() => setAddFor(null)}
         onSubmitted={() => qc.invalidateQueries({ queryKey: ["seller-featured-collections", seller?.id] })}
       />
+
     </div>
   );
 }
 
 function AddProductsDialog({
-  collection, products, onClose, onSubmitted,
+  collection, products, sellerId, onClose, onSubmitted,
 }: {
   collection: SellerCollection | null;
   products: ProductLite[];
+  sellerId: string | undefined;
   onClose: () => void;
   onSubmitted: () => void;
 }) {
+
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
 
@@ -213,12 +219,14 @@ function AddProductsDialog({
   };
 
   const submit = async () => {
-    if (!collection || selected.size === 0) return;
+    if (!collection || selected.size === 0 || !sellerId) return;
     setSaving(true);
     const { error } = await supabase.rpc("submit_products_to_collection", {
       _collection_id: collection.id,
       _product_ids: [...selected],
+      _seller_id: sellerId,
     });
+
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Produtos candidatados. Aguardam aprovação.");

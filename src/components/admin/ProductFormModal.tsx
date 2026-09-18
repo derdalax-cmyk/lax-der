@@ -33,7 +33,17 @@ type ProductRow = {
   status: ProductStatus;
   stock?: number | null;
   stock_alert?: number | null;
+  approval_status?: string | null;
 };
+
+type SellerCollection = {
+  id: string;
+  name: string;
+  icon: string | null;
+  max_products_per_seller: number;
+  submissions: { product_id: string; status: string }[];
+};
+
 
 
 
@@ -64,7 +74,7 @@ function packMeta(text: string, meta: Meta): string {
 
 export function ProductFormModal({ open, onOpenChange, product, sellerId, collaborator }: Props) {
   const isSeller = !!sellerId;
-  const isCollab = !!collaborator;
+  void collaborator; // o ambiente do colaborador usa as mesmas regras do vendedor (validadas no servidor)
   const { user } = useAuth();
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
@@ -92,7 +102,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [aiUsed, setAiUsed] = useState(false);
   const [aiAllowed, setAiAllowed] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
+  const [sellerCollections, setSellerCollections] = useState<SellerCollection[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
+  const productApproved = (product?.approval_status ?? "approved") === "approved" && !!product;
+  const canFeatureHere = isSeller && productApproved && sellerCollections.length > 0;
+
 
   useEffect(() => {
     if (!open || !sellerId) { setAiAllowed(false); return; }
@@ -124,16 +138,32 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   };
 
 
+  // Admin: lista simples de coleções de destaque
   useEffect(() => {
-    if (!open || isCollab) return;
-    let query = supabase.from("featured_collections").select("id,name,icon").order("sort_order");
-    if (isSeller && sellerId) {
-      query = query.eq("is_active", true).not("hidden_sellers", "cs", `{${sellerId}}`);
-    }
-    query.then(({ data }) => {
+    if (!open || isSeller) return;
+    supabase.from("featured_collections").select("id,name,icon").order("sort_order").then(({ data }) => {
       setCollections(data ?? []);
     });
+  }, [open, isSeller]);
+
+  // Vendedor / colaborador com permissão products.feature: destaques disponíveis + candidaturas
+  useEffect(() => {
+    if (!open || !isSeller || !sellerId) { setSellerCollections([]); return; }
+    supabase.rpc("get_seller_featured_collections", { _seller_id: sellerId }).then(({ data }) => {
+      setSellerCollections((data ?? []) as unknown as SellerCollection[]);
+    });
   }, [open, isSeller, sellerId]);
+
+  // Seleção inicial dos destaques deste produto (lado vendedor/colaborador)
+  useEffect(() => {
+    if (!isSeller) return;
+    if (!product) { setSelectedCollections(new Set()); return; }
+    const mine = sellerCollections
+      .filter((c) => (c.submissions ?? []).some((s) => s.product_id === product.id && s.status !== "rejected"))
+      .map((c) => c.id);
+    setSelectedCollections(new Set(mine));
+  }, [isSeller, product, sellerCollections]);
+
 
   useEffect(() => {
     if (!open) return;
@@ -159,11 +189,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
-      let membershipQuery = supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id);
-      if (isSeller && sellerId) membershipQuery = membershipQuery.eq("seller_id", sellerId);
-      membershipQuery.then(({ data }) => {
-        setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
-      });
+      if (!isSeller) {
+        supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id).then(({ data }) => {
+          setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
+        });
+      }
+
     } else {
       setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
@@ -247,15 +278,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
         }
       }
 
-      if (pid && isSeller && !isCollab) {
-        const { data: currentRows, error: currentError } = await supabase
-          .from("featured_collection_products")
-          .select("collection_id,status")
-          .eq("product_id", pid)
-          .eq("seller_id", sellerId!);
-        if (currentError) throw currentError;
-
-        const current = new Map((currentRows ?? []).map((r) => [r.collection_id, r.status]));
+      if (pid && isSeller && canFeatureHere) {
+        const current = new Map<string, string>();
+        sellerCollections.forEach((c) => {
+          const sub = (c.submissions ?? []).find((s) => s.product_id === pid && s.status !== "rejected");
+          if (sub) current.set(c.id, sub.status);
+        });
         const chosen = [...selectedCollections];
         const toAdd = chosen.filter((cid) => !current.has(cid));
         const toRemove = [...current.entries()]
@@ -266,6 +294,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           const { error } = await supabase.rpc("submit_products_to_collection", {
             _collection_id: collectionId,
             _product_ids: [pid],
+            _seller_id: sellerId!,
           });
           if (error) throw error;
         }
@@ -273,10 +302,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           const { error } = await supabase.rpc("withdraw_product_from_collection", {
             _collection_id: collectionId,
             _product_id: pid,
+            _seller_id: sellerId!,
           });
           if (error) throw error;
         }
       }
+
 
       toast.success(isSeller
         ? (product ? "Produto e destaques atualizados" : "Produto criado e destaques enviados para aprovação")
@@ -407,9 +438,48 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
 
 
 
-          {!isCollab && (
+          {isSeller ? (
+            <>
+              {canFeatureHere && (
+                <div>
+                  <Label className="mb-2 block">Destaques</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {sellerCollections.map((c) => {
+                      const sub = (c.submissions ?? []).find((s) => s.product_id === product?.id && s.status !== "rejected");
+                      const locked = sub?.status === "approved";
+                      const checked = selectedCollections.has(c.id);
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          disabled={locked}
+                          onClick={() => setSelectedCollections((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
+                            return next;
+                          })}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"} ${locked ? "opacity-70 cursor-not-allowed" : ""}`}
+                        >
+                          <span>{c.icon}</span> {c.name}
+                          {sub && <span className="text-[10px] text-muted-foreground">({sub.status === "approved" ? "aprovado" : "pendente"})</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente. Candidaturas já aprovadas só a administração pode retirar.
+                  </p>
+                </div>
+              )}
+              {!product && (
+                <p className="text-xs text-muted-foreground">
+                  Depois de aprovado, você poderá candidatar este produto a um destaque na edição.
+                </p>
+              )}
+            </>
+          ) : (
           <div>
-            <Label className="mb-2 block">{isSeller ? "Adicionar a Destaques" : "Categorias de destaque"}</Label>
+            <Label className="mb-2 block">Categorias de destaque</Label>
             {collections.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhuma categoria de destaque criada ainda.</p>
             ) : (
@@ -434,12 +504,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">
-              {isSeller
-                ? "A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente."
-                : "Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo)."}
+              Se nenhuma for selecionada, o produto não aparece em destaques (continua visível no catálogo).
             </p>
           </div>
           )}
+
 
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">

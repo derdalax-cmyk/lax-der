@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Users, UserPlus, MoreHorizontal, Loader2, PauseCircle, PlayCircle, UserMinus } from "lucide-react";
+import { Users, UserPlus, MoreHorizontal, Loader2, PauseCircle, PlayCircle, UserMinus, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -67,13 +67,14 @@ export function useCollaboratorActions(invalidateKeys: unknown[][]) {
   });
 
   const setRole = useMutation({
-    mutationFn: async ({ id, role }: { id: string; role: string }) => {
-      const { error } = await supabase.rpc("set_collaborator_role", { _id: id, _role_slug: role, _permissions: undefined });
+    mutationFn: async ({ id, role, permissions }: { id: string; role: string; permissions?: string[] }) => {
+      const { error } = await supabase.rpc("set_collaborator_role", { _id: id, _role_slug: role, _permissions: permissions });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Função atualizada"); invalidate(); },
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   return { setStatus, setRole, invalidate };
 }
@@ -83,9 +84,14 @@ export function CollaboratorActionsMenu({
 }: {
   row: CollaboratorRow;
   onStatus: (status: "active" | "suspended" | "removed") => void;
-  onRole: (role: string) => void;
+  onRole: (role: string, permissions?: string[]) => void;
   roles: { slug: string; label: string }[];
 }) {
+  const hasFeature = (row.permissions ?? []).includes("products.feature");
+  const toggleFeature = () => {
+    const base = (row.permissions ?? []).filter((p) => p !== "products.feature");
+    onRole(row.role_slug, hasFeature ? base : [...base, "products.feature"]);
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -104,6 +110,9 @@ export function CollaboratorActionsMenu({
             <PauseCircle className="w-4 h-4 mr-2" /> Suspender acesso
           </DropdownMenuItem>
         )}
+        <DropdownMenuItem onClick={toggleFeature}>
+          <Flame className="w-4 h-4 mr-2" /> {hasFeature ? "Retirar permissão de destaques" : "Permitir candidatar a destaques"}
+        </DropdownMenuItem>
         {row.status !== "removed" && (
           <DropdownMenuItem className="text-destructive" onClick={() => onStatus("removed")}>
             <UserMinus className="w-4 h-4 mr-2" /> Remover da loja
@@ -131,17 +140,21 @@ export function AddCollaboratorModal({
   const { data: roles } = useCollaboratorRoles();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("product_manager");
+  const [canFeature, setCanFeature] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const submit = async () => {
     if (!email.trim()) { toast.error("Indique o e-mail do colaborador"); return; }
+    const base = (roles ?? []).find((r) => r.slug === role)?.default_permissions ?? [];
+    const perms = canFeature ? [...base.filter((p) => p !== "products.feature"), "products.feature"] : base;
     setSaving(true);
     const { error } = await supabase.rpc("add_seller_collaborator", {
       _email: email.trim(),
       _seller_id: sellerId,
       _role_slug: role,
-      _permissions: undefined,
+      _permissions: canFeature ? perms : undefined,
     });
+
     setSaving(false);
     if (error) {
       if (error.message.includes("no_account")) toast.error("Não existe conta DERDALAX com esse e-mail. Peça à pessoa para se registar primeiro.");
@@ -190,6 +203,18 @@ export function AddCollaboratorModal({
               </div>
             </div>
           )}
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-0.5 accent-[hsl(var(--gold))]"
+              checked={canFeature}
+              onChange={(e) => setCanFeature(e.target.checked)}
+            />
+            <span>
+              Candidatar produtos a destaques <span className="text-[11px] text-muted-foreground">(opcional)</span>
+            </span>
+          </label>
+
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancelar</Button>
@@ -206,8 +231,12 @@ export const PERM_LABEL: Record<string, string> = {
   "products.view": "Ver produtos",
   "products.create": "Cadastrar produtos",
   "products.update": "Editar produtos",
+  "products.feature": "Candidatar a destaques",
   "seller.view_basic": "Ver dados da loja",
 };
+
+export const OPTIONAL_PERMS = ["products.feature"] as const;
+
 
 export function CollaboratorsSection({ sellerId, storeName }: { sellerId: string; storeName: string }) {
   const [addOpen, setAddOpen] = useState(false);

@@ -1447,6 +1447,7 @@ export type Database = {
         }
         Returns: Json
       }
+      can_feature_for_seller: { Args: { _seller_id: string }; Returns: boolean }
       can_use_ai_generator: { Args: { _seller_id: string }; Returns: boolean }
       current_seller_id: { Args: never; Returns: string }
       delete_email: {
@@ -1483,7 +1484,10 @@ export type Database = {
       }
       get_seller_collaborators: { Args: { _seller_id?: string }; Returns: Json }
       get_seller_dashboard: { Args: never; Returns: Json }
-      get_seller_featured_collections: { Args: never; Returns: Json }
+      get_seller_featured_collections: {
+        Args: { _seller_id?: string }
+        Returns: Json
+      }
       get_seller_orders: { Args: never; Returns: Json }
       get_seller_rating_breakdown: {
         Args: { _seller_id: string }
@@ -1609,11 +1613,19 @@ export type Database = {
         Returns: string
       }
       submit_products_to_collection: {
-        Args: { _collection_id: string; _product_ids: string[] }
+        Args: {
+          _collection_id: string
+          _product_ids: string[]
+          _seller_id: string
+        }
         Returns: undefined
       }
       withdraw_product_from_collection: {
-        Args: { _collection_id: string; _product_id: string }
+        Args: {
+          _collection_id: string
+          _product_id: string
+          _seller_id: string
+        }
         Returns: undefined
       }
     }

@@ -15,6 +15,20 @@
       "when": 1789671808457,
       "tag": "0001_log_product_activity_only_collaborators",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789767276304,
+      "tag": "0002_collaborator_products_feature",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789767560337,
+      "tag": "0003_fix_can_feature_null_safe",
+      "breakpoints": true
     }
   ]
 }
