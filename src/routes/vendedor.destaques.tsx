@@ -53,7 +53,7 @@ function SellerDestaques() {
     queryKey: ["seller-featured-collections", seller?.id],
     enabled: !!seller?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_seller_featured_collections");
+      const { data, error } = await supabase.rpc("get_seller_featured_collections", { _seller_id: seller!.id });
       if (error) throw error;
       return (data ?? []) as unknown as SellerCollection[];
     },
@@ -79,7 +79,9 @@ function SellerDestaques() {
     const { error } = await supabase.rpc("withdraw_product_from_collection", {
       _collection_id: collectionId,
       _product_id: productId,
+      _seller_id: seller!.id,
     });
+
     if (error) return toast.error(error.message);
     toast.success("Produto retirado do destaque");
     qc.invalidateQueries({ queryKey: ["seller-featured-collections", seller?.id] });

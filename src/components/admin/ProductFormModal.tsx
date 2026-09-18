@@ -74,7 +74,7 @@ function packMeta(text: string, meta: Meta): string {
 
 export function ProductFormModal({ open, onOpenChange, product, sellerId, collaborator }: Props) {
   const isSeller = !!sellerId;
-  const isCollab = !!collaborator;
+  void collaborator; // o ambiente do colaborador usa as mesmas regras do vendedor (validadas no servidor)
   const { user } = useAuth();
   const qc = useQueryClient();
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
