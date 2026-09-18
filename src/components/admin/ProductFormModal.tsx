@@ -278,15 +278,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
         }
       }
 
-      if (pid && isSeller && !isCollab) {
-        const { data: currentRows, error: currentError } = await supabase
-          .from("featured_collection_products")
-          .select("collection_id,status")
-          .eq("product_id", pid)
-          .eq("seller_id", sellerId!);
-        if (currentError) throw currentError;
-
-        const current = new Map((currentRows ?? []).map((r) => [r.collection_id, r.status]));
+      if (pid && isSeller && canFeatureHere) {
+        const current = new Map<string, string>();
+        sellerCollections.forEach((c) => {
+          const sub = (c.submissions ?? []).find((s) => s.product_id === pid && s.status !== "rejected");
+          if (sub) current.set(c.id, sub.status);
+        });
         const chosen = [...selectedCollections];
         const toAdd = chosen.filter((cid) => !current.has(cid));
         const toRemove = [...current.entries()]
@@ -297,6 +294,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           const { error } = await supabase.rpc("submit_products_to_collection", {
             _collection_id: collectionId,
             _product_ids: [pid],
+            _seller_id: sellerId!,
           });
           if (error) throw error;
         }
@@ -304,10 +302,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           const { error } = await supabase.rpc("withdraw_product_from_collection", {
             _collection_id: collectionId,
             _product_id: pid,
+            _seller_id: sellerId!,
           });
           if (error) throw error;
         }
       }
+
 
       toast.success(isSeller
         ? (product ? "Produto e destaques atualizados" : "Produto criado e destaques enviados para aprovação")
