@@ -103,9 +103,10 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [aiAllowed, setAiAllowed] = useState(false);
   const [collections, setCollections] = useState<{ id: string; name: string; icon: string | null }[]>([]);
   const [sellerCollections, setSellerCollections] = useState<SellerCollection[]>([]);
+  const [canFeatureForSeller, setCanFeatureForSeller] = useState(false);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
   const productApproved = (product?.approval_status ?? "approved") === "approved" && !!product;
-  const canFeatureHere = isSeller && productApproved && sellerCollections.length > 0;
+  const canFeatureHere = isSeller && canFeatureForSeller && productApproved && sellerCollections.length > 0;
 
 
   useEffect(() => {
@@ -146,13 +147,21 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
     });
   }, [open, isSeller]);
 
+  // Vendedor / colaborador: verificar permissão de destaques (validada no servidor)
+  useEffect(() => {
+    if (!open || !isSeller || !sellerId) { setCanFeatureForSeller(false); return; }
+    supabase.rpc("can_feature_for_seller", { _seller_id: sellerId }).then(({ data }) => {
+      setCanFeatureForSeller(data === true);
+    });
+  }, [open, isSeller, sellerId]);
+
   // Vendedor / colaborador com permissão products.feature: destaques disponíveis + candidaturas
   useEffect(() => {
-    if (!open || !isSeller || !sellerId) { setSellerCollections([]); return; }
+    if (!open || !isSeller || !sellerId || !canFeatureForSeller) { setSellerCollections([]); return; }
     supabase.rpc("get_seller_featured_collections", { _seller_id: sellerId }).then(({ data }) => {
       setSellerCollections((data ?? []) as unknown as SellerCollection[]);
     });
-  }, [open, isSeller, sellerId]);
+  }, [open, isSeller, sellerId, canFeatureForSeller]);
 
   // Seleção inicial dos destaques deste produto (lado vendedor/colaborador)
   useEffect(() => {
