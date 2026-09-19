@@ -46,6 +46,8 @@ function ExplorarPage() {
   const [category, setCategory] = useState("all");
   const [gender, setGender] = useState("all");
 
+  const hasActiveFilters = !!searchDebounced.trim() || category !== "all" || gender !== "all";
+
 
   useEffect(() => {
     const t = setTimeout(() => setSearchDebounced(search), 300);
@@ -123,7 +125,13 @@ function ExplorarPage() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        city ? (
+        hasActiveFilters ? (
+          <div className="text-center py-20 text-muted-foreground">
+            {searchDebounced.trim()
+              ? `Nenhuma peça encontrada para "${searchDebounced.trim()}".`
+              : "Nenhuma peça encontrada com esses filtros."}
+          </div>
+        ) : city ? (
           <div className="text-center py-20">
             <p className="text-lg font-medium">Nenhuma peça encontrada em {city}.</p>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
