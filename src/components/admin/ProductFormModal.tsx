@@ -480,7 +480,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                   </p>
                 </div>
               )}
-              {product && !productApproved && (
+              {canFeatureForSeller && product && !productApproved && (
                 <p className="text-xs text-muted-foreground">
                   Depois de aprovado, você poderá candidatar este produto a um destaque por aqui.
                 </p>
@@ -490,7 +490,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                   Depois de aprovado, você poderá candidatar este produto a um destaque na edição.
                 </p>
               )}
-              {productApproved && sellerCollections.length === 0 && (
+              {canFeatureForSeller && productApproved && sellerCollections.length === 0 && (
                 <p className="text-xs text-muted-foreground">
                   Não há nenhum destaque ativo no momento.
                 </p>
