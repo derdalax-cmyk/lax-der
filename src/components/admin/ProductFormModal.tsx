@@ -105,8 +105,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [sellerCollections, setSellerCollections] = useState<SellerCollection[]>([]);
   const [canFeatureForSeller, setCanFeatureForSeller] = useState(false);
   const [selectedCollections, setSelectedCollections] = useState<Set<string>>(new Set());
-  const productApproved = (product?.approval_status ?? "approved") === "approved" && !!product;
-  const canFeatureHere = isSeller && canFeatureForSeller && productApproved && sellerCollections.length > 0;
+  const canFeatureHere = isSeller && canFeatureForSeller && sellerCollections.length > 0;
 
 
   useEffect(() => {
@@ -480,17 +479,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                   </p>
                 </div>
               )}
-              {canFeatureForSeller && product && !productApproved && (
-                <p className="text-xs text-muted-foreground">
-                  Depois de aprovado, você poderá candidatar este produto a um destaque por aqui.
-                </p>
-              )}
-              {!product && (
-                <p className="text-xs text-muted-foreground">
-                  Depois de aprovado, você poderá candidatar este produto a um destaque na edição.
-                </p>
-              )}
-              {canFeatureForSeller && productApproved && sellerCollections.length === 0 && (
+              {canFeatureForSeller && !canFeatureHere && (
                 <p className="text-xs text-muted-foreground">
                   Não há nenhum destaque ativo no momento.
                 </p>
