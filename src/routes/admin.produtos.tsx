@@ -61,6 +61,16 @@ function AdminProdutos() {
     },
   });
 
+  const { data: pendingMap } = useQuery({
+    queryKey: ["products-pending-orders", "admin"],
+    queryFn: async () => {
+      const { data } = await supabase.rpc("get_products_pending_orders");
+      const m = new Map<string, number>();
+      (data ?? []).forEach((r: { product_id: string; pending_qty: number }) => m.set(r.product_id, Number(r.pending_qty)));
+      return m;
+    },
+  });
+
   const { data: sellers } = useQuery({
     queryKey: ["admin-sellers-map"],
     queryFn: async () => {
@@ -230,7 +240,10 @@ function AdminProdutos() {
               )}
               {filtered.map((p) => {
                 const imgs = Array.isArray(p.images) ? (p.images as string[]) : [];
-                const st = STATUS_LABEL[p.status] ?? { label: p.status, cls: "bg-secondary" };
+                const pendingQty = pendingMap?.get(p.id) ?? 0;
+                const st = p.status !== "sold" && pendingQty > 0
+                  ? { label: p.is_unique ? "Pendente (pedido)" : `${pendingQty} pendente(s)`, cls: "bg-gold/20 text-ink" }
+                  : STATUS_LABEL[p.status] ?? { label: p.status, cls: "bg-secondary" };
                 const ap = APPROVAL[p.approval_status] ?? APPROVAL.approved;
                 return (
                   <tr key={p.id} className="border-t border-border hover:bg-secondary/40">
