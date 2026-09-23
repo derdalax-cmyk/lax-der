@@ -1477,6 +1477,13 @@ export type Database = {
         Args: { _limit?: number; _user_id: string }
         Returns: Json
       }
+      get_products_pending_orders: {
+        Args: never
+        Returns: {
+          pending_qty: number
+          product_id: string
+        }[]
+      }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_seller_audit_logs: {
         Args: { _limit?: number; _seller_id: string }
