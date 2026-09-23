@@ -43,6 +43,13 @@
       "when": 1790197137566,
       "tag": "0005_order_product_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790197153766,
+      "tag": "0006_finalize_no_marker",
+      "breakpoints": true
     }
   ]
 }
