@@ -163,7 +163,6 @@ function CartTab() {
         <h2 className="font-display text-xl mb-2">Resumo</h2>
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(subtotal)}</span></div>
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Frete</span><span>{shipping === 0 ? "Grátis" : formatMZN(shipping)}</span></div>
-        {subtotal < 2500 && subtotal > 0 && <p className="text-xs text-muted-foreground">Faltam {formatMZN(2500 - subtotal)} para frete grátis.</p>}
         <div className="flex justify-between font-medium text-lg pt-3 border-t border-border"><span>Total</span><span>{formatMZN(total)}</span></div>
         <Button onClick={() => navigate({ to: "/checkout" })} className="w-full bg-gold text-ink hover:bg-gold/90 mt-2">Finalizar compra</Button>
         <Link to="/produtos" className="block text-center text-sm text-muted-foreground hover:text-foreground">Continuar a comprar</Link>

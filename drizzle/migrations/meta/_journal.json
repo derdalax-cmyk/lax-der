@@ -33,15 +33,8 @@
     {
       "idx": 4,
       "version": "7",
-      "when": 1789839647006,
-      "tag": "0004_tmp_set_teste_produto_pending",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1789839926577,
-      "tag": "0005_lov_database_migration",
+      "when": 1790179766334,
+      "tag": "0004_shipping_only_product_fee",
       "breakpoints": true
     }
   ]
