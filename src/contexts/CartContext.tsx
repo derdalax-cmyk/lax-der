@@ -48,9 +48,6 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | undefined>(undefined);
 const STORAGE_KEY = "derdalax_cart_v1";
-// Fallback flat shipping (only used if no product-level shipping_fee is set on any item)
-const FALLBACK_SHIPPING_FEE = 100;
-const FREE_SHIPPING_THRESHOLD = 2500;
 
 type LocalRow = { product_id: string; variation_id: string | null; quantity: number };
 
@@ -250,20 +247,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const shipping = useMemo(() => {
-    if (subtotal === 0) return 0;
-    if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
-    // Sum per-product shipping_fee across distinct products. If none set, use flat fallback.
+    // Only the per-product shipping_fee defined at product registration.
     const seen = new Set<string>();
     let sum = 0;
-    let anySet = false;
     for (const i of items) {
       if (seen.has(i.product.id)) continue;
       seen.add(i.product.id);
       const fee = Number(i.product.shipping_fee ?? 0);
-      if (fee > 0) { sum += fee; anySet = true; }
+      if (fee > 0) sum += fee;
     }
-    return anySet ? sum : FALLBACK_SHIPPING_FEE;
-  }, [items, subtotal]);
+    return sum;
+  }, [items]);
   const total = subtotal + shipping;
 
   return (
