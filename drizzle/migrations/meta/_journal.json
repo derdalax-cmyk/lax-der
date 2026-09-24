@@ -57,6 +57,13 @@
       "when": 1790197175601,
       "tag": "0007_pending_order_qty",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790289149040,
+      "tag": "0008_products_require_auth",
+      "breakpoints": true
     }
   ]
 }
