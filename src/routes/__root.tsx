@@ -4,9 +4,12 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useNavigate,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { isPublicPath, safeRedirect } from "@/lib/safeRedirect";
 import { Suspense, lazy, useEffect } from "react";
 
 import appCss from "../styles.css?url";
@@ -161,18 +164,47 @@ function AppShell() {
   useServiceWorker();
 
 
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useRouterState({ select: (s) => s.location });
+  const publicPath = isPublicPath(location.pathname);
+  const blocked = !loading && !user && !publicPath;
+
+  useEffect(() => {
+    if (!blocked) return;
+    const target = location.pathname + (location.searchStr ?? "");
+    const redirect = safeRedirect(target);
+    navigate({
+      to: "/login",
+      search: redirect && redirect !== "/" ? { redirect } : {},
+      replace: true,
+    });
+  }, [blocked, location.pathname, location.searchStr, navigate]);
+
+  // Visitors: clean screen, no store navigation.
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1">
+          {loading || blocked ? (
+            <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
+          ) : (
+            <Outlet />
+          )}
+        </main>
+        <Toaster richColors position="top-right" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <CityAlert />
       <main className="flex-1 pb-20 md:pb-0">
-        {loading ? (
-          <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
-        ) : (
-          <Outlet />
-        )}
+        <Outlet />
       </main>
+      
       
       <BottomNav />
       <Suspense fallback={null}>
