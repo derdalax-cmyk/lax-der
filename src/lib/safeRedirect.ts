@@ -6,7 +6,7 @@ export function safeRedirect(value: unknown): string | null {
   return value;
 }
 
-export const PUBLIC_PATH_PREFIXES = ["/login", "/politicas/", "/api/", "/lovable/"];
+export const PUBLIC_PATH_PREFIXES = ["/login", "/politica-privacidade", "/politicas/", "/api/", "/lovable/"];
 
 export function isPublicPath(pathname: string) {
   return PUBLIC_PATH_PREFIXES.some((p) => pathname === p.replace(/\/$/, "") || pathname.startsWith(p));
