@@ -13,8 +13,13 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TermsLink, PrivacyLink } from "@/components/TermsLink";
+import { safeRedirect, storePendingRedirect, takePendingRedirect } from "@/lib/safeRedirect";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
+    const r = safeRedirect(s.redirect);
+    return r ? { redirect: r } : {};
+  },
   head: () => ({
     meta: [
       { title: "Entrar · DERDALAX" },
@@ -61,6 +66,7 @@ const signupSchema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const { user, loading, isAdmin, refreshProfile } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -73,12 +79,21 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: isAdmin ? "/admin" : "/" });
-  }, [user, loading, isAdmin, navigate]);
+    if (search.redirect) storePendingRedirect(search.redirect);
+  }, [search.redirect]);
+
+  useEffect(() => {
+    if (!loading && user) {
+      const dest = takePendingRedirect() ?? search.redirect ?? null;
+      if (dest) navigate({ to: dest as "/", replace: true });
+      else navigate({ to: isAdmin ? "/admin" : "/", replace: true });
+    }
+  }, [user, loading, isAdmin, navigate, search.redirect]);
 
   const oauth = async (provider: "google") => {
     setBusy(true);
-    const res = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
+    if (search.redirect) storePendingRedirect(search.redirect);
+    const res = await lovable.auth.signInWithOAuth(provider, { redirect_uri: `${window.location.origin}/login` });
     setBusy(false);
     if (res.error) toast.error(res.error.message || "Erro ao iniciar sessão");
   };
