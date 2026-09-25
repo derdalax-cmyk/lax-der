@@ -13,6 +13,7 @@ import { Route as VendedorRouteImport } from './routes/vendedor'
 import { Route as TornarSeVendedorRouteImport } from './routes/tornar-se-vendedor'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as MensagensRouteImport } from './routes/mensagens'
 import { Route as LoginRouteImport } from './routes/login'
@@ -77,6 +78,11 @@ const SuporteRoute = SuporteRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliticaPrivacidadeRoute = PoliticaPrivacidadeRouteImport.update({
+  id: '/politica-privacidade',
+  path: '/politica-privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -319,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
   '/perfil': typeof PerfilRouteWithChildren
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/favoritos': typeof FavoritosRoute
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
   '/perfil': typeof PerfilRouteWithChildren
+  '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
@@ -471,6 +480,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mensagens'
     | '/perfil'
+    | '/politica-privacidade'
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
@@ -519,6 +529,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/login'
     | '/mensagens'
+    | '/politica-privacidade'
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/mensagens'
     | '/perfil'
+    | '/politica-privacidade'
     | '/produtos'
     | '/suporte'
     | '/tornar-se-vendedor'
@@ -621,6 +633,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MensagensRoute: typeof MensagensRoute
   PerfilRoute: typeof PerfilRouteWithChildren
+  PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
   ProdutosRoute: typeof ProdutosRoute
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
@@ -665,6 +678,13 @@ declare module '@tanstack/react-router' {
       path: '/produtos'
       fullPath: '/produtos'
       preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politica-privacidade': {
+      id: '/politica-privacidade'
+      path: '/politica-privacidade'
+      fullPath: '/politica-privacidade'
+      preLoaderRoute: typeof PoliticaPrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -1082,6 +1102,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MensagensRoute: MensagensRoute,
   PerfilRoute: PerfilRouteWithChildren,
+  PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
   ProdutosRoute: ProdutosRoute,
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,

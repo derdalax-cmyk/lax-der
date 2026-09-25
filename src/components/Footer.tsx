@@ -25,6 +25,7 @@ export function Footer() {
           <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Suporte</h4>
           <ul className="space-y-2 text-sm">
             <li><Link to="/suporte" className="hover:text-gold">Ajuda & FAQ</Link></li>
+            <li><Link to="/politica-privacidade" className="hover:text-gold">Política de Privacidade</Link></li>
             <li><a href="https://wa.me/258840000000" className="hover:text-gold inline-flex items-center gap-2"><MessageCircle className="w-4 h-4" /> WhatsApp</a></li>
           </ul>
         </div>
