@@ -186,7 +186,7 @@ function AppShell() {
     return (
       <div className="min-h-screen flex flex-col">
         <main className="flex-1">
-          {loading || blocked ? (
+          {!publicPath && (loading || blocked) ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
           ) : (
             <Outlet />

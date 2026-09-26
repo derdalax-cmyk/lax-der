@@ -217,6 +217,11 @@ function LoginPage() {
             </form>
           </TabsContent>
         </Tabs>
+        <div className="mt-6 text-center">
+          <a href="/politica-privacidade" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-gold">
+            Política de Privacidade
+          </a>
+        </div>
       </div>
     </div>
   );
