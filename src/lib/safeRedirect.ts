@@ -6,7 +6,13 @@ export function safeRedirect(value: unknown): string | null {
   return value;
 }
 
-export const PUBLIC_PATH_PREFIXES = ["/login", "/inicial", "/explorar", "/produto/", "/politica-privacidade", "/politicas/", "/api/", "/lovable/"];
+export const PUBLIC_PATH_PREFIXES = ["/login", "/inicial", "/explorar", "/produto/", "/produtos", "/categorias", "/suporte", "/politica-privacidade", "/politicas/", "/api/", "/lovable/"];
+
+/** Path of the current page, safe to use as a post-login destination. */
+export function currentPath(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  return safeRedirect(window.location.pathname + window.location.search) ?? undefined;
+}
 
 export function isPublicPath(pathname: string) {
   if (pathname === "/") return true;

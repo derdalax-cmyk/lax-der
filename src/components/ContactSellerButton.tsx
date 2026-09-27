@@ -6,6 +6,7 @@ import { useSeller } from "@/hooks/useSeller";
 import { startConversation } from "@/hooks/useMessaging";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { currentPath } from "@/lib/safeRedirect";
 
 type Props = {
   sellerId: string;
@@ -25,7 +26,8 @@ export function ContactSellerButton({ sellerId, productId, className, label = "C
 
   const handle = async () => {
     if (!user) {
-      navigate({ to: "/login" });
+      const redirect = currentPath();
+      navigate({ to: "/login", search: redirect ? { redirect } : {} });
       return;
     }
     setLoading(true);

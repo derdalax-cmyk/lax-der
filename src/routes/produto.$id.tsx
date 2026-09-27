@@ -269,6 +269,10 @@ function ProdutoDetalhe() {
 
   const handleAddToCart = async (): Promise<boolean> => {
     if (!product) return false;
+    if (!user) {
+      navigate({ to: "/login", search: { redirect: `/produto/${product.id}` } });
+      return false;
+    }
     if (reservedByOther) { toast.error("Peça indisponível"); return false; }
     if (!canBuy) { toast.error("Selecione variação disponível"); return false; }
     setAdding(true);

@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
-import { GuestSignupBanner } from "@/components/GuestSignupBanner";
-import { AboutDerdalax } from "@/components/AboutDerdalax";
+import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -196,8 +195,7 @@ function Home() {
           ))}
         </div>
       </section>
-      <AboutDerdalax />
-      <GuestSignupBanner />
+      <AboutDerdalaxCard />
     </>
   );
 }
