@@ -42,9 +42,6 @@ export function AboutDerdalaxCard() {
             </span>
           </div>
         </Link>
-        <Link to="/politica-privacidade" className="mt-6 inline-block text-xs text-muted-foreground underline">
-          Política de Privacidade
-        </Link>
       </div>
     </section>
   );
