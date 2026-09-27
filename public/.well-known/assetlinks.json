@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "mz.co.derdalax.twa",
+    "sha256_cert_fingerprints": ["74:EB:B8:73:74:81:7E:01:39:AF:B1:36:09:93:D4:9B:08:11:8B:C6:C2:A1:9C:8D:20:0C:D2:D7:D9:6B:C2:3B"]
+  }
+}]
