@@ -41,6 +41,7 @@ import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-conta'
+import { Route as PerfilEliminarContaRouteImport } from './routes/perfil.eliminar-conta'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
@@ -221,6 +222,11 @@ const PerfilExcluirContaRoute = PerfilExcluirContaRouteImport.update({
   path: '/excluir-conta',
   getParentRoute: () => PerfilRoute,
 } as any)
+const PerfilEliminarContaRoute = PerfilEliminarContaRouteImport.update({
+  id: '/eliminar-conta',
+  path: '/eliminar-conta',
+  getParentRoute: () => PerfilRoute,
+} as any)
 const PedidoIdRoute = PedidoIdRouteImport.update({
   id: '/pedido/$id',
   path: '/pedido/$id',
@@ -349,6 +355,7 @@ export interface FileRoutesByFullPath {
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/eliminar-conta': typeof PerfilEliminarContaRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
@@ -398,6 +405,7 @@ export interface FileRoutesByTo {
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/eliminar-conta': typeof PerfilEliminarContaRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
@@ -452,6 +460,7 @@ export interface FileRoutesById {
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
+  '/perfil/eliminar-conta': typeof PerfilEliminarContaRoute
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/eliminar-conta'
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/eliminar-conta'
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
+    | '/perfil/eliminar-conta'
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
@@ -889,6 +901,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilExcluirContaRouteImport
       parentRoute: typeof PerfilRoute
     }
+    '/perfil/eliminar-conta': {
+      id: '/perfil/eliminar-conta'
+      path: '/eliminar-conta'
+      fullPath: '/perfil/eliminar-conta'
+      preLoaderRoute: typeof PerfilEliminarContaRouteImport
+      parentRoute: typeof PerfilRoute
+    }
     '/pedido/$id': {
       id: '/pedido/$id'
       path: '/pedido/$id'
@@ -1070,6 +1089,7 @@ const ColaboradorRouteWithChildren = ColaboradorRoute._addFileChildren(
 )
 
 interface PerfilRouteChildren {
+  PerfilEliminarContaRoute: typeof PerfilEliminarContaRoute
   PerfilExcluirContaRoute: typeof PerfilExcluirContaRoute
   PerfilFavoritosRoute: typeof PerfilFavoritosRoute
   PerfilPedidosRoute: typeof PerfilPedidosRoute
@@ -1077,6 +1097,7 @@ interface PerfilRouteChildren {
 }
 
 const PerfilRouteChildren: PerfilRouteChildren = {
+  PerfilEliminarContaRoute: PerfilEliminarContaRoute,
   PerfilExcluirContaRoute: PerfilExcluirContaRoute,
   PerfilFavoritosRoute: PerfilFavoritosRoute,
   PerfilPedidosRoute: PerfilPedidosRoute,
