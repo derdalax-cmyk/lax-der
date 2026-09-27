@@ -314,17 +314,12 @@ function Perfil() {
         <Button variant="ghost" className="text-muted-foreground" onClick={() => signOut()}>
           <LogOut className="w-4 h-4 mr-1.5" /> Terminar sessão
         </Button>
-        <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-          <DialogTrigger asChild>
-            <Button variant="link" className="h-auto gap-1.5 px-0 py-2 text-xs text-destructive/80 hover:text-destructive">
-              <Trash2 className="w-3.5 h-3.5" /> Excluir conta
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-3xl p-5 sm:p-8">
-            <DialogTitle className="sr-only">Excluir conta</DialogTitle>
-            <AccountDeletionFlow onDeleted={() => setDeleteOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <Link
+          to="/perfil/eliminar-conta"
+          className="inline-flex items-center gap-1.5 px-0 py-2 text-xs text-destructive/80 hover:text-destructive"
+        >
+          <Trash2 className="w-3.5 h-3.5" /> Excluir conta
+        </Link>
       </div>
     </div>
   );
