@@ -27,8 +27,6 @@ import {
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
-import { AccountDeletionFlow } from "@/components/profile/AccountDeletionFlow";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
@@ -45,7 +43,6 @@ function Perfil() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", city: "" });
   const { collaborations } = useCollaborations();
   const activeCollaborations = collaborations.filter((c) => c.status === "active");
