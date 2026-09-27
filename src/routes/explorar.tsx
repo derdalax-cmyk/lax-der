@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { type ProductCardData, formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCity } from "@/contexts/CityContext";
-import { CitySelector } from "@/components/CitySelector";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ function firstImage(images: unknown): string | null {
 function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
   const { categories: cats } = useCategories();
-  const { city, clearCity } = useCity();
+  const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -130,14 +129,6 @@ function ExplorarPage() {
             {searchDebounced.trim()
               ? `Nenhuma peça encontrada para "${searchDebounced.trim()}".`
               : "Nenhuma peça encontrada com esses filtros."}
-          </div>
-        ) : city ? (
-          <div className="text-center py-20">
-            <p className="text-lg font-medium">Nenhuma peça encontrada em {city}.</p>
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
-              <CitySelector tone="light" compact className="px-3 py-2 text-sm" />
-              <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
-            </div>
           </div>
         ) : (
           <div className="text-center py-20 text-muted-foreground">Nenhuma peça encontrada.</div>

@@ -16,9 +16,12 @@ import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 import { safeRedirect, storePendingRedirect, takePendingRedirect } from "@/lib/safeRedirect";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (s: Record<string, unknown>): { redirect?: string } => {
+  validateSearch: (s: Record<string, unknown>): { redirect?: string; mode?: "signup" } => {
     const r = safeRedirect(s.redirect);
-    return r ? { redirect: r } : {};
+    return {
+      ...(r ? { redirect: r } : {}),
+      ...(s.mode === "signup" ? { mode: "signup" as const } : {}),
+    };
   },
   head: () => ({
     meta: [
@@ -68,7 +71,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
   const { user, loading, isAdmin, refreshProfile } = useAuth();
-  const [tab, setTab] = useState<"login" | "signup">("login");
+  const [tab, setTab] = useState<"login" | "signup">(search.mode === "signup" ? "signup" : "login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
