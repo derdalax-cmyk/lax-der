@@ -78,6 +78,13 @@
       "when": 1790524650244,
       "tag": "0010_grant_anon_select_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790524675079,
+      "tag": "0011_grant_anon_select_featured",
+      "breakpoints": true
     }
   ]
 }
