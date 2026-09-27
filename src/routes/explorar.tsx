@@ -17,6 +17,10 @@ export const Route = createFileRoute("/explorar")({
   head: () => ({ meta: [
     { title: "Explorar · DERDALAX" },
     { name: "description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
+    { property: "og:title", content: "Explorar · DERDALAX" },
+    { property: "og:description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
   ]}),
   component: ExplorarPage,
 });

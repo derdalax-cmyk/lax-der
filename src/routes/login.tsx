@@ -27,6 +27,10 @@ export const Route = createFileRoute("/login")({
     meta: [
       { title: "Entrar · DERDALAX" },
       { name: "description", content: "Aceda à sua conta DERDALAX." },
+      { property: "og:title", content: "Entrar · DERDALAX" },
+      { property: "og:description", content: "Aceda à sua conta DERDALAX ou crie uma nova conta." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LoginPage,
