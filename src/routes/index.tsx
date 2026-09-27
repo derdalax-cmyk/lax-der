@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
-import { CitySelector } from "@/components/CitySelector";
-import { Button } from "@/components/ui/button";
+import { GuestSignupBanner } from "@/components/GuestSignupBanner";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -28,7 +27,7 @@ export const Route = createFileRoute("/")({
 const PRODUCT_FIELDS = "id,title,base_price,images,is_unique,status,category";
 
 function Home() {
-  const { city, clearCity } = useCity();
+  const { city } = useCity();
 
 
 
@@ -148,14 +147,7 @@ function Home() {
         </div>
       ) : noCityProducts ? (
         <div className="max-w-[1400px] mx-auto px-5 py-16 text-center">
-          <p className="text-lg font-medium">Ainda não há produtos em {city}.</p>
-          <p className="text-muted-foreground mt-2">
-            Experimente escolher outra cidade no seletor ou ver todas as cidades.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-            <CitySelector tone="light" compact className="px-3 py-2 text-sm" />
-            <Button variant="outline" onClick={() => clearCity()}>Ver todas as cidades</Button>
-          </div>
+          <p className="text-muted-foreground">Nenhuma peça encontrada.</p>
         </div>
       ) : (
         <>
@@ -203,6 +195,7 @@ function Home() {
           ))}
         </div>
       </section>
+      <GuestSignupBanner />
     </>
   );
 }
