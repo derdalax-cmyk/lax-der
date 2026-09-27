@@ -5,17 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
-import { GuestSignupBanner } from "@/components/GuestSignupBanner";
-import { AboutDerdalax } from "@/components/AboutDerdalax";
+import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DERDALAX" },
-      { name: "description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
-      { property: "og:title", content: "DERDALAX" },
-      { property: "og:description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
+      { title: "DERDALAX — Marketplace de moda em Moçambique" },
+      { name: "description", content: "Marketplace de moda em Moçambique: descubra, compre e venda roupa, calçado e acessórios em segunda mão com vários vendedores." },
+      { property: "og:title", content: "DERDALAX — Marketplace de moda em Moçambique" },
+      { property: "og:description", content: "Marketplace de moda em Moçambique: descubra, compre e venda roupa, calçado e acessórios em segunda mão com vários vendedores." },
     ],
     links: [
       { rel: "preload", as: "image", href: heroBg.url, fetchPriority: "high" },
@@ -196,8 +195,7 @@ function Home() {
           ))}
         </div>
       </section>
-      <AboutDerdalax />
-      <GuestSignupBanner />
+      <AboutDerdalaxCard />
     </>
   );
 }

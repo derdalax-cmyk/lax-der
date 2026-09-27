@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { currentPath } from "@/lib/safeRedirect";
 
 export function useFavorites() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [ids, setIds] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
@@ -16,7 +19,11 @@ export function useFavorites() {
   useEffect(() => { load(); }, [load]);
 
   const toggle = useCallback(async (productId: string) => {
-    if (!user) { toast.error("Inicie sessão para adicionar favoritos"); return; }
+    if (!user) {
+      const redirect = currentPath();
+      navigate({ to: "/login", search: redirect ? { redirect } : {} });
+      return;
+    }
     if (ids.has(productId)) {
       const next = new Set(ids); next.delete(productId); setIds(next);
       await supabase.from("favorites").delete().eq("user_id", user.id).eq("product_id", productId);

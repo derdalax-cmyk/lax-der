@@ -50,9 +50,27 @@ export function Navbar() {
                 <span className="absolute -top-2 -right-2 bg-gold text-ink text-[10px] font-bold rounded-full min-w-4 h-4 px-1 flex items-center justify-center">{count}</span>
               )}
             </Link>
-            <Link to={user ? "/perfil" : "/login"} className="hover:text-gold transition-colors" aria-label="Conta">
-              <User className="w-5 h-5" />
-            </Link>
+            {user ? (
+              <Link to="/perfil" className="hover:text-gold transition-colors" aria-label="Conta">
+                <User className="w-5 h-5" />
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  search={{ mode: "signup" }}
+                  className="hidden sm:inline text-sm font-medium text-white/80 hover:text-gold transition-colors"
+                >
+                  Criar conta
+                </Link>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center rounded-md bg-gold px-3 py-1.5 text-sm font-semibold text-ink hover:bg-gold/90 transition-colors"
+                >
+                  Entrar
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

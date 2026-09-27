@@ -181,17 +181,19 @@ function AppShell() {
     });
   }, [blocked, location.pathname, location.searchStr, navigate]);
 
-  // Visitors: clean screen, no store navigation.
+  // Visitors: same store navigation, with a fixed "Entrar / Criar conta" CTA in the Navbar.
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col">
-        <main className="flex-1">
+        <Navbar />
+        <main className="flex-1 pb-20 md:pb-0">
           {!publicPath && (loading || blocked) ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground">A carregar…</div>
           ) : (
             <Outlet />
           )}
         </main>
+        <BottomNav />
         <Toaster richColors position="top-right" />
       </div>
     );
