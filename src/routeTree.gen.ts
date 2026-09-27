@@ -17,6 +17,7 @@ import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-priva
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as MensagensRouteImport } from './routes/mensagens'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InicialRouteImport } from './routes/inicial'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as ExplorarRouteImport } from './routes/explorar'
 import { Route as ColaboradorRouteImport } from './routes/colaborador'
@@ -98,6 +99,11 @@ const MensagensRoute = MensagensRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InicialRoute = InicialRouteImport.update({
+  id: '/inicial',
+  path: '/inicial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritosRoute = FavoritosRouteImport.update({
@@ -322,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/colaborador': typeof ColaboradorRouteWithChildren
   '/explorar': typeof ExplorarRoute
   '/favoritos': typeof FavoritosRoute
+  '/inicial': typeof InicialRoute
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
   '/perfil': typeof PerfilRouteWithChildren
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/explorar': typeof ExplorarRoute
   '/favoritos': typeof FavoritosRoute
+  '/inicial': typeof InicialRoute
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
@@ -423,6 +431,7 @@ export interface FileRoutesById {
   '/colaborador': typeof ColaboradorRouteWithChildren
   '/explorar': typeof ExplorarRoute
   '/favoritos': typeof FavoritosRoute
+  '/inicial': typeof InicialRoute
   '/login': typeof LoginRoute
   '/mensagens': typeof MensagensRoute
   '/perfil': typeof PerfilRouteWithChildren
@@ -477,6 +486,7 @@ export interface FileRouteTypes {
     | '/colaborador'
     | '/explorar'
     | '/favoritos'
+    | '/inicial'
     | '/login'
     | '/mensagens'
     | '/perfil'
@@ -527,6 +537,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/explorar'
     | '/favoritos'
+    | '/inicial'
     | '/login'
     | '/mensagens'
     | '/politica-privacidade'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/colaborador'
     | '/explorar'
     | '/favoritos'
+    | '/inicial'
     | '/login'
     | '/mensagens'
     | '/perfil'
@@ -630,6 +642,7 @@ export interface RootRouteChildren {
   ColaboradorRoute: typeof ColaboradorRouteWithChildren
   ExplorarRoute: typeof ExplorarRoute
   FavoritosRoute: typeof FavoritosRoute
+  InicialRoute: typeof InicialRoute
   LoginRoute: typeof LoginRoute
   MensagensRoute: typeof MensagensRoute
   PerfilRoute: typeof PerfilRouteWithChildren
@@ -706,6 +719,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inicial': {
+      id: '/inicial'
+      path: '/inicial'
+      fullPath: '/inicial'
+      preLoaderRoute: typeof InicialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favoritos': {
@@ -1099,6 +1119,7 @@ const rootRouteChildren: RootRouteChildren = {
   ColaboradorRoute: ColaboradorRouteWithChildren,
   ExplorarRoute: ExplorarRoute,
   FavoritosRoute: FavoritosRoute,
+  InicialRoute: InicialRoute,
   LoginRoute: LoginRoute,
   MensagensRoute: MensagensRoute,
   PerfilRoute: PerfilRouteWithChildren,
