@@ -71,6 +71,13 @@
       "when": 1790524552067,
       "tag": "0009_allow_anon_view_approved_products",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790524650244,
+      "tag": "0010_grant_anon_select_catalog",
+      "breakpoints": true
     }
   ]
 }
