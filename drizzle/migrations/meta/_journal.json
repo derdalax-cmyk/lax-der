@@ -64,6 +64,13 @@
       "when": 1790289149040,
       "tag": "0008_products_require_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790524552067,
+      "tag": "0009_allow_anon_view_approved_products",
+      "breakpoints": true
     }
   ]
 }
