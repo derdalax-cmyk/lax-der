@@ -27,7 +27,7 @@ function InicialPage() {
       <header className="max-w-3xl mx-auto px-5 pt-14 text-center">
         <p className="font-display text-sm font-bold tracking-widest text-gold">DERDALAX</p>
         <h1 className="mt-3 font-display text-3xl md:text-5xl text-foreground">
-          Moda em segunda mão, direto dos vendedores
+          Moda da Calamidade, direto dos vendedores
         </h1>
       </header>
       <AboutDerdalax />
