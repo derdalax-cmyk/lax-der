@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 const DESC =
-  "A DERDALAX é um marketplace de moda em Moçambique onde vendedores de roupa, calçado e acessórios em segunda mão anunciam e você compra diretamente com eles.";
+  "A DERDALAX é um marketplace de moda em Moçambique que reúne vendedores de roupas, calçados e acessórios da calamidade (brechó) num só lugar.";
 
 export const Route = createFileRoute("/inicial")({
   head: () => ({
@@ -27,7 +27,7 @@ function InicialPage() {
       <header className="max-w-3xl mx-auto px-5 pt-14 text-center">
         <p className="font-display text-sm font-bold tracking-widest text-gold">DERDALAX</p>
         <h1 className="mt-3 font-display text-3xl md:text-5xl text-foreground">
-          Moda em segunda mão, direto dos vendedores
+          Moda da Calamidade, direto dos vendedores
         </h1>
       </header>
       <AboutDerdalax />

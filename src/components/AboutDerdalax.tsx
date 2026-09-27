@@ -8,9 +8,15 @@ export function AboutDerdalax() {
       <div className="max-w-3xl mx-auto px-5 text-center">
         <h2 id="sobre-derdalax" className="font-display text-3xl md:text-4xl text-gold mb-4">DERDALAX</h2>
         <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
-          A DERDALAX é um marketplace de moda em Moçambique. Vários vendedores apresentam roupa, calçado e
-          acessórios em segunda mão / brechó, e você pode descobrir peças, comprar, contactar os vendedores
-          diretamente e também vender as suas. O pagamento é combinado no chat com o vendedor ou feito na entrega.
+          A DERDALAX é um marketplace de moda em Moçambique que reúne vendedores de roupas, calçados e
+          acessórios da calamidade (brechó) num só lugar.
+        </p>
+        <p className="mt-4 text-base md:text-lg leading-relaxed text-muted-foreground">
+          Descubra peças, consulte os vendedores, compre diretamente e, se quiser, também pode vender os
+          seus produtos através da plataforma.
+        </p>
+        <p className="mt-6 font-display text-lg md:text-xl text-foreground">
+          Encontre. Escolha. Compre. Venda.
         </p>
       </div>
     </section>
