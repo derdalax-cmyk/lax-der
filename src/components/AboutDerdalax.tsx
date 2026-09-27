@@ -41,7 +41,7 @@ export function AboutDerdalaxCard() {
             </h3>
             <p className="text-sm text-muted-foreground max-w-2xl">
               Um marketplace de moda em Moçambique onde vários vendedores apresentam roupas, calçados e acessórios
-              em segunda mão / brechó. Descubra peças, compre, venda e fale diretamente com os vendedores.
+              da calamidade. Descubra peças, compre, venda e fale diretamente com os vendedores.
             </p>
             <span className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-gold">
               Conhecer a DERDALAX <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
