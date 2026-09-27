@@ -64,6 +64,34 @@
       "when": 1790289149040,
       "tag": "0008_products_require_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790524552067,
+      "tag": "0009_allow_anon_view_approved_products",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790524650244,
+      "tag": "0010_grant_anon_select_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790524675079,
+      "tag": "0011_grant_anon_select_featured",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790524732730,
+      "tag": "0012_grant_anon_execute_policy_functions",
+      "breakpoints": true
     }
   ]
 }
