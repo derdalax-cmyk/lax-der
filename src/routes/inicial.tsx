@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 const DESC =
-  "A DERDALAX é um marketplace de moda em Moçambique onde vendedores de roupa, calçado e acessórios em segunda mão anunciam e você compra diretamente com eles.";
+  "A DERDALAX é um marketplace de moda em Moçambique que reúne vendedores de roupas, calçados e acessórios da calamidade (brechó) num só lugar.";
 
 export const Route = createFileRoute("/inicial")({
   head: () => ({
