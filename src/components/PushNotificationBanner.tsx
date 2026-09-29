@@ -31,7 +31,9 @@ export function PushNotificationBanner({ floating = false }: { floating?: boolea
 
   if (status === "loading" || !supported || subscribed || dismissed) return null;
 
-  const denied = status === "denied";
+  // Never block the button on "denied": in the TWA the state can be stale,
+  // so "Ativar" always retries the system dialog.
+  const denied = false;
 
   const dismiss = () => {
     try {

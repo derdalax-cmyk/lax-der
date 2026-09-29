@@ -8,10 +8,6 @@ export function PushSettingsRow() {
   if (!supported) return null;
 
   const toggle = async () => {
-    if (!subscribed && status === "denied") {
-      toast.error(PUSH_ERROR_MESSAGES.permission);
-      return;
-    }
     try {
       if (subscribed) {
         await unsubscribe();
