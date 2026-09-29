@@ -11,10 +11,10 @@ import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DERDALAX — Marketplace de moda em Moçambique" },
-      { name: "description", content: "Marketplace de moda em Moçambique: descubra, compre e venda roupa, calçado e acessórios em segunda mão com vários vendedores." },
-      { property: "og:title", content: "DERDALAX — Marketplace de moda em Moçambique" },
-      { property: "og:description", content: "Marketplace de moda em Moçambique: descubra, compre e venda roupa, calçado e acessórios em segunda mão com vários vendedores." },
+      { title: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
+      { name: "description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
+      { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
+      { property: "og:description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
     ],
     links: [
       { rel: "preload", as: "image", href: heroBg.url, fetchPriority: "high" },
