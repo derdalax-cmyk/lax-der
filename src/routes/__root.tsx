@@ -96,6 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "application-name", content: "DERDALAX" },
     ],
     links: [
+      { rel: "google-site-verification-tag", href: "" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "serviceworker", href: "/sw.js" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
