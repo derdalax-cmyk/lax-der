@@ -92,6 +92,13 @@
       "when": 1790524732730,
       "tag": "0012_grant_anon_execute_policy_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1790696329743,
+      "tag": "0013_add_product_original_price",
+      "breakpoints": true
     }
   ]
 }
