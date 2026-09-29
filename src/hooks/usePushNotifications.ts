@@ -5,7 +5,9 @@ import { VAPID_PUBLIC_KEY, urlBase64ToUint8Array } from "@/lib/vapid";
 import { ensureServiceWorker, SW_URL } from "@/lib/serviceWorker";
 
 export type PushStatus = "unsupported" | "denied" | "granted" | "default" | "loading";
-export type PushErrorStage = "unsupported" | "auth" | "permission" | "service_worker" | "subscription" | "database";
+export type PushErrorStage = "unsupported" | "auth" | "declined" | "permission" | "service_worker" | "subscription" | "database";
+
+const DENIED_KEY = "push-permission-denied-once";
 
 export class PushError extends Error {
   stage: PushErrorStage;
@@ -19,6 +21,7 @@ export class PushError extends Error {
 export const PUSH_ERROR_MESSAGES: Record<PushErrorStage, string> = {
   unsupported: "Este dispositivo ou navegador não suporta notificações.",
   auth: "Inicie sessão para ativar as notificações.",
+  declined: "Notificações não ativadas. Pode tocar em Ativar novamente quando quiser.",
   permission:
     "As notificações estão bloqueadas. Ative-as nas definições do Android (Definições → Apps → DERDALAX → Notificações) e tente novamente.",
   service_worker: "Não foi possível preparar o serviço de notificações. Recarregue a app e tente novamente.",
@@ -87,29 +90,28 @@ export function usePushNotifications() {
     if (!isSupported()) throw new PushError("unsupported", "Push API unavailable");
     if (!user?.id) throw new PushError("auth", "No session");
 
-    // Never re-prompt once the user has denied permission.
-    if (Notification.permission === "denied") {
-      setStatus("denied");
-      throw new PushError("permission", "Permission denied");
-    }
-
+    // Always ask directly from the tap: in a TWA, Notification.permission may be
+    // stale "denied" while the Android delegation can still show the dialog.
     setBusy(true);
     try {
-      // Request permission first, synchronously within the user gesture.
       let permission: NotificationPermission = Notification.permission;
       if (permission !== "granted") {
+        const hadDenied = localStorage.getItem(DENIED_KEY) === "1";
         try {
           permission = await Notification.requestPermission();
         } catch (e) {
           console.warn("[push] permission request failed", (e as Error)?.name);
-          throw new PushError("permission", "requestPermission failed");
+          throw new PushError("declined", "requestPermission failed");
+        }
+        if (permission === "denied") {
+          try { localStorage.setItem(DENIED_KEY, "1"); } catch { /* ignore */ }
+          // Only after a repeat denial treat it as permanently blocked.
+          throw new PushError(hadDenied ? "permission" : "declined", "Permission denied");
         }
       }
+      try { localStorage.removeItem(DENIED_KEY); } catch { /* ignore */ }
       setStatus(permission as PushStatus);
-      if (permission !== "granted") {
-        if (permission === "denied") throw new PushError("permission", "Permission denied");
-        return false; // dismissed ("default") — user can try again
-      }
+      if (permission !== "granted") return false; // dismissed — can try again
 
       let reg: ServiceWorkerRegistration;
       try {

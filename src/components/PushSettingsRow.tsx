@@ -1,6 +1,6 @@
 import { Bell, BellOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { usePushNotifications, pushErrorMessage, PUSH_ERROR_MESSAGES } from "@/hooks/usePushNotifications";
+import { usePushNotifications, pushErrorMessage } from "@/hooks/usePushNotifications";
 
 export function PushSettingsRow() {
   const { status, subscribed, busy, supported, subscribe, unsubscribe } = usePushNotifications();
@@ -8,10 +8,6 @@ export function PushSettingsRow() {
   if (!supported) return null;
 
   const toggle = async () => {
-    if (!subscribed && status === "denied") {
-      toast.error(PUSH_ERROR_MESSAGES.permission);
-      return;
-    }
     try {
       if (subscribed) {
         await unsubscribe();
@@ -42,7 +38,7 @@ export function PushSettingsRow() {
           <span className="block font-medium leading-tight">Notificações do navegador</span>
           <span className="block text-xs text-muted-foreground mt-0.5">
             {status === "denied"
-              ? "Bloqueadas nas definições do navegador."
+              ? "Toque para pedir a permissão novamente."
               : on
               ? "Ativas — recebe pedidos e mensagens em tempo real."
               : "Ative para receber avisos mesmo com o site fechado."}

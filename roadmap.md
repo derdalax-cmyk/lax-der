@@ -5,3 +5,4 @@
 - [ ] Adicionar convite de criação de conta na página inicial, com adiamento de 24 horas após fechar.
 - [ ] Abrir o formulário de cadastro por `/login?mode=signup`.
 - [ ] Validar os comportamentos para visitante e utilizador autenticado.
+- [x] Notificações TWA: "Ativar" pede sempre a permissão do sistema diretamente.
