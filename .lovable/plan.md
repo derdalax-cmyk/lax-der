@@ -1,16 +1,14 @@
-# Corrigir pedido de permissão de notificações no TWA
+# Preço original e desconto
 
-## Alterações
-- Manter o banner automático e iniciar o pedido nativo apenas ao tocar em **Ativar**.
-- Remover os bloqueios antecipados baseados apenas em `Notification.permission === "denied"` no banner e no Perfil.
-- Em cada tentativa manual, chamar diretamente `Notification.requestPermission()` antes do registo push, incluindo no TWA.
-- Distinguir uma recusa normal de um bloqueio persistente: a primeira mostra uma mensagem simples; apenas tentativas posteriores persistentemente negadas mencionam as definições.
-- Preservar `/sw.js`, VAPID, armazenamento das subscrições, layout, rotas e restantes funcionalidades.
-
-## Verificação
-- Executar a verificação TypeScript relevante.
-- Confirmar o resultado do build automático e rever os ficheiros alterados.
+## Implementação
+- Adicionar `original_price` opcional e decimal à tabela de produtos, preservando os dados e as permissões atuais.
+- Integrar “Preço original (opcional)” no formulário existente de criação e edição; valores vazios ou zero serão guardados como `NULL`.
+- Criar uma função central para validar preço promocional e calcular a percentagem arredondada.
+- Mostrar preço original riscado e desconto apenas quando o preço original for superior ao preço atual, nos cartões/listagens e no detalhe.
+- Manter `base_price` como único preço usado pelo carrinho, checkout e pedidos.
 
 ## Detalhes técnicos
-- A lógica ficará concentrada no hook existente; banner e linha do Perfil continuarão a reutilizar `subscribe()`.
-- O estado de uma tentativa anterior será guardado localmente apenas para escolher a mensagem adequada, sem bloquear novas tentativas.
+- Migração aditiva, sem alteração de RLS ou políticas existentes.
+- Atualizar apenas as projeções de produto necessárias para transportar o novo campo.
+- Reutilizar os estilos e a estrutura atuais, sem alterações gerais de layout.
+- Verificar os quatro casos pedidos, TypeScript e o build da aplicação.
