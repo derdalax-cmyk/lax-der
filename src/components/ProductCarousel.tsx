@@ -5,6 +5,7 @@ import { thumbUrl } from "@/lib/imageUrl";
 import { formatMZN, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { CategoryIcon } from "@/lib/categoryIcons";
+import { getProductDiscount } from "@/lib/productPrice";
 
 
 function firstImage(images: unknown): string | null {
@@ -51,6 +52,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
         {products.map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
+          const discount = getProductDiscount(Number(p.base_price), p.original_price);
           return (
             <div
               key={p.id}
@@ -69,7 +71,11 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
                 </div>
                 <div className="p-2">
                   <h3 className="font-medium text-xs line-clamp-1">{p.title}</h3>
-                  <p className="text-xs text-gold font-semibold mt-0.5">{formatMZN(Number(p.base_price))}</p>
+                  <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1 gap-y-0.5 text-xs">
+                    <span className="text-gold font-semibold">{formatMZN(Number(p.base_price))}</span>
+                    {discount && <span className="text-[10px] text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
+                    {discount && <span className="text-[10px] font-medium text-destructive">-{discount.discountPercent}%</span>}
+                  </div>
                 </div>
               </Link>
 

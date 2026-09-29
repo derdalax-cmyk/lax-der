@@ -12,6 +12,7 @@ import { ProductFormModal, type ProductRow } from "@/components/admin/ProductFor
 import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/admin/produtos")({
   component: AdminProdutos,
@@ -130,6 +131,7 @@ function AdminProdutos() {
       title: `${p.title} (cópia)`,
       description: p.description,
       base_price: p.base_price,
+      original_price: p.original_price,
       category: p.category,
       is_unique: p.is_unique,
       featured: false,
@@ -240,6 +242,7 @@ function AdminProdutos() {
               )}
               {filtered.map((p) => {
                 const imgs = Array.isArray(p.images) ? (p.images as string[]) : [];
+                const discount = getProductDiscount(Number(p.base_price), p.original_price);
                 const pendingQty = pendingMap?.get(p.id) ?? 0;
                 const st = p.status !== "sold" && pendingQty > 0
                   ? { label: p.is_unique ? "Pendente (pedido)" : `${pendingQty} pendente(s)`, cls: "bg-gold/20 text-ink" }
@@ -269,7 +272,10 @@ function AdminProdutos() {
                       )}
                     </td>
                     <td className="px-4 py-2 text-muted-foreground">{labelOf(p.category)}</td>
-                    <td className="px-4 py-2 font-medium">{Number(p.base_price).toLocaleString("pt-PT")} MT</td>
+                    <td className="px-4 py-2 font-medium">
+                      <div>{Number(p.base_price).toLocaleString("pt-PT")} MT</div>
+                      {discount && <div className="text-xs font-normal text-muted-foreground"><span className="line-through">{discount.originalPrice.toLocaleString("pt-PT")} MT</span> <span className="text-destructive">-{discount.discountPercent}%</span></div>}
+                    </td>
                     <td className="px-4 py-2"><Badge className={ap.cls}>{ap.label}</Badge></td>
                     <td className="px-4 py-2"><Badge className={st.cls}>{st.label}</Badge></td>
                     <td className="px-4 py-2">

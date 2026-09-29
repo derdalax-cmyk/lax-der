@@ -2,11 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
+import { getProductDiscount } from "@/lib/productPrice";
 
 export type ProductCardData = {
   id: string;
   title: string;
   base_price: number;
+  original_price: number | null;
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
@@ -34,6 +36,7 @@ type Props = {
 
 export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   const img = firstImage(product.images);
+  const discount = getProductDiscount(Number(product.base_price), product.original_price);
   return (
     <div className="group relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} className="block">
@@ -57,7 +60,11 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
         </div>
         <div className="p-3">
           <h3 className="font-medium text-sm line-clamp-1">{product.title}</h3>
-          <p className="text-sm text-muted-foreground mt-0.5">{formatMZN(Number(product.base_price))}</p>
+          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
+            <span className="text-muted-foreground">{formatMZN(Number(product.base_price))}</span>
+            {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
+            {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
+          </div>
         </div>
       </Link>
       <button

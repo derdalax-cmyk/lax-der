@@ -11,6 +11,7 @@ import { Plus, Search, Pencil, Trash2, ImageOff, Clock, CheckCircle2, XCircle, C
 import { ProductFormModal, type ProductRow } from "@/components/admin/ProductFormModal";
 import { useCategories } from "@/hooks/useCategories";
 import { toast } from "sonner";
+import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/vendedor/produtos")({
   component: SellerProdutos,
@@ -148,6 +149,7 @@ function SellerProdutos() {
               )}
               {filtered.map((p) => {
                 const imgs = Array.isArray(p.images) ? (p.images as string[]) : [];
+                const discount = getProductDiscount(Number(p.base_price), p.original_price);
                 const ap = APPROVAL[p.approval_status] ?? APPROVAL.pending;
                 const Icon = ap.icon;
                 const pendingQty = pendingMap?.get(p.id) ?? 0;
@@ -169,7 +171,10 @@ function SellerProdutos() {
                       )}
                     </td>
                     <td className="px-4 py-2 text-muted-foreground">{labelOf(p.category)}</td>
-                    <td className="px-4 py-2 font-medium">{Number(p.base_price).toLocaleString("pt-PT")} MT</td>
+                    <td className="px-4 py-2 font-medium">
+                      <div>{Number(p.base_price).toLocaleString("pt-PT")} MT</div>
+                      {discount && <div className="text-xs font-normal text-muted-foreground"><span className="line-through">{discount.originalPrice.toLocaleString("pt-PT")} MT</span> <span className="text-destructive">-{discount.discountPercent}%</span></div>}
+                    </td>
                     <td className="px-4 py-2">
                       <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${ap.cls}`}>
                         <Icon className="w-3 h-3" /> {ap.label}

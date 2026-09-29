@@ -16,6 +16,7 @@ import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { AutoFramedProductImage } from "@/components/product/AutoFramedProductImage";
+import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/produto/$id")({
   head: () => ({ meta: [
@@ -35,6 +36,7 @@ type Product = {
   title: string;
   description: string | null;
   base_price: number;
+  original_price: number | null;
   shipping_fee: number | null;
   category: string | null;
   images: unknown;
@@ -171,7 +173,7 @@ function ProdutoDetalhe() {
       if (p?.category) {
         let relQ = supabase
           .from("products")
-          .select("id,title,base_price,shipping_fee,images,is_unique,status,category")
+          .select("id,title,base_price,original_price,shipping_fee,images,is_unique,status,category")
           .eq("category", p.category)
           .neq("id", id)
           .neq("status", "sold");
@@ -235,6 +237,7 @@ function ProdutoDetalhe() {
   const hasPriceRange = candidatePrices.length > 1 && Math.max(...candidatePrices) !== minPrice;
   const effectivePrice = selectedVariation ? Number(selectedVariation.price ?? basePrice) : minPrice;
   const showFromPrice = !selectedVariation && hasPriceRange;
+  const discount = getProductDiscount(effectivePrice, product?.original_price);
 
   const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
   const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
@@ -370,10 +373,14 @@ function ProdutoDetalhe() {
 
         <div className="min-w-0">
           <h1 className="font-display text-2xl sm:text-3xl md:text-4xl break-words">{product.title}</h1>
-          <p className="mt-2 text-2xl font-medium">
-            {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
-            {formatMZN(Number(effectivePrice))}
-          </p>
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p className="text-2xl font-medium">
+              {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
+              {formatMZN(Number(effectivePrice))}
+            </p>
+            {discount && <span className="text-sm text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
+            {discount && <span className="text-sm font-medium text-destructive">-{discount.discountPercent}%</span>}
+          </div>
           <p className="mt-1 text-sm">
             {Number(product.shipping_fee ?? 0) > 0 ? (
               <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>

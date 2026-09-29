@@ -878,6 +878,7 @@ export type Database = {
           id: string
           images: Json | null
           is_unique: boolean
+          original_price: number | null
           rejection_reason: string | null
           reserved_by: string | null
           reserved_until: string | null
@@ -900,6 +901,7 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          original_price?: number | null
           rejection_reason?: string | null
           reserved_by?: string | null
           reserved_until?: string | null
@@ -922,6 +924,7 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          original_price?: number | null
           rejection_reason?: string | null
           reserved_by?: string | null
           reserved_until?: string | null

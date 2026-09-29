@@ -25,6 +25,7 @@ type ProductRow = {
   title: string;
   description: string | null;
   base_price: number;
+  original_price: number | null;
   shipping_fee: number | null;
   category: string | null;
   images: unknown;
@@ -81,6 +82,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [price, setPrice] = useState<number>(0);
+  const [originalPrice, setOriginalPrice] = useState<string>("");
   const [shippingFee, setShippingFee] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
   const { categories } = useCategories();
@@ -180,6 +182,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       setTitle(product.title);
       setText(text);
       setPrice(Number(product.base_price));
+      setOriginalPrice(product.original_price ? String(product.original_price) : "");
       setShippingFee(Number(product.shipping_fee ?? 0));
       setCategory(product.category ?? "");
       setGender(meta.gender ?? "");
@@ -204,13 +207,18 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       }
 
     } else {
-      setTitle(""); setText(""); setPrice(0); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
+      setTitle(""); setText(""); setPrice(0); setOriginalPrice(""); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
   }, [product, open]);
 
   const save = async () => {
     if (!title.trim() || !category || price < 0) {
       toast.error("Preencha título, categoria e preço");
+      return;
+    }
+    const parsedOriginalPrice = originalPrice.trim() === "" ? null : Number(originalPrice);
+    if (parsedOriginalPrice !== null && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice < 0)) {
+      toast.error("O preço original deve ser um valor válido");
       return;
     }
     setSaving(true);
@@ -220,6 +228,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
         title: title.trim(),
         description: packMeta(text.trim(), meta),
         base_price: price,
+        original_price: parsedOriginalPrice && parsedOriginalPrice > 0 ? parsedOriginalPrice : null,
         shipping_fee: shippingFee || 0,
         category,
         is_unique: isUnique,
@@ -354,6 +363,10 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
             <div>
               <Label>Preço base (MT) *</Label>
               <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+            </div>
+            <div>
+              <Label>Preço original (opcional)</Label>
+              <Input type="number" min={0} step="0.01" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="MT" />
             </div>
             <div>
               <Label>Frete de entrega (MT)</Label>
