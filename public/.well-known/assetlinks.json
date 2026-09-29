@@ -1,8 +1,12 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "mz.co.derdalax.twa",
-    "sha256_cert_fingerprints": ["74:EB:B8:73:74:81:7E:01:39:AF:B1:36:09:93:D4:9B:08:11:8B:C6:C2:A1:9C:8D:20:0C:D2:D7:D9:6B:C2:3B"]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "mz.co.derdalax.twa",
+      "sha256_cert_fingerprints": [
+        "5D:3E:34:4E:82:5A:2E:D4:43:E5:47:94:AB:6F:68:84:B1:83:82:49:E7:69:7A:10:E8:D8:11:39:75:49:C2:56"
+      ]
+    }
   }
-}]
+]
