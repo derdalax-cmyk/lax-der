@@ -1,6 +1,6 @@
 import { Bell, BellOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { usePushNotifications, pushErrorMessage, PUSH_ERROR_MESSAGES } from "@/hooks/usePushNotifications";
 
 export function PushSettingsRow() {
   const { status, subscribed, busy, supported, subscribe, unsubscribe } = usePushNotifications();
@@ -8,6 +8,10 @@ export function PushSettingsRow() {
   if (!supported) return null;
 
   const toggle = async () => {
+    if (!subscribed && status === "denied") {
+      toast.error(PUSH_ERROR_MESSAGES.permission);
+      return;
+    }
     try {
       if (subscribed) {
         await unsubscribe();
@@ -15,10 +19,9 @@ export function PushSettingsRow() {
       } else {
         const ok = await subscribe();
         if (ok) toast.success("Notificações ativadas.");
-        else if (status === "denied") toast.error("Permissão bloqueada nas definições do navegador.");
       }
-    } catch {
-      toast.error("Não foi possível atualizar.");
+    } catch (e) {
+      toast.error(pushErrorMessage(e));
     }
   };
 
@@ -28,7 +31,7 @@ export function PushSettingsRow() {
     <button
       type="button"
       onClick={toggle}
-      disabled={busy || status === "denied"}
+      disabled={busy}
       className="w-full group flex items-center justify-between gap-3 rounded-2xl border border-border px-4 py-3 hover:border-gold/60 transition-colors disabled:opacity-60 mb-3"
     >
       <span className="flex items-center gap-3">
