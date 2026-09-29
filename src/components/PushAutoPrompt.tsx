@@ -1,9 +1,20 @@
+import { useRouterState } from "@tanstack/react-router";
+import { useAuth } from "@/contexts/AuthContext";
+import { PushNotificationBanner } from "@/components/PushNotificationBanner";
+
 /**
- * Automatic permission prompting was removed: Android/TWA requires the
- * notification permission to be requested from an explicit user action.
- * Activation now happens only via PushNotificationBanner / PushSettingsRow.
- * Kept as a no-op so existing imports keep working.
+ * Automatically SHOWS the notification banner to signed-in users who have
+ * not enabled push yet. It never requests the system permission by itself:
+ * the native Android/TWA dialog only opens when the user taps "Ativar".
  */
 export function PushAutoPrompt() {
-  return null;
+  const { user, loading } = useAuth();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  if (loading || !user) return null;
+  // Seller dashboard already renders the inline banner — avoid duplicates.
+  if (pathname === "/vendedor" || pathname === "/vendedor/") return null;
+  if (pathname.startsWith("/login")) return null;
+
+  return <PushNotificationBanner floating />;
 }
