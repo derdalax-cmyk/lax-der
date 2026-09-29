@@ -1535,6 +1535,15 @@ export type Database = {
         Args: { _side: string; _thread_id: string }
         Returns: undefined
       }
+      move_product_featured_collection: {
+        Args: {
+          _from_collection_id: string
+          _product_id: string
+          _seller_id: string
+          _to_collection_id: string
+        }
+        Returns: undefined
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string

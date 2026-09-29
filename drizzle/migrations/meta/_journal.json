@@ -99,6 +99,13 @@
       "when": 1790696329743,
       "tag": "0013_add_product_original_price",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1790697274973,
+      "tag": "0014_featured_manage_by_seller",
+      "breakpoints": true
     }
   ]
 }
