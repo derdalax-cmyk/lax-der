@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bell, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { usePushNotifications, pushErrorMessage } from "@/hooks/usePushNotifications";
 
 const DISMISS_KEY = "push-banner-dismissed";
 
@@ -26,9 +26,8 @@ export function PushNotificationBanner() {
     try {
       const ok = await subscribe();
       if (ok) toast.success("Notificações ativadas. Vai receber pedidos e mensagens em tempo real.");
-      else toast.error("Permissão negada nas definições do navegador.");
     } catch (e) {
-      toast.error("Não foi possível ativar as notificações.");
+      toast.error(pushErrorMessage(e));
     }
   };
 
