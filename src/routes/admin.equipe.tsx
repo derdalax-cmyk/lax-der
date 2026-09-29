@@ -147,7 +147,7 @@ function AdminEquipe() {
                       row={r}
                       roles={roles ?? []}
                       onStatus={(s) => mutStatus.mutate({ id: r.id, status: s }, { onSuccess: () => refetch() })}
-                      onRole={(role) => setRole.mutate({ id: r.id, role }, { onSuccess: () => refetch() })}
+                      onRole={(role, permissions) => setRole.mutate({ id: r.id, role, permissions }, { onSuccess: () => refetch() })}
                     />
                   </td>
                 </tr>
