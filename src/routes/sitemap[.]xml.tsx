@@ -13,7 +13,7 @@ const STATIC_PATHS = [
   "/politica-privacidade",
 ];
 
-export const Route = createFileRoute("/sitemap[.]xml")({
+export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {

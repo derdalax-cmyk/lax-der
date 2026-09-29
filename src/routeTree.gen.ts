@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VendedorRouteImport } from './routes/vendedor'
 import { Route as TornarSeVendedorRouteImport } from './routes/tornar-se-vendedor'
 import { Route as SuporteRouteImport } from './routes/suporte'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as PoliticaPrivacidadeRouteImport } from './routes/politica-privacidade'
 import { Route as PerfilRouteImport } from './routes/perfil'
@@ -75,6 +76,11 @@ const TornarSeVendedorRoute = TornarSeVendedorRouteImport.update({
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
   path: '/suporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdutosRoute = ProdutosRouteImport.update({
@@ -340,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRouteWithChildren
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/mensagens': typeof MensagensRoute
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
@@ -445,6 +453,7 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRouteWithChildren
   '/politica-privacidade': typeof PoliticaPrivacidadeRoute
   '/produtos': typeof ProdutosRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/politica-privacidade'
     | '/produtos'
+    | '/sitemap.xml'
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/vendedor'
@@ -552,6 +562,7 @@ export interface FileRouteTypes {
     | '/mensagens'
     | '/politica-privacidade'
     | '/produtos'
+    | '/sitemap.xml'
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/admin/administradores'
@@ -605,6 +616,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/politica-privacidade'
     | '/produtos'
+    | '/sitemap.xml'
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/vendedor'
@@ -660,6 +672,7 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRouteWithChildren
   PoliticaPrivacidadeRoute: typeof PoliticaPrivacidadeRoute
   ProdutosRoute: typeof ProdutosRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
   VendedorRoute: typeof VendedorRouteWithChildren
@@ -696,6 +709,13 @@ declare module '@tanstack/react-router' {
       path: '/suporte'
       fullPath: '/suporte'
       preLoaderRoute: typeof SuporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produtos': {
@@ -1146,6 +1166,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRouteWithChildren,
   PoliticaPrivacidadeRoute: PoliticaPrivacidadeRoute,
   ProdutosRoute: ProdutosRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
   VendedorRoute: VendedorRouteWithChildren,
