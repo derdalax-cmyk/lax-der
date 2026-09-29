@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 const DESC =
-  "A DERDALAX é um marketplace de moda em Moçambique que reúne vendedores de roupas, calçados e acessórios da calamidade (brechó) num só lugar.";
+  "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX.";
 
 export const Route = createFileRoute("/inicial")({
   head: () => ({
     meta: [
-      { title: "DERDALAX — Marketplace de moda em Moçambique" },
+      { title: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
       { name: "description", content: DESC },
-      { property: "og:title", content: "DERDALAX — Marketplace de moda em Moçambique" },
+      { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
