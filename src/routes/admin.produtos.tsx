@@ -130,6 +130,7 @@ function AdminProdutos() {
       title: `${p.title} (cópia)`,
       description: p.description,
       base_price: p.base_price,
+      original_price: p.original_price,
       category: p.category,
       is_unique: p.is_unique,
       featured: false,

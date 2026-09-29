@@ -39,7 +39,7 @@ function FavoritosPage() {
       setLoading(true);
       const { data } = await supabase
         .from("products")
-        .select("id,title,base_price,images,is_unique,status,category")
+        .select("id,title,base_price,original_price,images,is_unique,status,category")
         .in("id", ids);
       // keep only currently-favorited and preserve order of favoriting
       const byId = new Map((data ?? []).map((p) => [p.id, p as ProductCardData]));

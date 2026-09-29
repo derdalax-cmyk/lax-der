@@ -12,6 +12,7 @@ import { CategoryIcon } from "@/lib/categoryIcons";
 import { Search, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
+import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/explorar")({
   head: () => ({ meta: [
@@ -65,7 +66,7 @@ function ExplorarPage() {
       setLoading(true);
       let q = supabase
         .from("products")
-        .select("id,title,base_price,images,is_unique,status,category")
+        .select("id,title,base_price,original_price,images,is_unique,status,category")
         .neq("status", "sold");
 
       if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
@@ -144,6 +145,7 @@ function ExplorarPage() {
             {items.map((p) => {
               const img = firstImage(p.images);
               const fav = isFavorite(p.id);
+              const discount = getProductDiscount(Number(p.base_price), p.original_price);
               return (
                 <div key={p.id} className="mb-4 break-inside-avoid group relative">
                   <Link to="/produto/$id" params={{ id: p.id }} className="block rounded-xl overflow-hidden border border-border bg-card">
@@ -159,7 +161,11 @@ function ExplorarPage() {
                     </div>
                     <div className="p-3">
                       <h3 className="font-medium text-sm line-clamp-1">{p.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-0.5">{formatMZN(Number(p.base_price))}</p>
+                      <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
+                        <span className="text-muted-foreground">{formatMZN(Number(p.base_price))}</span>
+                        {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
+                        {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
+                      </div>
                     </div>
                   </Link>
                   <button

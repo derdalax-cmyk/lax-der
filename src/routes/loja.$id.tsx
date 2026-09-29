@@ -45,7 +45,7 @@ function LojaPublica() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id,title,base_price,images,is_unique,status,category")
+        .select("id,title,base_price,original_price,images,is_unique,status,category")
         .eq("seller_id", id)
         .eq("approval_status", "approved")
         .neq("status", "sold")
