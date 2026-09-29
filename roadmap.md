@@ -6,3 +6,4 @@
 - [ ] Abrir o formulário de cadastro por `/login?mode=signup`.
 - [ ] Validar os comportamentos para visitante e utilizador autenticado.
 - [x] Notificações TWA: "Ativar" pede sempre a permissão do sistema diretamente.
+- [ ] Adicionar preço original opcional por produto e apresentar desconto válido no formulário, cartões e detalhe.
