@@ -9,9 +9,9 @@ const DESC =
 export const Route = createFileRoute("/inicial")({
   head: () => ({
     meta: [
-      { title: "DERDALAX — Marketplace de moda em Moçambique" },
+      { title: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
       { name: "description", content: DESC },
-      { property: "og:title", content: "DERDALAX — Marketplace de moda em Moçambique" },
+      { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
