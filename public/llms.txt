@@ -1,0 +1,13 @@
+# DERDALAX
+
+> Marketplace de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos.
+
+## Pages
+
+- [Início](/): Homepage da DERDALAX com destaques da plataforma.
+- [Explorar](/explorar): Catálogo de roupas da calamidade publicadas pelos vendedores.
+- [Categorias](/categorias): Navegação por categorias de produtos.
+- [Tornar-se vendedor](/tornar-se-vendedor): Como anunciar e vender as suas peças na DERDALAX.
+- [Sobre a DERDALAX](/inicial): Quem somos e como funciona a plataforma.
+- [Suporte](/suporte): Apoio ao cliente e contacto.
+- [Políticas](/politicas/privacidade): Políticas da plataforma, incluindo a Política de Privacidade.
