@@ -13,14 +13,14 @@ export const Route = createFileRoute("/vendedor")({
   component: SellerLayout,
 });
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; soon?: boolean };
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; soon?: boolean; hidden?: boolean };
 const nav: NavItem[] = [
   { to: "/vendedor", label: "Painel", icon: LayoutDashboard, exact: true },
   { to: "/vendedor/produtos", label: "Produtos", icon: Package },
   { to: "/vendedor/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/vendedor/destaques", label: "Destaques", icon: Flame },
   { to: "/vendedor/equipe", label: "Equipe", icon: Users },
-  { to: "/vendedor/mensalidade", label: "Mensalidade", icon: CalendarClock, soon: true },
+  { to: "/vendedor/mensalidade", label: "Mensalidade", icon: CalendarClock, soon: true, hidden: true },
   { to: "/mensagens", label: "Mensagens", icon: MessageSquare },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
 ];
@@ -92,7 +92,7 @@ function SellerLayout() {
                 </div>
               </SheetHeader>
               <nav className="flex-1 overflow-y-auto py-1">
-                {nav.map((n, idx) => {
+                {nav.filter((n) => !n.hidden).map((n, idx) => {
                   const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
                   const Icon = n.icon;
                   return (
