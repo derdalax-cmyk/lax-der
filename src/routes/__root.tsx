@@ -94,6 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "DERDALAX" },
       { name: "application-name", content: "DERDALAX" },
+      { name: "google-site-verification", content: "P9NgOAAqJNbD7Q8jJxiUScib38wAtROxkPqKRJlsDnE" },
     ],
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
