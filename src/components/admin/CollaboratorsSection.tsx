@@ -285,7 +285,7 @@ export function CollaboratorsSection({ sellerId, storeName }: { sellerId: string
                 row={r}
                 roles={roles ?? []}
                 onStatus={(status) => setStatus.mutate({ id: r.id, status }, { onSuccess: () => refetch() })}
-                onRole={(role) => setRole.mutate({ id: r.id, role }, { onSuccess: () => refetch() })}
+                onRole={(role, permissions) => setRole.mutate({ id: r.id, role, permissions }, { onSuccess: () => refetch() })}
               />
             </li>
           ))}

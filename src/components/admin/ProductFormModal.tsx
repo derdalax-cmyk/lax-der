@@ -15,6 +15,7 @@ import { Sparkles, Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCategories } from "@/hooks/useCategories";
+import { CategoryIcon } from "@/lib/categoryIcons";
 
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
@@ -81,9 +82,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const productId = useMemo(() => product?.id ?? crypto.randomUUID(), [product?.id, open]);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<string>("");
   const [originalPrice, setOriginalPrice] = useState<string>("");
-  const [shippingFee, setShippingFee] = useState<number>(0);
+  const [shippingFee, setShippingFee] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const { categories } = useCategories();
   const [gender, setGender] = useState<string>("");
@@ -181,9 +182,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       const { text, meta } = parseMeta(product.description);
       setTitle(product.title);
       setText(text);
-      setPrice(Number(product.base_price));
+      setPrice(product.base_price != null ? String(product.base_price) : "");
       setOriginalPrice(product.original_price ? String(product.original_price) : "");
-      setShippingFee(Number(product.shipping_fee ?? 0));
+      setShippingFee(product.shipping_fee ? String(product.shipping_fee) : "");
       setCategory(product.category ?? "");
       setGender(meta.gender ?? "");
       setMaterial(meta.material ?? "");
@@ -207,17 +208,27 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       }
 
     } else {
-      setTitle(""); setText(""); setPrice(0); setOriginalPrice(""); setShippingFee(0); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
+      setTitle(""); setText(""); setPrice(""); setOriginalPrice(""); setShippingFee(""); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
     }
   }, [product, open]);
 
   const save = async () => {
-    if (!title.trim() || !category || price < 0) {
+    const parsedPrice = price.trim() === "" ? NaN : Number(price);
+    if (!title.trim() || !category) {
       toast.error("Preencha título, categoria e preço");
       return;
     }
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      toast.error("Indique um preço de venda válido, maior que 0");
+      return;
+    }
+    const parsedShipping = shippingFee.trim() === "" ? 0 : Number(shippingFee);
+    if (!Number.isFinite(parsedShipping) || parsedShipping < 0) {
+      toast.error("O frete deve ser um valor válido");
+      return;
+    }
     const parsedOriginalPrice = originalPrice.trim() === "" ? null : Number(originalPrice);
-    if (parsedOriginalPrice !== null && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice < 0)) {
+    if (parsedOriginalPrice !== null && (!Number.isFinite(parsedOriginalPrice) || parsedOriginalPrice <= 0)) {
       toast.error("O preço original deve ser um valor válido");
       return;
     }
@@ -227,9 +238,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       const payload = {
         title: title.trim(),
         description: packMeta(text.trim(), meta),
-        base_price: price,
+        base_price: parsedPrice,
         original_price: parsedOriginalPrice && parsedOriginalPrice > 0 ? parsedOriginalPrice : null,
-        shipping_fee: shippingFee || 0,
+        shipping_fee: parsedShipping,
         category,
         is_unique: isUnique,
         featured: isSeller ? false : featured,
@@ -303,9 +314,20 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
         });
         const chosen = [...selectedCollections];
         const toAdd = chosen.filter((cid) => !current.has(cid));
-        const toRemove = [...current.entries()]
-          .filter(([cid, submissionStatus]) => !selectedCollections.has(cid) && submissionStatus !== "approved")
-          .map(([cid]) => cid);
+        const toRemove = [...current.keys()].filter((cid) => !selectedCollections.has(cid));
+
+        // Troca de destaque: move a associação existente de forma atómica no servidor
+        while (toAdd.length && toRemove.length) {
+          const from = toRemove.shift()!;
+          const to = toAdd.shift()!;
+          const { error } = await supabase.rpc("move_product_featured_collection", {
+            _from_collection_id: from,
+            _to_collection_id: to,
+            _product_id: pid,
+            _seller_id: sellerId!,
+          });
+          if (error) throw error;
+        }
 
         for (const collectionId of toAdd) {
           const { error } = await supabase.rpc("submit_products_to_collection", {
@@ -362,7 +384,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
             </div>
             <div>
               <Label>Preço base (MT) *</Label>
-              <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+              <Input type="number" min={0} step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="MT" />
             </div>
             <div>
               <Label>Preço original (opcional)</Label>
@@ -370,8 +392,8 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
             </div>
             <div>
               <Label>Frete de entrega (MT)</Label>
-              <Input type="number" min={0} step="0.01" value={shippingFee} onChange={(e) => setShippingFee(Number(e.target.value))} placeholder="0 = Grátis" />
-              <p className="text-[11px] text-muted-foreground mt-1">Deixe 0 (ou vazio) para <strong>Frete Grátis</strong>.</p>
+              <Input type="number" min={0} step="0.01" value={shippingFee} onChange={(e) => setShippingFee(e.target.value)} placeholder="Vazio = Grátis" />
+              <p className="text-[11px] text-muted-foreground mt-1">Deixe vazio para <strong>Frete Grátis</strong>.</p>
             </div>
             <div>
               <Label>Categoria *</Label>
@@ -467,28 +489,26 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                   <div className="flex flex-wrap gap-2">
                     {sellerCollections.map((c) => {
                       const sub = (c.submissions ?? []).find((s) => s.product_id === product?.id && s.status !== "rejected");
-                      const locked = sub?.status === "approved";
-                      const checked = selectedCollections.has(c.id);
+                                            const checked = selectedCollections.has(c.id);
                       return (
                         <button
                           key={c.id}
                           type="button"
-                          disabled={locked}
-                          onClick={() => setSelectedCollections((prev) => {
+                                                    onClick={() => setSelectedCollections((prev) => {
                             const next = new Set(prev);
                             if (next.has(c.id)) next.delete(c.id); else next.add(c.id);
                             return next;
                           })}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"} ${locked ? "opacity-70 cursor-not-allowed" : ""}`}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
                         >
-                          <span>{c.icon}</span> {c.name}
+                          {c.icon && <CategoryIcon icon={c.icon} className="w-4 h-4" />} {c.name}
                           {sub && <span className="text-[10px] text-muted-foreground">({sub.status === "approved" ? "aprovado" : "pendente"})</span>}
                         </button>
                       );
                     })}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente. Candidaturas já aprovadas só a administração pode retirar.
+                    A candidatura fica pendente até à aprovação da administração. Os limites de cada destaque são aplicados automaticamente. Pode alterar ou retirar destaques a qualquer momento; novas candidaturas passam pela aprovação.
                   </p>
                 </div>
               )}
@@ -518,7 +538,7 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
                       })}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-sm transition-colors ${checked ? "border-gold bg-gold/10 text-ink" : "border-border hover:bg-secondary"}`}
                     >
-                      <span>{c.icon}</span> {c.name}
+                      {c.icon && <CategoryIcon icon={c.icon} className="w-4 h-4" />} {c.name}
                     </button>
                   );
                 })}
