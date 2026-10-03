@@ -21,7 +21,7 @@ const nav: NavItem[] = [
   { to: "/vendedor/destaques", label: "Destaques", icon: Flame },
   { to: "/vendedor/equipe", label: "Equipe", icon: Users },
   { to: "/vendedor/mensalidade", label: "Mensalidade", icon: CalendarClock, soon: true, hidden: true },
-  { to: "/mensagens", label: "Mensagens", icon: MessageSquare },
+  { to: "/vendedor/mensagens", label: "Mensagens", icon: MessageSquare },
   { to: "/vendedor/loja", label: "Minha loja", icon: Store },
 ];
 

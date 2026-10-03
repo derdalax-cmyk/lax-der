@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { startOrderConversation } from "@/hooks/useMessaging";
+import { getOrCreateOrderConversation } from "@/hooks/useMessaging";
 import { formatMZN } from "@/components/ProductCard";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -69,7 +69,7 @@ function OrdersHistoryPage() {
   const openChat = async (orderId: string, sellerId: string) => {
     setChatting(`${orderId}-${sellerId}`);
     try {
-      await startOrderConversation(orderId, sellerId);
+      await getOrCreateOrderConversation(orderId, sellerId);
       navigate({ to: "/chat/order/$orderId", params: { orderId }, search: { seller: sellerId } });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível abrir o chat");

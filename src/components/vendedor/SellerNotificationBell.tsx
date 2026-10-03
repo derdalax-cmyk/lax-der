@@ -98,7 +98,7 @@ export function SellerNotificationBell() {
       await supabase.from("notifications").update({ read: true }).eq("id", n.id);
       qc.invalidateQueries({ queryKey: ["seller-notifications", user?.id] });
     }
-    if (n.link) navigate({ to: n.link as "/vendedor/pedidos" });
+    if (n.link) navigate({ href: n.link });
   };
 
   return (
