@@ -113,6 +113,13 @@
       "when": 1790699001858,
       "tag": "0015_tighten_settings_roles_private_avatars",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791067601426,
+      "tag": "0016_chat_architecture_order_threads_edit_delete",
+      "breakpoints": true
     }
   ]
 }

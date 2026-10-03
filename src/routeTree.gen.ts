@@ -34,6 +34,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VendedorProdutosRouteImport } from './routes/vendedor.produtos'
 import { Route as VendedorPedidosRouteImport } from './routes/vendedor.pedidos'
 import { Route as VendedorMensalidadeRouteImport } from './routes/vendedor.mensalidade'
+import { Route as VendedorMensagensRouteImport } from './routes/vendedor.mensagens'
 import { Route as VendedorLojaRouteImport } from './routes/vendedor.loja'
 import { Route as VendedorEquipeRouteImport } from './routes/vendedor.equipe'
 import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
@@ -55,6 +56,8 @@ import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
+import { Route as VendedorMensagensIndexRouteImport } from './routes/vendedor.mensagens.index'
+import { Route as VendedorMensagensConversationIdRouteImport } from './routes/vendedor.mensagens.$conversationId'
 import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$orderId'
 import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.vendedores_.dashboard'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -188,6 +191,11 @@ const VendedorMensalidadeRoute = VendedorMensalidadeRouteImport.update({
   path: '/mensalidade',
   getParentRoute: () => VendedorRoute,
 } as any)
+const VendedorMensagensRoute = VendedorMensagensRouteImport.update({
+  id: '/mensagens',
+  path: '/mensagens',
+  getParentRoute: () => VendedorRoute,
+} as any)
 const VendedorLojaRoute = VendedorLojaRouteImport.update({
   id: '/loja',
   path: '/loja',
@@ -293,6 +301,17 @@ const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   path: '/administradores',
   getParentRoute: () => AdminRoute,
 } as any)
+const VendedorMensagensIndexRoute = VendedorMensagensIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VendedorMensagensRoute,
+} as any)
+const VendedorMensagensConversationIdRoute =
+  VendedorMensagensConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => VendedorMensagensRoute,
+  } as any)
 const ChatOrderOrderIdRoute = ChatOrderOrderIdRouteImport.update({
   id: '/chat/order/$orderId',
   path: '/chat/order/$orderId',
@@ -371,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/equipe': typeof VendedorEquipeRoute
   '/vendedor/loja': typeof VendedorLojaRoute
+  '/vendedor/mensagens': typeof VendedorMensagensRouteWithChildren
   '/vendedor/mensalidade': typeof VendedorMensalidadeRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
@@ -380,6 +400,8 @@ export interface FileRoutesByFullPath {
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
+  '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -431,6 +453,8 @@ export interface FileRoutesByTo {
   '/vendedor': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
+  '/vendedor/mensagens': typeof VendedorMensagensIndexRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -478,6 +502,7 @@ export interface FileRoutesById {
   '/vendedor/destaques': typeof VendedorDestaquesRoute
   '/vendedor/equipe': typeof VendedorEquipeRoute
   '/vendedor/loja': typeof VendedorLojaRoute
+  '/vendedor/mensagens': typeof VendedorMensagensRouteWithChildren
   '/vendedor/mensalidade': typeof VendedorMensalidadeRoute
   '/vendedor/pedidos': typeof VendedorPedidosRoute
   '/vendedor/produtos': typeof VendedorProdutosRoute
@@ -487,6 +512,8 @@ export interface FileRoutesById {
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
+  '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
+  '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -535,6 +562,7 @@ export interface FileRouteTypes {
     | '/vendedor/destaques'
     | '/vendedor/equipe'
     | '/vendedor/loja'
+    | '/vendedor/mensagens'
     | '/vendedor/mensalidade'
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
@@ -544,6 +572,8 @@ export interface FileRouteTypes {
     | '/vendedor/'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
+    | '/vendedor/mensagens/$conversationId'
+    | '/vendedor/mensagens/'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -595,6 +625,8 @@ export interface FileRouteTypes {
     | '/vendedor'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
+    | '/vendedor/mensagens/$conversationId'
+    | '/vendedor/mensagens'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -641,6 +673,7 @@ export interface FileRouteTypes {
     | '/vendedor/destaques'
     | '/vendedor/equipe'
     | '/vendedor/loja'
+    | '/vendedor/mensagens'
     | '/vendedor/mensalidade'
     | '/vendedor/pedidos'
     | '/vendedor/produtos'
@@ -650,6 +683,8 @@ export interface FileRouteTypes {
     | '/vendedor/'
     | '/admin/vendedores_/dashboard'
     | '/chat/order/$orderId'
+    | '/vendedor/mensagens/$conversationId'
+    | '/vendedor/mensagens/'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -865,6 +900,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendedorMensalidadeRouteImport
       parentRoute: typeof VendedorRoute
     }
+    '/vendedor/mensagens': {
+      id: '/vendedor/mensagens'
+      path: '/mensagens'
+      fullPath: '/vendedor/mensagens'
+      preLoaderRoute: typeof VendedorMensagensRouteImport
+      parentRoute: typeof VendedorRoute
+    }
     '/vendedor/loja': {
       id: '/vendedor/loja'
       path: '/loja'
@@ -1012,6 +1054,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdministradoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/vendedor/mensagens/': {
+      id: '/vendedor/mensagens/'
+      path: '/'
+      fullPath: '/vendedor/mensagens/'
+      preLoaderRoute: typeof VendedorMensagensIndexRouteImport
+      parentRoute: typeof VendedorMensagensRoute
+    }
+    '/vendedor/mensagens/$conversationId': {
+      id: '/vendedor/mensagens/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/vendedor/mensagens/$conversationId'
+      preLoaderRoute: typeof VendedorMensagensConversationIdRouteImport
+      parentRoute: typeof VendedorMensagensRoute
+    }
     '/chat/order/$orderId': {
       id: '/chat/order/$orderId'
       path: '/chat/order/$orderId'
@@ -1127,10 +1183,24 @@ const PerfilRouteChildren: PerfilRouteChildren = {
 const PerfilRouteWithChildren =
   PerfilRoute._addFileChildren(PerfilRouteChildren)
 
+interface VendedorMensagensRouteChildren {
+  VendedorMensagensConversationIdRoute: typeof VendedorMensagensConversationIdRoute
+  VendedorMensagensIndexRoute: typeof VendedorMensagensIndexRoute
+}
+
+const VendedorMensagensRouteChildren: VendedorMensagensRouteChildren = {
+  VendedorMensagensConversationIdRoute: VendedorMensagensConversationIdRoute,
+  VendedorMensagensIndexRoute: VendedorMensagensIndexRoute,
+}
+
+const VendedorMensagensRouteWithChildren =
+  VendedorMensagensRoute._addFileChildren(VendedorMensagensRouteChildren)
+
 interface VendedorRouteChildren {
   VendedorDestaquesRoute: typeof VendedorDestaquesRoute
   VendedorEquipeRoute: typeof VendedorEquipeRoute
   VendedorLojaRoute: typeof VendedorLojaRoute
+  VendedorMensagensRoute: typeof VendedorMensagensRouteWithChildren
   VendedorMensalidadeRoute: typeof VendedorMensalidadeRoute
   VendedorPedidosRoute: typeof VendedorPedidosRoute
   VendedorProdutosRoute: typeof VendedorProdutosRoute
@@ -1141,6 +1211,7 @@ const VendedorRouteChildren: VendedorRouteChildren = {
   VendedorDestaquesRoute: VendedorDestaquesRoute,
   VendedorEquipeRoute: VendedorEquipeRoute,
   VendedorLojaRoute: VendedorLojaRoute,
+  VendedorMensagensRoute: VendedorMensagensRouteWithChildren,
   VendedorMensalidadeRoute: VendedorMensalidadeRoute,
   VendedorPedidosRoute: VendedorPedidosRoute,
   VendedorProdutosRoute: VendedorProdutosRoute,

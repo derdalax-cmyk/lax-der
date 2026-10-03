@@ -583,6 +583,8 @@ export type Database = {
           body: string
           conversation_id: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
           id: string
           read: boolean
           sender_id: string
@@ -591,6 +593,8 @@ export type Database = {
           body: string
           conversation_id: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           read?: boolean
           sender_id: string
@@ -599,6 +603,8 @@ export type Database = {
           body?: string
           conversation_id?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           read?: boolean
           sender_id?: string
@@ -1457,6 +1463,11 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      delete_message: { Args: { _message_id: string }; Returns: undefined }
+      edit_message: {
+        Args: { _body: string; _message_id: string }
+        Returns: undefined
+      }
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
@@ -1479,6 +1490,10 @@ export type Database = {
       get_my_team_activity: {
         Args: { _limit?: number; _user_id: string }
         Returns: Json
+      }
+      get_or_create_order_conversation: {
+        Args: { _order_id: string; _seller_id: string }
+        Returns: string
       }
       get_products_pending_orders: {
         Args: never
@@ -1527,6 +1542,10 @@ export type Database = {
         Returns: boolean
       }
       is_active_collaborator: { Args: never; Returns: boolean }
+      is_conversation_participant: {
+        Args: { _conversation_id: string }
+        Returns: boolean
+      }
       mark_conversation_read: {
         Args: { _conversation_id: string }
         Returns: undefined
@@ -1588,6 +1607,10 @@ export type Database = {
         }[]
       }
       recalc_order_totals: { Args: { _order_id: string }; Returns: undefined }
+      refresh_conversation_preview: {
+        Args: { _conversation_id: string }
+        Returns: undefined
+      }
       release_expired_reservations: { Args: never; Returns: number }
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
