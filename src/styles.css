@@ -35,6 +35,8 @@
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --color-ink: var(--ink);
+  --color-notification-surface: var(--notification-surface);
+  --color-notification-foreground: var(--notification-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -45,6 +47,8 @@
 
   /* Brand palette - DERDALAX */
   --ink: oklch(0.15 0 0);                    /* #0a0a0a preto */
+  --notification-surface: oklch(1 0 0);
+  --notification-foreground: oklch(0.15 0 0);
   --gold: oklch(0.78 0.12 78);               /* #e4b363 amarelo dourado */
   --gold-foreground: oklch(0.15 0 0);
   --forest: oklch(0.36 0.08 152);            /* #1a4d2e verde */

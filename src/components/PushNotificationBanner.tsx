@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Bell, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { usePushNotifications, pushErrorMessage, PUSH_ERROR_MESSAGES } from "@/hooks/usePushNotifications";
+import { Button } from "@/components/ui/button";
 
 const DISMISS_KEY = "push-banner-dismissed-at";
 const SESSION_KEY = "push-banner-dismissed-session";
@@ -53,7 +54,7 @@ export function PushNotificationBanner({ floating = false }: { floating?: boolea
   };
 
   const card = (
-    <div className={`${floating ? "shadow-lg bg-background" : "mb-4"} flex items-start gap-3 rounded-xl border border-gold/30 bg-gold/5 p-3 sm:p-4`}>
+    <div className={`${floating ? "shadow-lg" : "mb-4"} flex items-start gap-3 rounded-xl border border-gold/30 bg-notification-surface p-3 text-notification-foreground sm:p-4`}>
       <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gold/15 text-gold">
         <Bell className="h-4 w-4" />
       </div>
@@ -61,40 +62,45 @@ export function PushNotificationBanner({ floating = false }: { floating?: boolea
         <p className="text-sm font-medium leading-tight">
           {denied ? "Notificações bloqueadas" : "Ativar notificações do navegador"}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="mt-0.5 text-xs text-notification-foreground">
           {denied
             ? PUSH_ERROR_MESSAGES.permission
             : "Receba avisos de pedidos e mensagens em tempo real, mesmo com o site fechado."}
         </p>
         <div className="mt-2 flex items-center gap-2">
           {!denied && (
-            <button
+            <Button
               type="button"
               onClick={enable}
               disabled={busy}
-              className="inline-flex items-center gap-1.5 rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-gold hover:bg-ink/90 disabled:opacity-60"
+              size="sm"
+              className="h-auto bg-ink px-3 py-1.5 text-xs text-gold hover:bg-ink/90"
             >
               {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Bell className="h-3 w-3" />}
               Ativar
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
             onClick={dismiss}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            variant="ghost"
+            size="sm"
+            className="h-auto px-2 py-1.5 text-xs text-notification-foreground hover:bg-secondary hover:text-notification-foreground"
           >
             {denied ? "Entendi" : "Agora não"}
-          </button>
+          </Button>
         </div>
       </div>
-      <button
+      <Button
         type="button"
         onClick={dismiss}
         aria-label="Fechar"
-        className="shrink-0 rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground"
+        variant="ghost"
+        size="icon"
+        className="h-7 w-7 shrink-0 text-notification-foreground hover:bg-secondary hover:text-notification-foreground"
       >
         <X className="h-4 w-4" />
-      </button>
+      </Button>
     </div>
   );
 
