@@ -215,6 +215,7 @@ function SellerPedidos() {
 }
 
 function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; saving: boolean; onUpdate: (status: string, extra?: { tracking?: string; notes?: string }) => void }) {
+  const { seller } = useSeller();
   const currentStatus = order.seller_status ?? "pending";
   const stage = stageOf(currentStatus);
   const [tracking, setTracking] = useState(order.tracking_code ?? "");
