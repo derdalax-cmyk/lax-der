@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export type Conversation = {
   id: string;
   role: "buyer" | "seller";
+  kind: "general" | "order";
   seller_id: string;
   product_id: string | null;
   order_id: string | null;
@@ -24,9 +25,18 @@ export type Message = {
   body: string;
   read: boolean;
   created_at: string;
+  edited_at: string | null;
+  deleted_at: string | null;
 };
 
-/** Start (or reuse) a conversation with a seller and return its id. */
+/** Minutes during which a message can still be edited by its author (enforced server-side). */
+export const EDIT_WINDOW_MS = 15 * 60 * 1000;
+
+export function orderRef(orderId: string | null | undefined): string {
+  return orderId ? `#${orderId.slice(0, 8).toUpperCase()}` : "";
+}
+
+/** Start (or reuse) the general pre-purchase conversation with a seller. */
 export async function startConversation(sellerId: string, productId?: string | null): Promise<string> {
   const { data, error } = await supabase.rpc("start_conversation", {
     _seller_id: sellerId,
@@ -36,8 +46,9 @@ export async function startConversation(sellerId: string, productId?: string | n
   return data as unknown as string;
 }
 
-export async function startOrderConversation(orderId: string, sellerId: string): Promise<string> {
-  const { data, error } = await supabase.rpc("start_order_conversation", {
+/** Resolve the single conversation for (order, store). Callable by the buyer or the store owner. */
+export async function getOrCreateOrderConversation(orderId: string, sellerId: string): Promise<string> {
+  const { data, error } = await supabase.rpc("get_or_create_order_conversation", {
     _order_id: orderId,
     _seller_id: sellerId,
   });
@@ -45,13 +56,18 @@ export async function startOrderConversation(orderId: string, sellerId: string):
   return data as unknown as string;
 }
 
+/** @deprecated use getOrCreateOrderConversation */
+export const startOrderConversation = getOrCreateOrderConversation;
+
+export const conversationsKey = (userId?: string) => ["my-conversations", userId] as const;
+
 /** List the current user's conversations, kept live via realtime. */
 export function useConversations() {
   const { user } = useAuth();
   const qc = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["my-conversations", user?.id],
+    queryKey: conversationsKey(user?.id),
     enabled: !!user?.id,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_my_conversations");
@@ -62,11 +78,11 @@ export function useConversations() {
 
   useEffect(() => {
     if (!user?.id) return;
+    const refresh = () => qc.invalidateQueries({ queryKey: conversationsKey(user.id) });
     const channel = supabase
-      .channel("conversations-live")
-      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
-        qc.invalidateQueries({ queryKey: ["my-conversations", user.id] });
-      })
+      .channel(`conversations-${user.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations", filter: `buyer_id=eq.${user.id}` }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations", filter: `seller_user_id=eq.${user.id}` }, refresh)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [user?.id, qc]);
