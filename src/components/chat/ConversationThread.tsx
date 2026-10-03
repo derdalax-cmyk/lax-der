@@ -64,7 +64,7 @@ export function ConversationThread({ conversationId, areaClassName, compact }: P
         prev.some((x) => x.id === m.id) ? prev.map((x) => (x.id === m.id ? m : x)) : [...prev, m],
       );
     const channel = supabase
-      .channel(`messages-${conversationId}-${user.id}`)
+      .channel(`messages-${conversationId}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${conversationId}` }, (payload) => {
         const m = payload.new as Message;
         upsert(m);

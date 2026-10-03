@@ -80,7 +80,7 @@ export function useConversations() {
     if (!user?.id) return;
     const refresh = () => qc.invalidateQueries({ queryKey: conversationsKey(user.id) });
     const channel = supabase
-      .channel(`conversations-${user.id}`)
+      .channel(`conversations-${user.id}-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "conversations", filter: `buyer_id=eq.${user.id}` }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "conversations", filter: `seller_user_id=eq.${user.id}` }, refresh)
       .subscribe();
