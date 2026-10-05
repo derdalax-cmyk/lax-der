@@ -52,3 +52,28 @@ export function useRoleta() {
     refresh: () => qc.invalidateQueries({ queryKey: ROLETA_KEY }),
   };
 }
+
+import { useCart } from "@/contexts/CartContext";
+import { getRoletaCart } from "@/lib/productPrice";
+
+/** Estimate of the roleta discount for the current cart. Server recomputes on order creation. */
+export function useCartRoleta() {
+  const { items } = useCart();
+  const { activeReward, eligible } = useRoleta();
+  return useMemo(() => {
+    const lines = items.map((it) => ({
+      key: `${it.product_id}-${it.variation_id ?? "_"}`,
+      unitPrice: Number(it.variation?.price ?? it.product.base_price),
+      basePrice: Number(it.product.base_price),
+      originalPrice: it.product.original_price ?? null,
+      quantity: it.quantity,
+      eligible: eligible.has(it.product_id),
+    }));
+    const normalDiscount = lines.reduce((a, l) => {
+      const o = Number(l.originalPrice ?? 0);
+      return l.unitPrice === l.basePrice && o > l.basePrice ? a + (o - l.basePrice) * l.quantity : a;
+    }, 0);
+    const res = getRoletaCart(lines, activeReward);
+    return { reward: activeReward, normalDiscount, roletaDiscount: res.discount, byKey: res.byKey };
+  }, [items, activeReward, eligible]);
+}

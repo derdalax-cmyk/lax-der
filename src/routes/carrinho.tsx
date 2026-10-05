@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { formatMZN } from "@/components/ProductCard";
+import { useCartRoleta } from "@/hooks/useRoleta";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { CountdownTimer } from "@/components/cart/CountdownTimer";
 import { OrderChatPanel } from "@/components/OrderChatPanel";
@@ -100,6 +101,7 @@ function TabBtn({ active, onClick, icon, label, badge }: { active: boolean; onCl
 function CartTab() {
   const navigate = useNavigate();
   const { items, loading, subtotal, shipping, total, updateQuantity, removeItem, refresh } = useCart();
+  const cartRoleta = useCartRoleta();
 
   if (loading) return <div className="py-14 text-center text-muted-foreground">A carregar carrinho…</div>;
 
@@ -152,7 +154,14 @@ function CartTab() {
                     <span className="w-8 text-center text-sm font-medium">{it.quantity}</span>
                     <button disabled={it.product.is_unique || (!!it.variation && it.quantity >= it.variation.stock)} onClick={() => updateQuantity(it.product_id, it.variation_id, it.quantity + 1)} className="w-8 h-8 flex items-center justify-center disabled:opacity-30"><Plus className="w-3 h-3" /></button>
                   </div>
-                  <p className="font-medium">{formatMZN(price * it.quantity)}</p>
+                  <div className="text-right">
+                    {cartRoleta.byKey.get(key) ? (
+                      <>
+                        <p className="text-xs text-muted-foreground line-through">{formatMZN(price * it.quantity)}</p>
+                        <p className="font-medium">{formatMZN(cartRoleta.byKey.get(key)!.unitFinal * it.quantity)}</p>
+                      </>
+                    ) : <p className="font-medium">{formatMZN(price * it.quantity)}</p>}
+                  </div>
                 </div>
               </div>
             </li>
@@ -162,8 +171,10 @@ function CartTab() {
       <aside className="bg-card border border-border rounded-xl p-5 h-fit space-y-3">
         <h2 className="font-display text-xl mb-2">Resumo</h2>
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(subtotal)}</span></div>
+        {cartRoleta.normalDiscount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Desconto normal (incluído)</span><span className="text-destructive">-{formatMZN(cartRoleta.normalDiscount)}</span></div>}
+        {cartRoleta.roletaDiscount > 0 && <div className="flex justify-between text-sm"><span className="text-gold font-medium">🎁 Desconto da Roleta -{cartRoleta.reward?.percent}%</span><span className="text-destructive">-{formatMZN(cartRoleta.roletaDiscount)}</span></div>}
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">Frete</span><span>{shipping === 0 ? "Grátis" : formatMZN(shipping)}</span></div>
-        <div className="flex justify-between font-medium text-lg pt-3 border-t border-border"><span>Total</span><span>{formatMZN(total)}</span></div>
+        <div className="flex justify-between font-medium text-lg pt-3 border-t border-border"><span>Total</span><span>{formatMZN(total - cartRoleta.roletaDiscount)}</span></div>
         <Button onClick={() => navigate({ to: "/checkout" })} className="w-full bg-gold text-ink hover:bg-gold/90 mt-2">Finalizar compra</Button>
         <Link to="/produtos" className="block text-center text-sm text-muted-foreground hover:text-foreground">Continuar a comprar</Link>
       </aside>
