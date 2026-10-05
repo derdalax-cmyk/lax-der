@@ -7,3 +7,4 @@
 - [ ] Validar os comportamentos para visitante e utilizador autenticado.
 - [x] Notificações TWA: "Ativar" pede sempre a permissão do sistema diretamente.
 - [x] Adicionar preço original opcional por produto e apresentar desconto válido no formulário, cartões e detalhe.
+- [x] Roleta DERDALAX (campanhas, códigos, indicações, sorteio no servidor, desconto por produto participante, admin).
