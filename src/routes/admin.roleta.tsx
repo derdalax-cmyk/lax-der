@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Copy, Download, Plus, Loader2 } from "lucide-react";
+import { Copy, Download, Plus, Loader2, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -46,9 +46,20 @@ function AdminRoleta() {
   const sel = campaigns.find((c) => c.id === selId) ?? null;
 
   const createCampaign = async () => {
-    const { data, error } = await supabase.from("roleta_campaigns").insert({ name: `Campanha ${new Date().toLocaleDateString("pt-PT")}`, prizes: DEFAULT_PRIZES as never }).select("id").single();
+    const name = window.prompt("Nome da nova campanha", `Campanha ${new Date().toLocaleDateString("pt-PT")}`)?.trim();
+    if (!name) return;
+    const { data, error } = await supabase.from("roleta_campaigns").insert({ name, prizes: DEFAULT_PRIZES as never }).select("id").single();
     if (error) { toast.error(error.message); return; }
     await refetch(); setSelId(data.id); toast.success("Campanha criada (desativada)");
+  };
+
+  const renameCampaign = async () => {
+    if (!sel) return;
+    const name = window.prompt("Novo nome da campanha", sel.name)?.trim();
+    if (!name || name === sel.name) return;
+    const { error } = await supabase.from("roleta_campaigns").update({ name }).eq("id", sel.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Nome atualizado"); await refetch(); qc.invalidateQueries({ queryKey: ROLETA_KEY });
   };
 
   return (
@@ -65,6 +76,7 @@ function AdminRoleta() {
               <SelectContent>{campaigns.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}{c.is_active ? " · ativa" : ""}</SelectItem>)}</SelectContent>
             </Select>
           )}
+          {sel && <Button variant="outline" onClick={renameCampaign}><Pencil className="w-4 h-4 mr-1" /> Editar nome</Button>}
           <Button onClick={createCampaign} className="bg-gold text-ink hover:bg-gold/90"><Plus className="w-4 h-4 mr-1" /> Nova campanha</Button>
         </div>
       </div>
@@ -77,7 +89,7 @@ function AdminRoleta() {
             <TabsTrigger value="indicacoes">Indicações</TabsTrigger>
             <TabsTrigger value="resultados">Resultados</TabsTrigger>
           </TabsList>
-          <TabsContent value="campanha"><CampaignForm key={sel.id} c={sel} campaigns={campaigns} onSaved={() => { refetch(); qc.invalidateQueries({ queryKey: ROLETA_KEY }); }} /></TabsContent>
+          <TabsContent value="campanha"><CampaignForm key={`${sel.id}-${sel.name}`} c={sel} campaigns={campaigns} onSaved={() => { refetch(); qc.invalidateQueries({ queryKey: ROLETA_KEY }); }} /></TabsContent>
           <TabsContent value="codigos"><CodesTab campaignId={sel.id} /></TabsContent>
           <TabsContent value="indicacoes"><ReferralsTab campaignId={sel.id} /></TabsContent>
           <TabsContent value="resultados"><ResultsTab campaignId={sel.id} /></TabsContent>
@@ -231,21 +243,23 @@ function ReferralsTab({ campaignId }: { campaignId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("roleta_admin_referrals", { _campaign_id: campaignId });
       if (error) throw error;
-      return (data ?? []) as unknown as { user_id: string; name: string | null; count: number; code: string | null; code_status: string | null }[];
+      return (data ?? []) as unknown as { user_id: string; name: string | null; count: number; codes_issued?: number; code: string | null; code_status: string | null }[];
     },
   });
   return (
     <div className="bg-card border border-border rounded-xl p-5 mt-3">
       {data.length === 0 ? <p className="text-sm text-muted-foreground">Sem indicações nesta campanha.</p> : (
         <table className="w-full text-sm">
-          <thead className="text-left text-muted-foreground"><tr><th className="py-2">Utilizador</th><th>Progresso</th><th>Código</th><th>Estado</th></tr></thead>
+          <thead className="text-left text-muted-foreground"><tr><th className="py-2">Utilizador</th><th>Indicações</th><th>Ciclo atual</th><th>Códigos gerados</th><th>Último código</th><th>Estado</th></tr></thead>
           <tbody className="divide-y divide-border">
             {data.map((r) => (
               <tr key={r.user_id}>
                 <td className="py-2">{r.name ?? "—"}</td>
-                <td>{Math.min(r.count, 5)}/5{r.count > 5 ? ` (+${r.count - 5})` : ""}</td>
+                <td>{r.count}</td>
+                <td>{Math.min(Math.max(r.count - (r.codes_issued ?? 0) * 5, 0), 5)}/5</td>
+                <td>{r.codes_issued ?? 0}</td>
                 <td className="font-mono">{r.code ?? "—"}</td>
-                <td>{r.code ? (r.code_status === "AVAILABLE" ? "Gerado" : "Utilizado") : r.count >= 5 ? "Desbloqueado" : "Em progresso"}</td>
+                <td>{r.code ? (r.code_status === "AVAILABLE" ? "Por usar" : "Utilizado") : "Em progresso"}</td>
               </tr>
             ))}
           </tbody>
