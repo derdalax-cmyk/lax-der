@@ -77,17 +77,17 @@ export function NotificationPreferences() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-border p-4 text-sm text-muted-foreground flex items-center gap-2">
+      <div className="rounded-xl border border-border px-3 py-2.5 text-sm text-muted-foreground flex items-center gap-2">
         <Loader2 className="h-4 w-4 animate-spin" /> A carregar preferências…
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-border p-4">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="rounded-xl border border-border px-3 py-2.5">
+      <div className="mb-1 flex items-center justify-between">
         <div>
-          <div className="font-medium leading-tight">Preferências de notificação</div>
+          <div className="text-sm font-medium leading-tight">Preferências de notificação</div>
           <div className="text-xs text-muted-foreground mt-0.5">
             Ative ou desative todas as notificações por canal.
           </div>
@@ -96,9 +96,9 @@ export function NotificationPreferences() {
       </div>
 
       <div className="divide-y divide-border">
-        <div className="py-3 flex items-start justify-between gap-3">
+        <div className="py-2 flex items-center justify-between gap-3">
           <div className="min-w-0 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-muted grid place-items-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-muted grid place-items-center shrink-0">
               <Bell className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -109,14 +109,15 @@ export function NotificationPreferences() {
             </div>
           </div>
           <Switch
+            className="scale-90 origin-right"
             checked={prefs.push_enabled}
             onCheckedChange={(v) => update("push_enabled", v)}
           />
         </div>
 
-        <div className="py-3 flex items-start justify-between gap-3">
+        <div className="py-2 flex items-center justify-between gap-3">
           <div className="min-w-0 flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-muted grid place-items-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-muted grid place-items-center shrink-0">
               <Mail className="h-4 w-4" />
             </div>
             <div className="min-w-0">
@@ -127,6 +128,7 @@ export function NotificationPreferences() {
             </div>
           </div>
           <Switch
+            className="scale-90 origin-right"
             checked={prefs.email_enabled}
             onCheckedChange={(v) => update("email_enabled", v)}
           />
