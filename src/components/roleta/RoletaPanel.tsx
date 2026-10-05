@@ -81,7 +81,8 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
     setResult(Number((data as { percent: number }).percent));
   };
 
-  const done = () => { setBusy(false); setRevealed(true); refresh(); onSpun?.(); };
+  const done = () => { setBusy(false); setRevealed(true); setCode(""); refresh(); onSpun?.(); };
+  const again = () => { setResult(null); setRevealed(false); };
 
   const genCode = async () => {
     setGenBusy(true);
@@ -104,19 +105,29 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
         {revealed && (result > 0
           ? <p className="font-display text-2xl text-gold">Ganhou {result}% de desconto! 🎉</p>
           : <p className="font-display text-xl">Não foi desta vez.</p>)}
+        {revealed && campaign && (
+          <Button onClick={again} variant="outline" className="border-gold/60 text-gold bg-transparent hover:bg-gold/10">Introduzir outro código</Button>
+        )}
       </div>
     );
   }
 
-  if (spinRec) {
-    return <SpinResult spin={spinRec} />;
-  }
   if (!campaign) return mine?.reward ? <SpinResult spin={mine.reward} /> : null;
+  const live = mine?.reward && (mine.reward.status === "ACTIVE" || mine.reward.status === "RESERVED") ? mine.reward : null;
+  const activeCount = mine?.active_rewards?.length ?? 0;
 
   return (
     <div className="space-y-5">
+      {live ? (
+        <div className="rounded-xl border border-gold/40 bg-gold/10 px-4 py-3 text-center">
+          <SpinResult spin={live} />
+          {activeCount > 1 && <p className="mt-1 text-xs text-muted-foreground">Tem {activeCount} prémios ativos. Em cada pedido aplicamos automaticamente o que lhe poupa mais.</p>}
+        </div>
+      ) : spinRec ? (
+        <p className="text-center text-sm text-muted-foreground">{spinRec.percent > 0 ? "O seu último prémio já não está ativo." : "Não foi desta vez."} Tem outro código? Tente novamente.</p>
+      ) : null}
       <div className="space-y-2">
-        <label className="text-sm font-medium">Código de desbloqueio</label>
+        <label className="text-sm font-medium">{spinRec ? "Novo código de desbloqueio" : "Código de desbloqueio"}</label>
         <div className="flex gap-2">
           <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 5))} placeholder="XXXXX" maxLength={5}
             className="uppercase tracking-[0.4em] font-semibold text-center text-foreground bg-background" />
@@ -128,7 +139,7 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
 
       {ref && (
         <div className="rounded-xl border border-gold/40 p-4 space-y-3">
-          <p className="text-sm font-medium flex items-center gap-2"><Users className="w-4 h-4 text-gold" /> Convide 5 amigos e desbloqueie seu código</p>
+          <p className="text-sm font-medium flex items-center gap-2"><Users className="w-4 h-4 text-gold" /> Partilhe com 5 amigos e ganhe um novo código</p>
           <div className="flex items-center gap-3">
             <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden"><div className="h-full bg-gold" style={{ width: `${Math.min(100, (ref.count / ref.needed) * 100)}%` }} /></div>
             <span className="text-sm font-semibold tabular-nums">{Math.min(ref.count, ref.needed)}/{ref.needed}</span>
@@ -141,15 +152,14 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
             )}
           </div>
           <p className="text-xs text-muted-foreground">Conta apenas quando uma pessoa nova cria conta pelo seu link.</p>
+          {ref.code && ref.code_status === "AVAILABLE" && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-lg tracking-[0.3em] font-bold text-gold">{ref.code}</span>
+              <Button onClick={() => spin(ref.code!)} disabled={busy} className="bg-gold text-ink hover:bg-gold/90">Usar código e girar</Button>
+            </div>
+          )}
           {ref.count >= ref.needed && (
-            ref.code ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-lg tracking-[0.3em] font-bold text-gold">{ref.code}</span>
-                {ref.code_status === "AVAILABLE" && <Button onClick={() => spin(ref.code!)} disabled={busy} className="bg-gold text-ink hover:bg-gold/90">Usar código e girar</Button>}
-              </div>
-            ) : (
-              <Button onClick={genCode} disabled={genBusy} className="bg-gold text-ink hover:bg-gold/90"><Gift className="w-4 h-4 mr-1" /> Gerar meu código</Button>
-            )
+            <Button onClick={genCode} disabled={genBusy} className="bg-gold text-ink hover:bg-gold/90"><Gift className="w-4 h-4 mr-1" /> Gerar novo código</Button>
           )}
         </div>
       )}
@@ -159,7 +169,7 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
 
 function SpinResult({ spin }: { spin: { percent: number; status: string; expires_at: string | null; max_discount_mt: number } }) {
   if (spin.percent === 0) {
-    return <div className="text-center space-y-1"><p className="font-display text-xl">Não ganhou nesta campanha</p><p className="text-sm text-muted-foreground">Fique atento à próxima campanha da Roleta.</p></div>;
+    return <div className="text-center space-y-1"><p className="font-display text-xl">Não foi desta vez</p><p className="text-sm text-muted-foreground">Com um novo código pode girar novamente.</p></div>;
   }
   const live = spin.status === "ACTIVE" || spin.status === "RESERVED";
   return (

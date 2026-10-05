@@ -13,7 +13,7 @@ const LOCAL_KEY = "derdalax_roleta_popup_until";
 /** Discreet notice of an active reward + first-visit popup while eligible. */
 export function RoletaHome() {
   const { user, loading } = useAuth();
-  const { campaign, mine, refresh } = useRoleta();
+  const { campaign, mine, refresh, activeReward } = useRoleta();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function RoletaHome() {
       return;
     }
     if (!mine) return;
-    if (mine.current_spin) return;
+    if (mine.has_spun_current ?? !!mine.current_spin) return;
     if (mine.popup_dismissed_until && new Date(mine.popup_dismissed_until) > new Date()) return;
     setOpen(true);
   }, [loading, user, campaign, mine]);
@@ -32,11 +32,11 @@ export function RoletaHome() {
   const close = (v: boolean) => {
     if (v) return;
     setOpen(false);
-    if (user) { if (!mine?.current_spin) supabase.rpc("roleta_dismiss_popup").then(() => refresh()); }
+    if (user) { if (!(mine?.has_spun_current ?? mine?.current_spin)) supabase.rpc("roleta_dismiss_popup").then(() => refresh()); }
     else localStorage.setItem(LOCAL_KEY, String(Date.now() + 24 * 3600 * 1000));
   };
 
-  const reward = mine?.reward && (mine.reward.status === "ACTIVE" || mine.reward.status === "RESERVED") ? mine.reward : null;
+  const reward = activeReward ?? (mine?.reward && (mine.reward.status === "ACTIVE" || mine.reward.status === "RESERVED") ? mine.reward : null);
 
   return (
     <>

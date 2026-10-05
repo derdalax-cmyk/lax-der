@@ -57,6 +57,7 @@ import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
+import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AdminAdministradoresRouteImport } from './routes/admin.administradores'
 import { Route as VendedorMensagensIndexRouteImport } from './routes/vendedor.mensagens.index'
 import { Route as VendedorMensagensConversationIdRouteImport } from './routes/vendedor.mensagens.$conversationId'
@@ -308,6 +309,11 @@ const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
   path: '/categorias',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBannersRoute = AdminBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAdministradoresRoute = AdminAdministradoresRouteImport.update({
   id: '/administradores',
   path: '/administradores',
@@ -382,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
@@ -438,6 +445,7 @@ export interface FileRoutesByTo {
   '/suporte': typeof SuporteRoute
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
@@ -498,6 +506,7 @@ export interface FileRoutesById {
   '/tornar-se-vendedor': typeof TornarSeVendedorRoute
   '/vendedor': typeof VendedorRouteWithChildren
   '/admin/administradores': typeof AdminAdministradoresRoute
+  '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
   '/admin/conversas': typeof AdminConversasRoute
@@ -560,6 +569,7 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
@@ -616,6 +626,7 @@ export interface FileRouteTypes {
     | '/suporte'
     | '/tornar-se-vendedor'
     | '/admin/administradores'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
@@ -675,6 +686,7 @@ export interface FileRouteTypes {
     | '/tornar-se-vendedor'
     | '/vendedor'
     | '/admin/administradores'
+    | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
     | '/admin/conversas'
@@ -1085,6 +1097,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/banners': {
+      id: '/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AdminBannersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/administradores': {
       id: '/admin/administradores'
       path: '/administradores'
@@ -1160,6 +1179,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdministradoresRoute: typeof AdminAdministradoresRoute
+  AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
   AdminConversasRoute: typeof AdminConversasRoute
@@ -1175,6 +1195,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdministradoresRoute: AdminAdministradoresRoute,
+  AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
   AdminConversasRoute: AdminConversasRoute,

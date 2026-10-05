@@ -8,6 +8,7 @@ import { useCity } from "@/contexts/CityContext";
 import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
 import { RoletaHome } from "@/components/roleta/RoletaHome";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
+import { HomeHero } from "@/components/HomeHero";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -103,35 +104,7 @@ function Home() {
   return (
 
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <img
-          src={heroBg.url}
-          alt="Arara de roupas DERDALAX com iluminação quente"
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-
-        {/* overlay de cor sólida transparente para legibilidade */}
-        <div className="absolute inset-0 bg-ink/65" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
-
-        <div className="relative max-w-[1400px] mx-auto px-5 py-14 md:py-24 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gold/40 text-gold text-xs uppercase tracking-widest mb-5 animate-fade-in">
-            Nova coleção
-          </div>
-          <h1 className="font-display text-3xl sm:text-4xl md:text-6xl leading-[1.05] mb-4 text-white animate-fade-in">
-            Moda com <span className="text-gold italic">história</span>, estilo com futuro.
-          </h1>
-          <p
-            className="text-base md:text-lg text-white/85 max-w-md mx-auto leading-relaxed animate-fade-in"
-            style={{ animationDelay: "150ms", animationFillMode: "backwards" }}
-          >
-            Peças únicas, selecionadas para você.
-          </p>
-        </div>
-      </section>
+      <HomeHero />
 
       <RoletaHome />
 

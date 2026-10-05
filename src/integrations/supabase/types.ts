@@ -578,6 +578,45 @@ export type Database = {
         }
         Relationships: []
       }
+      home_banners: {
+        Row: {
+          alt: string | null
+          created_at: string
+          cta_label: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          sort_order: number
+          subtitle: string | null
+          updated_at: string
+        }
+        Insert: {
+          alt?: string | null
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Update: {
+          alt?: string | null
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
@@ -1920,6 +1959,10 @@ export type Database = {
       roleta_admin_referrals: { Args: { _campaign_id: string }; Returns: Json }
       roleta_admin_stats: { Args: { _campaign_id: string }; Returns: Json }
       roleta_apply_to_order: { Args: { _order_id: string }; Returns: Json }
+      roleta_calc_order_discount: {
+        Args: { _order_id: string; _spin_id: string }
+        Returns: number
+      }
       roleta_claim_referral: { Args: { _ref: string }; Returns: Json }
       roleta_current_campaign: { Args: never; Returns: string }
       roleta_dismiss_popup: { Args: never; Returns: undefined }

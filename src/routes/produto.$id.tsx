@@ -239,8 +239,9 @@ function ProdutoDetalhe() {
   const effectivePrice = selectedVariation ? Number(selectedVariation.price ?? basePrice) : minPrice;
   const showFromPrice = !selectedVariation && hasPriceRange;
   const discount = getProductDiscount(effectivePrice, product?.original_price);
-  const { activeReward, eligible } = useRoleta();
-  const roleta = product && activeReward && eligible.has(product.id)
+  const { rewardFor } = useRoleta();
+  const activeReward = product ? rewardFor(product.id) : null;
+  const roleta = product && activeReward
     ? getRoletaLine(effectivePrice, basePrice, product.original_price, 1, activeReward)
     : null;
 

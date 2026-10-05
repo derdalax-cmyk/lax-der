@@ -37,8 +37,9 @@ type Props = {
 
 export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   const img = firstImage(product.images);
-  const { activeReward, eligible } = useRoleta();
-  const roleta = activeReward && eligible.has(product.id)
+  const { rewardFor } = useRoleta();
+  const activeReward = rewardFor(product.id);
+  const roleta = activeReward
     ? getRoletaLine(Number(product.base_price), Number(product.base_price), product.original_price, 1, activeReward)
     : null;
   const shownPrice = roleta?.applies ? roleta.unitFinal : Number(product.base_price);
@@ -58,7 +59,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
             {product.is_unique && (
               <span className="bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
             )}
-            {activeReward && eligible.has(product.id) && (
+            {activeReward && (
               <span className="self-start bg-ink text-gold border border-gold/60 text-[10px] tracking-wider px-2 py-0.5 rounded font-semibold">🎁 -{activeReward.percent}% ROLETA</span>
             )}
             {product.status === "reserved" && (
