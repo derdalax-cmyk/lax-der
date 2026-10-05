@@ -29,7 +29,7 @@ type Props = {
 
 export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel, seeMoreSearch }: Props) {
   const { isFavorite, toggle } = useFavorites();
-  const { activeReward, eligible } = useRoleta();
+  const { rewardFor } = useRoleta();
   if (!products.length) return null;
 
   return (
@@ -54,7 +54,8 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
         {products.map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
-          const roletaOn = !!activeReward && eligible.has(p.id);
+          const activeReward = rewardFor(p.id);
+          const roletaOn = !!activeReward;
           const roleta = roletaOn ? getRoletaLine(Number(p.base_price), Number(p.base_price), p.original_price, 1, activeReward) : null;
           const shownPrice = roleta?.applies ? roleta.unitFinal : Number(p.base_price);
           const discount = roleta?.applies
