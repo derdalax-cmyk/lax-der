@@ -75,7 +75,7 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
 
   const spinRec = mine?.current_spin;
   const ref = mine?.referral;
-  const link = ref && typeof window !== "undefined" ? `${window.location.origin}/?ref=${ref.ref_code}` : "";
+  const link = ref ? `https://derdalax.co.mz/?ref=${encodeURIComponent(ref.ref_code)}` : "";
 
   // Spinning or just revealed
   if (result !== null) {
