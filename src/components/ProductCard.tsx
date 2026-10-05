@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
-import { getProductDiscount } from "@/lib/productPrice";
+import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
+import { useRoleta } from "@/hooks/useRoleta";
 
 export type ProductCardData = {
   id: string;
@@ -36,7 +37,14 @@ type Props = {
 
 export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   const img = firstImage(product.images);
-  const discount = getProductDiscount(Number(product.base_price), product.original_price);
+  const { activeReward, eligible } = useRoleta();
+  const roleta = activeReward && eligible.has(product.id)
+    ? getRoletaLine(Number(product.base_price), Number(product.base_price), product.original_price, 1, activeReward)
+    : null;
+  const shownPrice = roleta?.applies ? roleta.unitFinal : Number(product.base_price);
+  const discount = roleta?.applies
+    ? getProductDiscount(shownPrice, Math.max(Number(product.original_price ?? 0), Number(product.base_price)))
+    : getProductDiscount(Number(product.base_price), product.original_price);
   return (
     <div className="group relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} className="block">
@@ -50,6 +58,9 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
             {product.is_unique && (
               <span className="bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
             )}
+            {activeReward && eligible.has(product.id) && (
+              <span className="self-start bg-ink text-gold border border-gold/60 text-[10px] tracking-wider px-2 py-0.5 rounded font-semibold">🎁 -{activeReward.percent}% ROLETA</span>
+            )}
             {product.status === "reserved" && (
               <span className="bg-foreground text-background text-[10px] tracking-wider px-2 py-1 rounded font-semibold">RESERVADO</span>
             )}
@@ -61,7 +72,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
         <div className="p-3">
           <h3 className="font-medium text-sm line-clamp-1">{product.title}</h3>
           <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
-            <span className="text-muted-foreground">{formatMZN(Number(product.base_price))}</span>
+            <span className="text-muted-foreground">{formatMZN(shownPrice)}</span>
             {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
             {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
           </div>

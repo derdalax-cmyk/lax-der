@@ -5,7 +5,8 @@ import { thumbUrl } from "@/lib/imageUrl";
 import { formatMZN, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { CategoryIcon } from "@/lib/categoryIcons";
-import { getProductDiscount } from "@/lib/productPrice";
+import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
+import { useRoleta } from "@/hooks/useRoleta";
 
 
 function firstImage(images: unknown): string | null {
@@ -28,6 +29,7 @@ type Props = {
 
 export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel, seeMoreSearch }: Props) {
   const { isFavorite, toggle } = useFavorites();
+  const { activeReward, eligible } = useRoleta();
   if (!products.length) return null;
 
   return (
@@ -52,7 +54,12 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
         {products.map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
-          const discount = getProductDiscount(Number(p.base_price), p.original_price);
+          const roletaOn = !!activeReward && eligible.has(p.id);
+          const roleta = roletaOn ? getRoletaLine(Number(p.base_price), Number(p.base_price), p.original_price, 1, activeReward) : null;
+          const shownPrice = roleta?.applies ? roleta.unitFinal : Number(p.base_price);
+          const discount = roleta?.applies
+            ? getProductDiscount(shownPrice, Math.max(Number(p.original_price ?? 0), Number(p.base_price)))
+            : getProductDiscount(Number(p.base_price), p.original_price);
           return (
             <div
               key={p.id}
@@ -65,14 +72,17 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                   )}
-                  {p.is_unique && (
-                    <span className="absolute top-1.5 left-1.5 bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>
+                  {(p.is_unique || roletaOn) && (
+                    <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-0.5">
+                      {p.is_unique && <span className="bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>}
+                      {roletaOn && <span className="bg-ink text-gold border border-gold/60 text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">🎁 -{activeReward!.percent}% ROLETA</span>}
+                    </div>
                   )}
                 </div>
                 <div className="p-2">
                   <h3 className="font-medium text-xs line-clamp-1">{p.title}</h3>
                   <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1 gap-y-0.5 text-xs">
-                    <span className="text-gold font-semibold">{formatMZN(Number(p.base_price))}</span>
+                    <span className="text-gold font-semibold">{formatMZN(shownPrice)}</span>
                     {discount && <span className="text-[10px] text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
                     {discount && <span className="text-[10px] font-medium text-destructive">-{discount.discountPercent}%</span>}
                   </div>
