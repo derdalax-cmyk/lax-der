@@ -307,7 +307,7 @@ function Perfil() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
+              className="h-9 w-9 rounded-xl overflow-hidden hover:opacity-90 transition-opacity"
             >
               <img src={instagramAsset.url} alt="Instagram" className="w-full h-full object-cover" />
             </a>
@@ -316,7 +316,7 @@ function Perfil() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
+              className="h-9 w-9 rounded-xl overflow-hidden hover:opacity-90 transition-opacity"
             >
               <img src={facebookAsset.url} alt="Facebook" className="w-full h-full object-cover" />
             </a>
@@ -325,7 +325,7 @@ function Perfil() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"
-              className="h-11 w-11 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity"
+              className="h-9 w-9 rounded-xl overflow-hidden hover:opacity-90 transition-opacity"
             >
               <img src={whatsappAsset.url} alt="WhatsApp" className="w-full h-full object-cover" />
             </a>
@@ -348,16 +348,6 @@ function Perfil() {
       </div>
     </div>
   );
-}
-
-function formatRoletaTimeLeft(expiresAt: string | null) {
-  if (!expiresAt) return "prémio ativo";
-  const remainingMs = new Date(expiresAt).getTime() - Date.now();
-  if (remainingMs <= 0) return "a expirar";
-  const hours = Math.ceil(remainingMs / 3_600_000);
-  if (hours < 24) return `${hours}h restantes`;
-  const days = Math.ceil(hours / 24);
-  return `${days} ${days === 1 ? "dia restante" : "dias restantes"}`;
 }
 
 function Field({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value?: string | null }) {
