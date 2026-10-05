@@ -16,7 +16,8 @@ import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { AutoFramedProductImage } from "@/components/product/AutoFramedProductImage";
-import { getProductDiscount } from "@/lib/productPrice";
+import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
+import { useRoleta } from "@/hooks/useRoleta";
 
 export const Route = createFileRoute("/produto/$id")({
   head: () => ({ meta: [
@@ -238,6 +239,10 @@ function ProdutoDetalhe() {
   const effectivePrice = selectedVariation ? Number(selectedVariation.price ?? basePrice) : minPrice;
   const showFromPrice = !selectedVariation && hasPriceRange;
   const discount = getProductDiscount(effectivePrice, product?.original_price);
+  const { activeReward, eligible } = useRoleta();
+  const roleta = product && activeReward && eligible.has(product.id)
+    ? getRoletaLine(effectivePrice, basePrice, product.original_price, 1, activeReward)
+    : null;
 
   const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
   const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
@@ -381,6 +386,13 @@ function ProdutoDetalhe() {
             {discount && <span className="text-sm text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
             {discount && <span className="text-sm font-medium text-destructive">-{discount.discountPercent}%</span>}
           </div>
+          {roleta?.applies && (
+            <div className="mt-2 inline-flex flex-wrap items-baseline gap-x-2 rounded-lg border border-gold/50 bg-ink px-3 py-1.5 text-gold">
+              <span className="text-xs font-semibold tracking-wider">🎁 Desconto da Roleta -{activeReward!.percent}%</span>
+              <span className="text-lg font-semibold">{formatMZN(roleta.unitFinal)}</span>
+              <span className="text-[11px] opacity-80">o seu preço pessoal</span>
+            </div>
+          )}
           <p className="mt-1 text-sm">
             {Number(product.shipping_fee ?? 0) > 0 ? (
               <span className="text-muted-foreground">Frete: <span className="font-medium text-foreground">{formatMZN(Number(product.shipping_fee))}</span></span>
