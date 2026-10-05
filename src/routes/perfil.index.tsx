@@ -42,13 +42,29 @@ export const Route = createFileRoute("/perfil/")({
 
 function Perfil() {
   const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
-  const { campaign: roletaCampaign, mine: roletaMine } = useRoleta();
+  const { campaign: roletaPublicCampaign, mine: roletaMine, activeReward: roletaReward } = useRoleta();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", city: "" });
   const { collaborations } = useCollaborations();
   const activeCollaborations = collaborations.filter((c) => c.status === "active");
+  const roletaCampaign = roletaPublicCampaign ?? roletaMine?.campaign ?? null;
+  const roletaSpin = roletaMine?.current_spin;
+  const showRoletaCard = Boolean(roletaCampaign || roletaSpin || roletaMine?.history?.length);
+  const roletaSubtitle = roletaReward
+    ? `${roletaReward.percent}% de desconto · ${formatRoletaTimeLeft(roletaReward.expires_at)}`
+    : roletaSpin?.status === "RESERVED"
+      ? `${roletaSpin.percent}% de desconto · reservado no pedido`
+      : roletaSpin?.status === "REDEEMED"
+        ? "Desconto utilizado · ver histórico"
+        : roletaSpin?.status === "EXPIRED"
+          ? "Prémio expirado · ver histórico"
+          : roletaSpin?.status === "LOST"
+            ? "Veja o resultado e o histórico"
+            : roletaCampaign
+              ? "Desbloqueie e gire a roleta"
+              : "Consulte o seu histórico da roleta";
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -254,18 +270,21 @@ function Perfil() {
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
-        {(roletaCampaign || roletaMine?.history?.length) ? (
+        {showRoletaCard ? (
           <Link
             to="/perfil/roleta"
-            className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+            className="group sm:col-span-2 bg-ink border border-gold/60 rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-gold transition-colors shadow-sm"
           >
-            <span className="flex items-center gap-3">
-              <span className="h-10 w-10 rounded-xl bg-gold/15 flex items-center justify-center">
-                <Gift className="w-5 h-5 text-gold" />
+            <span className="flex items-center gap-3 min-w-0">
+              <span className="h-11 w-11 shrink-0 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center">
+                <Gift className="w-5 h-5 text-gold" aria-hidden="true" />
               </span>
-              <span className="font-medium">Roleta de Descontos</span>
+              <span className="min-w-0">
+                <span className="block font-semibold text-gold">Roleta de Descontos</span>
+                <span className="block text-xs text-white/70 mt-0.5 truncate">{roletaSubtitle}</span>
+              </span>
             </span>
-            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+            <ChevronRight className="w-5 h-5 shrink-0 text-gold group-hover:translate-x-1 transition-transform" />
           </Link>
         ) : null}
       </div>
@@ -340,6 +359,16 @@ function Perfil() {
       </div>
     </div>
   );
+}
+
+function formatRoletaTimeLeft(expiresAt: string | null) {
+  if (!expiresAt) return "prémio ativo";
+  const remainingMs = new Date(expiresAt).getTime() - Date.now();
+  if (remainingMs <= 0) return "a expirar";
+  const hours = Math.ceil(remainingMs / 3_600_000);
+  if (hours < 24) return `${hours}h restantes`;
+  const days = Math.ceil(hours / 24);
+  return `${days} ${days === 1 ? "dia restante" : "dias restantes"}`;
 }
 
 function Field({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value?: string | null }) {
