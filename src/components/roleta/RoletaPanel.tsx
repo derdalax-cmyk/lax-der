@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Gift, Copy, Loader2, Users, Share2 } from "lucide-react";
 import { toast } from "sonner";
@@ -11,18 +11,20 @@ import { RoletaWheel } from "./RoletaWheel";
 
 export function useCountdownParts(until: string | null | undefined, onExpire?: () => void) {
   const [now, setNow] = useState(() => Date.now());
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
   const expiresAt = until ? new Date(until).getTime() : 0;
   useEffect(() => {
     if (!expiresAt) return;
     const tick = () => {
       const nextNow = Date.now();
       setNow(nextNow);
-      if (nextNow >= expiresAt) onExpire?.();
+      if (nextNow >= expiresAt) onExpireRef.current?.();
     };
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
-  }, [expiresAt, onExpire]);
-  const ms = Math.max(0, new Date(until).getTime() - now);
+  }, [expiresAt]);
+  const ms = Math.max(0, expiresAt - now);
   return {
     expired: Boolean(until) && ms === 0,
     days: Math.floor(ms / 86400000),
