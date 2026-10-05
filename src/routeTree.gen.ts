@@ -40,6 +40,7 @@ import { Route as VendedorEquipeRouteImport } from './routes/vendedor.equipe'
 import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
+import { Route as PerfilRoletaRouteImport } from './routes/perfil.roleta'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-conta'
@@ -221,6 +222,11 @@ const PoliticasSlugRoute = PoliticasSlugRouteImport.update({
   path: '/politicas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoletaRoute = PerfilRoletaRouteImport.update({
+  id: '/roleta',
+  path: '/roleta',
+  getParentRoute: () => PerfilRoute,
+} as any)
 const PerfilPedidosRoute = PerfilPedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -385,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -439,6 +446,7 @@ export interface FileRoutesByTo {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -497,6 +505,7 @@ export interface FileRoutesById {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -557,6 +566,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -611,6 +621,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -668,6 +679,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -942,6 +954,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliticasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perfil/roleta': {
+      id: '/perfil/roleta'
+      path: '/roleta'
+      fullPath: '/perfil/roleta'
+      preLoaderRoute: typeof PerfilRoletaRouteImport
+      parentRoute: typeof PerfilRoute
+    }
     '/perfil/pedidos': {
       id: '/perfil/pedidos'
       path: '/pedidos'
@@ -1169,6 +1188,7 @@ interface PerfilRouteChildren {
   PerfilExcluirContaRoute: typeof PerfilExcluirContaRoute
   PerfilFavoritosRoute: typeof PerfilFavoritosRoute
   PerfilPedidosRoute: typeof PerfilPedidosRoute
+  PerfilRoletaRoute: typeof PerfilRoletaRoute
   PerfilIndexRoute: typeof PerfilIndexRoute
 }
 
@@ -1177,6 +1197,7 @@ const PerfilRouteChildren: PerfilRouteChildren = {
   PerfilExcluirContaRoute: PerfilExcluirContaRoute,
   PerfilFavoritosRoute: PerfilFavoritosRoute,
   PerfilPedidosRoute: PerfilPedidosRoute,
+  PerfilRoletaRoute: PerfilRoletaRoute,
   PerfilIndexRoute: PerfilIndexRoute,
 }
 

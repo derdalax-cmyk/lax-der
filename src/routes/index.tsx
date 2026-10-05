@@ -6,6 +6,7 @@ import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
 import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
+import { RoletaHome } from "@/components/roleta/RoletaHome";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -131,6 +132,8 @@ function Home() {
           </p>
         </div>
       </section>
+
+      <RoletaHome />
 
       {productsLoading ? (
         <div className="max-w-[1400px] mx-auto px-5 pt-10">

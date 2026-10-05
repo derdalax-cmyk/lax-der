@@ -21,6 +21,7 @@ import { CityAlert } from "@/components/CityAlert";
 import { BottomNav } from "@/components/BottomNav";
 
 import { Toaster } from "@/components/ui/sonner";
+import { RoletaReferralCapture } from "@/components/roleta/RoletaHome";
 import { supabase } from "@/integrations/supabase/client";
 import { useOnlinePresence } from "@/hooks/useOnlinePresence";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
@@ -196,6 +197,7 @@ function AppShell() {
         </main>
         <BottomNav />
         <Toaster richColors position="top-right" />
+        <RoletaReferralCapture />
       </div>
     );
   }
@@ -216,6 +218,7 @@ function AppShell() {
         <PushAutoPrompt />
       </Suspense>
       <Toaster richColors position="top-right" />
+        <RoletaReferralCapture />
 
     </div>
   );
