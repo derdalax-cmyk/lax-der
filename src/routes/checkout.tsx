@@ -181,7 +181,8 @@ function CheckoutPage() {
 
       // Update profile contact if missing
       await supabase.from("profiles").update({
-        name: contact.name, phone: contact.phone, city: address.city,
+        name: contact.name, city: address.city,
+        ...(isValidMzPhone(contact.phone) ? { phone: toMzE164(contact.phone) } : {}),
       }).eq("id", user.id);
 
       const sellerIds = Array.from(new Set(items.map((item) => item.product.seller_id).filter((id): id is string => Boolean(id))));
