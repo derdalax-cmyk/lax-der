@@ -50,7 +50,7 @@ export function RoletaHome() {
       )}
       {campaign && (
         <Dialog open={open} onOpenChange={close}>
-          <DialogContent className="bg-ink text-white border-gold/50 max-w-md">
+          <DialogContent onFocusOutside={(e) => e.preventDefault()} className="bg-ink text-white border-gold/50 max-w-md">
             <div className="text-center space-y-1">
               <p className="text-xs uppercase tracking-[0.3em] text-gold">Roleta DERDALAX</p>
               <DialogTitle className="font-display text-3xl text-white">Ganhe até <span className="text-gold">{campaign.max_percent}%</span> de desconto</DialogTitle>
