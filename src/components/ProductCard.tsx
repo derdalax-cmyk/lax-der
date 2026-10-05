@@ -25,7 +25,7 @@ function firstImage(images: unknown): string | null {
 }
 
 export function formatMZN(v: number): string {
-  return new Intl.NumberFormat("pt-PT", { maximumFractionDigits: 0 }).format(v) + " MT";
+  return new Intl.NumberFormat("pt-PT", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(v)) + " MT";
 }
 
 type Props = {
