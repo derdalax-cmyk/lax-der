@@ -127,6 +127,13 @@
       "when": 1791217058489,
       "tag": "0017_roleta_derdalax",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791225062688,
+      "tag": "0018_roleta_multi_spins_banners_phone",
+      "breakpoints": true
     }
   ]
 }
