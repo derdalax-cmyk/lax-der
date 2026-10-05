@@ -2,8 +2,12 @@ export function normalizeMzPhone(input: string): string {
   return input.replace(/[\s\-().]/g, "").replace(/^(\+|00)?258/, "");
 }
 
-/** Mozambican mobile: 9 national digits starting with 82–87. */
 export function isValidMzPhone(input: string): boolean {
+  return /^(84|85|86|87)\d{7}$/.test(normalizeMzPhone(input));
+}
+
+/** Any Mozambican mobile operator: 9 national digits starting with 82–87 (mirrors DB trigger). */
+export function isValidMzMobile(input: string): boolean {
   return /^8[2-7]\d{7}$/.test(normalizeMzPhone(input));
 }
 
