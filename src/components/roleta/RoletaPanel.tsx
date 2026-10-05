@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Gift, Copy, Loader2, Users, Share2 } from "lucide-react";
 import { toast } from "sonner";
@@ -9,15 +9,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RoletaWheel } from "./RoletaWheel";
 
-export function useCountdown(until: string | null | undefined) {
+export function useCountdownParts(until: string | null | undefined, onExpire?: () => void) {
   const [now, setNow] = useState(() => Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
+  const expiresAt = until ? new Date(until).getTime() : 0;
+  useEffect(() => {
+    if (!expiresAt) return;
+    const tick = () => {
+      const nextNow = Date.now();
+      setNow(nextNow);
+      if (nextNow >= expiresAt) onExpireRef.current?.();
+    };
+    const t = setInterval(tick, 1000);
+    return () => clearInterval(t);
+  }, [expiresAt]);
+  const ms = Math.max(0, expiresAt - now);
+  return {
+    expired: Boolean(until) && ms === 0,
+    days: Math.floor(ms / 86400000),
+    hours: Math.floor((ms % 86400000) / 3600000),
+    minutes: Math.floor((ms % 3600000) / 60000),
+    seconds: Math.floor((ms % 60000) / 1000),
+  };
+}
+
+export function useCountdown(until: string | null | undefined) {
+  const { days: d, hours: h, minutes: m, seconds: s } = useCountdownParts(until);
   if (!until) return "";
-  const ms = Math.max(0, new Date(until).getTime() - now);
-  const d = Math.floor(ms / 86400000);
-  const h = Math.floor((ms % 86400000) / 3600000);
-  const m = Math.floor((ms % 3600000) / 60000);
-  const s = Math.floor((ms % 60000) / 1000);
   return `${d > 0 ? `${d}d ` : ""}${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 

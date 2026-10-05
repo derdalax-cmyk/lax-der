@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Gift } from "lucide-react";
+import { ChevronRight, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleta } from "@/hooks/useRoleta";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { RoletaPanel, RoletaCountdown } from "./RoletaPanel";
+import { RoletaPanel, useCountdownParts } from "./RoletaPanel";
 
 const LOCAL_KEY = "derdalax_roleta_popup_until";
 
@@ -42,10 +42,7 @@ export function RoletaHome() {
     <>
       {reward && (
         <div className="max-w-[1400px] mx-auto px-5 pt-4">
-          <Link to="/perfil/roleta" className="flex items-center justify-between gap-3 rounded-xl border border-gold/50 bg-ink text-gold px-4 py-2.5 text-sm">
-            <span className="flex items-center gap-2"><Gift className="w-4 h-4" /> Tem <strong>-{reward.percent}%</strong> da Roleta {reward.status === "RESERVED" ? "(reservado num pedido)" : ""}</span>
-            {reward.expires_at && <span className="text-xs opacity-80">expira em <RoletaCountdown until={reward.expires_at} /></span>}
-          </Link>
+          <ActiveRewardCard percent={reward.percent} expiresAt={reward.expires_at} onExpire={refresh} />
         </div>
       )}
       {campaign && (
@@ -64,6 +61,46 @@ export function RoletaHome() {
         </Dialog>
       )}
     </>
+  );
+}
+
+function ActiveRewardCard({ percent, expiresAt, onExpire }: { percent: number; expiresAt: string | null; onExpire: () => void }) {
+  const time = useCountdownParts(expiresAt, onExpire);
+  if (!expiresAt || time.expired) return null;
+  const units = [
+    { value: time.days, label: "Dias" },
+    { value: time.hours, label: "Horas" },
+    { value: time.minutes, label: "Min" },
+    { value: time.seconds, label: "Seg" },
+  ];
+
+  return (
+    <Link
+      to="/perfil/roleta"
+      aria-label={`Seu desconto de ${percent}% está ativo. Ver Roleta de Descontos`}
+      className="group flex items-center gap-3 sm:gap-5 rounded-2xl border border-gold/50 bg-ink px-3 py-3 sm:px-5 sm:py-4 text-white shadow-sm hover:border-gold transition-colors"
+    >
+      <span className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl border border-gold/30 bg-gold/15">
+        <Gift className="h-7 w-7 sm:h-8 sm:w-8 text-gold" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <span className="block min-w-0">
+          <span className="block text-sm sm:text-base font-semibold leading-tight">
+            Seu desconto de <span className="text-gold">{percent}%</span> está ativo!
+          </span>
+          <span className="block mt-1 text-xs text-white/65">Aproveite, faltam:</span>
+        </span>
+        <span className="mt-2 grid w-full max-w-[270px] grid-cols-4 gap-1.5 sm:mt-0 sm:w-auto sm:min-w-[260px]" aria-label="Tempo restante">
+          {units.map((unit) => (
+            <span key={unit.label} className="flex min-w-0 flex-col items-center rounded-lg border border-gold/25 bg-gold/10 px-1.5 py-1.5">
+              <span className="text-base sm:text-lg font-bold leading-none tabular-nums text-gold">{String(unit.value).padStart(2, "0")}</span>
+              <span className="mt-1 text-[9px] sm:text-[10px] uppercase text-white/55">{unit.label}</span>
+            </span>
+          ))}
+        </span>
+      </span>
+      <ChevronRight className="h-5 w-5 shrink-0 text-gold transition-transform group-hover:translate-x-1" aria-hidden="true" />
+    </Link>
   );
 }
 
