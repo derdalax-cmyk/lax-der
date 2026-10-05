@@ -22,7 +22,6 @@ import {
   Heart,
   ShoppingBag,
   ChevronRight,
-  Gift,
   FileText,
   Trash2,
 } from "lucide-react";
@@ -30,6 +29,8 @@ import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { NotificationPreferences } from "@/components/NotificationPreferences";
 import { toast } from "sonner";
+import { RoletaFloatingButton } from "@/components/roleta/RoletaFloatingButton";
+import { isValidMzMobile, toMzE164, mzNationalPart, MZ_PHONE_ERROR } from "@/lib/validation";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
 import facebookAsset from "@/assets/facebook.png.asset.json";
@@ -52,20 +53,6 @@ function Perfil() {
   const roletaCampaign = roletaPublicCampaign ?? roletaMine?.campaign ?? null;
   const roletaSpin = roletaMine?.current_spin;
   const showRoletaCard = Boolean(roletaCampaign || roletaSpin || roletaMine?.history?.length);
-  const roletaSubtitle = roletaReward
-    ? `${roletaReward.percent}% de desconto · ${formatRoletaTimeLeft(roletaReward.expires_at)}`
-    : roletaSpin?.status === "RESERVED"
-      ? `${roletaSpin.percent}% de desconto · reservado no pedido`
-      : roletaSpin?.status === "REDEEMED"
-        ? "Desconto utilizado · ver histórico"
-        : roletaSpin?.status === "EXPIRED"
-          ? "Prémio expirado · ver histórico"
-          : roletaSpin?.status === "LOST"
-            ? "Veja o resultado e o histórico"
-            : roletaCampaign
-              ? "Desbloqueie e gire a roleta"
-              : "Consulte o seu histórico da roleta";
-
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [user, loading, navigate]);
@@ -82,7 +69,7 @@ function Perfil() {
   useEffect(() => {
     setForm({
       name: profile?.name ?? "",
-      phone: profile?.phone ?? "",
+      phone: mzNationalPart(profile?.phone),
       city: profile?.city ?? "",
     });
   }, [profile, full]);
@@ -90,8 +77,14 @@ function Perfil() {
   if (!user) return null;
 
   const save = async () => {
+    const phoneDigits = form.phone.replace(/\D/g, "");
+    const phoneChanged = phoneDigits !== mzNationalPart(profile?.phone);
+    if (phoneDigits && phoneChanged && !isValidMzMobile(phoneDigits)) { toast.error(MZ_PHONE_ERROR); return; }
     setSaving(true);
-    const { error } = await supabase.from("profiles").update(form).eq("id", user.id);
+    const { error } = await supabase.from("profiles").update({
+      name: form.name, city: form.city,
+      ...(phoneChanged ? { phone: phoneDigits ? toMzE164(phoneDigits) : null } : {}),
+    }).eq("id", user.id);
     setSaving(false);
     if (error) {
       toast.error(error.message);
@@ -104,17 +97,17 @@ function Perfil() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-5 py-6 sm:py-10">
+    <div className="max-w-3xl mx-auto px-4 sm:px-5 py-4 sm:py-8">
       <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
         {/* Cover */}
-        <div className="relative h-36 sm:h-48">
+        <div className="relative h-28 sm:h-36">
           <img src={coverAsset.url} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
         </div>
 
         {/* Header */}
-        <div className="px-5 sm:px-8 pb-6">
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-14">
+        <div className="px-4 sm:px-6 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-3 -mt-12">
             <AvatarUploader
               userId={user.id}
               avatarUrl={profile?.avatar_url ?? null}
@@ -124,7 +117,7 @@ function Perfil() {
             />
             <div className="flex-1 sm:pb-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-2xl sm:text-3xl font-bold leading-tight">
+                <h1 className="font-display text-xl sm:text-2xl font-bold leading-tight">
                   {profile?.name || "Bem-vindo"}
                 </h1>
                 {full?.is_vip && (
@@ -189,8 +182,8 @@ function Perfil() {
       </div>
 
       {/* Personal data */}
-      <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
-        <div className="flex items-center justify-between mb-5">
+      <div className="bg-card border border-border rounded-2xl mt-4 p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="font-display text-lg font-semibold">Dados pessoais</h2>
           {!editing ? (
             <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
@@ -220,11 +213,22 @@ function Perfil() {
             </div>
             <div>
               <Label className="text-xs">Telefone</Label>
-              <Input
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="+258 84 000 0000"
-              />
+              <div className="flex h-9 rounded-md border border-input bg-background overflow-hidden focus-within:ring-2 focus-within:ring-ring">
+                <span className="px-3 grid place-items-center text-sm font-medium bg-secondary text-muted-foreground border-r border-input">+258</span>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel-national"
+                  aria-label="Telefone (9 dígitos)"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").replace(/^258/, "").slice(0, 9) })}
+                  placeholder="84 000 0000"
+                  className="flex-1 min-w-0 px-3 text-sm bg-transparent outline-none"
+                />
+              </div>
+              {form.phone && form.phone !== mzNationalPart(profile?.phone) && !isValidMzMobile(form.phone) && (
+                <p className="text-xs text-destructive mt-1">{MZ_PHONE_ERROR}</p>
+              )}
             </div>
             <div>
               <Label className="text-xs">Cidade</Label>
@@ -245,13 +249,13 @@ function Perfil() {
       </div>
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
         <Link
           to="/favoritos"
-          className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+          className="group bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between hover:border-gold/60 transition-colors"
         >
           <span className="flex items-center gap-3">
-            <span className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+            <span className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center">
               <Heart className="w-5 h-5 text-[#c44545]" />
             </span>
             <span className="font-medium">Os meus favoritos</span>
@@ -260,47 +264,30 @@ function Perfil() {
         </Link>
         <Link
           to="/perfil/pedidos"
-          className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+          className="group bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between hover:border-gold/60 transition-colors"
         >
           <span className="flex items-center gap-3">
-            <span className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <span className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-emerald-600" />
             </span>
             <span className="font-medium">Os meus pedidos</span>
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
-        {showRoletaCard ? (
-          <Link
-            to="/perfil/roleta"
-            className="group sm:col-span-2 bg-ink border border-gold/60 rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-gold transition-colors shadow-sm"
-          >
-            <span className="flex items-center gap-3 min-w-0">
-              <span className="h-11 w-11 shrink-0 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center">
-                <Gift className="w-5 h-5 text-gold" aria-hidden="true" />
-              </span>
-              <span className="min-w-0">
-                <span className="block font-semibold text-gold">Roleta de Descontos</span>
-                <span className="block text-xs text-white/70 mt-0.5 truncate">{roletaSubtitle}</span>
-              </span>
-            </span>
-            <ChevronRight className="w-5 h-5 shrink-0 text-gold group-hover:translate-x-1 transition-transform" />
-          </Link>
-        ) : null}
       </div>
 
       {/* Sobre a DERDALAX */}
-      <div className="bg-card border border-border rounded-3xl mt-5 p-5 sm:p-8 shadow-sm">
-        <h2 className="font-display text-lg font-semibold mb-5">Sobre a DERDALAX</h2>
+      <div className="bg-card border border-border rounded-2xl mt-4 p-4 sm:p-6 shadow-sm space-y-2.5">
+        <h2 className="font-display text-base font-semibold mb-1">Sobre a DERDALAX</h2>
         <PushSettingsRow />
         <NotificationPreferences />
 
         <PoliciesDialog
           trigger={
-            <button className="w-full group flex items-center justify-between gap-3 rounded-2xl border border-border px-4 py-3 hover:border-gold/60 transition-colors">
+            <button className="w-full group flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2.5 hover:border-gold/60 transition-colors">
               <span className="flex items-center gap-3">
-                <span className="h-10 w-10 rounded-xl bg-gold/15 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-gold" />
+                <span className="h-8 w-8 rounded-lg bg-gold/15 flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-gold" />
                 </span>
                 <span className="text-left">
                   <span className="block font-medium leading-tight">Políticas</span>
@@ -312,7 +299,7 @@ function Perfil() {
           }
         />
 
-        <div className="mt-5">
+        <div className="pt-2">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Siga-nos</div>
           <div className="flex items-center gap-3">
             <a
@@ -346,7 +333,9 @@ function Perfil() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col items-center gap-1">
+      {showRoletaCard && <RoletaFloatingButton highlight={!!roletaReward} />}
+
+      <div className="mt-5 flex flex-col items-center gap-1 pb-16">
         <Button variant="ghost" className="text-muted-foreground" onClick={() => signOut()}>
           <LogOut className="w-4 h-4 mr-1.5" /> Terminar sessão
         </Button>
@@ -373,7 +362,7 @@ function formatRoletaTimeLeft(expiresAt: string | null) {
 
 function Field({ icon: Icon, label, value }: { icon: typeof Phone; label: string; value?: string | null }) {
   return (
-    <div className="flex items-start gap-3 bg-secondary/40 rounded-xl px-4 py-3">
+    <div className="flex items-start gap-2.5 bg-secondary/40 rounded-lg px-3 py-2">
       <Icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
       <div className="min-w-0">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
