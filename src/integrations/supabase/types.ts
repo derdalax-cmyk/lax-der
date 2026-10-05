@@ -661,8 +661,12 @@ export type Database = {
           image_snapshot: string | null
           order_id: string
           price: number
+          price_before_roleta: number | null
           product_id: string | null
           quantity: number
+          roleta_discount: number | null
+          roleta_percent: number | null
+          roleta_spin_id: string | null
           seller_id: string | null
           title_snapshot: string | null
           variation_id: string | null
@@ -672,8 +676,12 @@ export type Database = {
           image_snapshot?: string | null
           order_id: string
           price: number
+          price_before_roleta?: number | null
           product_id?: string | null
           quantity?: number
+          roleta_discount?: number | null
+          roleta_percent?: number | null
+          roleta_spin_id?: string | null
           seller_id?: string | null
           title_snapshot?: string | null
           variation_id?: string | null
@@ -683,8 +691,12 @@ export type Database = {
           image_snapshot?: string | null
           order_id?: string
           price?: number
+          price_before_roleta?: number | null
           product_id?: string | null
           quantity?: number
+          roleta_discount?: number | null
+          roleta_percent?: number | null
+          roleta_spin_id?: string | null
           seller_id?: string | null
           title_snapshot?: string | null
           variation_id?: string | null
@@ -702,6 +714,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_roleta_spin_id_fkey"
+            columns: ["roleta_spin_id"]
+            isOneToOne: false
+            referencedRelation: "roleta_spins"
             referencedColumns: ["id"]
           },
           {
@@ -1068,6 +1087,282 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      roleta_campaigns: {
+        Row: {
+          created_at: string
+          ends_at: string | null
+          id: string
+          is_active: boolean
+          max_discount_mt: number
+          name: string
+          prizes: Json
+          starts_at: string | null
+          top_prize_limit: number
+          top_prize_percent: number
+          updated_at: string
+          validity_days: number
+        }
+        Insert: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_discount_mt?: number
+          name: string
+          prizes?: Json
+          starts_at?: string | null
+          top_prize_limit?: number
+          top_prize_percent?: number
+          updated_at?: string
+          validity_days?: number
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_discount_mt?: number
+          name?: string
+          prizes?: Json
+          starts_at?: string | null
+          top_prize_limit?: number
+          top_prize_percent?: number
+          updated_at?: string
+          validity_days?: number
+        }
+        Relationships: []
+      }
+      roleta_codes: {
+        Row: {
+          campaign_id: string
+          code: string
+          created_at: string
+          created_by: string | null
+          id: string
+          origin: string
+          owner_user_id: string | null
+          redeemed_at: string | null
+          redeemed_by: string | null
+          status: string
+        }
+        Insert: {
+          campaign_id: string
+          code: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          origin: string
+          owner_user_id?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+        }
+        Update: {
+          campaign_id?: string
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          origin?: string
+          owner_user_id?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roleta_codes_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "roleta_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roleta_popup_state: {
+        Row: {
+          dismissed_until: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          dismissed_until?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          dismissed_until?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      roleta_product_participation: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          created_by: string | null
+          product_id: string
+          seller_id: string | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          created_by?: string | null
+          product_id: string
+          seller_id?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          created_by?: string | null
+          product_id?: string
+          seller_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roleta_product_participation_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "roleta_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roleta_product_participation_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roleta_product_participation_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roleta_referral_links: {
+        Row: {
+          created_at: string
+          ref_code: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ref_code: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ref_code?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      roleta_referrals: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roleta_referrals_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "roleta_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roleta_spins: {
+        Row: {
+          campaign_id: string
+          code_id: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          max_discount_mt: number
+          order_id: string | null
+          percent: number
+          redeemed_at: string | null
+          reserved_at: string | null
+          status: string
+          user_id: string
+          won_at: string
+        }
+        Insert: {
+          campaign_id: string
+          code_id: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          max_discount_mt: number
+          order_id?: string | null
+          percent: number
+          redeemed_at?: string | null
+          reserved_at?: string | null
+          status: string
+          user_id: string
+          won_at?: string
+        }
+        Update: {
+          campaign_id?: string
+          code_id?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          max_discount_mt?: number
+          order_id?: string | null
+          percent?: number
+          redeemed_at?: string | null
+          reserved_at?: string | null
+          status?: string
+          user_id?: string
+          won_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roleta_spins_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "roleta_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roleta_spins_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: true
+            referencedRelation: "roleta_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roleta_spins_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       seller_collaborators: {
         Row: {
@@ -1486,6 +1781,7 @@ export type Database = {
       }
       get_my_conversations: { Args: never; Returns: Json }
       get_my_order_history: { Args: never; Returns: Json }
+      get_my_roleta: { Args: never; Returns: Json }
       get_my_team: { Args: never; Returns: Json }
       get_my_team_activity: {
         Args: { _limit?: number; _user_id: string }
@@ -1503,6 +1799,7 @@ export type Database = {
         }[]
       }
       get_public_seller: { Args: { _id: string }; Returns: Json }
+      get_roleta_public: { Args: never; Returns: Json }
       get_seller_audit_logs: {
         Args: { _limit?: number; _seller_id: string }
         Returns: Json
@@ -1615,6 +1912,25 @@ export type Database = {
       release_product: { Args: { _product_id: string }; Returns: undefined }
       reserve_product: { Args: { _product_id: string }; Returns: Json }
       revoke_admin_by_email: { Args: { _email: string }; Returns: undefined }
+      roleta_admin_codes: { Args: { _campaign_id: string }; Returns: Json }
+      roleta_admin_generate_codes: {
+        Args: { _campaign_id: string; _qty: number }
+        Returns: string[]
+      }
+      roleta_admin_referrals: { Args: { _campaign_id: string }; Returns: Json }
+      roleta_admin_stats: { Args: { _campaign_id: string }; Returns: Json }
+      roleta_apply_to_order: { Args: { _order_id: string }; Returns: Json }
+      roleta_claim_referral: { Args: { _ref: string }; Returns: Json }
+      roleta_current_campaign: { Args: never; Returns: string }
+      roleta_dismiss_popup: { Args: never; Returns: undefined }
+      roleta_expire_mine: { Args: { _uid: string }; Returns: undefined }
+      roleta_generate_referral_code: { Args: never; Returns: string }
+      roleta_random_code: { Args: never; Returns: string }
+      roleta_set_product_participation: {
+        Args: { _participate: boolean; _product_id: string }
+        Returns: undefined
+      }
+      roleta_spin: { Args: { _code: string }; Returns: Json }
       seller_set_collaborator_status: {
         Args: {
           _id: string

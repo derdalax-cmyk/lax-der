@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCartRoleta, ROLETA_KEY } from "@/hooks/useRoleta";
 import { formatMZN } from "@/components/ProductCard";
 import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
@@ -43,6 +45,8 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
   const { items, subtotal, shipping, total, clear, loading: cartLoading } = useCart();
+  const cartRoleta = useCartRoleta();
+  const qcRoleta = useQueryClient();
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -156,6 +160,13 @@ function CheckoutPage() {
       }));
       const { error: iErr } = await supabase.from("order_items").insert(rows);
       if (iErr) throw new Error(iErr.message);
+
+      // Roleta DERDALAX: server decides and reserves the reward atomically
+      if (cartRoleta.reward) {
+        const { error: rErr } = await supabase.rpc("roleta_apply_to_order", { _order_id: order.id });
+        if (rErr) console.warn("roleta warning:", rErr.message);
+        qcRoleta.invalidateQueries({ queryKey: ROLETA_KEY });
+      }
 
       // Finalize (mark unique sold, deduct stock)
       const { error: fErr } = await supabase.rpc("finalize_order_items", { _order_id: order.id });
@@ -379,8 +390,10 @@ function CheckoutPage() {
           </ul>
           <div className="border-t border-border pt-3 space-y-2">
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatMZN(subtotal)}</span></div>
+            {cartRoleta.normalDiscount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Desconto normal (incluído)</span><span className="text-destructive">-{formatMZN(cartRoleta.normalDiscount)}</span></div>}
+            {cartRoleta.roletaDiscount > 0 && <div className="flex justify-between text-sm"><span className="text-gold font-medium">🎁 Desconto da Roleta -{cartRoleta.reward?.percent}%</span><span className="text-destructive">-{formatMZN(cartRoleta.roletaDiscount)}</span></div>}
             <div className="flex justify-between text-sm"><span className="text-muted-foreground">Frete</span><span>{shipping === 0 ? "Grátis" : formatMZN(shipping)}</span></div>
-            <div className="flex justify-between font-medium text-lg pt-2 border-t border-border"><span>Total</span><span>{formatMZN(total)}</span></div>
+            <div className="flex justify-between font-medium text-lg pt-2 border-t border-border"><span>Total</span><span>{formatMZN(total - cartRoleta.roletaDiscount)}</span></div>
           </div>
         </aside>
       </div>

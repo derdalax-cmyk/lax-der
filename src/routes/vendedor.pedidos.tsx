@@ -21,7 +21,7 @@ export const Route = createFileRoute("/vendedor/pedidos")({
   component: SellerPedidos,
 });
 
-type OrderItem = { title: string; quantity: number; price: number; size: string | null; color: string | null; images?: string[] | null };
+type OrderItem = { price_before_roleta?: number | null; roleta_percent?: number | null; roleta_discount?: number | null; title: string; quantity: number; price: number; size: string | null; color: string | null; images?: string[] | null };
 type ShippingAddress = { line1?: string; line2?: string; city?: string; province?: string; postal_code?: string; country?: string; reference?: string } | null;
 type SellerOrder = {
   id: string;
@@ -302,7 +302,15 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
                       {[it.size, it.color].filter(Boolean).length > 0 && ` · ${[it.size, it.color].filter(Boolean).join(" / ")}`}
                     </span>
                   </span>
-                  <span className="font-medium shrink-0">{mzn(it.price * it.quantity)}</span>
+                  <span className="font-medium shrink-0 text-right">
+                    {it.roleta_percent ? (
+                      <>
+                        <span className="block text-xs text-muted-foreground">Preço normal: {mzn(Number(it.price_before_roleta) * it.quantity)}</span>
+                        <span className="block text-xs text-gold">Roleta DERDALAX -{it.roleta_percent}%: -{mzn(Number(it.roleta_discount))}</span>
+                        <span className="block">{mzn(it.price * it.quantity)}</span>
+                      </>
+                    ) : mzn(it.price * it.quantity)}
+                  </span>
                 </li>
               );
             })}

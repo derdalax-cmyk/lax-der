@@ -40,6 +40,7 @@ import { Route as VendedorEquipeRouteImport } from './routes/vendedor.equipe'
 import { Route as VendedorDestaquesRouteImport } from './routes/vendedor.destaques'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
+import { Route as PerfilRoletaRouteImport } from './routes/perfil.roleta'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-conta'
@@ -49,6 +50,7 @@ import { Route as LojaIdRouteImport } from './routes/loja.$id'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
+import { Route as AdminRoletaRouteImport } from './routes/admin.roleta'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
 import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
@@ -221,6 +223,11 @@ const PoliticasSlugRoute = PoliticasSlugRouteImport.update({
   path: '/politicas/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoletaRoute = PerfilRoletaRouteImport.update({
+  id: '/roleta',
+  path: '/roleta',
+  getParentRoute: () => PerfilRoute,
+} as any)
 const PerfilPedidosRoute = PerfilPedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
@@ -264,6 +271,11 @@ const AdminVendedoresRoute = AdminVendedoresRouteImport.update({
 const AdminUtilizadoresRoute = AdminUtilizadoresRouteImport.update({
   id: '/utilizadores',
   path: '/utilizadores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRoletaRoute = AdminRoletaRouteImport.update({
+  id: '/roleta',
+  path: '/roleta',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminProdutosRoute = AdminProdutosRouteImport.update({
@@ -376,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
@@ -385,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -430,6 +444,7 @@ export interface FileRoutesByTo {
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
@@ -439,6 +454,7 @@ export interface FileRoutesByTo {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -488,6 +504,7 @@ export interface FileRoutesById {
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
+  '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
@@ -497,6 +514,7 @@ export interface FileRoutesById {
   '/perfil/excluir-conta': typeof PerfilExcluirContaRoute
   '/perfil/favoritos': typeof PerfilFavoritosRoute
   '/perfil/pedidos': typeof PerfilPedidosRoute
+  '/perfil/roleta': typeof PerfilRoletaRoute
   '/politicas/$slug': typeof PoliticasSlugRoute
   '/produto/$id': typeof ProdutoIdRoute
   '/vendedor/destaques': typeof VendedorDestaquesRoute
@@ -548,6 +566,7 @@ export interface FileRouteTypes {
     | '/admin/denuncias'
     | '/admin/equipe'
     | '/admin/produtos'
+    | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/colaborador/$sellerId'
@@ -557,6 +576,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -602,6 +622,7 @@ export interface FileRouteTypes {
     | '/admin/denuncias'
     | '/admin/equipe'
     | '/admin/produtos'
+    | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/colaborador/$sellerId'
@@ -611,6 +632,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -659,6 +681,7 @@ export interface FileRouteTypes {
     | '/admin/denuncias'
     | '/admin/equipe'
     | '/admin/produtos'
+    | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/colaborador/$sellerId'
@@ -668,6 +691,7 @@ export interface FileRouteTypes {
     | '/perfil/excluir-conta'
     | '/perfil/favoritos'
     | '/perfil/pedidos'
+    | '/perfil/roleta'
     | '/politicas/$slug'
     | '/produto/$id'
     | '/vendedor/destaques'
@@ -942,6 +966,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliticasSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perfil/roleta': {
+      id: '/perfil/roleta'
+      path: '/roleta'
+      fullPath: '/perfil/roleta'
+      preLoaderRoute: typeof PerfilRoletaRouteImport
+      parentRoute: typeof PerfilRoute
+    }
     '/perfil/pedidos': {
       id: '/perfil/pedidos'
       path: '/pedidos'
@@ -1003,6 +1034,13 @@ declare module '@tanstack/react-router' {
       path: '/utilizadores'
       fullPath: '/admin/utilizadores'
       preLoaderRoute: typeof AdminUtilizadoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/roleta': {
+      id: '/admin/roleta'
+      path: '/roleta'
+      fullPath: '/admin/roleta'
+      preLoaderRoute: typeof AdminRoletaRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/produtos': {
@@ -1128,6 +1166,7 @@ interface AdminRouteChildren {
   AdminDenunciasRoute: typeof AdminDenunciasRoute
   AdminEquipeRoute: typeof AdminEquipeRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
+  AdminRoletaRoute: typeof AdminRoletaRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1142,6 +1181,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminDenunciasRoute: AdminDenunciasRoute,
   AdminEquipeRoute: AdminEquipeRoute,
   AdminProdutosRoute: AdminProdutosRoute,
+  AdminRoletaRoute: AdminRoletaRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -1169,6 +1209,7 @@ interface PerfilRouteChildren {
   PerfilExcluirContaRoute: typeof PerfilExcluirContaRoute
   PerfilFavoritosRoute: typeof PerfilFavoritosRoute
   PerfilPedidosRoute: typeof PerfilPedidosRoute
+  PerfilRoletaRoute: typeof PerfilRoletaRoute
   PerfilIndexRoute: typeof PerfilIndexRoute
 }
 
@@ -1177,6 +1218,7 @@ const PerfilRouteChildren: PerfilRouteChildren = {
   PerfilExcluirContaRoute: PerfilExcluirContaRoute,
   PerfilFavoritosRoute: PerfilFavoritosRoute,
   PerfilPedidosRoute: PerfilPedidosRoute,
+  PerfilRoletaRoute: PerfilRoletaRoute,
   PerfilIndexRoute: PerfilIndexRoute,
 }
 

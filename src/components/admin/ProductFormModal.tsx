@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCategories } from "@/hooks/useCategories";
 import { CategoryIcon } from "@/lib/categoryIcons";
+import { useRoleta } from "@/hooks/useRoleta";
 
 const GENDERS = ["masculino", "feminino", "unissex"] as const;
 
@@ -95,6 +96,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
   const [inStock, setInStock] = useState(true);
   const [isUnique, setIsUnique] = useState(false);
   const [featured, setFeatured] = useState(false);
+  const { campaign: roletaCampaign } = useRoleta();
+  const [roletaJoin, setRoletaJoin] = useState(false);
+  const [roletaJoinInitial, setRoletaJoinInitial] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [status, setStatus] = useState<ProductStatus>("available");
@@ -201,6 +205,12 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
       supabase.from("product_variations").select("*").eq("product_id", product.id).then(({ data }) => {
         setVariations((data ?? []).map((v) => ({ id: v.id, size: v.size ?? "", color: v.color ?? "", stock: v.stock, price: v.price as number | null })));
       });
+      setRoletaJoin(false); setRoletaJoinInitial(false);
+      if (roletaCampaign) {
+        supabase.from("roleta_product_participation").select("product_id").eq("campaign_id", roletaCampaign.id).eq("product_id", product.id).maybeSingle().then(({ data }) => {
+          setRoletaJoin(!!data); setRoletaJoinInitial(!!data);
+        });
+      }
       if (!isSeller) {
         supabase.from("featured_collection_products").select("collection_id").eq("product_id", product.id).then(({ data }) => {
           setSelectedCollections(new Set((data ?? []).map((r) => r.collection_id)));
@@ -209,8 +219,9 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
 
     } else {
       setTitle(""); setText(""); setPrice(""); setOriginalPrice(""); setShippingFee(""); setCategory(""); setGender(""); setMaterial(""); setColor(""); setBrand(""); setDefaultSize(""); setInStock(true); setIsUnique(false); setFeatured(false); setImages([]); setVariations([]); setSelectedCollections(new Set()); setStatus("available"); setStock(0); setStockAlert(5);
+      setRoletaJoin(false); setRoletaJoinInitial(false);
     }
-  }, [product, open]);
+  }, [product, open, roletaCampaign?.id]);
 
   const save = async () => {
     const parsedPrice = price.trim() === "" ? NaN : Number(price);
@@ -285,6 +296,11 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
           const { error } = await supabase.from("product_variations").insert(rows);
           if (error) throw error;
         }
+      }
+
+      if (pid && roletaCampaign && roletaJoin !== roletaJoinInitial) {
+        const { error: rErr } = await supabase.rpc("roleta_set_product_participation", { _product_id: pid, _participate: roletaJoin });
+        if (rErr) toast.error("Roleta: " + rErr.message);
       }
 
       if (pid && !isSeller) {
@@ -442,6 +458,15 @@ export function ProductFormModal({ open, onOpenChange, product, sellerId, collab
             {!isSeller && <label className="flex items-center gap-2 text-sm"><Checkbox checked={featured} onCheckedChange={(v) => setFeatured(!!v)} /> Destaque</label>}
             <label className="flex items-center gap-2 text-sm"><Checkbox checked={inStock} onCheckedChange={(v) => setInStock(!!v)} /> Em estoque</label>
           </div>
+          {roletaCampaign && (
+            <label className="flex items-start gap-2 text-sm rounded-lg border border-gold/40 bg-gold/5 px-3 py-2">
+              <Checkbox checked={roletaJoin} onCheckedChange={(v) => setRoletaJoin(!!v)} className="mt-0.5" />
+              <span>
+                <span className="font-medium">Participar da campanha da Roleta</span>
+                <span className="block text-xs text-muted-foreground">"{roletaCampaign.name}" — clientes premiados podem receber até {roletaCampaign.max_percent}% de desconto neste produto (máx. {roletaCampaign.max_discount_mt} MT). O desconto é suportado pela loja.</span>
+              </span>
+            </label>
+          )}
 
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

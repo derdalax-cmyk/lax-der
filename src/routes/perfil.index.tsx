@@ -1,3 +1,4 @@
+import { useRoleta } from "@/hooks/useRoleta";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -21,6 +22,7 @@ import {
   Heart,
   ShoppingBag,
   ChevronRight,
+  Gift,
   FileText,
   Trash2,
 } from "lucide-react";
@@ -40,6 +42,7 @@ export const Route = createFileRoute("/perfil/")({
 
 function Perfil() {
   const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
+  const { campaign: roletaCampaign, mine: roletaMine } = useRoleta();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -251,6 +254,20 @@ function Perfil() {
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Link>
+        {(roletaCampaign || roletaMine?.history?.length) ? (
+          <Link
+            to="/perfil/roleta"
+            className="group bg-card border border-border rounded-2xl p-5 flex items-center justify-between hover:border-gold/60 transition-colors"
+          >
+            <span className="flex items-center gap-3">
+              <span className="h-10 w-10 rounded-xl bg-gold/15 flex items-center justify-center">
+                <Gift className="w-5 h-5 text-gold" />
+              </span>
+              <span className="font-medium">Roleta de Descontos</span>
+            </span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+          </Link>
+        ) : null}
       </div>
 
       {/* Sobre a DERDALAX */}
