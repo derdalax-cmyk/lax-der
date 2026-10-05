@@ -16,6 +16,7 @@ import { Check, ChevronLeft, ChevronRight, Smartphone, Loader2, Truck, Wallet } 
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TermsLink, PrivacyLink } from "@/components/TermsLink";
+import { isValidMzPhone, toMzE164 } from "@/lib/validation";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
