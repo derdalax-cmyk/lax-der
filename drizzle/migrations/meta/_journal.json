@@ -120,6 +120,13 @@
       "when": 1791067601426,
       "tag": "0016_chat_architecture_order_threads_edit_delete",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791217058489,
+      "tag": "0017_roleta_derdalax",
+      "breakpoints": true
     }
   ]
 }
