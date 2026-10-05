@@ -21,9 +21,8 @@ export function RoletaFloatingButton({ highlight }: { highlight?: boolean }) {
                 key={i}
                 d={`M50 50 L${p(a0)} A48 48 0 0 1 ${p(a1)} Z`}
                 className={i % 2 === 0 ? "fill-gold" : "fill-ink"}
-                stroke="currentColor"
+                stroke="var(--gold)"
                 strokeWidth="1"
-                style={{ color: "var(--gold)" }}
               />
             );
           })}
