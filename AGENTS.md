@@ -3,3 +3,6 @@
 - Product discount eligibility and percentage calculations use the shared `productPrice` helper so every storefront surface follows the same rule.
 - Roleta DERDALAX: spins, code consumption, referral credit and order discounts are decided only by SECURITY DEFINER RPCs (roleta_*), and the reward lifecycle follows order_sellers status via trigger, because the browser must never choose or apply a discount.
 - Roleta price estimates on cards/cart use `getRoletaLine`/`getRoletaCart` in `productPrice`, which mirror `roleta_apply_to_order`, so storefront previews match what the server charges.
+- Roleta: each valid code grants exactly one spin (no per-user/campaign limit); referral progress = valid referrals − 5 × referral codes issued; an order uses only the single ACTIVE reward with the best real saving (chosen in `roleta_apply_to_order`), because rewards must never stack.
+- Home hero title is constant; images come from `home_banners` (admin-managed, stored in the public `products` bucket under `banners/`) with the bundled hero as fallback.
+- Profile phone is normalized/validated by the `normalize_profile_phone` trigger only when it changes, so legacy values stay intact.
