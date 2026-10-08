@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Adicionar selo DERDALAX opcional, arrastável e redimensionável no editor partilhado.
+- [ ] Validar composição guardada, rotação/recorte e interação mobile sem guardar dados de teste.
+
 - [ ] Remover mensagens e ações de cidade sem produtos na página inicial e no Explorar.
 - [ ] Limitar o aviso de cidade a visitantes que ainda não escolheram uma cidade.
 - [ ] Adicionar convite de criação de conta na página inicial, com adiamento de 24 horas após fechar.

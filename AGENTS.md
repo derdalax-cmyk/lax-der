@@ -1,4 +1,5 @@
 # Project architecture
+- Product image watermarks use the same-origin public brand icon and normalized final-canvas coordinates; preview and JPEG export share one composition so crop/rotation never displace the saved seal.
 - Visitors get the full Navbar/BottomNav with a permanent Entrar/Criar conta CTA; private actions redirect to /login with safeRedirect, because the homepage must be public (Google OAuth).
 - Product discount eligibility and percentage calculations use the shared `productPrice` helper so every storefront surface follows the same rule.
 - Roleta DERDALAX: spins, code consumption, referral credit and order discounts are decided only by SECURITY DEFINER RPCs (roleta_*), and the reward lifecycle follows order_sellers status via trigger, because the browser must never choose or apply a discount.
