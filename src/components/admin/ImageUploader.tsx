@@ -78,8 +78,7 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
       .from("products")
       .upload(path, blob, { upsert: false, contentType: "image/jpeg" });
     if (error) {
-      toast.error(`Erro: ${error.message}`);
-      return;
+      throw new Error(`Erro: ${error.message}`);
     }
     const { data } = supabase.storage.from("products").getPublicUrl(path);
     onChange(value.map((u) => (u === url ? data.publicUrl : u)));
@@ -209,7 +208,8 @@ export function ImageUploader({ productId, pathPrefix, value, onChange }: Props)
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                const url = confirmRemove!;
+                const url = confirmRemove;
+                if (!url) return;
                 setConfirmRemove(null);
                 void remove(url);
               }}
