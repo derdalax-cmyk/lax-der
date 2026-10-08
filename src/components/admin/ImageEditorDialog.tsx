@@ -213,7 +213,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[calc(100dvh-1rem)] overflow-y-auto p-4 sm:p-6" onOpenAutoFocus={() => {}}>
+      <DialogContent className="max-w-lg max-h-[calc(100dvh-1rem)] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">Editar imagem</DialogTitle>
         </DialogHeader>
@@ -292,7 +292,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
           {seal && (
             <div className="flex items-center gap-3">
               <label id="seal-size-label" className="shrink-0 text-xs font-medium">Tamanho do selo</label>
-              <Slider aria-labelledby="seal-size-label" min={5} max={60} step={1} value={[Math.round(seal.size * 100)]} disabled={saving} className="min-h-9 [&_[data-slot=thumb]]:h-5" onValueChange={([value]) => {
+              <Slider aria-labelledby="seal-size-label" min={5} max={60} step={1} value={[Math.round(seal.size * 100)]} disabled={saving} className="min-h-9" onValueChange={([value]) => {
                 const canvas = canvasRef.current;
                 if (value === undefined || !canvas) return;
                 setSeal((current) => current ? fitSeal({ ...current, size: value / 100 }, canvas.width, canvas.height) : null);
