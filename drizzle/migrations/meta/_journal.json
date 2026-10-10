@@ -134,6 +134,13 @@
       "when": 1791225062688,
       "tag": "0018_roleta_multi_spins_banners_phone",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791629147477,
+      "tag": "0019_home_banner_editable_title",
+      "breakpoints": true
     }
   ]
 }
