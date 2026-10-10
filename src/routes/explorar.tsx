@@ -97,9 +97,20 @@ function ExplorarPage() {
       const from = (page - 1) * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
 
-      const { data, count } = await q;
+      const { data, count, error } = await q;
       if (cancelled) return;
-      const n = count ?? 0;
+      let n = count ?? 0;
+      if (error && page > 1) {
+        // Página fora do intervalo: obter só o total com os mesmos filtros.
+        let c = supabase.from("products").select("id", { count: "exact", head: true }).neq("status", "sold");
+        if (searchDebounced.trim()) c = c.ilike("title", `%${searchDebounced.trim()}%`);
+        if (category !== "all") c = c.eq("category", category);
+        if (gender !== "all") c = c.ilike("description", `%"gender":"${gender}"%`);
+        if (city) c = c.or(`city.eq.${city},city.is.null`);
+        const r = await c;
+        if (cancelled) return;
+        n = r.count ?? 0;
+      }
       const pages = Math.max(1, Math.ceil(n / PAGE_SIZE));
       setTotal(n);
       if (page > pages || page !== pagina) { setPage(Math.min(page, pages), false); return; }
