@@ -53,7 +53,7 @@ function ExplorarPage() {
   const page = Math.max(1, Math.floor(Number(pagina) || 1));
   const [total, setTotal] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
-  const firstFilterRun = useRef(true);
+  const filterKey = useRef<string | null>(null);
   const setPage = (n: number, scroll = true) => {
     navigate({ search: (prev) => ({ ...prev, pagina: n }), replace: !scroll });
     if (scroll) listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -72,7 +72,9 @@ function ExplorarPage() {
   }, [search]);
 
   useEffect(() => {
-    if (firstFilterRun.current) { firstFilterRun.current = false; return; }
+    const key = JSON.stringify([searchDebounced, category, gender, city]);
+    if (filterKey.current === null || filterKey.current === key) { filterKey.current = key; return; }
+    filterKey.current = key;
     if (page !== 1) setPage(1, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchDebounced, category, gender, city]);
