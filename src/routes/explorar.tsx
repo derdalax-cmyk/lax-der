@@ -1,5 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { type ProductCardData, formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -9,12 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/hooks/useCategories";
 import { CategoryIcon } from "@/lib/categoryIcons";
-import { Search, Heart } from "lucide-react";
+import { Search, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount } from "@/lib/productPrice";
 
+const searchSchema = z.object({ pagina: fallback(z.number().int(), 1).default(1) });
+
 export const Route = createFileRoute("/explorar")({
+  validateSearch: zodValidator(searchSchema),
   head: () => ({ meta: [
     { title: "Explorar · DERDALAX" },
     { name: "description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
@@ -26,7 +31,7 @@ export const Route = createFileRoute("/explorar")({
   component: ExplorarPage,
 });
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 50;
 
 function firstImage(images: unknown): string | null {
   if (Array.isArray(images) && images.length > 0) {
@@ -43,8 +48,16 @@ function ExplorarPage() {
   const { city } = useCity();
   const [items, setItems] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const { pagina } = Route.useSearch();
+  const navigate = useNavigate({ from: "/explorar" });
+  const page = Math.max(1, Math.floor(Number(pagina) || 1));
+  const [total, setTotal] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  const firstFilterRun = useRef(true);
+  const setPage = (n: number, scroll = true) => {
+    navigate({ search: (prev) => ({ ...prev, pagina: n }), replace: !scroll });
+    if (scroll) listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [category, setCategory] = useState("all");
@@ -58,7 +71,11 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(0); setItems([]); }, [searchDebounced, category, gender, city]);
+  useEffect(() => {
+    if (firstFilterRun.current) { firstFilterRun.current = false; return; }
+    if (page !== 1) setPage(1, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchDebounced, category, gender, city]);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,28 +83,33 @@ function ExplorarPage() {
       setLoading(true);
       let q = supabase
         .from("products")
-        .select("id,title,base_price,original_price,images,is_unique,status,category")
+        .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
         .neq("status", "sold");
 
       if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
       if (category !== "all") q = q.eq("category", category);
       if (gender !== "all") q = q.ilike("description", `%"gender":"${gender}"%`);
       if (city) q = q.or(`city.eq.${city},city.is.null`);
-      q = q.order("created_at", { ascending: false });
+      q = q.order("created_at", { ascending: false }).order("id", { ascending: false });
 
-      const from = page * PAGE_SIZE;
+      const from = (page - 1) * PAGE_SIZE;
       q = q.range(from, from + PAGE_SIZE - 1);
 
-      const { data } = await q;
+      const { data, count } = await q;
       if (cancelled) return;
-      const rows = (data ?? []) as ProductCardData[];
-      setItems((prev) => (page === 0 ? rows : [...prev, ...rows]));
-      setHasMore(rows.length === PAGE_SIZE);
+      const n = count ?? 0;
+      const pages = Math.max(1, Math.ceil(n / PAGE_SIZE));
+      setTotal(n);
+      if (page > pages || page !== pagina) { setPage(Math.min(page, pages), false); return; }
+      setItems((data ?? []) as ProductCardData[]);
       setLoading(false);
     };
     run();
     return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, searchDebounced, category, gender, city]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">
@@ -122,6 +144,7 @@ function ExplorarPage() {
       </div>
 
 
+      <div ref={listRef} className="scroll-mt-24" />
       {loading && items.length === 0 ? (
         <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
           {Array.from({ length: 12 }).map((_, i) => (
@@ -162,7 +185,7 @@ function ExplorarPage() {
                     <div className="p-3">
                       <h3 className="font-medium text-sm line-clamp-1">{p.title}</h3>
                       <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
-                        <span className="text-muted-foreground">{formatMZN(Number(p.base_price))}</span>
+                        <span className="text-gold font-semibold">{formatMZN(Number(p.base_price))}</span>
                         {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
                         {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
                       </div>
@@ -180,10 +203,14 @@ function ExplorarPage() {
               );
             })}
           </div>
-          {hasMore && (
-            <div className="flex justify-center mt-8">
-              <Button variant="outline" disabled={loading} onClick={() => setPage((p) => p + 1)}>
-                {loading ? "A carregar…" : "Ver mais"}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <span className="text-sm text-muted-foreground mr-1">Página {page} de {totalPages}</span>
+              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Página anterior" disabled={loading || page <= 1} onClick={() => setPage(page - 1)}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Página seguinte" disabled={loading || page >= totalPages} onClick={() => setPage(page + 1)}>
+                <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           )}
