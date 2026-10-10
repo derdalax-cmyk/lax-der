@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 
-type Banner = { id: string; image_url: string; subtitle: string | null; alt: string | null; link_url: string | null; cta_label: string | null };
+type Banner = { id: string; title: string; image_url: string; subtitle: string | null; alt: string | null; link_url: string | null; cta_label: string | null };
 
 const FALLBACK: Banner = {
   id: "fallback",
+  title: "Conectamos-te ao que procuras.",
   image_url: heroBg.url,
   subtitle: "Peças únicas, selecionadas para você.",
   alt: "Arara de roupas DERDALAX com iluminação quente",
@@ -22,7 +23,7 @@ export function HomeHero() {
     queryFn: async () => {
       const { data } = await supabase
         .from("home_banners")
-        .select("id,image_url,subtitle,alt,link_url,cta_label")
+        .select("id,title,image_url,subtitle,alt,link_url,cta_label")
         .eq("is_active", true)
         .order("sort_order", { ascending: true })
         .order("created_at", { ascending: true });
@@ -68,8 +69,8 @@ export function HomeHero() {
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
 
       <div className="relative h-full max-w-[1400px] mx-auto px-5 flex flex-col items-center justify-center text-center">
-        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl leading-[1.05] mb-3 text-white animate-fade-in">
-          Conectamos-te ao <span className="text-gold italic">que procuras.</span>
+        <h1 key={`title-${cur.id}`} className="font-display text-3xl sm:text-4xl md:text-5xl leading-[1.05] mb-3 text-primary-foreground max-w-4xl break-words line-clamp-3 animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
+          {(!cur.title?.trim() || cur.title === FALLBACK.title) ? <>Conectamos-te ao <span className="text-gold italic">que procuras.</span></> : cur.title}
         </h1>
         <p key={cur.id} className="text-sm md:text-lg text-white/85 max-w-md mx-auto leading-relaxed animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
           {cur.subtitle || FALLBACK.subtitle}
