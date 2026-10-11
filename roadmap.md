@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Permitir editar o título principal por banner no Admin e validar a apresentação na página inicial.
+- [x] Permitir editar o título principal por banner no Admin e validar a apresentação na página inicial.
 
 - [x] Adicionar selo DERDALAX opcional, arrastável e redimensionável no editor partilhado.
 - [x] Validar composição guardada, rotação/recorte e interação mobile sem guardar dados de teste.

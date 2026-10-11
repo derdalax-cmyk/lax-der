@@ -17,6 +17,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
       { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
       { property: "og:description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "preload", as: "image", href: heroBg.url, fetchPriority: "high" },
