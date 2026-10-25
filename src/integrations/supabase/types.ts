@@ -847,6 +847,7 @@ export type Database = {
           shipping: number
           shipping_address: Json | null
           status: Database["public"]["Enums"]["order_status"]
+          stock_finalized_at: string | null
           subtotal: number
           total: number
           updated_at: string
@@ -866,6 +867,7 @@ export type Database = {
           shipping?: number
           shipping_address?: Json | null
           status?: Database["public"]["Enums"]["order_status"]
+          stock_finalized_at?: string | null
           subtotal?: number
           total?: number
           updated_at?: string
@@ -885,6 +887,7 @@ export type Database = {
           shipping?: number
           shipping_address?: Json | null
           status?: Database["public"]["Enums"]["order_status"]
+          stock_finalized_at?: string | null
           subtotal?: number
           total?: number
           updated_at?: string
@@ -1795,6 +1798,19 @@ export type Database = {
       }
       can_feature_for_seller: { Args: { _seller_id: string }; Returns: boolean }
       can_use_ai_generator: { Args: { _seller_id: string }; Returns: boolean }
+      create_order_secure: {
+        Args: {
+          _customer_name: string
+          _customer_phone: string
+          _items: Json
+          _notes?: string
+          _payment_method: string
+          _payment_phone?: string
+          _payment_reference?: string
+          _shipping_address: Json
+        }
+        Returns: Json
+      }
       current_seller_id: { Args: never; Returns: string }
       delete_email: {
         Args: { message_id: number; queue_name: string }

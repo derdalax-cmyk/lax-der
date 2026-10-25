@@ -141,6 +141,13 @@
       "when": 1791629147477,
       "tag": "0019_home_banner_editable_title",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792968277158,
+      "tag": "0020_security_checkout_orders_products_audit",
+      "breakpoints": true
     }
   ]
 }
