@@ -21,7 +21,36 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   }
 });
 
+// Headers de segurança em todas as respostas HTTP.
+// frame-ancestors inclui os domínios Lovable para o preview do editor continuar a funcionar.
+const securityHeaders = createMiddleware().server(async ({ next }) => {
+  const result = await next();
+  const res = result.response;
+  const h = new Headers(res.headers);
+  h.set("X-Content-Type-Options", "nosniff");
+  h.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  h.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  h.set(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https:",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://*.lovableproject.com https://*.lovableproject-dev.com",
+      "frame-src 'self' https://*.lovable.app https://*.lovable.dev https://accounts.google.com",
+      "worker-src 'self'",
+      "frame-ancestors 'self' https://*.lovable.app https://*.lovable.dev https://*.lovableproject.com https://*.lovableproject-dev.com",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join("; "),
+  );
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
+});
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [securityHeaders, errorMiddleware],
   functionMiddleware: [attachSupabaseAuth],
 }));

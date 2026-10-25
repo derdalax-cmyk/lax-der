@@ -141,6 +141,34 @@
       "when": 1791629147477,
       "tag": "0019_home_banner_editable_title",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792968277158,
+      "tag": "0020_security_checkout_orders_products_audit",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792968302115,
+      "tag": "0021_security_roleta_cooldown",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792968317418,
+      "tag": "0022_security_products_bucket_image_extensions",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792968547709,
+      "tag": "0023_security_roleta_cooldown_commit",
+      "breakpoints": true
     }
   ]
 }

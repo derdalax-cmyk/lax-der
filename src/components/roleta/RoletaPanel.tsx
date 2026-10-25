@@ -78,7 +78,9 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
     setBusy(true);
     const { data, error } = await supabase.rpc("roleta_spin", { _code: v });
     if (error) { setBusy(false); toast.error(error.message); return; }
-    setResult(Number((data as { percent: number }).percent));
+    const res = data as { ok?: boolean; error?: string; percent?: number };
+    if (res && res.ok === false) { setBusy(false); toast.error(res.error || "Código inválido ou já utilizado"); return; }
+    setResult(Number(res.percent));
   };
 
   const done = () => { setBusy(false); setRevealed(true); setCode(""); refresh(); onSpun?.(); };

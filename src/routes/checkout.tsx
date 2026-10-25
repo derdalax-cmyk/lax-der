@@ -62,6 +62,7 @@ function CheckoutPage() {
   const [payTiming, setPayTiming] = useState<PayTiming>("antecipado");
   const [payMethod, setPayMethod] = useState<PayMethod>("e-mpesa");
   const [payPhone, setPayPhone] = useState("");
+  const [notes, setNotes] = useState("");
 
   // Auth gate
   useEffect(() => {
@@ -133,45 +134,27 @@ function CheckoutPage() {
     try {
       const reference = genReference();
       const finalMethod = payTiming === "entrega" ? "entrega" : payMethod;
-      // Create order
-      const { data: order, error: oErr } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user.id,
-          customer_name: contact.name,
-          customer_phone: contact.phone,
-          subtotal, shipping, total,
-          payment_method: finalMethod as never,
-          payment_status: "pending",
-          payment_reference: reference,
-          payment_phone: payTiming === "entrega" ? contact.phone : payPhone,
-          status: "pending",
-          shipping_address: address,
-        })
-        .select("id").single();
-      if (oErr || !order) throw new Error(oErr?.message || "Falha ao criar pedido");
-
-      // Create items
-      const rows = items.map((it) => ({
-        order_id: order.id,
-        product_id: it.product_id,
-        variation_id: it.variation_id,
-        quantity: it.quantity,
-        price: it.variation?.price ?? Number(it.product.base_price),
-      }));
-      const { error: iErr } = await supabase.from("order_items").insert(rows);
-      if (iErr) throw new Error(iErr.message);
+      // O pedido é criado integralmente no servidor: preços, stock, vendedor,
+      // totais e estado inicial são lidos/validados na base de dados.
+      const { data: created, error: oErr } = await supabase.rpc("create_order_secure", {
+        _items: items.map((it) => ({ product_id: it.product_id, variation_id: it.variation_id, quantity: it.quantity })),
+        _customer_name: contact.name,
+        _customer_phone: contact.phone,
+        _shipping_address: address as never,
+        _payment_method: finalMethod,
+        _payment_phone: payTiming === "entrega" ? contact.phone : payPhone,
+        _payment_reference: reference,
+        _notes: notes,
+      });
+      if (oErr || !created) throw new Error(oErr?.message || "Falha ao criar pedido");
+      const orderId = (created as { order_id: string }).order_id;
 
       // Roleta DERDALAX: server decides and reserves the reward atomically
       if (cartRoleta.reward) {
-        const { error: rErr } = await supabase.rpc("roleta_apply_to_order", { _order_id: order.id });
+        const { error: rErr } = await supabase.rpc("roleta_apply_to_order", { _order_id: orderId });
         if (rErr) console.warn("roleta warning:", rErr.message);
         qcRoleta.invalidateQueries({ queryKey: ROLETA_KEY });
       }
-
-      // Finalize (mark unique sold, deduct stock)
-      const { error: fErr } = await supabase.rpc("finalize_order_items", { _order_id: order.id });
-      if (fErr) console.warn("finalize warning:", fErr.message);
 
       // Save address
       if (saveAddress) {
@@ -191,9 +174,9 @@ function CheckoutPage() {
 
       toast.success(payTiming === "entrega" ? "Pedido criado! Pagará ao receber o produto." : "Pedido criado com sucesso! Combine o pagamento com a loja pelo chat.");
       if (sellerIds.length === 1) {
-        navigate({ to: "/chat/order/$orderId", params: { orderId: order.id }, search: { seller: sellerIds[0] } });
+        navigate({ to: "/chat/order/$orderId", params: { orderId }, search: { seller: sellerIds[0] } });
       } else {
-        navigate({ to: "/perfil/pedidos", search: { novo: order.id } });
+        navigate({ to: "/perfil/pedidos", search: { novo: orderId } });
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao processar pedido");
@@ -353,7 +336,7 @@ function CheckoutPage() {
 
               <div>
                 <Label htmlFor="notes">Notas (opcional)</Label>
-                <Textarea id="notes" rows={2} placeholder="Instruções para entrega…" />
+                <Textarea id="notes" rows={2} placeholder="Instruções para entrega…" value={notes} onChange={(e) => setNotes(e.target.value)} />
               </div>
 
               <label className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer pt-1">

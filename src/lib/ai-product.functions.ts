@@ -36,6 +36,36 @@ export const generateProductFields = createServerFn({ method: "POST" })
 
     const { imagesToDataUrls, generateProductData, aiProductModel } = await import("./ai-product.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // O productId (quando presente) tem de pertencer à loja autorizada.
+    if (data.productId) {
+      const { data: prod } = await supabaseAdmin
+        .from("products").select("id")
+        .eq("id", data.productId).eq("seller_id", data.sellerId).maybeSingle();
+      if (!prod) return { ok: false as const, error: MESSAGES.forbidden };
+    }
+
+    // Cada imagem tem de pertencer à loja: pasta sellers/<dono> ou pasta de um produto da loja.
+    const { data: sellerRow } = await supabaseAdmin
+      .from("sellers").select("user_id").eq("id", data.sellerId).maybeSingle();
+    const ownerId = (sellerRow as { user_id?: string } | null)?.user_id ?? null;
+    const paths = data.images
+      .map((u) => u.match(/\/products\/(.+?)(\?|$)/)?.[1])
+      .filter((p): p is string => !!p)
+      .map((p) => decodeURIComponent(p));
+    const firstSegments = [...new Set(paths.map((p) => p.split("/")[0]))];
+    const productIds = firstSegments.filter((s) => /^[0-9a-f-]{36}$/i.test(s));
+    const { data: ownedRows } = productIds.length
+      ? await supabaseAdmin.from("products").select("id").in("id", productIds).eq("seller_id", data.sellerId)
+      : { data: [] as { id: string }[] };
+    const ownedIds = new Set((ownedRows ?? []).map((r) => r.id));
+    const allOwned = paths.length > 0 && paths.every((p) => {
+      const seg = p.split("/");
+      if (seg[0] === "sellers") return !!ownerId && seg[1] === ownerId;
+      return ownedIds.has(seg[0]);
+    });
+    if (!allOwned) return { ok: false as const, error: MESSAGES.forbidden };
+
     const model = aiProductModel();
 
     const log = async (status: string, images_count: number, result: unknown, error?: string) => {
