@@ -24,7 +24,8 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
 // Headers de segurança em todas as respostas HTTP.
 // frame-ancestors inclui os domínios Lovable para o preview do editor continuar a funcionar.
 const securityHeaders = createMiddleware().server(async ({ next }) => {
-  const res = await next();
+  const result = await next();
+  const res = result.response;
   const h = new Headers(res.headers);
   h.set("X-Content-Type-Options", "nosniff");
   h.set("Referrer-Policy", "strict-origin-when-cross-origin");
