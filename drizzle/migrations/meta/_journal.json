@@ -148,6 +148,13 @@
       "when": 1792968277158,
       "tag": "0020_security_checkout_orders_products_audit",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792968302115,
+      "tag": "0021_security_roleta_cooldown",
+      "breakpoints": true
     }
   ]
 }

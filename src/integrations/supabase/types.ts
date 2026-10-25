@@ -1339,6 +1339,27 @@ export type Database = {
           },
         ]
       }
+      roleta_spin_attempts: {
+        Row: {
+          fails: number
+          locked_until: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          fails?: number
+          locked_until?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          fails?: number
+          locked_until?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       roleta_spins: {
         Row: {
           campaign_id: string
