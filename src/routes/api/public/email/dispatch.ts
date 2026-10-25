@@ -103,8 +103,9 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           return Response.json({ skipped: "pref_off" });
         }
 
-        const linkPath = link && link.startsWith("/") ? link : "/";
-        const linkUrl = `https://derdalax.co.mz${linkPath}`;
+        // Apenas caminhos internos com caracteres seguros; o URL é escapado antes de ir para o HTML.
+        const linkPath = link && /^\/[A-Za-z0-9\-_\/?.=&%#]*$/.test(link) ? link : "/";
+        const linkUrl = escapeHtml(`https://derdalax.co.mz${linkPath}`);
         const html = renderEmail(title, body ?? "", linkUrl);
         const text = `${title}\n\n${body ?? ""}\n\n${linkUrl}`;
         const messageId = crypto.randomUUID();

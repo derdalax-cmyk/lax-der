@@ -68,6 +68,26 @@ function isApiRequest(url) {
   );
 }
 
+// Rotas privadas/autenticadas: nunca cachear HTML nem servir do cache offline.
+const PRIVATE_NAV_PREFIXES = [
+  "/admin",
+  "/perfil",
+  "/vendedor",
+  "/colaborador",
+  "/pedido",
+  "/mensagens",
+  "/chat",
+  "/checkout",
+  "/carrinho",
+  "/favoritos",
+  "/login",
+];
+function isPrivateNav(url) {
+  return PRIVATE_NAV_PREFIXES.some(
+    (p) => url.pathname === p || url.pathname.startsWith(p + "/")
+  );
+}
+
 function isStaticAsset(url) {
   if (url.origin !== self.location.origin) return false;
   if (url.pathname.startsWith("/_build/") || url.pathname.startsWith("/assets/")) return true;
@@ -84,6 +104,11 @@ self.addEventListener("fetch", (event) => {
 
   // HTML navigations: network-first, fall back to cache, then offline shell.
   if (request.mode === "navigate") {
+    // Páginas privadas: network-only, sem gravar nem ler do cache.
+    if (isPrivateNav(url)) {
+      event.respondWith(fetch(request).catch(() => Response.error()));
+      return;
+    }
     event.respondWith(
       (async () => {
         try {
