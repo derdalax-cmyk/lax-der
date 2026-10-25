@@ -155,6 +155,13 @@
       "when": 1792968302115,
       "tag": "0021_security_roleta_cooldown",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792968317418,
+      "tag": "0022_security_products_bucket_image_extensions",
+      "breakpoints": true
     }
   ]
 }
