@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Fechar INSERT direto de pedidos e preservar criação pela RPC segura.
+- [ ] Remover identificação da reserva das respostas públicas e validar loja/carrinho/painéis.
+- [ ] Documentar testes finais e dependência Zod pendente sem upgrade major.
+
 - [x] Permitir editar o título principal por banner no Admin e validar a apresentação na página inicial.
 
 - [x] Adicionar selo DERDALAX opcional, arrastável e redimensionável no editor partilhado.
