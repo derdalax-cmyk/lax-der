@@ -38,7 +38,7 @@ function CollaboratorStorePanel() {
     enabled: !!collaboration && collaboration.status === "active",
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("products").select("*").eq("seller_id", sellerId).order("created_at", { ascending: false });
+        .rpc("get_managed_products", { _seller_id: sellerId });
       if (error) throw error;
       return data as unknown as Row[];
     },

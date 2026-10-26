@@ -20,7 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         let productUrls = "";
         try {
           const { data } = await supabase
-            .from("products")
+            .from("public_products")
             .select("id")
             .neq("status", "sold")
             .order("created_at", { ascending: false })

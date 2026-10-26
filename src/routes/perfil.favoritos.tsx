@@ -25,7 +25,7 @@ function FavoritosPage() {
       if (ids.length === 0) { setProducts([]); setLoading(false); return; }
       setLoading(true);
       const { data } = await supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category")
         .in("id", ids);
       setProducts((data ?? []) as ProductCardData[]);

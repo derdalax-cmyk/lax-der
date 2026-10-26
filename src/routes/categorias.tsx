@@ -24,7 +24,7 @@ function CategoriasPage() {
     queryFn: async () => {
       const result: Record<string, number> = {};
       await Promise.all(categories.map(async (c) => {
-        let q = supabase.from("products").select("id", { count: "exact", head: true })
+        let q = supabase.from("public_products").select("id", { count: "exact", head: true })
           .eq("category", c.slug).neq("status", "sold");
         if (city) q = q.or(`city.eq.${city},city.is.null`);
         const { count } = await q;

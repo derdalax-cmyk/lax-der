@@ -38,7 +38,7 @@ function FavoritosPage() {
       }
       setLoading(true);
       const { data } = await supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category")
         .in("id", ids);
       // keep only currently-favorited and preserve order of favoriting

@@ -57,7 +57,7 @@ function ProdutosPage() {
     const fetchData = async () => {
       setLoading(true);
       let q = supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
         .neq("status", "sold")
         .order("created_at", { ascending: false });

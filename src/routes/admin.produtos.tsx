@@ -56,7 +56,7 @@ function AdminProdutos() {
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.rpc("get_managed_products", {});
       if (error) throw error;
       return data as Row[];
     },

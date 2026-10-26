@@ -48,7 +48,8 @@ function SellerProdutos() {
     queryKey: ["seller-products", seller?.id],
     enabled: !!seller?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").eq("seller_id", seller!.id).order("created_at", { ascending: false });
+      if (!seller?.id) return [];
+      const { data, error } = await supabase.rpc("get_managed_products", { _seller_id: seller.id });
       if (error) throw error;
       return data as Row[];
     },
