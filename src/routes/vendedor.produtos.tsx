@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/vendedor/produtos")({
+  head: () => ({ meta: [{ title: "Produtos da minha loja · DERDALAX" }, { name: "description", content: "Gestão dos produtos da sua loja DERDALAX." }, { property: "og:title", content: "Produtos da minha loja · DERDALAX" }, { property: "og:description", content: "Gestão dos produtos da sua loja DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SellerProdutos,
 });
 
@@ -48,7 +49,8 @@ function SellerProdutos() {
     queryKey: ["seller-products", seller?.id],
     enabled: !!seller?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").eq("seller_id", seller!.id).order("created_at", { ascending: false });
+      if (!seller?.id) return [];
+      const { data, error } = await supabase.rpc("get_managed_products", { _seller_id: seller.id });
       if (error) throw error;
       return data as Row[];
     },

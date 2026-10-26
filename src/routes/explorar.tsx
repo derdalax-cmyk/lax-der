@@ -84,7 +84,7 @@ function ExplorarPage() {
     const run = async () => {
       setLoading(true);
       let q = supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
         .neq("status", "sold");
 
@@ -102,7 +102,7 @@ function ExplorarPage() {
       let n = count ?? 0;
       if (error && page > 1) {
         // Página fora do intervalo: obter só o total com os mesmos filtros.
-        let c = supabase.from("products").select("id", { count: "exact", head: true }).neq("status", "sold");
+        let c = supabase.from("public_products").select("id", { count: "exact", head: true }).neq("status", "sold");
         if (searchDebounced.trim()) c = c.ilike("title", `%${searchDebounced.trim()}%`);
         if (category !== "all") c = c.eq("category", category);
         if (gender !== "all") c = c.ilike("description", `%"gender":"${gender}"%`);

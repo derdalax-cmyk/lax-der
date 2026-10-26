@@ -12,6 +12,10 @@ export const Route = createFileRoute("/favoritos")({
     meta: [
       { title: "Favoritos · DERDALAX" },
       { name: "description", content: "As suas peças favoritas guardadas na DERDALAX." },
+      { property: "og:title", content: "Favoritos · DERDALAX" },
+      { property: "og:description", content: "As suas peças favoritas guardadas na DERDALAX." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: FavoritosPage,
@@ -38,7 +42,7 @@ function FavoritosPage() {
       }
       setLoading(true);
       const { data } = await supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category")
         .in("id", ids);
       // keep only currently-favorited and preserve order of favoriting

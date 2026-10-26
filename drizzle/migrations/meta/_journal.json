@@ -169,6 +169,13 @@
       "when": 1792968547709,
       "tag": "0023_security_roleta_cooldown_commit",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792991524895,
+      "tag": "0024_close_legacy_order_inserts_public_product_projection",
+      "breakpoints": true
     }
   ]
 }

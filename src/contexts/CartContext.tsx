@@ -13,7 +13,6 @@ export type CartProduct = {
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
   reserved_until: string | null;
-  reserved_by: string | null;
   seller_id: string | null;
 };
 
@@ -72,7 +71,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const productIds = Array.from(new Set(rows.map((r) => r.product_id)));
     const variationIds = Array.from(new Set(rows.map((r) => r.variation_id).filter(Boolean) as string[]));
     const [{ data: products }, { data: variations }] = await Promise.all([
-      supabase.from("products").select("id,title,base_price,original_price,shipping_fee,images,is_unique,status,reserved_until,reserved_by,seller_id").in("id", productIds),
+      supabase.from("public_products").select("id,title,base_price,original_price,shipping_fee,images,is_unique,status,reserved_until,seller_id").in("id", productIds),
       variationIds.length
         ? supabase.from("product_variations").select("id,size,color,price,stock").in("id", variationIds)
         : Promise.resolve({ data: [] as CartVariation[] }),
@@ -164,8 +163,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback(async (productId: string, variationId: string | null, quantity = 1): Promise<boolean> => {
     const { data: prod } = await supabase
-      .from("products")
-      .select("id,is_unique,status,reserved_by")
+      .from("public_products")
+      .select("id,is_unique,status")
       .eq("id", productId).maybeSingle();
     if (!prod) { toast.error("Produto não encontrado"); return false; }
     if (prod.status === "sold") { toast.error("Produto vendido"); return false; }

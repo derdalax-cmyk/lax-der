@@ -39,7 +39,7 @@ function Home() {
     queryKey: ["home-featured", city],
     queryFn: async () => {
       let q = supabase
-        .from("products")
+        .from("public_products")
         .select(PRODUCT_FIELDS)
         .eq("featured", true)
         .neq("status", "sold");
@@ -74,7 +74,7 @@ function Home() {
       let products: ProductCardData[] = [];
       if (productIds.length) {
         let pq = supabase
-          .from("products")
+          .from("public_products")
           .select(PRODUCT_FIELDS)
           .in("id", productIds)
           .neq("status", "sold");

@@ -7,3 +7,6 @@
 - Roleta: each valid code grants exactly one spin (no per-user/campaign limit); referral progress = valid referrals − 5 × referral codes issued; an order uses only the single ACTIVE reward with the best real saving (chosen in `roleta_apply_to_order`), because rewards must never stack.
 - Home hero headings and images come from each admin-managed `home_banners` row; images use the public `products` bucket under `banners/`, with the bundled hero and default heading as fallback so existing banners remain compatible.
 - Profile phone is normalized/validated by the `normalize_profile_phone` trigger only when it changes, so legacy values stay intact.
+
+- Storefront reads use the explicit public_products security-invoker projection; reservation ownership is a user-scoped boolean RPC and full moderation records use get_managed_products, because public clients must never read reservation owner IDs.
+- Orders are created only through create_order_secure; direct client INSERT grants and policies remain revoked to prevent price and status bypasses.

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/admin/produtos")({
+  head: () => ({ meta: [{ title: "Administração de produtos · DERDALAX" }, { name: "description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:title", content: "Administração de produtos · DERDALAX" }, { property: "og:description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: AdminProdutos,
 });
 
@@ -56,7 +57,7 @@ function AdminProdutos() {
   const { data: products, isLoading } = useQuery({
     queryKey: ["admin-products"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.rpc("get_managed_products", {});
       if (error) throw error;
       return data as Row[];
     },

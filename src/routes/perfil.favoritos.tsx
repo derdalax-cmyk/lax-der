@@ -6,7 +6,7 @@ import { ProductCard, type ProductCardData } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 
 export const Route = createFileRoute("/perfil/favoritos")({
-  head: () => ({ meta: [{ title: "Favoritos · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Favoritos do perfil · DERDALAX" }, { name: "description", content: "Peças guardadas no seu perfil DERDALAX." }, { property: "og:title", content: "Favoritos do perfil · DERDALAX" }, { property: "og:description", content: "Peças guardadas no seu perfil DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: FavoritosPage,
 });
 
@@ -25,7 +25,7 @@ function FavoritosPage() {
       if (ids.length === 0) { setProducts([]); setLoading(false); return; }
       setLoading(true);
       const { data } = await supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category")
         .in("id", ids);
       setProducts((data ?? []) as ProductCardData[]);

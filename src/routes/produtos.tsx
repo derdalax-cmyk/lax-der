@@ -21,6 +21,10 @@ export const Route = createFileRoute("/produtos")({
   head: () => ({ meta: [
     { title: "Produtos · DERDALAX" },
     { name: "description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
+    { property: "og:title", content: "Produtos · DERDALAX" },
+    { property: "og:description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
   ]}),
   component: ProdutosPage,
 });
@@ -57,7 +61,7 @@ function ProdutosPage() {
     const fetchData = async () => {
       setLoading(true);
       let q = supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
         .neq("status", "sold")
         .order("created_at", { ascending: false });

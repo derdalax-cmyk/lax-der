@@ -43,7 +43,7 @@ type Product = {
   images: unknown;
   is_unique: boolean;
   status: "available" | "reserved" | "sold";
-  reserved_by: string | null;
+  reserved_by_me?: boolean;
   reserved_until: string | null;
   seller_id: string | null;
   city: string | null;
@@ -156,12 +156,13 @@ function ProdutoDetalhe() {
     let cancelled = false;
     const load = async () => {
       setLoading(true);
-      const [{ data: p }, { data: v }] = await Promise.all([
-        supabase.from("products").select("*").eq("id", id).maybeSingle(),
+      const [{ data: p }, { data: v }, { data: reservations }] = await Promise.all([
+        supabase.from("public_products").select("id,title,description,base_price,original_price,shipping_fee,category,images,is_unique,status,reserved_until,seller_id,city").eq("id", id).maybeSingle(),
         supabase.from("product_variations").select("*").eq("product_id", id).eq("is_active", true),
+        user ? supabase.rpc("get_my_product_reservations", { _product_ids: [id] }) : Promise.resolve({ data: [] }),
       ]);
       if (cancelled) return;
-      setProduct(p as Product | null);
+      setProduct(p ? { ...p, reserved_by_me: reservations?.[0]?.reserved_by_me ?? false } as Product : null);
       setVariations((v ?? []) as Variation[]);
       setImgIdx(0); setRotation(0); setSize(null); setColor(null); setQty(1);
       setSeller(null);
@@ -173,7 +174,7 @@ function ProdutoDetalhe() {
       }
       if (p?.category) {
         let relQ = supabase
-          .from("products")
+          .from("public_products")
           .select("id,title,base_price,original_price,shipping_fee,images,is_unique,status,category")
           .eq("category", p.category)
           .neq("id", id)
@@ -187,7 +188,7 @@ function ProdutoDetalhe() {
     };
     load();
     return () => { cancelled = true; };
-  }, [id]);
+  }, [id, user?.id]);
 
   const imgs = useMemo(() => product ? imagesArr(product.images) : [], [product]);
   const { text: descText, meta } = useMemo(() => parseMeta(product?.description ?? null), [product]);
@@ -245,15 +246,18 @@ function ProdutoDetalhe() {
     ? getRoletaLine(effectivePrice, basePrice, product.original_price, 1, activeReward)
     : null;
 
-  const reservedByOther = !!product?.is_unique && product.status === "reserved" && product.reserved_by !== user?.id;
-  const reservedByMe = !!product?.is_unique && product.status === "reserved" && product.reserved_by === user?.id;
+  const reservedByOther = !!product?.is_unique && product.status === "reserved" && !product.reserved_by_me;
+  const reservedByMe = !!product?.is_unique && product.status === "reserved" && !!product.reserved_by_me;
 
   const canBuy = !!product && product.status !== "sold" && !reservedByOther && stockAvailable > 0 &&
     (sizes.length === 0 || !!size) && (colors.length === 0 || !!color);
 
   const reload = async () => {
-    const { data: p } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
-    setProduct(p as Product | null);
+    const { data: p } = await supabase.from("public_products").select("id,title,description,base_price,original_price,shipping_fee,category,images,is_unique,status,reserved_until,seller_id,city").eq("id", id).maybeSingle();
+    const { data: reservations } = user
+      ? await supabase.rpc("get_my_product_reservations", { _product_ids: [id] })
+      : { data: [] };
+    setProduct(p ? { ...p, reserved_by_me: reservations?.[0]?.reserved_by_me ?? false } as Product : null);
   };
 
   const handleShare = async () => {

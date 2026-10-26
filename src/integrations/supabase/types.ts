@@ -351,6 +351,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "conversations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "conversations_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
@@ -473,6 +480,13 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
+            referencedColumns: ["id"]
+          },
         ]
       }
       featured_collection_products: {
@@ -516,6 +530,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "featured_collection_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
             referencedColumns: ["id"]
           },
           {
@@ -759,6 +780,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "order_items_roleta_spin_id_fkey"
             columns: ["roleta_spin_id"]
             isOneToOne: false
@@ -932,6 +960,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_variations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
             referencedColumns: ["id"]
           },
         ]
@@ -1278,6 +1313,13 @@ export type Database = {
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roleta_product_participation_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
             referencedColumns: ["id"]
           },
           {
@@ -1801,11 +1843,88 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "waiting_list_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      public_products: {
+        Row: {
+          approval_status: string | null
+          base_price: number | null
+          category: string | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          id: string | null
+          images: Json | null
+          is_unique: boolean | null
+          original_price: number | null
+          reserved_until: string | null
+          seller_id: string | null
+          shipping_fee: number | null
+          status: Database["public"]["Enums"]["product_status"] | null
+          stock: number | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          approval_status?: string | null
+          base_price?: number | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string | null
+          images?: Json | null
+          is_unique?: boolean | null
+          original_price?: number | null
+          reserved_until?: string | null
+          seller_id?: string | null
+          shipping_fee?: number | null
+          status?: Database["public"]["Enums"]["product_status"] | null
+          stock?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          approval_status?: string | null
+          base_price?: number | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string | null
+          images?: Json | null
+          is_unique?: boolean | null
+          original_price?: number | null
+          reserved_until?: string | null
+          seller_id?: string | null
+          shipping_fee?: number | null
+          status?: Database["public"]["Enums"]["product_status"] | null
+          stock?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_seller_collaborator: {
@@ -1858,8 +1977,47 @@ export type Database = {
           product_count: number
         }[]
       }
+      get_managed_products: {
+        Args: { _seller_id?: string }
+        Returns: {
+          approval_status: string
+          base_price: number
+          category: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          images: Json | null
+          is_unique: boolean
+          original_price: number | null
+          rejection_reason: string | null
+          reserved_by: string | null
+          reserved_until: string | null
+          seller_id: string | null
+          shipping_fee: number
+          status: Database["public"]["Enums"]["product_status"]
+          stock: number
+          stock_alert: number
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "products"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_my_conversations: { Args: never; Returns: Json }
       get_my_order_history: { Args: never; Returns: Json }
+      get_my_product_reservations: {
+        Args: { _product_ids: string[] }
+        Returns: {
+          product_id: string
+          reserved_by_me: boolean
+        }[]
+      }
       get_my_roleta: { Args: never; Returns: Json }
       get_my_team: { Args: never; Returns: Json }
       get_my_team_activity: {

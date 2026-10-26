@@ -9,6 +9,10 @@ export const Route = createFileRoute("/categorias")({
   head: () => ({ meta: [
     { title: "Categorias · DERDALAX" },
     { name: "description", content: "Explore as categorias da loja DERDALAX: camisas, calças, sapatos e mais." },
+    { property: "og:title", content: "Categorias · DERDALAX" },
+    { property: "og:description", content: "Explore as categorias da loja DERDALAX: camisas, calças, sapatos e mais." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
   ]}),
   component: CategoriasPage,
 });
@@ -24,7 +28,7 @@ function CategoriasPage() {
     queryFn: async () => {
       const result: Record<string, number> = {};
       await Promise.all(categories.map(async (c) => {
-        let q = supabase.from("products").select("id", { count: "exact", head: true })
+        let q = supabase.from("public_products").select("id", { count: "exact", head: true })
           .eq("category", c.slug).neq("status", "sold");
         if (city) q = q.or(`city.eq.${city},city.is.null`);
         const { count } = await q;

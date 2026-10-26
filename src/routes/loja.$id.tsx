@@ -9,7 +9,7 @@ import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { Store, MapPin, Loader2, Package } from "lucide-react";
 
 export const Route = createFileRoute("/loja/$id")({
-  head: () => ({ meta: [{ title: "Loja · DERDALAX" }, { name: "description", content: "Perfil da loja e avaliações na DERDALAX." }] }),
+  head: () => ({ meta: [{ title: "Loja · DERDALAX" }, { name: "description", content: "Perfil da loja e avaliações na DERDALAX." }, { property: "og:title", content: "Loja · DERDALAX" }, { property: "og:description", content: "Perfil da loja e avaliações na DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: LojaPublica,
 });
 
@@ -44,7 +44,7 @@ function LojaPublica() {
     enabled: !!seller?.id,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("products")
+        .from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category")
         .eq("seller_id", id)
         .eq("approval_status", "approved")
