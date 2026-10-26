@@ -1,8 +1,9 @@
 # Roadmap
 
-- [ ] Fechar INSERT direto de pedidos e preservar criação pela RPC segura.
-- [ ] Remover identificação da reserva das respostas públicas e validar loja/carrinho/painéis.
-- [ ] Documentar testes finais e dependência Zod pendente sem upgrade major.
+- [x] Fechar INSERT direto de pedidos; RPC mantém execução autenticada e validação confirmada.
+- [x] Remover identificação da reserva das respostas públicas e validar loja/carrinho/Admin.
+- [x] Documentar testes finais e dependência Zod pendente sem upgrade major em SECURITY-CLOSURE.md.
+- [ ] Validar criação completa de pedido e leitura pela UI: sem ligação transacional privilegiada; pedido real notificaria vendedor.
 
 - [x] Permitir editar o título principal por banner no Admin e validar a apresentação na página inicial.
 
