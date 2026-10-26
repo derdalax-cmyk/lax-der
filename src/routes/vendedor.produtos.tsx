@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/vendedor/produtos")({
+  head: () => ({ meta: [{ title: "Produtos da minha loja · DERDALAX" }, { name: "description", content: "Gestão dos produtos da sua loja DERDALAX." }, { property: "og:title", content: "Produtos da minha loja · DERDALAX" }, { property: "og:description", content: "Gestão dos produtos da sua loja DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: SellerProdutos,
 });
 

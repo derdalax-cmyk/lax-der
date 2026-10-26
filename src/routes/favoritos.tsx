@@ -12,6 +12,10 @@ export const Route = createFileRoute("/favoritos")({
     meta: [
       { title: "Favoritos · DERDALAX" },
       { name: "description", content: "As suas peças favoritas guardadas na DERDALAX." },
+      { property: "og:title", content: "Favoritos · DERDALAX" },
+      { property: "og:description", content: "As suas peças favoritas guardadas na DERDALAX." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: FavoritosPage,

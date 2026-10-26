@@ -21,6 +21,10 @@ export const Route = createFileRoute("/produtos")({
   head: () => ({ meta: [
     { title: "Produtos · DERDALAX" },
     { name: "description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
+    { property: "og:title", content: "Produtos · DERDALAX" },
+    { property: "og:description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
   ]}),
   component: ProdutosPage,
 });

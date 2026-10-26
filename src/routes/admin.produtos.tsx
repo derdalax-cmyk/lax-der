@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/admin/produtos")({
+  head: () => ({ meta: [{ title: "Administração de produtos · DERDALAX" }, { name: "description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:title", content: "Administração de produtos · DERDALAX" }, { property: "og:description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: AdminProdutos,
 });
 
