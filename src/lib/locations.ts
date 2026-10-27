@@ -2,7 +2,6 @@
 // Usada no perfil/cadastro (sugestões) e na "cidade de venda" atribuída pelo admin.
 
 export const MZ_PROVINCES = [
-  "Maputo Cidade",
   "Maputo Província",
   "Gaza",
   "Inhambane",
@@ -22,7 +21,6 @@ export function isMzProvince(v: unknown): v is MzProvince {
 }
 
 export const MZ_CITIES_BY_PROVINCE: Record<MzProvince, string[]> = {
-  "Maputo Cidade": ["Maputo"],
   "Maputo Província": ["Matola", "Boane", "Namaacha", "Manhiça", "Marracuene", "Moamba"],
   Gaza: ["Xai-Xai", "Chókwè", "Chibuto", "Manjacaze", "Bilene", "Macia"],
   Inhambane: ["Inhambane", "Maxixe", "Vilankulo", "Massinga", "Inharrime"],

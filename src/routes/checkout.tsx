@@ -34,7 +34,7 @@ type Address = {
 type PayMethod = "e-mpesa" | "e-mola";
 type PayTiming = "antecipado" | "entrega";
 
-const PROVINCES = ["Maputo Cidade", "Maputo Província", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Cabo Delgado", "Niassa"];
+const PROVINCES = ["Maputo Província", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Cabo Delgado", "Niassa"];
 
 function genReference() {
   const t = Date.now().toString(36).toUpperCase();
