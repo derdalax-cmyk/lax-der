@@ -41,7 +41,7 @@ const factual = { nome: "Camisa azul", descricao: "Camisa azul com gola e botõe
 test("professional factual description remains intact", () => {
   expect(validateAiProductData(factual)).toEqual(factual);
 });
-for (const term of ["dedos", "mãos", "pessoas", "pele", "corpo", "braços", "pernas", "rostos", "manequim", "fingers", "person"]) {
+for (const term of ["dedos", "mãos", "pessoas", "pele", "corpo", "braços", "pernas", "rostos", "manequim", "fingers", "person", "joelho", "tornozelos", "pés"]) {
   test(`remove irrelevant ${term} claims server-side`, () => {
     expect(validateAiProductData({ ...factual, descricao: `${factual.descricao} Mostra ${term} na imagem.` }).descricao).toBe(factual.descricao);
   });
