@@ -16,7 +16,7 @@ import {
   Loader2, Camera, ChevronRight, Upload, X, Eye, EyeOff, FileText, CreditCard,
 } from "lucide-react";
 import { toast } from "sonner";
-import { isValidMzPhone } from "@/lib/validation";
+import { isValidMzPhone, MZ_PHONE_ERROR } from "@/lib/validation";
 import { cn } from "@/lib/utils";
 import { validateUpload } from "@/lib/uploadLimits";
 
