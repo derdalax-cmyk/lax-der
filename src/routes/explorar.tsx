@@ -54,12 +54,6 @@ function ExplorarPage() {
 
   const { items, loading, loadingMore, error, retry, sentinelRef } = useProductFeed({ search: searchDebounced, category, gender, city });
 
-  return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, searchDebounced, category, gender, city]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
   return (
     <div className="max-w-[1400px] mx-auto px-5 py-8 md:py-12">
       <header className="mb-6">

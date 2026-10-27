@@ -1,6 +1,6 @@
 export type AiProductData = { nome: string; descricao: string; material: string };
 
-const BODY = /\b(dedos?|m[aã]os?|pessoas?|pele|corpo|corpos|braços?|pernas?|rostos?|modelos?|modelo|homem|mulher|human[oa]s?|manequim|finger\w*|hands?|person\w*|skin|body|arms?|legs?|face|wearer)\b/i;
+const BODY = /(?<![\p{L}])(dedos?|m[aã]os?|pessoas?|pele|corpo|corpos|braços?|pernas?|rostos?|modelos?|modelo|homem|mulher|human[oa]s?|manequim|finger\w*|hands?|person\w*|skin|body|arms?|legs?|face|wearer)(?![\p{L}])/iu;
 const SPECULATION = /\b(provavelmente|talvez|parece ser|pode ser|possivelmente|geralmente|supostamente)\b/i;
 const UNSUPPORTED = /\b(marca|tamanho|composiç[aã]o)\s*[:=]|\b(100\s*%|\d+\s*%|aut[eê]ntic[oa]|original de marca)\b/i;
 const HYPE = /\b(perfeit[oa]|incr[ií]vel|luxuos[oa]|imperd[ií]vel|sensual)\b/i;

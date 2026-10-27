@@ -45,7 +45,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
             search={seeMoreSearch as never}
             className="text-sm font-medium text-muted-foreground hover:text-gold inline-flex items-center gap-1 shrink-0"
           >
-            {seeMoreLabel ?? "Ver mais"} <ArrowRight className="w-4 h-4" />
+            {seeMoreLabel ?? "Ver tudo"} <ArrowRight className="w-4 h-4" />
           </Link>
         )}
       </div>
