@@ -41,7 +41,7 @@ const benefits = [
 
 const schema = z.object({
   full_name: z.string().trim().min(2, "Indique o seu nome completo").max(120),
-  phone: z.string().trim().refine(isValidMzPhone, "Telefone inválido (84/85/86/87 + 7 dígitos)"),
+  phone: z.string().trim().refine(isValidMzPhone, MZ_PHONE_ERROR),
   store_name: z.string().trim().min(2, "Indique o nome da loja").max(120),
   province: z.string().trim().min(1, "Selecione a província"),
   description: z.string().trim().max(400).optional(),
@@ -376,7 +376,7 @@ function TornarSeVendedor() {
               <div>
                 <Label className="text-xs">Telefone (WhatsApp) *</Label>
                 <Input type="tel" inputMode="tel" autoComplete="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="84xxxxxxx" className={cn(phoneInvalid && "border-destructive")} />
-                {phoneInvalid && <p className="text-[11px] text-destructive mt-1">Formato inválido (84/85/86/87 + 7 dígitos)</p>}
+                {phoneInvalid && <p className="text-[11px] text-destructive mt-1">{MZ_PHONE_ERROR}</p>}
               </div>
               <div>
                 <Label className="text-xs">Província *</Label>
