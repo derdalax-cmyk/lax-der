@@ -1,9 +1,9 @@
 # Roadmap
 
-- [ ] Remover paginação de produtos e validar carregamento automático/filtros/duplicados.
-- [ ] Reforçar prompt e pós-validação IA sem alterar autorização ou modelo.
-- [ ] Ajustar cidade/WhatsApp no cadastro e destino normal do login Admin.
-- [ ] Executar testes focados e verificar páginas desktop/mobile e erros.
+- [x] Remover paginação de produtos e validar carregamento automático/filtros/duplicados.
+- [x] Reforçar prompt e pós-validação IA sem alterar autorização ou modelo.
+- [x] Ajustar cidade/WhatsApp no cadastro e destino normal do login Admin.
+- [x] Executar testes focados e verificar páginas desktop/mobile e erros.
 
 - [x] Fechar INSERT direto de pedidos; RPC mantém execução autenticada e validação confirmada.
 - [x] Remover identificação da reserva das respostas públicas e validar loja/carrinho/Admin.
