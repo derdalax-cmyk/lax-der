@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Adaptar grelhas de produtos a masonry sem mudar filtros, ordem ou carregamento.
+- [ ] Respeitar proporções naturais nos cards e galeria, sem cortar a peça.
+- [ ] Validar proporções e grelhas desktop/mobile; documentar ficheiros e revisão.
+
 - [x] Preservar contexto/ordem/scroll das listas e corrigir preços em cards mobile.
 - [x] Recomendações reais e partilha/metadata por produto; validar navegação e testes.
 
