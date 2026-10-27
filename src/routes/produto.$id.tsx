@@ -1,4 +1,7 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { queryOptions } from "@tanstack/react-query";
+import { getPublicProductDetails } from "@/lib/productDetails.functions";
+import { productPageHead, shareProduct } from "@/lib/productDetails";
+import { createFileRoute, Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -19,15 +22,15 @@ import { AutoFramedProductImage } from "@/components/product/AutoFramedProductIm
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 
+const productDetailsQuery = (id: string) => queryOptions({
+  queryKey: ["public-product-details", id],
+  queryFn: () => getPublicProductDetails({ data: { id } }),
+  staleTime: 60_000,
+});
+
 export const Route = createFileRoute("/produto/$id")({
-  head: () => ({ meta: [
-    { title: "Produto · DERDALAX" },
-    { name: "description", content: "Veja detalhes, imagens, preço e opções deste produto na DERDALAX." },
-    { property: "og:title", content: "Produto · DERDALAX" },
-    { property: "og:description", content: "Veja detalhes, imagens, preço e opções deste produto na DERDALAX." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  loader: ({ params, context }) => context.queryClient.ensureQueryData(productDetailsQuery(params.id)),
+  head: ({ params, loaderData }) => productPageHead(params.id, loaderData?.product ?? null),
   component: ProdutoDetalhe,
 });
 
@@ -134,13 +137,21 @@ function ProdutoDetalhe() {
   const { labelOf } = useCategories();
   const { id } = Route.useParams();
   const navigate = useNavigate();
+  const router = useRouter();
+  const originKnown = useRouterState({ select: state => state.location.state.productOrigin === true });
+  const details = Route.useLoaderData();
+  const goBack = () => {
+    if (originKnown && router.history.canGoBack()) router.history.back();
+    else void navigate({ to: "/explorar" });
+  };
   const { isFavorite, toggle } = useFavorites();
   const { user } = useAuth();
   const { addItem } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product | null>(details.product);
   const [variations, setVariations] = useState<Variation[]>([]);
-  const [related, setRelated] = useState<ProductCardData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [related, setRelated] = useState<ProductCardData[]>(details.related);
+  const sellerProducts = details.sellerProducts;
+  const [loading, setLoading] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const [zoom, setZoom] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -155,9 +166,10 @@ function ProdutoDetalhe() {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      setLoading(true);
-      const [{ data: p }, { data: v }, { data: reservations }] = await Promise.all([
-        supabase.from("public_products").select("id,title,description,base_price,original_price,shipping_fee,category,images,is_unique,status,reserved_until,seller_id,city").eq("id", id).maybeSingle(),
+      const p = details.product;
+      setProduct(p);
+      setRelated(details.related);
+      const [{ data: v }, { data: reservations }] = await Promise.all([
         supabase.from("product_variations").select("*").eq("product_id", id).eq("is_active", true),
         user ? supabase.rpc("get_my_product_reservations", { _product_ids: [id] }) : Promise.resolve({ data: [] }),
       ]);
@@ -172,23 +184,11 @@ function ProdutoDetalhe() {
           if (!cancelled) setSeller((s ?? null) as unknown as PublicSeller | null);
         });
       }
-      if (p?.category) {
-        let relQ = supabase
-          .from("public_products")
-          .select("id,title,base_price,original_price,shipping_fee,images,is_unique,status,category")
-          .eq("category", p.category)
-          .neq("id", id)
-          .neq("status", "sold");
-        // Produtos relacionados da mesma cidade do produto atual (ou globais/admin)
-        if (p.city) relQ = relQ.or(`city.eq.${p.city},city.is.null`);
-        const { data: rel } = await relQ.limit(5);
-        if (!cancelled) setRelated((rel ?? []) as ProductCardData[]);
-      }
       setLoading(false);
     };
     load();
     return () => { cancelled = true; };
-  }, [id, user?.id]);
+  }, [id, user?.id, details]);
 
   const imgs = useMemo(() => product ? imagesArr(product.images) : [], [product]);
   const { text: descText, meta } = useMemo(() => parseMeta(product?.description ?? null), [product]);
@@ -262,22 +262,9 @@ function ProdutoDetalhe() {
 
   const handleShare = async () => {
     if (!product) return;
-    const url = `https://derdalax.co.mz/produto/${product.id}`;
-    const payload = {
-      title: product.title,
-      text: `Vê isto na DERDALAX: ${product.title}`,
-      url,
-    };
     try {
-      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-        await navigator.share(payload);
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copiado!");
-    } catch {
-      // cancelamento ou falha silenciosa
-    }
+      if (await shareProduct(product) === "copied") toast.success("Link copiado!");
+    } catch { /* User dismissed the share sheet. */ }
   };
 
   const handleAddToCart = async (): Promise<boolean> => {
@@ -319,6 +306,7 @@ function ProdutoDetalhe() {
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-5 py-10 md:py-14 overflow-x-hidden">
       <nav className="text-sm text-muted-foreground mb-6">
+        <Button variant="ghost" size="icon" aria-label="Voltar" onClick={goBack} className="mr-2"><ChevronLeft className="w-4 h-4" /></Button>
         <Link to="/produtos" className="hover:text-foreground">Produtos</Link>
         {product.category && (
           <> <span className="mx-1">/</span>
@@ -384,7 +372,7 @@ function ProdutoDetalhe() {
         <div className="min-w-0">
           <h1 className="font-display text-2xl sm:text-3xl md:text-4xl break-words">{product.title}</h1>
           <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="text-2xl font-medium">
+            <p className="text-2xl font-medium text-gold">
               {showFromPrice && <span className="text-sm text-muted-foreground mr-1.5">A partir de</span>}
               {formatMZN(Number(effectivePrice))}
             </p>
@@ -393,7 +381,7 @@ function ProdutoDetalhe() {
           </div>
           {roleta?.applies && (
             <div className="mt-2 inline-flex flex-wrap items-baseline gap-x-2 rounded-lg border border-gold/50 bg-ink px-3 py-1.5 text-gold">
-              <span className="text-xs font-semibold tracking-wider">🎁 Desconto da Roleta -{activeReward!.percent}%</span>
+              <span className="text-xs font-semibold tracking-wider">🎁 Desconto da Roleta -{activeReward?.percent}%</span>
               <span className="text-lg font-semibold">{formatMZN(roleta.unitFinal)}</span>
               <span className="text-[11px] opacity-80">o seu preço pessoal</span>
             </div>
@@ -503,14 +491,14 @@ function ProdutoDetalhe() {
             <Button onClick={async () => { const ok = await handleAddToCart(); if (ok) navigate({ to: "/carrinho" }); }} disabled={!canBuy || adding} className="flex-1 bg-gold text-ink hover:bg-gold/90">
               Comprar agora
             </Button>
-            <button
+            <Button variant="outline"
               onClick={handleShare}
               aria-label="Partilhar produto"
               className="h-10 px-3 inline-flex items-center justify-center gap-2 border border-border rounded text-sm hover:border-foreground transition-colors"
             >
               <Share2 className="w-4 h-4" />
               Partilhar
-            </button>
+            </Button>
             <button
               onClick={() => toggle(product.id)}
               aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
@@ -568,6 +556,15 @@ function ProdutoDetalhe() {
             {related.map((p) => (
               <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
             ))}
+          </div>
+        </section>
+      )}
+
+      {sellerProducts.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-display text-2xl mb-5">Mais deste vendedor</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {sellerProducts.map(p => <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />)}
           </div>
         </section>
       )}

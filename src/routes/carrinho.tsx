@@ -125,13 +125,13 @@ function CartTab() {
           const key = `${it.product_id}-${it.variation_id ?? "_"}`;
           return (
             <li key={key} className="flex gap-4 bg-card border border-border rounded-xl p-4">
-              <Link to="/produto/$id" params={{ id: it.product_id }} className="flex-none w-24 h-32 bg-secondary rounded-md overflow-hidden">
+              <Link to="/produto/$id" params={{ id: it.product_id }} state={{ productOrigin: true }} className="flex-none w-24 h-32 bg-secondary rounded-md overflow-hidden">
                 {img ? <img src={img} alt={it.product.title} className="w-full h-full object-cover" /> : null}
               </Link>
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <Link to="/produto/$id" params={{ id: it.product_id }} className="font-medium line-clamp-1 hover:text-gold">{it.product.title}</Link>
+                    <Link to="/produto/$id" params={{ id: it.product_id }} state={{ productOrigin: true }} className="font-medium line-clamp-1 hover:text-gold">{it.product.title}</Link>
                     {(it.variation?.size || it.variation?.color) && (
                       <p className="text-xs text-muted-foreground mt-0.5">{[it.variation.size, it.variation.color].filter(Boolean).join(" · ")}</p>
                     )}
@@ -158,9 +158,9 @@ function CartTab() {
                     {cartRoleta.byKey.get(key) ? (
                       <>
                         <p className="text-xs text-muted-foreground line-through">{formatMZN(price * it.quantity)}</p>
-                        <p className="font-medium">{formatMZN(cartRoleta.byKey.get(key)!.unitFinal * it.quantity)}</p>
+                        <p className="font-medium text-gold">{formatMZN((cartRoleta.byKey.get(key)?.unitFinal ?? price) * it.quantity)}</p>
                       </>
-                    ) : <p className="font-medium">{formatMZN(price * it.quantity)}</p>}
+                    ) : <p className="font-medium text-gold">{formatMZN(price * it.quantity)}</p>}
                   </div>
                 </div>
               </div>

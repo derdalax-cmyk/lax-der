@@ -11,6 +11,9 @@ export function useProductFeed(filters: Filters) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const query = useInfiniteQuery({
     queryKey: ["product-feed", filters],
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
     initialPageParam: null as ProductCursor | null,
     retry: false,
     queryFn: async ({ pageParam, signal }) => {

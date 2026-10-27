@@ -32,6 +32,8 @@ function LojaPublica() {
 
   const { data: seller, isLoading } = useQuery({
     queryKey: ["public-seller", id],
+    staleTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_public_seller", { _id: id });
       if (error) throw error;
@@ -41,6 +43,8 @@ function LojaPublica() {
 
   const { data: products = [] } = useQuery({
     queryKey: ["public-seller-products", id],
+    staleTime: Infinity,
+    gcTime: Infinity,
     enabled: !!seller?.id,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -49,7 +53,7 @@ function LojaPublica() {
         .eq("seller_id", id)
         .eq("approval_status", "approved")
         .neq("status", "sold")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false }).order("id", { ascending: false });
       if (error) throw error;
       return (data ?? []) as ProductCardData[];
     },

@@ -47,8 +47,8 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
     ? getProductDiscount(shownPrice, Math.max(Number(product.original_price ?? 0), Number(product.base_price)))
     : getProductDiscount(Number(product.base_price), product.original_price);
   return (
-    <div className="group relative bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-      <Link to="/produto/$id" params={{ id: product.id }} className="block">
+    <div data-product-id={product.id} className="group relative min-w-0 bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+      <Link to="/produto/$id" params={{ id: product.id }} state={{ productOrigin: true }} className="block">
         <div className="relative aspect-square bg-secondary overflow-hidden">
           {img ? (
             <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
@@ -71,9 +71,9 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
           </div>
         </div>
         <div className="p-3">
-          <h3 className="font-medium text-sm line-clamp-1">{product.title}</h3>
-          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
-            <span className="text-muted-foreground">{formatMZN(shownPrice)}</span>
+          <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{product.title}</h3>
+          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm min-w-0">
+            <span data-product-price className="text-gold font-semibold break-words">{formatMZN(shownPrice)}</span>
             {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
             {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
           </div>

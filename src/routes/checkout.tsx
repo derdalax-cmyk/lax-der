@@ -368,7 +368,7 @@ function CheckoutPage() {
               return (
                 <li key={`${it.product_id}-${it.variation_id ?? "_"}`} className="flex justify-between text-sm">
                   <span className="line-clamp-1 pr-2">{it.product.title} × {it.quantity}</span>
-                  <span className="text-muted-foreground whitespace-nowrap">{formatMZN(price * it.quantity)}</span>
+                  <span className="text-gold font-medium whitespace-nowrap">{formatMZN(price * it.quantity)}</span>
                 </li>
               );
             })}

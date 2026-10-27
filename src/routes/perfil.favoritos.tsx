@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { ProductCard, type ProductCardData } from "@/components/ProductCard";
+import { useFavoriteProducts } from "@/hooks/useFavoriteProducts";
+import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 
 export const Route = createFileRoute("/perfil/favoritos")({
@@ -14,25 +14,9 @@ function FavoritosPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { favoriteIds, isFavorite, toggle } = useFavorites();
-  const [products, setProducts] = useState<ProductCardData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, loading } = useFavoriteProducts(user?.id, favoriteIds);
 
   useEffect(() => { if (!authLoading && !user) navigate({ to: "/login" }); }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    const load = async () => {
-      const ids = Array.from(favoriteIds);
-      if (ids.length === 0) { setProducts([]); setLoading(false); return; }
-      setLoading(true);
-      const { data } = await supabase
-        .from("public_products")
-        .select("id,title,base_price,original_price,images,is_unique,status,category")
-        .in("id", ids);
-      setProducts((data ?? []) as ProductCardData[]);
-      setLoading(false);
-    };
-    if (user) load();
-  }, [favoriteIds, user]);
 
   if (!user) return null;
 

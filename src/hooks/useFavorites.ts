@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,15 +9,24 @@ import { currentPath } from "@/lib/safeRedirect";
 export function useFavorites() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [ids, setIds] = useState<Set<string>>(new Set());
+  const queryClient = useQueryClient();
+  const setIds = (ids: Set<string>) => queryClient.setQueryData(["favorite-ids", user?.id], Array.from(ids));
+  const { data: savedIds = [] } = useQuery({
+    queryKey: ["favorite-ids", user?.id], enabled: !!user, staleTime: Infinity, gcTime: Infinity,
+    queryFn: async () => {
+      const { data } = await supabase.from("favorites").select("product_id").eq("user_id", user?.id ?? "").order("created_at", { ascending: false }).order("product_id", { ascending: false });
+      return (data ?? []).map(r => r.product_id);
+    },
+  });
+  const ids = new Set(savedIds);
 
   const load = useCallback(async () => {
     if (!user) { setIds(new Set()); return; }
-    const { data } = await supabase.from("favorites").select("product_id").eq("user_id", user.id);
+    const { data } = await supabase.from("favorites").select("product_id").eq("user_id", user.id).order("created_at", { ascending: false }).order("product_id", { ascending: false });
     setIds(new Set((data ?? []).map((r) => r.product_id)));
   }, [user]);
 
-  useEffect(() => { load(); }, [load]);
+
 
   const toggle = useCallback(async (productId: string) => {
     if (!user) {

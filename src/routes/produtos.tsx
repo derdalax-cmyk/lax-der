@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useProductFeed } from "@/hooks/useProductFeed";
 import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -14,6 +14,9 @@ import { Search, Loader2 } from "lucide-react";
 
 const searchSchema = z.object({
   categoria: fallback(z.string(), "").default(""),
+  q: fallback(z.string(), "").default(""),
+  min: fallback(z.string(), "").default(""),
+  max: fallback(z.string(), "").default(""),
 });
 
 export const Route = createFileRoute("/produtos")({
@@ -31,27 +34,22 @@ export const Route = createFileRoute("/produtos")({
 
 function ProdutosPage() {
   const { categories: catList } = useCategories();
-  const { categoria } = Route.useSearch();
+  const { categoria, q: search, min: minPrice, max: maxPrice } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
   const { city } = useCity();
-  const [search, setSearch] = useState("");
-  const [searchDebounced, setSearchDebounced] = useState("");
-  const [category, setCategory] = useState<string>(categoria || "all");
-  const [minPrice, setMinPrice] = useState<string>("");
-  const [maxPrice, setMaxPrice] = useState<string>("");
-
-  useEffect(() => { setCategory(categoria || "all"); }, [categoria]);
-
-
-  useEffect(() => {
-    const t = setTimeout(() => setSearchDebounced(search), 300);
-    return () => clearTimeout(t);
-  }, [search]);
+  const navigate = useNavigate({ from: Route.fullPath });
+  const update = (patch: { q?: string; categoria?: string; min?: string; max?: string }) => void navigate({ search: prev => ({ ...prev, ...patch }), replace: true, resetScroll: false });
+  const category = categoria || "all";
+  const searchDebounced = search;
+  const setSearch = (q: string) => update({ q });
+  const setCategory = (categoria: string) => update({ categoria });
+  const setMinPrice = (min: string) => update({ min });
+  const setMaxPrice = (max: string) => update({ max });
 
   const { items: products, loading, loadingMore, error, retry, sentinelRef } = useProductFeed({ search: searchDebounced, category, minPrice, maxPrice, city });
 
   const clearFilters = () => {
-    setSearch(""); setCategory("all"); setMinPrice(""); setMaxPrice("");
+    update({ q: "", categoria: "all", min: "", max: "" });
   };
 
   const hasFilters = useMemo(() => !!(search || category !== "all" || minPrice || maxPrice), [search, category, minPrice, maxPrice]);
