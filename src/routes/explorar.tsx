@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { useProductFeed } from "@/hooks/useProductFeed";
 import { formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -15,6 +16,7 @@ import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/explorar")({
+  validateSearch: zodValidator(z.object({ q: fallback(z.string(), "").default(""), categoria: fallback(z.string(), "all").default("all"), genero: fallback(z.string(), "all").default("all") })),
   head: () => ({ meta: [
     { title: "Explorar · DERDALAX" },
     { name: "description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
@@ -39,18 +41,17 @@ function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
   const { categories: cats } = useCategories();
   const { city } = useCity();
-  const [search, setSearch] = useState("");
-  const [searchDebounced, setSearchDebounced] = useState("");
-  const [category, setCategory] = useState("all");
-  const [gender, setGender] = useState("all");
+  const { q: search, categoria: category, genero: gender } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const update = (patch: { q?: string; categoria?: string; genero?: string }) => void navigate({ search: prev => ({ ...prev, ...patch }), replace: true, resetScroll: false });
+  const setSearch = (q: string) => update({ q });
+  const setCategory = (categoria: string) => update({ categoria });
+  const setGender = (genero: string) => update({ genero });
+  const searchDebounced = search;
 
   const hasActiveFilters = !!searchDebounced.trim() || category !== "all" || gender !== "all";
 
 
-  useEffect(() => {
-    const t = setTimeout(() => setSearchDebounced(search), 300);
-    return () => clearTimeout(t);
-  }, [search]);
 
   const { items, loading, loadingMore, error, retry, sentinelRef } = useProductFeed({ search: searchDebounced, category, gender, city });
 
@@ -89,7 +90,7 @@ function ExplorarPage() {
 
 
       {loading && items.length === 0 ? (
-        <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
+        <div className="mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="mb-4 bg-secondary animate-pulse rounded-xl" style={{ height: 180 + (i % 4) * 60 }} />
           ))}
@@ -107,17 +108,17 @@ function ExplorarPage() {
 
       ) : (
         <>
-          <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
+          <div className="mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
             {items.map((p) => {
               const img = firstImage(p.images);
               const fav = isFavorite(p.id);
               const discount = getProductDiscount(Number(p.base_price), p.original_price);
               return (
-                <div key={p.id} className="mb-4 break-inside-avoid group relative">
-                  <Link to="/produto/$id" params={{ id: p.id }} className="block rounded-xl overflow-hidden border border-border bg-card">
-                    <div className="relative w-full overflow-hidden bg-secondary">
+                <div key={p.id} data-product-id={p.id} className="min-w-0 group relative">
+                  <Link to="/produto/$id" params={{ id: p.id }} state={{ productOrigin: true }} className="block rounded-xl overflow-hidden border border-border bg-card">
+                    <div className="relative aspect-square w-full overflow-hidden bg-secondary">
                       {img ? (
-                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="block w-full h-auto" />
+                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
                       ) : (
                         <div className="w-full aspect-square flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
                       )}
@@ -126,9 +127,9 @@ function ExplorarPage() {
                       )}
                     </div>
                     <div className="p-3">
-                      <h3 className="font-medium text-sm line-clamp-1">{p.title}</h3>
+                      <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{p.title}</h3>
                       <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
-                        <span className="text-gold font-semibold">{formatMZN(Number(p.base_price))}</span>
+                        <span data-product-price className="text-gold font-semibold break-words">{formatMZN(Number(p.base_price))}</span>
                         {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
                         {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}
                       </div>
