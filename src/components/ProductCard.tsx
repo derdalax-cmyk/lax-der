@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
+import { NaturalProductImage } from "@/components/product/NaturalProductImage";
 
 export type ProductCardData = {
   id: string;
@@ -49,12 +50,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   return (
     <div data-product-id={product.id} className="group relative min-w-0 bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} state={{ productOrigin: true }} className="block">
-        <div className="relative aspect-square bg-secondary overflow-hidden">
-          {img ? (
-            <img src={thumbUrl(img)} alt={product.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
-          )}
+        <NaturalProductImage src={img ? thumbUrl(img) : null} alt={product.title}>
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.is_unique && (
               <span className="bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
@@ -69,7 +65,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
               <span className="bg-destructive text-destructive-foreground text-[10px] tracking-wider px-2 py-1 rounded font-semibold">VENDIDO</span>
             )}
           </div>
-        </div>
+        </NaturalProductImage>
         <div className="p-3">
           <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{product.title}</h3>
           <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm min-w-0">

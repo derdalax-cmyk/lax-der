@@ -1,3 +1,5 @@
+import { NaturalProductImage } from "@/components/product/NaturalProductImage";
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { queryOptions } from "@tanstack/react-query";
 import { getPublicProductDetails } from "@/lib/productDetails.functions";
 import { productPageHead, shareProduct } from "@/lib/productDetails";
@@ -318,7 +320,7 @@ function ProdutoDetalhe() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
         <div className="min-w-0">
           <div
-            className="relative aspect-square w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y bg-secondary/30"
+            className="relative w-full max-w-full rounded-xl overflow-hidden select-none touch-pan-y bg-secondary"
             onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
             onTouchEnd={(e) => {
               if (touchX.current === null || imgs.length < 2) return;
@@ -329,17 +331,7 @@ function ProdutoDetalhe() {
               setImgIdx((i) => (dx < 0 ? (i + 1) % imgs.length : (i - 1 + imgs.length) % imgs.length));
             }}
           >
-            {imgs[imgIdx] ? (
-              <img
-                src={mainUrl(imgs[imgIdx])} alt={product.title}
-                loading="eager"
-                className="absolute inset-0 w-full h-full object-cover object-center cursor-zoom-in"
-                style={{ transform: `rotate(${rotation}deg)` }}
-                onClick={() => setZoom(true)}
-              />
-            ) : (
-              <div className="w-full aspect-square bg-secondary flex items-center justify-center text-muted-foreground">Sem imagem</div>
-            )}
+            <NaturalProductImage src={imgs[imgIdx] ? mainUrl(imgs[imgIdx]) : null} alt={product.title} loading="eager" rotation={rotation} onClick={() => setZoom(true)} />
             {product.is_unique && (
               <span className="absolute top-3 left-3 bg-gold text-ink text-[10px] sm:text-xs tracking-wider px-2 py-1 sm:px-3 sm:py-1.5 rounded font-semibold">PEÇA ÚNICA</span>
             )}
@@ -361,7 +353,7 @@ function ProdutoDetalhe() {
             <div className="flex gap-2 mt-3 overflow-x-auto max-w-full pb-1">
               {imgs.map((src, i) => (
                 <button key={i} aria-label={`Ver imagem ${i + 1}`} onClick={() => { setRotation(0); setImgIdx(i); }} className={cn("relative flex-none w-16 h-16 rounded-md overflow-hidden border-2 bg-secondary/30", i === imgIdx ? "border-gold" : "border-border")}>
-                  <img src={thumbUrl(src)} alt="" loading="lazy" className="h-full w-full object-cover object-center" />
+                  <img src={thumbUrl(src)} alt="" loading="lazy" className="h-full w-full object-contain object-center" />
                 </button>
               ))}
             </div>
@@ -552,20 +544,20 @@ function ProdutoDetalhe() {
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="font-display text-2xl mb-5">Também pode gostar</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
             ))}
-          </div>
+          </ProductMasonry>
         </section>
       )}
 
       {sellerProducts.length > 0 && (
         <section className="mt-12">
           <h2 className="font-display text-2xl mb-5">Mais deste vendedor</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {sellerProducts.map(p => <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />)}
-          </div>
+          </ProductMasonry>
         </section>
       )}
 

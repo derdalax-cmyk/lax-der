@@ -1,4 +1,5 @@
 # Project architecture
+- Product discovery grids use measured shortest-column masonry with unchanged DOM/feed order; shared natural-image frames cache dimensions and contain photos within safe aspect limits, while horizontal carousels retain snap navigation and original files stay untouched.
 - Complete catalogue feeds share a keyset cursor (created_at/id), filter-keyed incremental query and automatic viewport sentinel; deduplication prevents repeated products without visible pagination.
 - Product lists keep session-lifetime Query caches and URL-based filters; router restoration keys list scroll by URL while product links mark internal origins for history-back, so returning preserves loaded batches and context.
 - Product detail metadata and recommendations use a public-only server function with per-product Query keys; sharing reads the same primary image and falls back to the canonical URL, preventing cross-product previews without exposing private records.

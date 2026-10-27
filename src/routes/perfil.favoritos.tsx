@@ -1,3 +1,4 @@
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,11 +29,11 @@ function FavoritosPage() {
       ) : products.length === 0 ? (
         <div className="text-center py-16 text-muted-foreground">Ainda não tem favoritos.</div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
           ))}
-        </div>
+        </ProductMasonry>
       )}
     </div>
   );
