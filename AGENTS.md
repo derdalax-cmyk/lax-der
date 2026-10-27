@@ -1,4 +1,7 @@
 # Project architecture
+- Complete catalogue feeds share a keyset cursor (created_at/id), filter-keyed incremental query and automatic viewport sentinel; deduplication prevents repeated products without visible pagination.
+- Product AI output passes the shared factual-content validator on the server before saving or returning; discard person/body claims and reject malformed or contradictory results without changing provider or ownership rules.
+- Login destination uses safe explicit/pending redirects with home as the role-independent fallback; administrative step-up stays at the admin gate.
 - Product image watermarks use the same-origin public brand icon and normalized final-canvas coordinates; preview and JPEG export share one composition so crop/rotation never displace the saved seal.
 - Visitors get the full Navbar/BottomNav with a permanent Entrar/Criar conta CTA; private actions redirect to /login with safeRedirect, because the homepage must be public (Google OAuth).
 - Product discount eligibility and percentage calculations use the shared `productPrice` helper so every storefront surface follows the same rule.
