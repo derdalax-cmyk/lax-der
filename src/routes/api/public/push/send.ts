@@ -19,52 +19,15 @@ export const Route = createFileRoute("/api/public/push/send")({
         const { user_id, title, body, url, tag } = payload ?? {};
         if (!user_id || !title) return new Response("Missing fields", { status: 400 });
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: subs, error } = await supabaseAdmin
-          .from("push_subscriptions")
-          .select("id, endpoint, keys")
-          .eq("user_id", user_id);
-        if (error) return new Response(error.message, { status: 500 });
-        if (!subs || subs.length === 0) return new Response(JSON.stringify({ sent: 0 }), { status: 200 });
-
-        const webpushMod = (await import("web-push")) as unknown as {
-          default?: typeof import("web-push");
-        } & typeof import("web-push");
-        const webpush = webpushMod.default ?? webpushMod;
-        webpush.setVapidDetails(
-          process.env.VAPID_SUBJECT || "mailto:suporte@derdalax.co.mz",
-          process.env.VAPID_PUBLIC_KEY!,
-          process.env.VAPID_PRIVATE_KEY!,
-        );
-
-        const notifPayload = JSON.stringify({ title, body: body ?? "", url: url ?? "/", tag: tag ?? "derdalax" });
-
+        const { sendPushToUser } = await import("@/lib/push.server");
         let sent = 0;
-        const toDelete: string[] = [];
-        await Promise.all(
-          subs.map(async (row) => {
-            const keys = row.keys as { p256dh?: string; auth?: string } | null;
-            if (!keys?.p256dh || !keys?.auth) return;
-            try {
-              await webpush.sendNotification(
-                { endpoint: row.endpoint, keys: { p256dh: keys.p256dh, auth: keys.auth } },
-                notifPayload,
-                { TTL: 60 * 60 * 24 },
-              );
-              sent++;
-            } catch (err: unknown) {
-              const status = (err as { statusCode?: number })?.statusCode;
-              if (status === 404 || status === 410) toDelete.push(row.id);
-              else console.error("push send failed", status, err);
-            }
-          }),
-        );
-
-        if (toDelete.length > 0) {
-          await supabaseAdmin.from("push_subscriptions").delete().in("id", toDelete);
+        let removed = 0;
+        try {
+          ({ sent, removed } = await sendPushToUser(user_id, { title, body, url, tag }));
+        } catch {
+          return new Response("Push error", { status: 500 });
         }
-
-        return new Response(JSON.stringify({ sent, removed: toDelete.length }), {
+        return new Response(JSON.stringify({ sent, removed }), {
           status: 200,
           headers: { "content-type": "application/json" },
         });
