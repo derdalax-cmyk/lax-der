@@ -32,6 +32,7 @@ import { Route as AdminAdministradoresRouteImport } from './routes/admin.adminis
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
+import { Route as AdminComunicacaoRouteImport } from './routes/admin.comunicacao'
 import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
@@ -41,6 +42,7 @@ import { Route as AdminSegurancaRouteImport } from './routes/admin.seguranca'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminVerificarRouteImport } from './routes/admin.verificar'
+import { Route as CampanhaIdRouteImport } from './routes/campanha.$id'
 import { Route as ColaboradorIndexRouteImport } from './routes/colaborador.index'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
@@ -187,6 +189,11 @@ const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
   path: '/categorias-destaque',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminComunicacaoRoute = AdminComunicacaoRouteImport.update({
+  id: '/comunicacao',
+  path: '/comunicacao',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminConversasRoute = AdminConversasRouteImport.update({
   id: '/conversas',
   path: '/conversas',
@@ -231,6 +238,11 @@ const AdminVerificarRoute = AdminVerificarRouteImport.update({
   id: '/verificar',
   path: '/verificar',
   getParentRoute: () => AdminRoute,
+} as any)
+const CampanhaIdRoute = CampanhaIdRouteImport.update({
+  id: '/campanha/$id',
+  path: '/campanha/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ColaboradorIndexRoute = ColaboradorIndexRouteImport.update({
   id: '/',
@@ -410,6 +422,7 @@ export interface FileRoutesByFullPath {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -419,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -470,6 +484,7 @@ export interface FileRoutesByTo {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -479,6 +494,7 @@ export interface FileRoutesByTo {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -534,6 +550,7 @@ export interface FileRoutesById {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -543,6 +560,7 @@ export interface FileRoutesById {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -600,6 +618,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -609,6 +628,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -660,6 +680,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -669,6 +690,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -723,6 +745,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -732,6 +755,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -784,6 +808,7 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
   VendedorRoute: typeof VendedorRouteWithChildren
+  CampanhaIdRoute: typeof CampanhaIdRoute
   LojaIdRoute: typeof LojaIdRoute
   PedidoIdRoute: typeof PedidoIdRoute
   PoliticasSlugRoute: typeof PoliticasSlugRoute
@@ -960,6 +985,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/comunicacao': {
+      id: '/admin/comunicacao'
+      path: '/comunicacao'
+      fullPath: '/admin/comunicacao'
+      preLoaderRoute: typeof AdminComunicacaoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/conversas': {
       id: '/admin/conversas'
       path: '/conversas'
@@ -1022,6 +1054,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/verificar'
       preLoaderRoute: typeof AdminVerificarRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/campanha/$id': {
+      id: '/campanha/$id'
+      path: '/campanha/$id'
+      fullPath: '/campanha/$id'
+      preLoaderRoute: typeof CampanhaIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/colaborador/': {
       id: '/colaborador/'
@@ -1241,6 +1280,7 @@ interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
+  AdminComunicacaoRoute: typeof AdminComunicacaoRoute
   AdminConversasRoute: typeof AdminConversasRoute
   AdminDenunciasRoute: typeof AdminDenunciasRoute
   AdminEquipeRoute: typeof AdminEquipeRoute
@@ -1259,6 +1299,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
+  AdminComunicacaoRoute: AdminComunicacaoRoute,
   AdminConversasRoute: AdminConversasRoute,
   AdminDenunciasRoute: AdminDenunciasRoute,
   AdminEquipeRoute: AdminEquipeRoute,
@@ -1367,6 +1408,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
   VendedorRoute: VendedorRouteWithChildren,
+  CampanhaIdRoute: CampanhaIdRoute,
   LojaIdRoute: LojaIdRoute,
   PedidoIdRoute: PedidoIdRoute,
   PoliticasSlugRoute: PoliticasSlugRoute,
