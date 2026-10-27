@@ -137,6 +137,141 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_recovery_codes: {
+        Row: {
+          code_hash: string
+          created_at: string
+          id: string
+          revoked_at: string | null
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          id?: string
+          revoked_at?: string | null
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          id?: string
+          revoked_at?: string | null
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_verified_sessions: {
+        Row: {
+          auth_method: string
+          expires_at: string
+          id: string
+          last_seen_at: string | null
+          revoked_at: string | null
+          session_nonce_hash: string
+          user_id: string
+          verified_at: string
+        }
+        Insert: {
+          auth_method: string
+          expires_at?: string
+          id?: string
+          last_seen_at?: string | null
+          revoked_at?: string | null
+          session_nonce_hash: string
+          user_id: string
+          verified_at?: string
+        }
+        Update: {
+          auth_method?: string
+          expires_at?: string
+          id?: string
+          last_seen_at?: string | null
+          revoked_at?: string | null
+          session_nonce_hash?: string
+          user_id?: string
+          verified_at?: string
+        }
+        Relationships: []
+      }
+      admin_webauthn_challenges: {
+        Row: {
+          challenge: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          origin: string
+          purpose: string
+          rp_id: string
+          user_id: string
+        }
+        Insert: {
+          challenge: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          origin: string
+          purpose: string
+          rp_id: string
+          user_id: string
+        }
+        Update: {
+          challenge?: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          origin?: string
+          purpose?: string
+          rp_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_webauthn_credentials: {
+        Row: {
+          counter: number
+          created_at: string
+          credential_id: string
+          device_name: string | null
+          id: string
+          last_used_at: string | null
+          public_key: string
+          revoked_at: string | null
+          transports: Json
+          user_id: string
+        }
+        Insert: {
+          counter?: number
+          created_at?: string
+          credential_id: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key: string
+          revoked_at?: string | null
+          transports?: Json
+          user_id: string
+        }
+        Update: {
+          counter?: number
+          created_at?: string
+          credential_id?: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key?: string
+          revoked_at?: string | null
+          transports?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_generation_logs: {
         Row: {
           created_at: string
