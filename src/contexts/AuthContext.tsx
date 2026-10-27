@@ -114,7 +114,6 @@ export function useAuth() {
 export const MZ_CITIES = ["Beira", "Maputo", "Nampula", "Quelimane", "Chimoio", "Tete", "Lichinga", "Pemba", "Xai-Xai", "Inhambane"] as const;
 
 export const MZ_PROVINCES = [
-  "Maputo Cidade",
   "Maputo Província",
   "Gaza",
   "Inhambane",
