@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-router";
 import { isPublicPath, safeRedirect } from "@/lib/safeRedirect";
 import { Suspense, lazy, useEffect } from "react";
+import { ListContextRestorer } from "@/components/ListContextRestorer";
 
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -199,6 +200,7 @@ function AppShell() {
         <BottomNav />
         <Toaster richColors position="top-right" />
         <RoletaReferralCapture />
+        <ListContextRestorer />
       </div>
     );
   }
@@ -220,6 +222,7 @@ function AppShell() {
       </Suspense>
       <Toaster richColors position="top-right" />
         <RoletaReferralCapture />
+        <ListContextRestorer />
 
     </div>
   );

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import {
-  anchorScrollTarget, clearSnapshot, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot,
+  anchorScrollTarget, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot,
 } from "@/lib/listContext";
 
 const MAX_WAIT_MS = 8000;
@@ -118,4 +118,3 @@ function restore(key: string, anchorId: string, offset: number, savedBatches: nu
   return () => { if (!cancelled) stop(); };
 }
 
-export { clearSnapshot };
