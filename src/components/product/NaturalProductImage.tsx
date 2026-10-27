@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const dimensions = new Map<string, { width: number; height: number }>();
 
 /** Presentation only: never crops or modifies the original product photograph. */
-export function NaturalProductImage({ src, alt, children, className, loading = "lazy", rotation = 0, onClick }: {
+export function NaturalProductImage({ src, alt, children, className, loading = "lazy", rotation = 0, onClick, fixedAspect }: {
   src: string | null;
   alt: string;
   children?: ReactNode;
@@ -13,6 +13,8 @@ export function NaturalProductImage({ src, alt, children, className, loading = "
   loading?: "eager" | "lazy";
   rotation?: number;
   onClick?: () => void;
+  /** Force a fixed frame aspect (e.g. 1 = square). Defaults to the natural/adaptive behaviour. */
+  fixedAspect?: number;
 }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [size, setSize] = useState<{ src: string; width: number; height: number } | null>(null);
@@ -28,7 +30,7 @@ export function NaturalProductImage({ src, alt, children, className, loading = "
     }
   }, [src]);
   const known = size?.src === src ? size : src ? dimensions.get(src) : undefined;
-  const aspect = productImageAspect(known?.width ?? 0, known?.height ?? 0, rotation);
+  const aspect = fixedAspect ?? productImageAspect(known?.width ?? 0, known?.height ?? 0, rotation);
   const sideways = Math.abs(rotation % 180) === 90;
   return (
     <div data-product-image-frame className={cn("relative w-full overflow-hidden bg-secondary", className)} style={{ aspectRatio: aspect }}>

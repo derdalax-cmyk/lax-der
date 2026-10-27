@@ -68,7 +68,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
               className="snap-start shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%] group relative bg-card border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
               <Link to="/produto/$id" params={{ id: p.id }} state={{ productOrigin: true }} className="block">
-                <NaturalProductImage src={img ? thumbUrl(img) : null} alt={p.title}>
+                <NaturalProductImage src={img ? thumbUrl(img) : null} alt={p.title} fixedAspect={1}>
                   {(p.is_unique || roletaOn) && (
                     <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-0.5">
                       {p.is_unique && <span className="bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>}
