@@ -5,6 +5,14 @@ import type { Database } from "@/integrations/supabase/types";
 import { recommendationSections, type PublicProduct } from "@/lib/productDetails";
 import type { ProductCardData } from "@/components/ProductCard";
 
+function normalizedImages(images: unknown): string[] {
+  if (!Array.isArray(images)) return [];
+  return images.flatMap(image => {
+    const url = typeof image === "string" ? image : image && typeof image === "object" && "url" in image ? image.url : null;
+    return typeof url === "string" ? [url] : [];
+  });
+}
+
 export const getPublicProductDetails = createServerFn({ method: "GET" })
   .inputValidator(z.object({ id: z.string().uuid() }))
   .handler(async ({ data }) => {
@@ -33,5 +41,6 @@ export const getPublicProductDetails = createServerFn({ method: "GET" })
       product.category ? available().eq("category", product.category).limit(10) : Promise.resolve({ data: [] }),
       product.seller_id ? available().eq("seller_id", product.seller_id).limit(5) : Promise.resolve({ data: [] }),
     ]);
-    return { product: product as PublicProduct, ...recommendationSections(data.id, (categoryRows.data ?? []) as ProductCardData[], (sellerRows.data ?? []) as ProductCardData[]) };
+    const normalize = (row: ProductCardData) => ({ ...row, images: normalizedImages(row.images) });
+    return { product: { ...product, images: normalizedImages(product.images) } as PublicProduct, ...recommendationSections(data.id, (categoryRows.data ?? []).map(normalize), (sellerRows.data ?? []).map(normalize)) };
   });

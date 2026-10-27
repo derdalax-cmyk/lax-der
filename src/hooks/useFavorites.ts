@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +9,8 @@ import { currentPath } from "@/lib/safeRedirect";
 export function useFavorites() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [localIds, setIds] = useState<Set<string> | null>(null);
+  const queryClient = useQueryClient();
+  const setIds = (ids: Set<string>) => queryClient.setQueryData(["favorite-ids", user?.id], Array.from(ids));
   const { data: savedIds = [] } = useQuery({
     queryKey: ["favorite-ids", user?.id], enabled: !!user, staleTime: Infinity, gcTime: Infinity,
     queryFn: async () => {
@@ -17,7 +18,7 @@ export function useFavorites() {
       return (data ?? []).map(r => r.product_id);
     },
   });
-  const ids = localIds ?? new Set(savedIds);
+  const ids = new Set(savedIds);
 
   const load = useCallback(async () => {
     if (!user) { setIds(new Set()); return; }

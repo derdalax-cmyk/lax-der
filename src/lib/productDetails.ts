@@ -1,7 +1,8 @@
 import { imageUrl } from "@/lib/imageUrl";
 import type { ProductCardData } from "@/components/ProductCard";
 
-export type PublicProduct = ProductCardData & {
+export type PublicProduct = Omit<ProductCardData, "images"> & {
+  images: string[];
   description: string | null;
   shipping_fee: number | null;
   reserved_until: string | null;
@@ -39,8 +40,8 @@ export function productPageHead(id: string, product: PublicProduct | null) {
   };
 }
 
-export function recommendationSections(currentId: string, related: ProductCardData[], seller: ProductCardData[]) {
-  const unique = (rows: ProductCardData[]) => [...new Map(rows.filter(p => p.id !== currentId && p.status !== "sold").map(p => [p.id, p])).values()];
+export function recommendationSections<T extends ProductCardData>(currentId: string, related: T[], seller: T[]) {
+  const unique = (rows: T[]) => [...new Map(rows.filter(p => p.id !== currentId && p.status !== "sold").map(p => [p.id, p])).values()];
   const sellerProducts = unique(seller).slice(0, 5);
   const sellerIds = new Set(sellerProducts.map(p => p.id));
   return { sellerProducts, related: unique(related).filter(p => !sellerIds.has(p.id)).slice(0, 5) };
