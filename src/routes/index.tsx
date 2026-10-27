@@ -149,7 +149,7 @@ function Home() {
           icon={c.icon ?? undefined}
           products={c.products}
           seeMoreTo="/explorar"
-          seeMoreLabel="Ver mais"
+          seeMoreLabel="Ver tudo"
         />
       ))}
 

@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { ProductCard, type ProductCardData } from "@/components/ProductCard";
+import { useProductFeed } from "@/hooks/useProductFeed";
+import { ProductCard } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/hooks/useCategories";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 
 const searchSchema = z.object({
   categoria: fallback(z.string(), "").default(""),
@@ -29,17 +29,11 @@ export const Route = createFileRoute("/produtos")({
   component: ProdutosPage,
 });
 
-const PAGE_SIZE = 10;
-
 function ProdutosPage() {
   const { categories: catList } = useCategories();
   const { categoria } = Route.useSearch();
   const { isFavorite, toggle } = useFavorites();
   const { city } = useCity();
-  const [products, setProducts] = useState<ProductCardData[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [category, setCategory] = useState<string>(categoria || "all");
@@ -54,38 +48,7 @@ function ProdutosPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [searchDebounced, category, minPrice, maxPrice, city]);
-
-  useEffect(() => {
-    let cancelled = false;
-    const fetchData = async () => {
-      setLoading(true);
-      let q = supabase
-        .from("public_products")
-        .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
-        .neq("status", "sold")
-        .order("created_at", { ascending: false });
-
-      if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
-      if (category !== "all") q = q.eq("category", category);
-      const min = Number(minPrice); if (minPrice && !isNaN(min)) q = q.gte("base_price", min);
-      const max = Number(maxPrice); if (maxPrice && !isNaN(max)) q = q.lte("base_price", max);
-      if (city) q = q.or(`city.eq.${city},city.is.null`);
-
-      const from = (page - 1) * PAGE_SIZE;
-      q = q.range(from, from + PAGE_SIZE - 1);
-
-      const { data, count } = await q;
-      if (cancelled) return;
-      setProducts((data ?? []) as ProductCardData[]);
-      setTotal(count ?? 0);
-      setLoading(false);
-    };
-    fetchData();
-    return () => { cancelled = true; };
-  }, [page, searchDebounced, category, minPrice, maxPrice, city]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const { items: products, loading, loadingMore, error, retry, sentinelRef } = useProductFeed({ search: searchDebounced, category, minPrice, maxPrice, city });
 
   const clearFilters = () => {
     setSearch(""); setCategory("all"); setMinPrice(""); setMaxPrice("");
@@ -134,15 +97,12 @@ function ProdutosPage() {
               <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
             ))}
           </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-10">
-              <Button variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Anterior</Button>
-              <span className="text-sm text-muted-foreground px-3">Página {page} de {totalPages}</span>
-              <Button variant="outline" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>Seguinte</Button>
-            </div>
-          )}
+
         </>
       )}
+      <div ref={sentinelRef} className="h-px" />
+      {loadingMore && <Loader2 aria-label="A carregar produtos" className="w-5 h-5 mx-auto mt-6 animate-spin text-muted-foreground" />}
+      {error && <div role="alert" className="text-center mt-6"><p>Não foi possível carregar os produtos.</p><Button variant="ghost" onClick={retry}>Tentar novamente</Button></div>}
     </div>
   );
 }
