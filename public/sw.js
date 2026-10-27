@@ -162,6 +162,7 @@ self.addEventListener("push", (event) => {
     renotify: true,
     data: { url: data.url || "/" },
   };
+  if (typeof data.image === "string" && data.image.startsWith("https://")) options.image = data.image;
 
   event.waitUntil(self.registration.showNotification(title, options));
 });

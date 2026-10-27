@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tansta
 import { useEffect, useState } from "react";
 import { useAdminSecurityStatus } from "@/hooks/useAdminSecurityStatus";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, UsersRound, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare, Gift, Images, KeyRound } from "lucide-react";
+import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, UsersRound, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare, Gift, Images, KeyRound, Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -24,6 +24,7 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/banners", label: "Banners da Home", icon: Images },
   { to: "/admin/roleta", label: "Roleta de Descontos", icon: Gift },
+  { to: "/admin/comunicacao", label: "Comunicação", icon: Megaphone },
   { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
   { to: "/admin/conversas", label: "Conversas", icon: MessagesSquare },
   { to: "/admin/seguranca", label: "Segurança", icon: KeyRound },

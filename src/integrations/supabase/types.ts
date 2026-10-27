@@ -137,6 +137,180 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_campaign_products: {
+        Row: {
+          campaign_id: string
+          product_id: string
+          sort_order: number
+        }
+        Insert: {
+          campaign_id: string
+          product_id: string
+          sort_order?: number
+        }
+        Update: {
+          campaign_id?: string
+          product_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_campaign_products_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "admin_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_campaign_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_campaign_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "public_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_campaign_recipients: {
+        Row: {
+          attempts: number
+          campaign_id: string
+          channel: string
+          error_code: string | null
+          id: string
+          sent_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          campaign_id: string
+          channel: string
+          error_code?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          campaign_id?: string
+          channel?: string
+          error_code?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_campaign_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "admin_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_campaign_worker_key: {
+        Row: {
+          id: number
+          token: string
+        }
+        Insert: {
+          id?: number
+          token?: string
+        }
+        Update: {
+          id?: number
+          token?: string
+        }
+        Relationships: []
+      }
+      admin_campaigns: {
+        Row: {
+          audience_filters: Json
+          audience_type: string
+          body: string
+          channels: Json
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          cta_label: string | null
+          cta_url: string
+          estimated_email: number
+          estimated_push: number
+          failed_email: number
+          failed_push: number
+          id: string
+          image_url: string | null
+          name: string
+          sent_email: number
+          sent_push: number
+          started_at: string | null
+          status: string
+          title: string
+          type: string
+        }
+        Insert: {
+          audience_filters?: Json
+          audience_type: string
+          body: string
+          channels?: Json
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          cta_label?: string | null
+          cta_url?: string
+          estimated_email?: number
+          estimated_push?: number
+          failed_email?: number
+          failed_push?: number
+          id?: string
+          image_url?: string | null
+          name: string
+          sent_email?: number
+          sent_push?: number
+          started_at?: string | null
+          status?: string
+          title: string
+          type: string
+        }
+        Update: {
+          audience_filters?: Json
+          audience_type?: string
+          body?: string
+          channels?: Json
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          cta_label?: string | null
+          cta_url?: string
+          estimated_email?: number
+          estimated_push?: number
+          failed_email?: number
+          failed_push?: number
+          id?: string
+          image_url?: string | null
+          name?: string
+          sent_email?: number
+          sent_push?: number
+          started_at?: string | null
+          status?: string
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       admin_recovery_codes: {
         Row: {
           code_hash: string
@@ -2074,6 +2248,37 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_campaign_audience: {
+        Args: { _filters: Json; _segment: string }
+        Returns: {
+          has_email: boolean
+          has_push: boolean
+          user_id: string
+        }[]
+      }
+      admin_campaign_claim: {
+        Args: { _limit: number }
+        Returns: {
+          attempts: number
+          campaign_id: string
+          channel: string
+          id: string
+          user_id: string
+        }[]
+      }
+      admin_campaign_enqueue: {
+        Args: { _campaign_id: string }
+        Returns: number
+      }
+      admin_campaign_estimate: {
+        Args: { _filters: Json; _segment: string }
+        Returns: Json
+      }
+      admin_campaign_refresh: {
+        Args: { _campaign_id: string }
+        Returns: undefined
+      }
+      admin_campaign_tick: { Args: never; Returns: undefined }
       can_feature_for_seller: { Args: { _seller_id: string }; Returns: boolean }
       can_use_ai_generator: { Args: { _seller_id: string }; Returns: boolean }
       create_order_secure: {
@@ -2173,6 +2378,7 @@ export type Database = {
           product_id: string
         }[]
       }
+      get_public_campaign: { Args: { _id: string }; Returns: Json }
       get_public_seller: { Args: { _id: string }; Returns: Json }
       get_roleta_public: { Args: never; Returns: Json }
       get_seller_audit_logs: {

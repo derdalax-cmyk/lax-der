@@ -32,6 +32,7 @@ import { Route as AdminAdministradoresRouteImport } from './routes/admin.adminis
 import { Route as AdminBannersRouteImport } from './routes/admin.banners'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 import { Route as AdminCategoriasDestaqueRouteImport } from './routes/admin.categorias-destaque'
+import { Route as AdminComunicacaoRouteImport } from './routes/admin.comunicacao'
 import { Route as AdminConversasRouteImport } from './routes/admin.conversas'
 import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
@@ -41,6 +42,7 @@ import { Route as AdminSegurancaRouteImport } from './routes/admin.seguranca'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminVerificarRouteImport } from './routes/admin.verificar'
+import { Route as CampanhaIdRouteImport } from './routes/campanha.$id'
 import { Route as ColaboradorIndexRouteImport } from './routes/colaborador.index'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
@@ -65,6 +67,7 @@ import { Route as AdminVendedoresDashboardRouteImport } from './routes/admin.ven
 import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$orderId'
 import { Route as VendedorMensagensIndexRouteImport } from './routes/vendedor.mensagens.index'
 import { Route as VendedorMensagensConversationIdRouteImport } from './routes/vendedor.mensagens.$conversationId'
+import { Route as ApiPublicCampaignsProcessRouteImport } from './routes/api/public/campaigns/process'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -186,6 +189,11 @@ const AdminCategoriasDestaqueRoute = AdminCategoriasDestaqueRouteImport.update({
   path: '/categorias-destaque',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminComunicacaoRoute = AdminComunicacaoRouteImport.update({
+  id: '/comunicacao',
+  path: '/comunicacao',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminConversasRoute = AdminConversasRouteImport.update({
   id: '/conversas',
   path: '/conversas',
@@ -230,6 +238,11 @@ const AdminVerificarRoute = AdminVerificarRouteImport.update({
   id: '/verificar',
   path: '/verificar',
   getParentRoute: () => AdminRoute,
+} as any)
+const CampanhaIdRoute = CampanhaIdRouteImport.update({
+  id: '/campanha/$id',
+  path: '/campanha/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ColaboradorIndexRoute = ColaboradorIndexRouteImport.update({
   id: '/',
@@ -353,6 +366,12 @@ const VendedorMensagensConversationIdRoute =
     path: '/$conversationId',
     getParentRoute: () => VendedorMensagensRoute,
   } as any)
+const ApiPublicCampaignsProcessRoute =
+  ApiPublicCampaignsProcessRouteImport.update({
+    id: '/api/public/campaigns/process',
+    path: '/api/public/campaigns/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   id: '/api/public/email/dispatch',
   path: '/api/public/email/dispatch',
@@ -403,6 +422,7 @@ export interface FileRoutesByFullPath {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -412,6 +432,7 @@ export interface FileRoutesByFullPath {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -437,6 +458,7 @@ export interface FileRoutesByFullPath {
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
+  '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -462,6 +484,7 @@ export interface FileRoutesByTo {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -471,6 +494,7 @@ export interface FileRoutesByTo {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -495,6 +519,7 @@ export interface FileRoutesByTo {
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens': typeof VendedorMensagensIndexRoute
+  '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -525,6 +550,7 @@ export interface FileRoutesById {
   '/admin/banners': typeof AdminBannersRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/categorias-destaque': typeof AdminCategoriasDestaqueRoute
+  '/admin/comunicacao': typeof AdminComunicacaoRoute
   '/admin/conversas': typeof AdminConversasRoute
   '/admin/denuncias': typeof AdminDenunciasRoute
   '/admin/equipe': typeof AdminEquipeRoute
@@ -534,6 +560,7 @@ export interface FileRoutesById {
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
+  '/campanha/$id': typeof CampanhaIdRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -559,6 +586,7 @@ export interface FileRoutesById {
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
+  '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -590,6 +618,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -599,6 +628,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -624,6 +654,7 @@ export interface FileRouteTypes {
     | '/chat/order/$orderId'
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens/'
+    | '/api/public/campaigns/process'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -649,6 +680,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -658,6 +690,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -682,6 +715,7 @@ export interface FileRouteTypes {
     | '/chat/order/$orderId'
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens'
+    | '/api/public/campaigns/process'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -711,6 +745,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/categorias'
     | '/admin/categorias-destaque'
+    | '/admin/comunicacao'
     | '/admin/conversas'
     | '/admin/denuncias'
     | '/admin/equipe'
@@ -720,6 +755,7 @@ export interface FileRouteTypes {
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
+    | '/campanha/$id'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -745,6 +781,7 @@ export interface FileRouteTypes {
     | '/chat/order/$orderId'
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens/'
+    | '/api/public/campaigns/process'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -771,11 +808,13 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   TornarSeVendedorRoute: typeof TornarSeVendedorRoute
   VendedorRoute: typeof VendedorRouteWithChildren
+  CampanhaIdRoute: typeof CampanhaIdRoute
   LojaIdRoute: typeof LojaIdRoute
   PedidoIdRoute: typeof PedidoIdRoute
   PoliticasSlugRoute: typeof PoliticasSlugRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
+  ApiPublicCampaignsProcessRoute: typeof ApiPublicCampaignsProcessRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -946,6 +985,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriasDestaqueRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/comunicacao': {
+      id: '/admin/comunicacao'
+      path: '/comunicacao'
+      fullPath: '/admin/comunicacao'
+      preLoaderRoute: typeof AdminComunicacaoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/conversas': {
       id: '/admin/conversas'
       path: '/conversas'
@@ -1008,6 +1054,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/verificar'
       preLoaderRoute: typeof AdminVerificarRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/campanha/$id': {
+      id: '/campanha/$id'
+      path: '/campanha/$id'
+      fullPath: '/campanha/$id'
+      preLoaderRoute: typeof CampanhaIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/colaborador/': {
       id: '/colaborador/'
@@ -1177,6 +1230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendedorMensagensConversationIdRouteImport
       parentRoute: typeof VendedorMensagensRoute
     }
+    '/api/public/campaigns/process': {
+      id: '/api/public/campaigns/process'
+      path: '/api/public/campaigns/process'
+      fullPath: '/api/public/campaigns/process'
+      preLoaderRoute: typeof ApiPublicCampaignsProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/dispatch': {
       id: '/api/public/email/dispatch'
       path: '/api/public/email/dispatch'
@@ -1220,6 +1280,7 @@ interface AdminRouteChildren {
   AdminBannersRoute: typeof AdminBannersRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminCategoriasDestaqueRoute: typeof AdminCategoriasDestaqueRoute
+  AdminComunicacaoRoute: typeof AdminComunicacaoRoute
   AdminConversasRoute: typeof AdminConversasRoute
   AdminDenunciasRoute: typeof AdminDenunciasRoute
   AdminEquipeRoute: typeof AdminEquipeRoute
@@ -1238,6 +1299,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBannersRoute: AdminBannersRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminCategoriasDestaqueRoute: AdminCategoriasDestaqueRoute,
+  AdminComunicacaoRoute: AdminComunicacaoRoute,
   AdminConversasRoute: AdminConversasRoute,
   AdminDenunciasRoute: AdminDenunciasRoute,
   AdminEquipeRoute: AdminEquipeRoute,
@@ -1346,11 +1408,13 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   TornarSeVendedorRoute: TornarSeVendedorRoute,
   VendedorRoute: VendedorRouteWithChildren,
+  CampanhaIdRoute: CampanhaIdRoute,
   LojaIdRoute: LojaIdRoute,
   PedidoIdRoute: PedidoIdRoute,
   PoliticasSlugRoute: PoliticasSlugRoute,
   ProdutoIdRoute: ProdutoIdRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
+  ApiPublicCampaignsProcessRoute: ApiPublicCampaignsProcessRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
