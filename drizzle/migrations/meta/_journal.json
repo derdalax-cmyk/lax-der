@@ -197,6 +197,13 @@
       "when": 1793094460185,
       "tag": "0027_remove_maputo_cidade_province",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1793134448456,
+      "tag": "0028_admin_campaigns",
+      "breakpoints": true
     }
   ]
 }
