@@ -42,5 +42,5 @@ export const getPublicProductDetails = createServerFn({ method: "GET" })
       product.seller_id ? available().eq("seller_id", product.seller_id).limit(5) : Promise.resolve({ data: [] }),
     ]);
     const normalize = (row: ProductCardData) => ({ ...row, images: normalizedImages(row.images) });
-    return { product: { ...product, images: normalizedImages(product.images) } as PublicProduct, ...recommendationSections(data.id, (categoryRows.data ?? []).map(normalize), (sellerRows.data ?? []).map(normalize)) };
+    return { product: { ...product, images: normalizedImages(product.images) } as PublicProduct, ...recommendationSections(data.id, ((categoryRows.data ?? []) as ProductCardData[]).map(normalize), ((sellerRows.data ?? []) as ProductCardData[]).map(normalize)) };
   });

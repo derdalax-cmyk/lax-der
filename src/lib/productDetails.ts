@@ -47,7 +47,7 @@ export function recommendationSections<T extends ProductCardData>(currentId: str
   return { sellerProducts, related: unique(related).filter(p => !sellerIds.has(p.id)).slice(0, 5) };
 }
 
-export async function shareProduct(product: Pick<PublicProduct, "id" | "title" | "images">, api: Pick<Navigator, "share" | "canShare" | "clipboard"> = navigator, fetchImage: typeof fetch = fetch) {
+export async function shareProduct(product: Pick<ProductCardData, "id" | "title" | "images">, api: Pick<Navigator, "share" | "canShare" | "clipboard"> = navigator, fetchImage: typeof fetch = fetch) {
   const url = `https://derdalax.co.mz/produto/${product.id}`;
   const payload: ShareData = { title: product.title, text: `Vê isto na DERDALAX: ${product.title}`, url };
   if (typeof api.share !== "function") {
