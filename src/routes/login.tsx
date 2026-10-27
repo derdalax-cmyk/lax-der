@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { isValidMzPhone } from "@/lib/validation";
+import { isValidMzPhone, toMzE164, MZ_PHONE_ERROR, sanitizeMzPhoneInput } from "@/lib/validation";
+import { MZ_PROVINCES } from "@/lib/locations";
+import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -66,8 +68,9 @@ function PasswordInput({
 const signupSchema = z.object({
   name: z.string().trim().min(2, "Nome muito curto").max(120),
   email: z.string().trim().email("Email inválido"),
-  phone: z.string().trim().refine(isValidMzPhone, "Telefone inválido (84/85/86/87 + 7 dígitos)"),
-  city: z.string().trim().min(1, "Selecione a cidade"),
+  phone: z.string().trim().refine(isValidMzPhone, MZ_PHONE_ERROR),
+  province: z.enum(MZ_PROVINCES, { errorMap: () => ({ message: "Selecione a província" }) }),
+  city: z.string().trim().min(1, "Indique a cidade").max(80),
   password: z.string().min(6, "Palavra-passe mínima de 6 caracteres"),
 });
 
@@ -81,6 +84,7 @@ function LoginPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
   const [confirm, setConfirm] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -112,7 +116,7 @@ function LoginPage() {
       if (tab === "signup") {
         if (!acceptedTerms) { toast.error("É necessário aceitar os Termos e Condições para criar uma conta"); setBusy(false); return; }
         if (password !== confirm) { toast.error("As senhas não coincidem"); setBusy(false); return; }
-        const parsed = signupSchema.safeParse({ name, email, phone, city, password });
+        const parsed = signupSchema.safeParse({ name, email, phone, province, city, password });
         if (!parsed.success) { toast.error(parsed.error.issues[0].message); setBusy(false); return; }
 
 
@@ -128,7 +132,7 @@ function LoginPage() {
         // If session is created immediately (email confirmation disabled), update profile
         if (data.session) {
           await supabase.from("profiles").update({
-            name, phone: phone.trim(), city,
+            name, phone: toMzE164(phone), province, city: city.trim(),
           }).eq("id", data.user!.id);
           await refreshProfile();
           toast.success("Conta criada com sucesso!");
@@ -191,14 +195,12 @@ function LoginPage() {
               <div><Label htmlFor="email2">Email *</Label>
                 <Input id="email2" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div><Label htmlFor="phone">Telefone (WhatsApp) *</Label>
-                <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="84xxxxxxx" />
+                <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(e) => setPhone(sanitizeMzPhoneInput(e.target.value))} placeholder="84 000 0000 (+258)" />
                 {phone && !isValidMzPhone(phone) && (
-                  <p className="text-xs text-destructive mt-1">Formato inválido — use 84/85/86/87 + 7 dígitos.</p>
+                  <p className="text-xs text-destructive mt-1">{MZ_PHONE_ERROR}</p>
                 )}
               </div>
-              <div><Label htmlFor="city">Cidade *</Label>
-                <Input id="city" type="text" autoComplete="address-level2" required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Maputo" />
-              </div>
+              <ProvinceCityFields province={province} city={city} onProvinceChange={setProvince} onCityChange={setCity} />
               <div><Label htmlFor="password2">Palavra-passe *</Label>
                 <PasswordInput id="password2" value={password} onChange={setPassword} minLength={6} placeholder="Mínimo 6 caracteres" />
               </div>

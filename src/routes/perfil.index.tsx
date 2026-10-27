@@ -27,10 +27,11 @@ import {
 } from "lucide-react";
 import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
-import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { toast } from "sonner";
 import { RoletaFloatingButton } from "@/components/roleta/RoletaFloatingButton";
-import { isValidMzMobile, toMzE164, mzNationalPart, MZ_PHONE_ERROR } from "@/lib/validation";
+import { isValidMzMobile, toMzE164, mzNationalPart, MZ_PHONE_ERROR, sanitizeMzPhoneInput } from "@/lib/validation";
+import { isMzProvince } from "@/lib/locations";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
 import facebookAsset from "@/assets/facebook.png.asset.json";
@@ -47,7 +48,7 @@ function Perfil() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", city: "" });
+  const [form, setForm] = useState({ name: "", phone: "", city: "", province: "" });
   const { collaborations } = useCollaborations();
   const activeCollaborations = collaborations.filter((c) => c.status === "active");
   const roletaCampaign = roletaPublicCampaign ?? roletaMine?.campaign ?? null;
@@ -71,6 +72,7 @@ function Perfil() {
       name: profile?.name ?? "",
       phone: mzNationalPart(profile?.phone),
       city: profile?.city ?? "",
+      province: profile?.province ?? "",
     });
   }, [profile, full]);
 
@@ -82,7 +84,8 @@ function Perfil() {
     if (phoneDigits && phoneChanged && !isValidMzMobile(phoneDigits)) { toast.error(MZ_PHONE_ERROR); return; }
     setSaving(true);
     const { error } = await supabase.from("profiles").update({
-      name: form.name, city: form.city,
+      name: form.name.trim(), city: form.city.trim(),
+      ...(form.province !== (profile?.province ?? "") ? { province: isMzProvince(form.province) ? form.province : null } : {}),
       ...(phoneChanged ? { phone: phoneDigits ? toMzE164(phoneDigits) : null } : {}),
     }).eq("id", user.id);
     setSaving(false);
@@ -221,7 +224,7 @@ function Perfil() {
                   autoComplete="tel-national"
                   aria-label="Telefone (9 dígitos)"
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "").replace(/^258/, "").slice(0, 9) })}
+                  onChange={(e) => setForm({ ...form, phone: sanitizeMzPhoneInput(e.target.value) })}
                   placeholder="84 000 0000"
                   className="flex-1 min-w-0 px-3 text-sm bg-transparent outline-none"
                 />
@@ -230,19 +233,19 @@ function Perfil() {
                 <p className="text-xs text-destructive mt-1">{MZ_PHONE_ERROR}</p>
               )}
             </div>
-            <div>
-              <Label className="text-xs">Cidade</Label>
-              <Input
-                value={form.city}
-                onChange={(e) => setForm({ ...form, city: e.target.value })}
-                placeholder="Ex: Maputo"
-              />
-            </div>
+            <ProvinceCityFields
+              labelClassName="text-xs"
+              province={form.province}
+              city={form.city}
+              onProvinceChange={(v) => setForm((f) => ({ ...f, province: v }))}
+              onCityChange={(v) => setForm((f) => ({ ...f, city: v }))}
+            />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field icon={Phone} label="Telefone" value={profile?.phone} />
-            <Field icon={MapPin} label="Província" value={profile?.city} />
+            <Field icon={MapPin} label="Província" value={profile?.province} />
+            <Field icon={MapPin} label="Cidade" value={profile?.city} />
             <Field icon={Mail} label="Email" value={profile?.email || user.email} />
           </div>
         )}
@@ -280,7 +283,6 @@ function Perfil() {
       <div className="bg-card border border-border rounded-2xl mt-4 p-4 sm:p-6 shadow-sm space-y-2.5">
         <h2 className="font-display text-base font-semibold mb-1">Sobre a DERDALAX</h2>
         <PushSettingsRow />
-        <NotificationPreferences />
 
         <PoliciesDialog
           trigger={
