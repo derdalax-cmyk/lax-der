@@ -197,12 +197,10 @@ function LoginPage() {
               <div><Label htmlFor="phone">Telefone (WhatsApp) *</Label>
                 <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(e) => setPhone(sanitizeMzPhoneInput(e.target.value))} placeholder="84 000 0000 (+258)" />
                 {phone && !isValidMzPhone(phone) && (
-                  <p className="text-xs text-destructive mt-1">Formato inválido — use 84/85/86/87 + 7 dígitos.</p>
+                  <p className="text-xs text-destructive mt-1">{MZ_PHONE_ERROR}</p>
                 )}
               </div>
-              <div><Label htmlFor="city">Cidade *</Label>
-                <Input id="city" type="text" autoComplete="address-level2" required value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Maputo" />
-              </div>
+              <ProvinceCityFields province={province} city={city} onProvinceChange={setProvince} onCityChange={setCity} />
               <div><Label htmlFor="password2">Palavra-passe *</Label>
                 <PasswordInput id="password2" value={password} onChange={setPassword} minLength={6} placeholder="Mínimo 6 caracteres" />
               </div>
