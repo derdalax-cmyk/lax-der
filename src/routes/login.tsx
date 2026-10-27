@@ -69,7 +69,7 @@ const signupSchema = z.object({
   name: z.string().trim().min(2, "Nome muito curto").max(120),
   email: z.string().trim().email("Email inválido"),
   phone: z.string().trim().refine(isValidMzPhone, MZ_PHONE_ERROR),
-  province: z.enum(MZ_PROVINCES, { message: "Selecione a província" }),
+  province: z.enum(MZ_PROVINCES, { errorMap: () => ({ message: "Selecione a província" }) }),
   city: z.string().trim().min(1, "Indique a cidade").max(80),
   password: z.string().min(6, "Palavra-passe mínima de 6 caracteres"),
 });
