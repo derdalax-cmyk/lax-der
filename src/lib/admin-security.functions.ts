@@ -5,6 +5,25 @@ type Json = Record<string, unknown>;
 const isObj = (v: unknown): v is Json => !!v && typeof v === "object" && !Array.isArray(v);
 const UUID = /^[0-9a-f-]{36}$/i;
 
+// Options JSON is built here instead of via @simplewebauthn/server's generate*Options:
+// those pull in generateChallenge, whose module-level internals hit a TDZ
+// ("Cannot access '_generateChallengeInternals' before initialization") in the
+// bundled server runtime. Verification still uses the library.
+function b64url(bytes: Uint8Array) {
+  let s = "";
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function newChallenge() {
+  return b64url(crypto.getRandomValues(new Uint8Array(32)));
+}
+type Cred = { credential_id: string; transports: unknown };
+const credDesc = (c: Cred) => ({
+  id: c.credential_id,
+  type: "public-key" as const,
+  ...(Array.isArray(c.transports) && c.transports.length ? { transports: c.transports } : {}),
+});
+
 /** Status used by the /admin guard. */
 export const getAdminSecurityStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -31,7 +50,6 @@ export const beginAdminPasskeyRegistration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const s = await import("./admin-security.server");
-    const { generateRegistrationOptions } = await import("@simplewebauthn/server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const uid = context.userId;
     await s.requireAdminRole(uid);
@@ -47,16 +65,18 @@ export const beginAdminPasskeyRegistration = createServerFn({ method: "POST" })
     const { rpID, origin } = s.resolveWebAuthnContext();
     const { data: existing } = await supabaseAdmin
       .from("admin_webauthn_credentials").select("credential_id, transports").eq("user_id", uid).is("revoked_at", null);
-    const options = await generateRegistrationOptions({
-      rpName: "DERDALAX Admin",
-      rpID,
-      userName: `admin-${uid.slice(0, 8)}`,
-      userDisplayName: "Administrador DERDALAX",
-      userID: new TextEncoder().encode(uid),
-      attestationType: "none",
-      excludeCredentials: (existing ?? []).map((c) => ({ id: c.credential_id, transports: (c.transports as never) ?? undefined })),
-      authenticatorSelection: { residentKey: "preferred", userVerification: "required" },
-    });
+    const options = {
+      challenge: newChallenge(),
+      rp: { name: "DERDALAX Admin", id: rpID },
+      user: { id: b64url(new TextEncoder().encode(uid)), name: `admin-${uid.slice(0, 8)}`, displayName: "Administrador DERDALAX" },
+      pubKeyCredParams: [{ alg: -8, type: "public-key" }, { alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+      timeout: 60000,
+      attestation: "none",
+      excludeCredentials: (existing ?? []).map(credDesc),
+      authenticatorSelection: { residentKey: "preferred", requireResidentKey: false, userVerification: "required" },
+      extensions: { credProps: true },
+      hints: [],
+    };
     await supabaseAdmin.from("admin_webauthn_challenges").insert({
       user_id: uid, challenge: options.challenge, purpose: "register", rp_id: rpID, origin,
     });
@@ -135,7 +155,6 @@ export const beginAdminPasskeyAuthentication = createServerFn({ method: "POST" }
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const s = await import("./admin-security.server");
-    const { generateAuthenticationOptions } = await import("@simplewebauthn/server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const uid = context.userId;
     await s.requireAdminRole(uid);
@@ -144,11 +163,13 @@ export const beginAdminPasskeyAuthentication = createServerFn({ method: "POST" }
     const { data: creds } = await supabaseAdmin
       .from("admin_webauthn_credentials").select("credential_id, transports").eq("user_id", uid).is("revoked_at", null);
     if (!creds?.length) throw new Error("Nenhuma passkey registada.");
-    const options = await generateAuthenticationOptions({
-      rpID,
+    const options = {
+      challenge: newChallenge(),
+      rpId: rpID,
+      timeout: 60000,
       userVerification: "required",
-      allowCredentials: creds.map((c) => ({ id: c.credential_id, transports: (c.transports as never) ?? undefined })),
-    });
+      allowCredentials: creds.map(credDesc),
+    };
     await supabaseAdmin.from("admin_webauthn_challenges").insert({
       user_id: uid, challenge: options.challenge, purpose: "authenticate", rp_id: rpID, origin,
     });
