@@ -1200,6 +1200,7 @@ export type Database = {
           name: string | null
           notification_preferences: Json
           phone: string | null
+          province: string | null
           updated_at: string
         }
         Insert: {
@@ -1215,6 +1216,7 @@ export type Database = {
           name?: string | null
           notification_preferences?: Json
           phone?: string | null
+          province?: string | null
           updated_at?: string
         }
         Update: {
@@ -1230,6 +1232,7 @@ export type Database = {
           name?: string | null
           notification_preferences?: Json
           phone?: string | null
+          province?: string | null
           updated_at?: string
         }
         Relationships: []
