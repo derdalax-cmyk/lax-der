@@ -13,14 +13,19 @@ import { HomeHero } from "@/components/HomeHero";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
-      { name: "description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
-      { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
-      { property: "og:description", content: "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX." },
+      { title: "Derdalax: compre sem sair de casa" },
+      { name: "description", content: "Compre moda online na Derdalax, de forma simples e sem sair de casa." },
+      { property: "og:title", content: "Derdalax: compre sem sair de casa" },
+      { property: "og:description", content: "Compre moda online na Derdalax, de forma simples e sem sair de casa." },
+      { property: "og:site_name", content: "Derdalax" },
+      { property: "og:url", content: "https://derdalax.co.mz/" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Derdalax: compre sem sair de casa" },
+      { name: "twitter:description", content: "Compre moda online na Derdalax, de forma simples e sem sair de casa." },
     ],
     links: [
+      { rel: "canonical", href: "https://derdalax.co.mz/" },
       { rel: "preload", as: "image", href: heroBg.url, fetchPriority: "high" },
     ],
   }),
