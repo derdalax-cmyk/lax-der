@@ -37,8 +37,10 @@ import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminRoletaRouteImport } from './routes/admin.roleta'
+import { Route as AdminSegurancaRouteImport } from './routes/admin.seguranca'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
+import { Route as AdminVerificarRouteImport } from './routes/admin.verificar'
 import { Route as ColaboradorIndexRouteImport } from './routes/colaborador.index'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
@@ -209,6 +211,11 @@ const AdminRoletaRoute = AdminRoletaRouteImport.update({
   path: '/roleta',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSegurancaRoute = AdminSegurancaRouteImport.update({
+  id: '/seguranca',
+  path: '/seguranca',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUtilizadoresRoute = AdminUtilizadoresRouteImport.update({
   id: '/utilizadores',
   path: '/utilizadores',
@@ -217,6 +224,11 @@ const AdminUtilizadoresRoute = AdminUtilizadoresRouteImport.update({
 const AdminVendedoresRoute = AdminVendedoresRouteImport.update({
   id: '/vendedores',
   path: '/vendedores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVerificarRoute = AdminVerificarRouteImport.update({
+  id: '/verificar',
+  path: '/verificar',
   getParentRoute: () => AdminRoute,
 } as any)
 const ColaboradorIndexRoute = ColaboradorIndexRouteImport.update({
@@ -396,8 +408,10 @@ export interface FileRoutesByFullPath {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -453,8 +467,10 @@ export interface FileRoutesByTo {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -514,8 +530,10 @@ export interface FileRoutesById {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -577,8 +595,10 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -634,8 +654,10 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -694,8 +716,10 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -957,6 +981,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRoletaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seguranca': {
+      id: '/admin/seguranca'
+      path: '/seguranca'
+      fullPath: '/admin/seguranca'
+      preLoaderRoute: typeof AdminSegurancaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/utilizadores': {
       id: '/admin/utilizadores'
       path: '/utilizadores'
@@ -969,6 +1000,13 @@ declare module '@tanstack/react-router' {
       path: '/vendedores'
       fullPath: '/admin/vendedores'
       preLoaderRoute: typeof AdminVendedoresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/verificar': {
+      id: '/admin/verificar'
+      path: '/verificar'
+      fullPath: '/admin/verificar'
+      preLoaderRoute: typeof AdminVerificarRouteImport
       parentRoute: typeof AdminRoute
     }
     '/colaborador/': {
@@ -1187,8 +1225,10 @@ interface AdminRouteChildren {
   AdminEquipeRoute: typeof AdminEquipeRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminRoletaRoute: typeof AdminRoletaRoute
+  AdminSegurancaRoute: typeof AdminSegurancaRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
+  AdminVerificarRoute: typeof AdminVerificarRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminVendedoresDashboardRoute: typeof AdminVendedoresDashboardRoute
 }
@@ -1203,8 +1243,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipeRoute: AdminEquipeRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminRoletaRoute: AdminRoletaRoute,
+  AdminSegurancaRoute: AdminSegurancaRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
+  AdminVerificarRoute: AdminVerificarRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminVendedoresDashboardRoute: AdminVendedoresDashboardRoute,
 }

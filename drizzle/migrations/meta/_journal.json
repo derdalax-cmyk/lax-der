@@ -176,6 +176,13 @@
       "when": 1792991524895,
       "tag": "0024_close_legacy_order_inserts_public_product_projection",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793060391794,
+      "tag": "0025_admin_step_up_security",
+      "breakpoints": true
     }
   ]
 }

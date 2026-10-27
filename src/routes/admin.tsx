@@ -1,7 +1,8 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useAdminSecurityStatus } from "@/hooks/useAdminSecurityStatus";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, UsersRound, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare, Gift, Images } from "lucide-react";
+import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, UsersRound, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare, Gift, Images, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -25,6 +26,7 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/roleta", label: "Roleta de Descontos", icon: Gift },
   { to: "/admin/denuncias", label: "Denúncias", icon: ShieldAlert },
   { to: "/admin/conversas", label: "Conversas", icon: MessagesSquare },
+  { to: "/admin/seguranca", label: "Segurança", icon: KeyRound },
   { to: "/perfil", label: "Perfil", icon: UserCircle },
 ];
 
@@ -38,7 +40,22 @@ function AdminLayout() {
     if (!loading && (!user || !isAdmin)) navigate({ to: "/" });
   }, [user, isAdmin, loading, navigate]);
 
-  if (loading || !isAdmin) return null;
+  const status = useAdminSecurityStatus(!loading && !!user && isAdmin);
+  const st = status.data;
+  const onVerify = loc.pathname.startsWith("/admin/verificar");
+  useEffect(() => {
+    if (!st) return;
+    if (!st.isAdmin) { navigate({ to: "/" }); return; }
+    if (!st.verified && !onVerify) {
+      navigate({ to: "/admin/verificar", search: { redirect: loc.pathname }, replace: true });
+    }
+  }, [st, onVerify, loc.pathname, navigate]);
+
+  if (loading || !isAdmin || !st) return null;
+  if (!st.isAdmin) return null;
+  if (!st.verified && !onVerify) return null;
+  if (onVerify) return <section className="max-w-md mx-auto px-4 py-10"><Outlet /></section>;
+  const visibleNav = nav.filter((n) => n.to !== "/admin/administradores" || (st.isAdmin && st.isSuperAdmin));
 
   return (
     <div className="min-h-screen">
@@ -56,7 +73,7 @@ function AdminLayout() {
                 <p className="text-xs text-muted-foreground text-left">Painel administrativo</p>
               </SheetHeader>
               <nav className="flex-1 overflow-y-auto py-1">
-                {nav.map((n, idx) => {
+                {visibleNav.map((n, idx) => {
                   const active = n.exact ? loc.pathname === n.to : loc.pathname.startsWith(n.to);
                   const Icon = n.icon;
                   return (

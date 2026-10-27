@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import type { Session, User } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { endAdminSession } from "@/lib/admin-security.functions";
 
 type Profile = {
   id: string;
@@ -77,6 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user, session, profile, isAdmin, loading, needsProfileCompletion,
       refreshProfile: async () => { if (user) await loadProfile(user.id); },
       signOut: async () => {
+        // Revogar a sessão administrativa forte (cookie HttpOnly) antes de sair.
+        if (isAdmin) {
+          try {
+            await endAdminSession();
+          } catch { /* ignore */ }
+        }
         // Limpar estado sensível antes de terminar a sessão.
         try { await queryClient.cancelQueries(); queryClient.clear(); } catch { /* ignore */ }
         try { sessionStorage.removeItem("derdalax_post_login_redirect"); } catch { /* ignore */ }
