@@ -11,7 +11,7 @@ import {
   beginAdminPasskeyAuthentication, finishAdminPasskeyAuthentication,
   beginAdminPasskeyRegistration, finishAdminPasskeyRegistration, verifyAdminRecoveryCode,
 } from "@/lib/admin-security.functions";
-import { useAdminSecurityStatus } from "./admin";
+import { useAdminSecurityStatus } from "@/hooks/useAdminSecurityStatus";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/admin/verificar")({

@@ -39,6 +39,7 @@ import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminRoletaRouteImport } from './routes/admin.roleta'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
+import { Route as AdminVerificarRouteImport } from './routes/admin.verificar'
 import { Route as ColaboradorIndexRouteImport } from './routes/colaborador.index'
 import { Route as ColaboradorSellerIdRouteImport } from './routes/colaborador.$sellerId'
 import { Route as LojaIdRouteImport } from './routes/loja.$id'
@@ -217,6 +218,11 @@ const AdminUtilizadoresRoute = AdminUtilizadoresRouteImport.update({
 const AdminVendedoresRoute = AdminVendedoresRouteImport.update({
   id: '/vendedores',
   path: '/vendedores',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVerificarRoute = AdminVerificarRouteImport.update({
+  id: '/verificar',
+  path: '/verificar',
   getParentRoute: () => AdminRoute,
 } as any)
 const ColaboradorIndexRoute = ColaboradorIndexRouteImport.update({
@@ -398,6 +404,7 @@ export interface FileRoutesByFullPath {
   '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -455,6 +462,7 @@ export interface FileRoutesByTo {
   '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -516,6 +524,7 @@ export interface FileRoutesById {
   '/admin/roleta': typeof AdminRoletaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
+  '/admin/verificar': typeof AdminVerificarRoute
   '/colaborador/$sellerId': typeof ColaboradorSellerIdRoute
   '/loja/$id': typeof LojaIdRoute
   '/pedido/$id': typeof PedidoIdRoute
@@ -579,6 +588,7 @@ export interface FileRouteTypes {
     | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -636,6 +646,7 @@ export interface FileRouteTypes {
     | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -696,6 +707,7 @@ export interface FileRouteTypes {
     | '/admin/roleta'
     | '/admin/utilizadores'
     | '/admin/vendedores'
+    | '/admin/verificar'
     | '/colaborador/$sellerId'
     | '/loja/$id'
     | '/pedido/$id'
@@ -971,6 +983,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVendedoresRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/verificar': {
+      id: '/admin/verificar'
+      path: '/verificar'
+      fullPath: '/admin/verificar'
+      preLoaderRoute: typeof AdminVerificarRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/colaborador/': {
       id: '/colaborador/'
       path: '/'
@@ -1189,6 +1208,7 @@ interface AdminRouteChildren {
   AdminRoletaRoute: typeof AdminRoletaRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
+  AdminVerificarRoute: typeof AdminVerificarRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminVendedoresDashboardRoute: typeof AdminVendedoresDashboardRoute
 }
@@ -1205,6 +1225,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminRoletaRoute: AdminRoletaRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
+  AdminVerificarRoute: AdminVerificarRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminVendedoresDashboardRoute: AdminVendedoresDashboardRoute,
 }

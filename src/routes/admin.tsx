@@ -1,8 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { getAdminSecurityStatus } from "@/lib/admin-security.functions";
+import { useAdminSecurityStatus } from "@/hooks/useAdminSecurityStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { LayoutDashboard, Store, ShieldAlert, Package, UserCircle, Menu, Users, UsersRound, ShieldCheck, BarChart3, FolderTree, Flame, MessagesSquare, Gift, Images, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,11 +29,6 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/seguranca", label: "Segurança", icon: KeyRound },
   { to: "/perfil", label: "Perfil", icon: UserCircle },
 ];
-
-export function useAdminSecurityStatus(enabled = true) {
-  const fn = useServerFn(getAdminSecurityStatus);
-  return useQuery({ queryKey: ["admin-security-status"], queryFn: () => fn(), enabled, staleTime: 30_000, refetchInterval: 60_000 });
-}
 
 function AdminLayout() {
   const { user, isAdmin, loading } = useAuth();
