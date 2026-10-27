@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Preservar contexto/ordem/scroll das listas e corrigir preços em cards mobile.
-- [ ] Recomendações reais e partilha/metadata por produto; validar navegação e testes.
+- [x] Preservar contexto/ordem/scroll das listas e corrigir preços em cards mobile.
+- [x] Recomendações reais e partilha/metadata por produto; validar navegação e testes.
 
 - [x] Remover paginação de produtos e validar carregamento automático/filtros/duplicados.
 - [x] Reforçar prompt e pós-validação IA sem alterar autorização ou modelo.
