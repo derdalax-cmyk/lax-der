@@ -26,3 +26,8 @@ export function storePendingRedirect(path: string | null) {
 export function takePendingRedirect(): string | null {
   try { const v = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); return safeRedirect(v); } catch { return null; }
 }
+
+/** A normal login always goes home, irrespective of account roles. */
+export function loginDestination(pending: unknown, requested: unknown): string {
+  return safeRedirect(pending) ?? safeRedirect(requested) ?? "/";
+}

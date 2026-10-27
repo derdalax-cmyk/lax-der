@@ -26,3 +26,8 @@ export function sanitizeMzPhoneInput(raw: string): string {
 }
 
 export const MZ_PHONE_ERROR = "Introduza um número moçambicano válido (+258 82–88...)";
+
+export function formatMzNationalPhone(raw: string): string {
+  const digits = sanitizeMzPhoneInput(raw);
+  return [digits.slice(0, 2), digits.slice(2, 5), digits.slice(5, 9)].filter(Boolean).join(" ");
+}

@@ -1,9 +1,7 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { type ProductCardData, formatMZN } from "@/components/ProductCard";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useProductFeed } from "@/hooks/useProductFeed";
+import { formatMZN } from "@/components/ProductCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCity } from "@/contexts/CityContext";
 import { Input } from "@/components/ui/input";
@@ -11,15 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/hooks/useCategories";
 import { CategoryIcon } from "@/lib/categoryIcons";
-import { Search, Heart, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Heart, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount } from "@/lib/productPrice";
 
-const searchSchema = z.object({ pagina: fallback(z.number().int(), 1).default(1) });
-
 export const Route = createFileRoute("/explorar")({
-  validateSearch: zodValidator(searchSchema),
   head: () => ({ meta: [
     { title: "Explorar · DERDALAX" },
     { name: "description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
@@ -30,8 +25,6 @@ export const Route = createFileRoute("/explorar")({
   ]}),
   component: ExplorarPage,
 });
-
-const PAGE_SIZE = 50;
 
 function firstImage(images: unknown): string | null {
   if (Array.isArray(images) && images.length > 0) {
@@ -46,18 +39,6 @@ function ExplorarPage() {
   const { isFavorite, toggle } = useFavorites();
   const { categories: cats } = useCategories();
   const { city } = useCity();
-  const [items, setItems] = useState<ProductCardData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { pagina } = Route.useSearch();
-  const navigate = useNavigate({ from: "/explorar" });
-  const page = Math.max(1, Math.floor(Number(pagina) || 1));
-  const [total, setTotal] = useState(0);
-  const listRef = useRef<HTMLDivElement>(null);
-  const filterKey = useRef<string | null>(null);
-  const setPage = (n: number, scroll = true) => {
-    navigate({ search: (prev) => ({ ...prev, pagina: n }), replace: !scroll });
-    if (scroll) listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const [category, setCategory] = useState("all");
@@ -71,54 +52,9 @@ function ExplorarPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => {
-    const key = JSON.stringify([searchDebounced, category, gender, city]);
-    if (filterKey.current === null || filterKey.current === key) { filterKey.current = key; return; }
-    filterKey.current = key;
-    if (page !== 1) setPage(1, false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchDebounced, category, gender, city]);
+  const { items, loading, loadingMore, error, retry, sentinelRef } = useProductFeed({ search: searchDebounced, category, gender, city });
 
-  useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      setLoading(true);
-      let q = supabase
-        .from("public_products")
-        .select("id,title,base_price,original_price,images,is_unique,status,category", { count: "exact" })
-        .neq("status", "sold");
-
-      if (searchDebounced.trim()) q = q.ilike("title", `%${searchDebounced.trim()}%`);
-      if (category !== "all") q = q.eq("category", category);
-      if (gender !== "all") q = q.ilike("description", `%"gender":"${gender}"%`);
-      if (city) q = q.or(`city.eq.${city},city.is.null`);
-      q = q.order("created_at", { ascending: false }).order("id", { ascending: false });
-
-      const from = (page - 1) * PAGE_SIZE;
-      q = q.range(from, from + PAGE_SIZE - 1);
-
-      const { data, count, error } = await q;
-      if (cancelled) return;
-      let n = count ?? 0;
-      if (error && page > 1) {
-        // Página fora do intervalo: obter só o total com os mesmos filtros.
-        let c = supabase.from("public_products").select("id", { count: "exact", head: true }).neq("status", "sold");
-        if (searchDebounced.trim()) c = c.ilike("title", `%${searchDebounced.trim()}%`);
-        if (category !== "all") c = c.eq("category", category);
-        if (gender !== "all") c = c.ilike("description", `%"gender":"${gender}"%`);
-        if (city) c = c.or(`city.eq.${city},city.is.null`);
-        const r = await c;
-        if (cancelled) return;
-        n = r.count ?? 0;
-      }
-      const pages = Math.max(1, Math.ceil(n / PAGE_SIZE));
-      setTotal(n);
-      if (page > pages || page !== pagina) { setPage(Math.min(page, pages), false); return; }
-      setItems((data ?? []) as ProductCardData[]);
-      setLoading(false);
-    };
-    run();
-    return () => { cancelled = true; };
+  return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, searchDebounced, category, gender, city]);
 
@@ -157,7 +93,7 @@ function ExplorarPage() {
       </div>
 
 
-      <div ref={listRef} className="scroll-mt-24" />
+
       {loading && items.length === 0 ? (
         <div className="mx-auto columns-2 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4 [column-fill:_balance]">
           {Array.from({ length: 12 }).map((_, i) => (
@@ -216,19 +152,12 @@ function ExplorarPage() {
               );
             })}
           </div>
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              <span className="text-sm text-muted-foreground mr-1">Página {page} de {totalPages}</span>
-              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Página anterior" disabled={loading || page <= 1} onClick={() => setPage(page - 1)}>
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Página seguinte" disabled={loading || page >= totalPages} onClick={() => setPage(page + 1)}>
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
+
         </>
       )}
+      <div ref={sentinelRef} className="h-px" />
+      {loadingMore && <Loader2 aria-label="A carregar produtos" className="w-5 h-5 mx-auto mt-6 animate-spin text-muted-foreground" />}
+      {error && <div role="alert" className="text-center mt-6"><p>Não foi possível carregar os produtos.</p><Button variant="ghost" onClick={retry}>Tentar novamente</Button></div>}
     </div>
   );
 }

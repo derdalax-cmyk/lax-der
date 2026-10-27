@@ -34,7 +34,7 @@ export function ProvinceCityFields({ province, city, onProvinceChange, onCityCha
           autoComplete="address-level2"
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
-          placeholder={province ? `Ex: ${citySuggestions(province)[0]}` : "Ex: Maputo"}
+          placeholder="Ex: Beira"
           maxLength={80}
         />
         <datalist id={listId}>

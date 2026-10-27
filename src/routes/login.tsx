@@ -8,14 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { isValidMzPhone, toMzE164, MZ_PHONE_ERROR, sanitizeMzPhoneInput } from "@/lib/validation";
+import { isValidMzPhone, toMzE164, MZ_PHONE_ERROR, sanitizeMzPhoneInput, formatMzNationalPhone } from "@/lib/validation";
 import { MZ_PROVINCES } from "@/lib/locations";
 import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TermsLink, PrivacyLink } from "@/components/TermsLink";
-import { safeRedirect, storePendingRedirect, takePendingRedirect } from "@/lib/safeRedirect";
+import { safeRedirect, storePendingRedirect, takePendingRedirect, loginDestination } from "@/lib/safeRedirect";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string; mode?: "signup" } => {
@@ -77,7 +77,7 @@ const signupSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const { user, loading, isAdmin, refreshProfile } = useAuth();
+  const { user, loading, refreshProfile } = useAuth();
   const [tab, setTab] = useState<"login" | "signup">(search.mode === "signup" ? "signup" : "login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -95,11 +95,10 @@ function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      const dest = takePendingRedirect() ?? search.redirect ?? null;
-      if (dest) navigate({ to: dest as "/", replace: true });
-      else navigate({ to: isAdmin ? "/admin" : "/", replace: true });
+      const dest = loginDestination(takePendingRedirect(), search.redirect);
+      navigate({ to: dest as "/", replace: true });
     }
-  }, [user, loading, isAdmin, navigate, search.redirect]);
+  }, [user, loading, navigate, search.redirect]);
 
   const oauth = async (provider: "google") => {
     setBusy(true);
@@ -130,10 +129,10 @@ function LoginPage() {
         if (error) throw error;
 
         // If session is created immediately (email confirmation disabled), update profile
-        if (data.session) {
+        if (data.session && data.user) {
           await supabase.from("profiles").update({
             name, phone: toMzE164(phone), province, city: city.trim(),
-          }).eq("id", data.user!.id);
+          }).eq("id", data.user.id);
           await refreshProfile();
           toast.success("Conta criada com sucesso!");
         } else {
@@ -195,7 +194,10 @@ function LoginPage() {
               <div><Label htmlFor="email2">Email *</Label>
                 <Input id="email2" type="email" inputMode="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div><Label htmlFor="phone">Telefone (WhatsApp) *</Label>
-                <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(e) => setPhone(sanitizeMzPhoneInput(e.target.value))} placeholder="84 000 0000 (+258)" />
+                <div className="flex items-center rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring">
+                  <span className="flex items-center gap-1.5 pl-3 pr-2 text-sm shrink-0"><span role="img" aria-label="Moçambique">🇲🇿</span><span>+258</span></span>
+                  <Input id="phone" type="tel" inputMode="tel" autoComplete="tel-national" required value={formatMzNationalPhone(phone)} onChange={(e) => setPhone(sanitizeMzPhoneInput(e.target.value))} placeholder="84 000 0000" className="border-0 shadow-none focus-visible:ring-0 min-w-0" />
+                </div>
                 {phone && !isValidMzPhone(phone) && (
                   <p className="text-xs text-destructive mt-1">{MZ_PHONE_ERROR}</p>
                 )}
