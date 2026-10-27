@@ -36,10 +36,13 @@ export const beginAdminPasskeyRegistration = createServerFn({ method: "POST" })
     const uid = context.userId;
     await s.requireAdminRole(uid);
     const state = await s.securityState(uid);
-    if (state.passkeys === 0 && state.recoveryCodes === 0) {
-      if (!s.hasRecentPrimaryLogin(context.claims)) throw new Error("RECENT_LOGIN_REQUIRED");
-    } else {
+    const current = await s.getVerifiedSession(uid);
+    if (current) {
       await s.requireRecentAdminVerification(uid);
+    } else {
+      // Bootstrap only: no factor exists yet, and the primary login is recent.
+      if (state.passkeys > 0 || state.recoveryCodes > 0) throw new Error("STEP_UP_REQUIRED");
+      if (!s.hasRecentPrimaryLogin(context.claims)) throw new Error("RECENT_LOGIN_REQUIRED");
     }
     const { rpID, origin } = s.resolveWebAuthnContext();
     const { data: existing } = await supabaseAdmin
