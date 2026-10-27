@@ -1,14 +1,19 @@
-import { Children, useEffect, useRef, type ReactNode } from "react";
+import { Children, useLayoutEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /** Shortest-column placement without changing product keys, DOM order or feed data. */
 export function ProductMasonry({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const grid = ref.current;
     if (!grid) return;
     let frame = 0;
     const place = () => {
+      // Remove previous placements before measuring explicit responsive tracks;
+      // otherwise desktop columns become implicit columns on a smaller screen.
+      for (const item of Array.from(grid.children)) {
+        if (item instanceof HTMLElement) item.style.gridColumn = "";
+      }
       const style = getComputedStyle(grid);
       const columns = style.gridTemplateColumns.split(" ").length;
       const gutter = parseFloat(style.columnGap) || 0;
