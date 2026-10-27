@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import type { Session, User } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { endAdminSession } from "@/lib/admin-security.functions";
 
 type Profile = {
   id: string;
@@ -80,7 +81,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Revogar a sessão administrativa forte (cookie HttpOnly) antes de sair.
         if (isAdmin) {
           try {
-            const { endAdminSession } = await import("@/lib/admin-security.functions");
             await endAdminSession();
           } catch { /* ignore */ }
         }
