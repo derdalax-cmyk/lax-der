@@ -11,8 +11,12 @@ export function ProductMasonry({ children, className }: { children: ReactNode; c
     const place = () => {
       // Remove previous placements before measuring explicit responsive tracks;
       // otherwise desktop columns become implicit columns on a smaller screen.
+      grid.classList.remove("product-masonry-ready");
       for (const item of Array.from(grid.children)) {
-        if (item instanceof HTMLElement) item.style.gridColumn = "";
+        if (item instanceof HTMLElement) {
+          item.style.gridColumn = "";
+          item.style.gridRow = "";
+        }
       }
       const style = getComputedStyle(grid);
       const columns = style.gridTemplateColumns.split(" ").length;
