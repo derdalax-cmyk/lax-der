@@ -1,3 +1,4 @@
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -53,7 +54,7 @@ function FavoritosPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+        <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="rounded-xl border border-border overflow-hidden">
               <div className="aspect-[3/4] bg-secondary animate-pulse" />
@@ -63,7 +64,7 @@ function FavoritosPage() {
               </div>
             </div>
           ))}
-        </div>
+        </ProductMasonry>
       ) : products.length === 0 ? (
         <div className="flex flex-col items-center text-center py-16 sm:py-24">
           <span className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center mb-5">
@@ -80,7 +81,7 @@ function FavoritosPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+        <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {products.map((p) => (
             <ProductCard
               key={p.id}
@@ -89,7 +90,7 @@ function FavoritosPage() {
               onToggleFavorite={toggle}
             />
           ))}
-        </div>
+        </ProductMasonry>
       )}
     </div>
   );

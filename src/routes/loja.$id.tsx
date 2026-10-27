@@ -1,3 +1,4 @@
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,11 +117,11 @@ function LojaPublica() {
               Esta loja ainda não tem produtos disponíveis.
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <ProductMasonry className="grid-cols-2 md:grid-cols-3 gap-4">
               {products.map((p) => (
                 <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
               ))}
-            </div>
+            </ProductMasonry>
           )}
         </section>
 

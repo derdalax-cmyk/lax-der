@@ -1,3 +1,5 @@
+import { NaturalProductImage } from "@/components/product/NaturalProductImage";
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -90,11 +92,11 @@ function ExplorarPage() {
 
 
       {loading && items.length === 0 ? (
-        <div className="mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
+        <ProductMasonry className="mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="mb-4 bg-secondary animate-pulse rounded-xl" style={{ height: 180 + (i % 4) * 60 }} />
           ))}
-        </div>
+        </ProductMasonry>
       ) : items.length === 0 ? (
         hasActiveFilters ? (
           <div className="text-center py-20 text-muted-foreground">
@@ -108,7 +110,7 @@ function ExplorarPage() {
 
       ) : (
         <>
-          <div className="mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
+          <ProductMasonry className="mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
             {items.map((p) => {
               const img = firstImage(p.images);
               const fav = isFavorite(p.id);
@@ -116,16 +118,11 @@ function ExplorarPage() {
               return (
                 <div key={p.id} data-product-id={p.id} className="min-w-0 group relative">
                   <Link to="/produto/$id" params={{ id: p.id }} state={{ productOrigin: true }} className="block rounded-xl overflow-hidden border border-border bg-card">
-                    <div className="relative aspect-square w-full overflow-hidden bg-secondary">
-                      {img ? (
-                        <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
-                      ) : (
-                        <div className="w-full aspect-square flex items-center justify-center text-muted-foreground text-xs">Sem imagem</div>
-                      )}
+                    <NaturalProductImage src={img ? thumbUrl(img) : null} alt={p.title}>
                       {p.is_unique && (
                         <span className="absolute top-2 left-2 bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
                       )}
-                    </div>
+                    </NaturalProductImage>
                     <div className="p-3">
                       <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{p.title}</h3>
                       <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
@@ -146,7 +143,7 @@ function ExplorarPage() {
                 </div>
               );
             })}
-          </div>
+          </ProductMasonry>
 
         </>
       )}

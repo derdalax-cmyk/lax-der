@@ -1,3 +1,4 @@
+import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -81,20 +82,20 @@ function ProdutosPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
             <div key={i} className="aspect-[3/4] bg-secondary animate-pulse rounded-xl" />
           ))}
-        </div>
+        </ProductMasonry>
       ) : products.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">Nenhum produto encontrado.</div>
       ) : (
         <>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} isFavorite={isFavorite(p.id)} onToggleFavorite={toggle} />
             ))}
-          </div>
+          </ProductMasonry>
 
         </>
       )}
