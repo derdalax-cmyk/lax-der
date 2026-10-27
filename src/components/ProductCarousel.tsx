@@ -50,7 +50,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
         )}
       </div>
 
-      <div className="flex gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div id={`carousel-${encodeURIComponent(title)}`} className="flex gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {products.map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
@@ -66,7 +66,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
               key={p.id}
               className="snap-start shrink-0 w-[40%] sm:w-[28%] md:w-[20%] lg:w-[15%] xl:w-[12.5%] group relative bg-card border border-border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
             >
-              <Link to="/produto/$id" params={{ id: p.id }} className="block">
+              <Link to="/produto/$id" params={{ id: p.id }} state={{ productOrigin: true }} className="block">
                 <div className="relative aspect-square bg-secondary overflow-hidden">
                   {img ? (
                     <img src={thumbUrl(img)} alt={p.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover object-center" />
@@ -76,7 +76,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
                   {(p.is_unique || roletaOn) && (
                     <div className="absolute top-1.5 left-1.5 flex flex-col items-start gap-0.5">
                       {p.is_unique && <span className="bg-gold text-ink text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">PEÇA ÚNICA</span>}
-                      {roletaOn && <span className="bg-ink text-gold border border-gold/60 text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">🎁 -{activeReward!.percent}% ROLETA</span>}
+                      {activeReward && <span className="bg-ink text-gold border border-gold/60 text-[9px] tracking-wide px-1.5 py-0.5 rounded font-semibold">🎁 -{activeReward.percent}% ROLETA</span>}
                     </div>
                   )}
                 </div>

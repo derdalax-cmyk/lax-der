@@ -42,6 +42,8 @@ function Home() {
 
   const { data: featured = [], isPending: featuredPending } = useQuery({
     queryKey: ["home-featured", city],
+    staleTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       let q = supabase
         .from("public_products")
@@ -51,6 +53,7 @@ function Home() {
       if (city) q = q.or(`city.eq.${city},city.is.null`);
       const { data } = await q
         .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
         .limit(12);
       return (data ?? []) as ProductCardData[];
     },
@@ -58,6 +61,8 @@ function Home() {
 
   const { data: collections = [], isPending: collectionsPending } = useQuery({
     queryKey: ["home-collections", city],
+    staleTime: Infinity,
+    gcTime: Infinity,
     queryFn: async () => {
       const nowIso = new Date().toISOString();
       const { data: cols } = await supabase
@@ -66,14 +71,14 @@ function Home() {
         .eq("is_active", true)
         .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
         .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
-        .order("sort_order", { ascending: true });
+        .order("sort_order", { ascending: true }).order("id", { ascending: true });
       if (!cols?.length) return [] as { id: string; name: string; icon: string | null; products: ProductCardData[] }[];
 
       const { data: links } = await supabase
         .from("featured_collection_products")
         .select("collection_id,product_id,sort_order")
         .eq("status", "approved")
-        .order("sort_order", { ascending: true });
+        .order("sort_order", { ascending: true }).order("product_id", { ascending: true });
 
       const productIds = [...new Set((links ?? []).map((l) => l.product_id))];
       let products: ProductCardData[] = [];
