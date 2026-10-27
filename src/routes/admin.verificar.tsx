@@ -58,12 +58,12 @@ function VerifyAdmin() {
 
   const withPasskey = () => run(async () => {
     const opts = await beginAuth();
-    const resp = await startAuthentication({ optionsJSON: opts as never });
+    const resp = await startAuthentication({ optionsJSON: JSON.parse(opts.optionsJson) });
     await finishAuth({ data: { response: resp as never } });
   });
   const register = () => run(async () => {
     const opts = await beginReg();
-    const resp = await startRegistration({ optionsJSON: opts as never });
+    const resp = await startRegistration({ optionsJSON: JSON.parse(opts.optionsJson) });
     await finishReg({ data: { response: resp as never, deviceName: navigator.platform || "Dispositivo" } });
   });
   const withCode = () => run(async () => { await recovery({ data: { code } }); });

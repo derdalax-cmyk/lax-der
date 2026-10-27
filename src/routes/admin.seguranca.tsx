@@ -54,7 +54,7 @@ function AdminSecurity() {
           <h2 className="font-semibold">Passkeys registadas</h2>
           <Button size="sm" disabled={busy} className="bg-gold text-ink hover:bg-gold/90" onClick={() => handle(async () => {
             const opts = await beginReg();
-            const resp = await startRegistration({ optionsJSON: opts as never });
+            const resp = await startRegistration({ optionsJSON: JSON.parse(opts.optionsJson) });
             await finishReg({ data: { response: resp as never, deviceName: navigator.platform || "Dispositivo" } });
             toast.success("Passkey adicionada"); await refresh();
           })}><Fingerprint className="w-4 h-4 mr-1" /> Adicionar dispositivo</Button>

@@ -37,6 +37,7 @@ import { Route as AdminDenunciasRouteImport } from './routes/admin.denuncias'
 import { Route as AdminEquipeRouteImport } from './routes/admin.equipe'
 import { Route as AdminProdutosRouteImport } from './routes/admin.produtos'
 import { Route as AdminRoletaRouteImport } from './routes/admin.roleta'
+import { Route as AdminSegurancaRouteImport } from './routes/admin.seguranca'
 import { Route as AdminUtilizadoresRouteImport } from './routes/admin.utilizadores'
 import { Route as AdminVendedoresRouteImport } from './routes/admin.vendedores'
 import { Route as AdminVerificarRouteImport } from './routes/admin.verificar'
@@ -208,6 +209,11 @@ const AdminProdutosRoute = AdminProdutosRouteImport.update({
 const AdminRoletaRoute = AdminRoletaRouteImport.update({
   id: '/roleta',
   path: '/roleta',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSegurancaRoute = AdminSegurancaRouteImport.update({
+  id: '/seguranca',
+  path: '/seguranca',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUtilizadoresRoute = AdminUtilizadoresRouteImport.update({
@@ -402,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
@@ -460,6 +467,7 @@ export interface FileRoutesByTo {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
@@ -522,6 +530,7 @@ export interface FileRoutesById {
   '/admin/equipe': typeof AdminEquipeRoute
   '/admin/produtos': typeof AdminProdutosRoute
   '/admin/roleta': typeof AdminRoletaRoute
+  '/admin/seguranca': typeof AdminSegurancaRoute
   '/admin/utilizadores': typeof AdminUtilizadoresRoute
   '/admin/vendedores': typeof AdminVendedoresRoute
   '/admin/verificar': typeof AdminVerificarRoute
@@ -586,6 +595,7 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
@@ -644,6 +654,7 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
@@ -705,6 +716,7 @@ export interface FileRouteTypes {
     | '/admin/equipe'
     | '/admin/produtos'
     | '/admin/roleta'
+    | '/admin/seguranca'
     | '/admin/utilizadores'
     | '/admin/vendedores'
     | '/admin/verificar'
@@ -969,6 +981,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRoletaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seguranca': {
+      id: '/admin/seguranca'
+      path: '/seguranca'
+      fullPath: '/admin/seguranca'
+      preLoaderRoute: typeof AdminSegurancaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/utilizadores': {
       id: '/admin/utilizadores'
       path: '/utilizadores'
@@ -1206,6 +1225,7 @@ interface AdminRouteChildren {
   AdminEquipeRoute: typeof AdminEquipeRoute
   AdminProdutosRoute: typeof AdminProdutosRoute
   AdminRoletaRoute: typeof AdminRoletaRoute
+  AdminSegurancaRoute: typeof AdminSegurancaRoute
   AdminUtilizadoresRoute: typeof AdminUtilizadoresRoute
   AdminVendedoresRoute: typeof AdminVendedoresRoute
   AdminVerificarRoute: typeof AdminVerificarRoute
@@ -1223,6 +1243,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEquipeRoute: AdminEquipeRoute,
   AdminProdutosRoute: AdminProdutosRoute,
   AdminRoletaRoute: AdminRoletaRoute,
+  AdminSegurancaRoute: AdminSegurancaRoute,
   AdminUtilizadoresRoute: AdminUtilizadoresRoute,
   AdminVendedoresRoute: AdminVendedoresRoute,
   AdminVerificarRoute: AdminVerificarRoute,

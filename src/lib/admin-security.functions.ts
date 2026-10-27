@@ -57,7 +57,7 @@ export const beginAdminPasskeyRegistration = createServerFn({ method: "POST" })
     await supabaseAdmin.from("admin_webauthn_challenges").insert({
       user_id: uid, challenge: options.challenge, purpose: "register", rp_id: rpID, origin,
     });
-    return options as unknown as Json;
+    return { optionsJson: JSON.stringify(options) };
   });
 
 export const finishAdminPasskeyRegistration = createServerFn({ method: "POST" })
@@ -149,7 +149,7 @@ export const beginAdminPasskeyAuthentication = createServerFn({ method: "POST" }
     await supabaseAdmin.from("admin_webauthn_challenges").insert({
       user_id: uid, challenge: options.challenge, purpose: "authenticate", rp_id: rpID, origin,
     });
-    return options as unknown as Json;
+    return { optionsJson: JSON.stringify(options) };
   });
 
 export const finishAdminPasskeyAuthentication = createServerFn({ method: "POST" })
