@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { useRouterState } from "@tanstack/react-router";
+import { listContextKey, registerListLoader } from "@/lib/listContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { ProductCardData } from "@/components/ProductCard";
 import { PRODUCT_BATCH_SIZE, productFeedCondition, uniqueProducts, type ProductCursor } from "@/lib/productFeed";
@@ -38,6 +40,14 @@ export function useProductFeed(filters: Filters) {
     },
   });
   const { hasNextPage, isFetching, isError, fetchNextPage } = query;
+  const loc = useRouterState({ select: (st) => listContextKey(st.location.pathname, st.location.searchStr ?? "") });
+  const live = useRef(query);
+  live.current = query;
+  useEffect(() => registerListLoader(loc, {
+    loadMore: () => live.current.hasNextPage && !live.current.isFetching ? live.current.fetchNextPage() : undefined,
+    hasMore: () => !!live.current.hasNextPage,
+    batches: () => live.current.data?.pages.length ?? 0,
+  }), [loc]);
   useEffect(() => {
     const target = sentinelRef.current;
     if (!target || !hasNextPage || isFetching || isError) return;
