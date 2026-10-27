@@ -129,3 +129,9 @@
   }
   h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; }
 }
+
+/* Explicit shortest-column tracks keep feed order stable as batches append. */
+.product-masonry-ready {
+  grid-auto-rows: 1px;
+  row-gap: 0;
+}

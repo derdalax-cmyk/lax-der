@@ -20,13 +20,13 @@ export function imageUrl(url: string | null | undefined, opts: Opts = {}): strin
   return `${base}${base.includes("?") ? "&" : "?"}${params.toString()}`;
 }
 
-/** Miniatura quadrada para cartões de produto (home, carrosséis, /explorar). */
+/** Product thumbnail preserving the photograph's natural aspect ratio. */
 export const thumbUrl = (url: string | null | undefined) =>
-  imageUrl(url, { width: 500, height: 500, quality: 78, resize: "cover" });
+  imageUrl(url, { width: 500, quality: 78, resize: "contain" });
 
-/** Imagem principal 1:1 da página de produto (cortada e redimensionada no servidor). */
+/** Product gallery image without server-side square cropping. */
 export const mainUrl = (url: string | null | undefined) =>
-  imageUrl(url, { width: 1000, height: 1000, quality: 80, resize: "cover" });
+  imageUrl(url, { width: 1000, quality: 80, resize: "contain" });
 
 /** Imagem grande para o zoom da página de produto (sem forçar quadrado — foto completa). */
 export const largeUrl = (url: string | null | undefined) => imageUrl(url, { width: 1200, quality: 80 });
