@@ -5,6 +5,7 @@ import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
+import { productImageMetadata } from "@/lib/productImageCache";
 
 export type ProductCardData = {
   id: string;
@@ -50,7 +51,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   return (
     <div data-product-id={product.id} className="group relative min-w-0 bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} state={{ productOrigin: true }} className="block">
-        <NaturalProductImage src={img ? thumbUrl(img) : null} alt={product.title}>
+        <NaturalProductImage src={img ? thumbUrl(img) : null} alt={product.title} {...productImageMetadata(product.images)}>
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.is_unique && (
               <span className="bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
@@ -68,7 +69,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
         </NaturalProductImage>
         <div className="p-3">
           <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{product.title}</h3>
-          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm min-w-0">
+          <div className="mt-0.5 min-h-5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm min-w-0">
             <span data-product-price className="text-gold font-semibold break-words">{formatMZN(shownPrice)}</span>
             {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
             {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}

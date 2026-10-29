@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRouterState } from "@tanstack/react-router";
-import { listContextKey, registerListLoader } from "@/lib/listContext";
+import { isListRestoring, listContextKey, registerListLoader, subscribeListRestoration } from "@/lib/listContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { ProductCardData } from "@/components/ProductCard";
 import { PRODUCT_BATCH_SIZE, productFeedCondition, uniqueProducts, type ProductCursor } from "@/lib/productFeed";
@@ -41,6 +41,7 @@ export function useProductFeed(filters: Filters) {
   });
   const { hasNextPage, isFetching, isError, fetchNextPage } = query;
   const loc = useRouterState({ select: (st) => listContextKey(st.location.pathname, st.location.searchStr ?? "") });
+  const restoring = useSyncExternalStore(subscribeListRestoration, () => isListRestoring(loc), () => false);
   const live = useRef(query);
   live.current = query;
   useEffect(() => registerListLoader(loc, {
@@ -50,12 +51,20 @@ export function useProductFeed(filters: Filters) {
   }), [loc]);
   useEffect(() => {
     const target = sentinelRef.current;
-    if (!target || !hasNextPage || isFetching || isError) return;
+    if (!target || !hasNextPage || isFetching || isError || restoring) return;
     const observer = new IntersectionObserver(([entry]) => {
+      if (isListRestoring(loc)) return;
+      const grids = document.querySelectorAll<HTMLElement>("[data-product-masonry]");
+      if (Array.from(grids).some(grid => grid.dataset.layoutReady === "false")) return;
       if (entry?.isIntersecting) void fetchNextPage();
     }, { rootMargin: "700px" });
     observer.observe(target);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetching, isError, fetchNextPage]);
+    const mutation = new MutationObserver(() => {
+      if (!target) return;
+      observer.unobserve(target); observer.observe(target);
+    });
+    for (const grid of document.querySelectorAll("[data-product-masonry]")) mutation.observe(grid, { attributes: true, attributeFilter: ["data-layout-ready"] });
+    return () => { observer.disconnect(); mutation.disconnect(); };
+  }, [hasNextPage, isFetching, isError, fetchNextPage, restoring, loc]);
   return { items: uniqueProducts(query.data?.pages ?? []), loading: query.isPending, loadingMore: query.isFetchingNextPage, error: query.isError, retry: () => query.refetch(), sentinelRef };
 }

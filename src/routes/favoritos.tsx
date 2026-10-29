@@ -1,3 +1,4 @@
+import { ProductCardSkeleton } from "@/components/product/ProductCardSkeleton";
 import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -56,13 +57,7 @@ function FavoritosPage() {
       {loading ? (
         <ProductMasonry className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-border overflow-hidden">
-              <div className="aspect-[3/4] bg-secondary animate-pulse" />
-              <div className="p-3 space-y-2">
-                <div className="h-3.5 bg-secondary rounded animate-pulse" />
-                <div className="h-3 w-1/2 bg-secondary rounded animate-pulse" />
-              </div>
-            </div>
+            <ProductCardSkeleton key={i} />
           ))}
         </ProductMasonry>
       ) : products.length === 0 ? (
