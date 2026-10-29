@@ -84,6 +84,25 @@ export function getListLoader(key: string): Loader | undefined {
   return loaders.get(key);
 }
 
+let restoringKey: string | null = null;
+const restorationListeners = new Set<() => void>();
+export function setListRestoring(key: string | null) {
+  restoringKey = key;
+  for (const listener of restorationListeners) listener();
+}
+export function isListRestoring(key: string) { return restoringKey === key; }
+export function subscribeListRestoration(listener: () => void) {
+  restorationListeners.add(listener);
+  return () => { restorationListeners.delete(listener); };
+}
+
+/** Diagnostics are opt-in and excluded from production logging. */
+export function catalogueDebug(event: string, detail: unknown) {
+  if (import.meta.env?.DEV && typeof window !== "undefined" && sessionStorage.getItem("dx:catalogue-debug") === "1") {
+    console.debug(`[catalogue] ${event}`, detail);
+  }
+}
+
 let sessionId = "";
 export function listSessionId(): string {
   if (!sessionId) sessionId = `${Date.now().toString(36)}${Math.floor(performance.now()).toString(36)}`;
