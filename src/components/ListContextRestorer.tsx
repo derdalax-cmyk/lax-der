@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import {
-  anchorScrollTarget, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot,
+  anchorScrollTarget, catalogueDebug, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot, setListRestoring,
 } from "@/lib/listContext";
 
 const MAX_WAIT_MS = 8000;
-const SETTLE_MS = 1200;
+const SETTLE_MS = 800;
 
 /** Captures product-card clicks and restores the list around the same product after history back. */
 export function ListContextRestorer() {
@@ -20,7 +20,7 @@ export function ListContextRestorer() {
       if (!card || !id || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
       const key = listContextKey(window.location.pathname, window.location.search);
       const scope = card.closest("main") ?? document;
-      const ids = Array.from(scope.querySelectorAll<HTMLElement>("[data-product-id]"), (el) => el.dataset.productId!).filter(Boolean);
+      const ids = Array.from(scope.querySelectorAll<HTMLElement>("[data-product-id]"), (el) => el.dataset.productId ?? "").filter(Boolean);
       saveSnapshot({
         key,
         anchorProductId: id,
@@ -40,7 +40,7 @@ export function ListContextRestorer() {
 
   // Restore: only after a history traversal (browser back, gesture, internal history.back()).
   useEffect(() => {
-    const onPop = () => { popped = true; };
+    const onPop = () => { popped = true; setListRestoring(listContextKey(window.location.pathname, window.location.search)); };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
@@ -50,7 +50,7 @@ export function ListContextRestorer() {
     popped = false;
     const key = listContextKey(window.location.pathname, window.location.search);
     const snap = loadSnapshot(key);
-    if (!snap || !pendingBack.has(key) && snap.session !== listSessionId()) return;
+    if (!snap || !pendingBack.has(key) && snap.session !== listSessionId()) { setListRestoring(null); return; }
     pendingBack.delete(key);
     return restore(key, snap.anchorProductId, snap.anchorOffset, snap.batches);
   }, [href]);
@@ -63,14 +63,19 @@ const pendingBack = new Set<string>();
 
 function restore(key: string, anchorId: string, offset: number, savedBatches: number): () => void {
   const start = performance.now();
+  setListRestoring(key);
   let cancelled = false;
-  let found: HTMLElement | null = null;
-  let settledAt = 0;
   let loading = false;
-  let observer: ResizeObserver | null = null;
+  let frame = 0;
+  let stableFrames = 0;
+  let previous = "";
+  let alignedAt = 0;
+  let corrected = false;
+  let drift = false;
   const stop = () => {
     cancelled = true;
-    observer?.disconnect();
+    cancelAnimationFrame(frame);
+    setListRestoring(null);
     window.removeEventListener("wheel", stop);
     window.removeEventListener("touchstart", stop);
     window.removeEventListener("keydown", stop);
@@ -78,43 +83,44 @@ function restore(key: string, anchorId: string, offset: number, savedBatches: nu
   window.addEventListener("wheel", stop, { passive: true });
   window.addEventListener("touchstart", stop, { passive: true });
   window.addEventListener("keydown", stop);
-
-  const align = () => {
-    if (!found || !found.isConnected) return;
-    const top = found.getBoundingClientRect().top;
-    if (Math.abs(top - offset) > 1) {
-      window.scrollTo({ top: anchorScrollTarget(window.scrollY, top, offset), behavior: "instant" as ScrollBehavior });
-      settledAt = performance.now();
-    }
-  };
-
   const tick = () => {
     if (cancelled) return;
     const now = performance.now();
-    if (now - start > MAX_WAIT_MS) return stop();
-    if (!found) {
-      found = document.querySelector<HTMLElement>(`[data-product-id="${CSS.escape(anchorId)}"]`);
-      if (found) {
-        settledAt = now;
-        // Masonry images settle after load: re-align whenever the list layout changes.
-        observer = new ResizeObserver(() => requestAnimationFrame(align));
-        observer.observe(found.parentElement ?? found);
-        observer.observe(document.body);
-      } else {
-        const loader = getListLoader(key);
-        if (loader && !loading && loader.hasMore() && loader.batches() < Math.max(savedBatches, 1) + 3) {
-          loading = true;
-          void Promise.resolve(loader.loadMore()).finally(() => { loading = false; });
+    if (now - start > MAX_WAIT_MS) { catalogueDebug("restore-timeout", { anchorId }); stop(); return; }
+    const loader = getListLoader(key);
+    const found = document.querySelector<HTMLElement>(`[data-product-id="${CSS.escape(anchorId)}"]`);
+    if (loader && loader.batches() < Math.max(1, savedBatches) && loader.hasMore()) {
+      if (!loading) {
+        loading = true;
+        void Promise.resolve(loader.loadMore()).finally(() => { loading = false; });
+      }
+    } else if (found) {
+      const grid = found.closest<HTMLElement>("[data-product-masonry]");
+      const wrapper = found.closest<HTMLElement>(".product-masonry-item");
+      const ready = !grid || wrapper?.dataset.layoutSettled === "true";
+      const top = found.getBoundingClientRect().top;
+      const absoluteTop = Math.round((top + window.scrollY) * 2) / 2;
+      const signature = `${absoluteTop}:${grid?.dataset.layoutVersion ?? ""}:${found.offsetHeight}`;
+      stableFrames = ready && signature === previous ? stableFrames + 1 : 0;
+      previous = signature;
+      if (!alignedAt && ready && stableFrames >= 2) {
+        window.scrollTo({ top: anchorScrollTarget(window.scrollY, top, offset), behavior: "instant" });
+        alignedAt = now;
+        catalogueDebug("restored", { anchorId, offset, batches: loader?.batches() });
+      } else if (alignedAt) {
+        drift ||= Math.abs(top - offset) > 2;
+        if (now - alignedAt >= SETTLE_MS) {
+          if (drift && !corrected) {
+            corrected = true;
+            window.scrollTo({ top: anchorScrollTarget(window.scrollY, top, offset), behavior: "instant" });
+            catalogueDebug("restore-correction", { anchorId, delta: top - offset });
+          }
+          stop(); return;
         }
       }
     }
-    if (found) {
-      align();
-      if (now - settledAt > SETTLE_MS) return stop();
-    }
-    requestAnimationFrame(() => requestAnimationFrame(tick));
+    frame = requestAnimationFrame(tick);
   };
-  requestAnimationFrame(() => requestAnimationFrame(tick));
-  return () => { if (!cancelled) stop(); };
+  frame = requestAnimationFrame(tick);
+  return stop;
 }
-

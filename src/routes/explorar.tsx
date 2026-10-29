@@ -1,3 +1,4 @@
+import { ProductCardSkeleton } from "@/components/product/ProductCardSkeleton";
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
 import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -94,7 +95,7 @@ function ExplorarPage() {
       {loading && items.length === 0 ? (
         <ProductMasonry className="mx-auto grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-start gap-3 sm:gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="mb-4 bg-secondary animate-pulse rounded-xl" style={{ height: 180 + (i % 4) * 60 }} />
+            <ProductCardSkeleton key={i} />
           ))}
         </ProductMasonry>
       ) : items.length === 0 ? (
@@ -125,7 +126,7 @@ function ExplorarPage() {
                     </NaturalProductImage>
                     <div className="p-3">
                       <h3 className="min-h-10 font-medium text-sm line-clamp-2 break-words">{p.title}</h3>
-                      <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
+                      <div className="mt-0.5 min-h-5 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-sm">
                         <span data-product-price className="text-gold font-semibold break-words">{formatMZN(Number(p.base_price))}</span>
                         {discount && <span className="text-xs text-muted-foreground line-through">{formatMZN(discount.originalPrice)}</span>}
                         {discount && <span className="text-xs font-medium text-destructive">-{discount.discountPercent}%</span>}

@@ -59,7 +59,6 @@ export function useProductFeed(filters: Filters) {
       if (entry?.isIntersecting) void fetchNextPage();
     }, { rootMargin: "700px" });
     observer.observe(target);
-    return () => observer.disconnect();
     const mutation = new MutationObserver(() => {
       observer.unobserve(target); observer.observe(target);
     });
