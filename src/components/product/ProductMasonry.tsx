@@ -49,8 +49,22 @@ export function ProductMasonry({ children, className }: { children: ReactNode; c
     // Readiness can change without a height change (square images and errors).
     const mutations = new MutationObserver(() => { signature = ""; schedule(); });
     mutations.observe(grid, { attributes: true, subtree: true, attributeFilter: ["data-image-ready"] });
+    const proximity = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        for (const item of Array.from(grid.children)) {
+          const image = item.querySelector<HTMLElement>('[data-image-ready="false"]');
+          if (image && image.dataset.windowMeasured !== "true") {
+            image.dataset.windowMeasured = "true";
+            image.dispatchEvent(new Event("dx:measure-image"));
+          }
+          if (item === entry.target) break;
+        }
+      }
+    }, { rootMargin: "600px" });
+    for (const item of Array.from(grid.children)) proximity.observe(item);
     place();
-    return () => { cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); };
+    return () => { cancelAnimationFrame(frame); observer.disconnect(); mutations.disconnect(); proximity.disconnect(); };
   }, [children]);
   return <div ref={ref} data-product-masonry className={cn("grid items-start", className)}>
     {Children.map(children, child => child ? <div className="min-w-0 relative product-masonry-item">{child}<div aria-hidden="true" className="product-card-measure-skeleton absolute inset-0 bg-card border border-border rounded-xl overflow-hidden"><div className="h-[calc(100%-5.5rem)] bg-secondary animate-pulse" /><div className="p-3 space-y-2"><div className="h-10 bg-secondary animate-pulse rounded" /><div className="h-5 w-1/2 bg-secondary animate-pulse rounded" /></div></div></div> : null)}
