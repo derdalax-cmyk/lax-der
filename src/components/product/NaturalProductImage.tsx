@@ -36,12 +36,13 @@ export function NaturalProductImage({ src, alt, children, className, loading = "
     });
     const frame = frameRef.current;
     if (!frame) return;
+    frame.addEventListener("dx:measure-image", measure);
     // Only measure the nearby window; off-screen cards never flood the network.
     const observer = new IntersectionObserver(entries => {
       if (entries.some(entry => entry.isIntersecting)) { observer.disconnect(); measure(); }
     }, { rootMargin: "1000px" });
     observer.observe(frame);
-    return () => { cancelled = true; observer.disconnect(); };
+    return () => { cancelled = true; observer.disconnect(); frame.removeEventListener("dx:measure-image", measure); };
   }, [src, fixedAspect, width, height]);
   const known = size?.src === src ? size : width && height ? { width, height } : undefined;
   const ready = !src || !!fixedAspect || resolved === src || !!known;

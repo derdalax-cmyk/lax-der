@@ -60,6 +60,7 @@ export function useProductFeed(filters: Filters) {
     }, { rootMargin: "700px" });
     observer.observe(target);
     const mutation = new MutationObserver(() => {
+      if (!target) return;
       observer.unobserve(target); observer.observe(target);
     });
     for (const grid of document.querySelectorAll("[data-product-masonry]")) mutation.observe(grid, { attributes: true, attributeFilter: ["data-layout-ready"] });

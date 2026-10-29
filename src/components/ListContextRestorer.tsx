@@ -4,7 +4,7 @@ import {
   anchorScrollTarget, catalogueDebug, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot, setListRestoring,
 } from "@/lib/listContext";
 
-const MAX_WAIT_MS = 8000;
+const MAX_WAIT_MS = 30000;
 const SETTLE_MS = 800;
 
 /** Captures product-card clicks and restores the list around the same product after history back. */
@@ -98,6 +98,16 @@ function restore(key: string, anchorId: string, offset: number, savedBatches: nu
       const grid = found.closest<HTMLElement>("[data-product-masonry]");
       const wrapper = found.closest<HTMLElement>(".product-masonry-item");
       const ready = !grid || wrapper?.dataset.layoutSettled === "true";
+      if (!ready && grid && wrapper) {
+        for (const item of Array.from(grid.children)) {
+          const image = item.querySelector<HTMLElement>('[data-image-ready="false"]');
+          if (image && image.dataset.restoreMeasured !== "true") {
+            image.dataset.restoreMeasured = "true";
+            image.dispatchEvent(new Event("dx:measure-image"));
+          }
+          if (item === wrapper) break;
+        }
+      }
       const top = found.getBoundingClientRect().top;
       const absoluteTop = Math.round((top + window.scrollY) * 2) / 2;
       const signature = `${absoluteTop}:${grid?.dataset.layoutVersion ?? ""}:${found.offsetHeight}`;
