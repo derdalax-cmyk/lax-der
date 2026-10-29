@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Estabilizar proporções persistentes, premedição limitada e masonry partilhado.
+- [ ] Pausar sentinel na restauração; alinhar âncora após layout estável com uma única correção.
+- [ ] Validar cache, prefetch, cold/warm load e retornos repetidos; documentar limites.
+
 - [x] Adaptar grelhas de produtos a masonry sem mudar filtros, ordem ou carregamento.
 - [x] Respeitar proporções naturais nos cards e galeria, sem cortar a peça.
 - [x] Validar proporções e grelhas desktop/mobile; documentar ficheiros e revisão.
