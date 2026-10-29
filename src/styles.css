@@ -135,3 +135,9 @@
   grid-auto-rows: 1px;
   row-gap: 0;
 }
+
+/* Measurement remains in-flow; reveal only the stable prefix, never half-placed cards. */
+[data-product-masonry] { overflow-anchor: none; }
+.product-card-measure-skeleton { display: none; pointer-events: none; }
+.product-masonry-item:not([data-layout-settled="true"]) > :first-child { visibility: hidden; }
+.product-masonry-item:not([data-layout-settled="true"]) > .product-card-measure-skeleton { display: block; }
