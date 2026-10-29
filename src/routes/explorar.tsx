@@ -17,6 +17,7 @@ import { Search, Heart, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount } from "@/lib/productPrice";
+import { productImageMetadata } from "@/lib/productImageCache";
 
 export const Route = createFileRoute("/explorar")({
   validateSearch: zodValidator(z.object({ q: fallback(z.string(), "").default(""), categoria: fallback(z.string(), "all").default("all"), genero: fallback(z.string(), "all").default("all") })),
@@ -119,7 +120,7 @@ function ExplorarPage() {
               return (
                 <div key={p.id} data-product-id={p.id} className="min-w-0 group relative">
                   <Link to="/produto/$id" params={{ id: p.id }} state={{ productOrigin: true }} className="block rounded-xl overflow-hidden border border-border bg-card">
-                    <NaturalProductImage src={img ? thumbUrl(img) : null} alt={p.title}>
+                    <NaturalProductImage src={img ? thumbUrl(img) : null} alt={p.title} {...productImageMetadata(p.images)}>
                       {p.is_unique && (
                         <span className="absolute top-2 left-2 bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
                       )}

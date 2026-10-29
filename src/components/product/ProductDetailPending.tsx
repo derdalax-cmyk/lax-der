@@ -7,7 +7,7 @@ import { formatMZN, type ProductCardData } from "@/components/ProductCard";
 
 export function ProductDetailPending() {
   const client = useQueryClient();
-  const href = useRouterState({ select: state => state.resolvedLocation?.href === state.location.href ? state.location.href : state.location.href });
+  const href = useRouterState({ select: state => state.location.href });
   const id = href.split("/produto/")[1]?.split(/[?#/]/)[0];
   let product: ProductCardData | undefined;
   if (id) {

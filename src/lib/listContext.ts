@@ -88,6 +88,7 @@ let restoringKey: string | null = null;
 const restorationListeners = new Set<() => void>();
 export function setListRestoring(key: string | null) {
   restoringKey = key;
+  if (typeof document !== "undefined") document.documentElement.dataset.listRestoring = key ?? "";
   for (const listener of restorationListeners) listener();
 }
 export function isListRestoring(key: string) { return restoringKey === key; }
@@ -98,9 +99,8 @@ export function subscribeListRestoration(listener: () => void) {
 
 /** Diagnostics are opt-in and excluded from production logging. */
 export function catalogueDebug(event: string, detail: unknown) {
-  if (import.meta.env?.DEV && typeof window !== "undefined" && sessionStorage.getItem("dx:catalogue-debug") === "1") {
-    console.debug(`[catalogue] ${event}`, detail);
-  }
+  if (!import.meta.env?.DEV || typeof window === "undefined") return;
+  try { if (sessionStorage.getItem("dx:catalogue-debug") === "1") console.debug(`[catalogue] ${event}`, detail); } catch { /* storage disabled */ }
 }
 
 let sessionId = "";

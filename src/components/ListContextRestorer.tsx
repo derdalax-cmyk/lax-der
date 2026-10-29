@@ -19,6 +19,7 @@ export function ListContextRestorer() {
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let idle: number | undefined;
     let lastId = "";
     const prefetch = (event: Event) => {
       if (imagePreloadLimit() < 4) return;
@@ -28,12 +29,16 @@ export function ListContextRestorer() {
       clearTimeout(timer);
       // Ignore cards merely crossed while scrolling; only deliberate interaction fetches data.
       timer = setTimeout(() => {
+        const run = () => {
         lastId = id;
         void router.preloadRoute({ to: "/produto/$id", params: { id } }).catch(() => {});
         void client.prefetchQuery(productDetailsQuery(id));
         const card = link.closest("[data-product-id]") ?? link;
         const src = card.querySelector<HTMLElement>("[data-image-src]")?.dataset.imageSrc;
         if (src) { const image = new Image(); image.src = mainUrl(src.replace("/render/image/public/", "/object/public/").split("?")[0]); }
+        };
+        if ("requestIdleCallback" in window) idle = window.requestIdleCallback(run, { timeout: 500 });
+        else run();
       }, event.type === "pointerdown" ? 0 : 120);
     };
     document.addEventListener("pointerover", prefetch, { passive: true });
@@ -41,11 +46,21 @@ export function ListContextRestorer() {
     document.addEventListener("focusin", prefetch);
     return () => {
       clearTimeout(timer);
+      if (idle !== undefined && "cancelIdleCallback" in window) window.cancelIdleCallback(idle);
       document.removeEventListener("pointerover", prefetch);
       document.removeEventListener("pointerdown", prefetch);
       document.removeEventListener("focusin", prefetch);
     };
   }, [client, router]);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV || !PerformanceObserver.supportedEntryTypes.includes("layout-shift")) return;
+    const observer = new PerformanceObserver(list => {
+      for (const entry of list.getEntries()) catalogueDebug("layout-shift", entry.toJSON());
+    });
+    observer.observe({ type: "layout-shift", buffered: true });
+    return () => observer.disconnect();
+  }, []);
 
   // Capture: before navigating to /produto/:id, record the anchor card and list state.
   useEffect(() => {

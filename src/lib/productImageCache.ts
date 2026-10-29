@@ -66,7 +66,15 @@ let active = 0;
 export function imagePreloadLimit() {
   if (typeof navigator === "undefined") return 4;
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  return connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType ?? "") ? 2 : 6;
+  return connection?.saveData || /(^|-)[23]g$/.test(connection?.effectiveType ?? "") ? 2 : 6;
+}
+
+export function productImageMetadata(images: unknown): { width?: number; height?: number } {
+  const first = Array.isArray(images) ? images[0] : undefined;
+  if (!first || typeof first !== "object") return {};
+  const width = Number(first.width ?? first.naturalWidth);
+  const height = Number(first.height ?? first.naturalHeight);
+  return width > 0 && height > 0 ? { width, height } : {};
 }
 function drain() {
   while (active < imagePreloadLimit() && queue.length) queue.shift()?.();

@@ -5,6 +5,7 @@ import { thumbUrl } from "@/lib/imageUrl";
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
+import { productImageMetadata } from "@/lib/productImageCache";
 
 export type ProductCardData = {
   id: string;
@@ -50,7 +51,7 @@ export function ProductCard({ product, isFavorite, onToggleFavorite }: Props) {
   return (
     <div data-product-id={product.id} className="group relative min-w-0 bg-card border border-border rounded-xl overflow-hidden hover:shadow-md transition-shadow">
       <Link to="/produto/$id" params={{ id: product.id }} state={{ productOrigin: true }} className="block">
-        <NaturalProductImage src={img ? thumbUrl(img) : null} alt={product.title}>
+        <NaturalProductImage src={img ? thumbUrl(img) : null} alt={product.title} {...productImageMetadata(product.images)}>
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {product.is_unique && (
               <span className="bg-gold text-ink text-[10px] tracking-wider px-2 py-1 rounded font-semibold">PEÇA ÚNICA</span>
