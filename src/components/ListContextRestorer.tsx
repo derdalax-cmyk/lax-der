@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import { useRouter, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { productDetailsQuery } from "@/lib/productDetailsQuery";
+import { mainUrl } from "@/lib/imageUrl";
+import { imagePreloadLimit } from "@/lib/productImageCache";
 import {
   anchorScrollTarget, catalogueDebug, getListLoader, listContextKey, listSessionId, loadSnapshot, saveSnapshot, setListRestoring,
 } from "@/lib/listContext";
@@ -10,6 +14,38 @@ const SETTLE_MS = 800;
 /** Captures product-card clicks and restores the list around the same product after history back. */
 export function ListContextRestorer() {
   const href = useRouterState({ select: (s) => s.location.href });
+  const client = useQueryClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let lastId = "";
+    const prefetch = (event: Event) => {
+      if (imagePreloadLimit() < 4) return;
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href*="/produto/"]');
+      const id = link?.pathname.split("/produto/")[1];
+      if (!link || !id || id === lastId) return;
+      clearTimeout(timer);
+      // Ignore cards merely crossed while scrolling; only deliberate interaction fetches data.
+      timer = setTimeout(() => {
+        lastId = id;
+        void router.preloadRoute({ to: "/produto/$id", params: { id } }).catch(() => {});
+        void client.prefetchQuery(productDetailsQuery(id));
+        const card = link.closest("[data-product-id]") ?? link;
+        const src = card.querySelector<HTMLElement>("[data-image-src]")?.dataset.imageSrc;
+        if (src) { const image = new Image(); image.src = mainUrl(src.replace("/render/image/public/", "/object/public/").split("?")[0]); }
+      }, event.type === "pointerdown" ? 0 : 120);
+    };
+    document.addEventListener("pointerover", prefetch, { passive: true });
+    document.addEventListener("pointerdown", prefetch, { passive: true });
+    document.addEventListener("focusin", prefetch);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("pointerover", prefetch);
+      document.removeEventListener("pointerdown", prefetch);
+      document.removeEventListener("focusin", prefetch);
+    };
+  }, [client, router]);
 
   // Capture: before navigating to /produto/:id, record the anchor card and list state.
   useEffect(() => {

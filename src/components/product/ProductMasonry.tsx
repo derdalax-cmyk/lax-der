@@ -9,8 +9,13 @@ export function ProductMasonry({ children, className }: { children: ReactNode; c
     if (!grid) return;
     let frame = 0;
     let signature = "";
+    let measuredWidth = 0;
     const place = () => {
       frame = 0;
+      if (measuredWidth !== grid.clientWidth) {
+        for (const item of Array.from(grid.children)) if (item instanceof HTMLElement) item.style.gridColumn = "";
+        measuredWidth = grid.clientWidth;
+      }
       const style = getComputedStyle(grid);
       const columns = style.gridTemplateColumns.split(" ").length;
       const gutter = parseFloat(style.columnGap) || 0;

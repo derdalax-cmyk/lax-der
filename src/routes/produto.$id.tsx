@@ -1,7 +1,7 @@
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
 import { ProductMasonry } from "@/components/product/ProductMasonry";
-import { queryOptions } from "@tanstack/react-query";
-import { getPublicProductDetails } from "@/lib/productDetails.functions";
+import { productDetailsQuery } from "@/lib/productDetailsQuery";
+import { ProductDetailPending } from "@/components/product/ProductDetailPending";
 import { productPageHead, shareProduct } from "@/lib/productDetails";
 import { createFileRoute, Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -24,16 +24,13 @@ import { AutoFramedProductImage } from "@/components/product/AutoFramedProductIm
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 
-const productDetailsQuery = (id: string) => queryOptions({
-  queryKey: ["public-product-details", id],
-  queryFn: () => getPublicProductDetails({ data: { id } }),
-  staleTime: 60_000,
-});
-
 export const Route = createFileRoute("/produto/$id")({
   loader: ({ params, context }) => context.queryClient.ensureQueryData(productDetailsQuery(params.id)),
   head: ({ params, loaderData }) => productPageHead(params.id, loaderData?.product ?? null),
   component: ProdutoDetalhe,
+  pendingComponent: ProductDetailPending,
+  pendingMs: 0,
+  pendingMinMs: 0,
 });
 
 
