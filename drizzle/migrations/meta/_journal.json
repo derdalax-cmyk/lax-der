@@ -204,6 +204,13 @@
       "when": 1793134448456,
       "tag": "0028_admin_campaigns",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1793492165824,
+      "tag": "0029_explore_filters",
+      "breakpoints": true
     }
   ]
 }
