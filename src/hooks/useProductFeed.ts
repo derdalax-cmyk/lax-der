@@ -6,7 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { ProductCardData } from "@/components/ProductCard";
 import { PRODUCT_BATCH_SIZE, productFeedCondition, uniqueProducts, type ProductCursor } from "@/lib/productFeed";
 
-type Filters = { search: string; category: string; city: string | null | undefined; gender?: string; minPrice?: string; maxPrice?: string };
+type ExploreArgs = Record<string, unknown>;
+type Filters = { search: string; category: string; city: string | null | undefined; gender?: string; minPrice?: string; maxPrice?: string; explore?: ExploreArgs };
 type Row = ProductCardData & ProductCursor;
 
 export function useProductFeed(filters: Filters) {
@@ -19,6 +20,16 @@ export function useProductFeed(filters: Filters) {
     initialPageParam: null as ProductCursor | null,
     retry: false,
     queryFn: async ({ pageParam, signal }) => {
+      if (filters.explore) {
+        const { data, error } = await supabase.rpc("explore_products", {
+          ...filters.explore,
+          _cursor_created: pageParam?.created_at,
+          _cursor_id: pageParam?.id,
+          _limit: PRODUCT_BATCH_SIZE,
+        } as never).abortSignal(signal);
+        if (error) throw error;
+        return (data ?? []) as unknown as Row[];
+      }
       let q = supabase.from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category,created_at")
         .neq("status", "sold")
