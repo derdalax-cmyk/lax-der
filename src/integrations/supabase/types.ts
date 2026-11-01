@@ -1292,6 +1292,9 @@ export type Database = {
           id: string
           images: Json | null
           is_unique: boolean
+          meta_color: string | null
+          meta_gender: string | null
+          meta_size: string | null
           original_price: number | null
           rejection_reason: string | null
           reserved_by: string | null
@@ -1315,6 +1318,9 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          meta_color?: string | null
+          meta_gender?: string | null
+          meta_size?: string | null
           original_price?: number | null
           rejection_reason?: string | null
           reserved_by?: string | null
@@ -1338,6 +1344,9 @@ export type Database = {
           id?: string
           images?: Json | null
           is_unique?: boolean
+          meta_color?: string | null
+          meta_gender?: string | null
+          meta_size?: string | null
           original_price?: number | null
           rejection_reason?: string | null
           reserved_by?: string | null
@@ -2309,6 +2318,53 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      explore_products: {
+        Args: {
+          _available?: boolean
+          _categories?: string[]
+          _city?: string
+          _colors?: string[]
+          _cursor_created?: string
+          _cursor_id?: string
+          _discount?: boolean
+          _gender?: string
+          _limit?: number
+          _max?: number
+          _min?: number
+          _q?: string
+          _seller?: string
+          _sizes?: string[]
+          _unique?: boolean
+        }
+        Returns: {
+          base_price: number
+          category: string
+          created_at: string
+          id: string
+          images: Json
+          is_unique: boolean
+          original_price: number
+          status: Database["public"]["Enums"]["product_status"]
+          title: string
+        }[]
+      }
+      explore_products_count: {
+        Args: {
+          _available?: boolean
+          _categories?: string[]
+          _city?: string
+          _colors?: string[]
+          _discount?: boolean
+          _gender?: string
+          _max?: number
+          _min?: number
+          _q?: string
+          _seller?: string
+          _sizes?: string[]
+          _unique?: boolean
+        }
+        Returns: number
+      }
       finalize_order_items: { Args: { _order_id: string }; Returns: undefined }
       get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_admin_sellers_dashboard: { Args: never; Returns: Json }
@@ -2320,6 +2376,7 @@ export type Database = {
           product_count: number
         }[]
       }
+      get_explore_facets: { Args: never; Returns: Json }
       get_managed_products: {
         Args: { _seller_id?: string }
         Returns: {
@@ -2333,6 +2390,9 @@ export type Database = {
           id: string
           images: Json | null
           is_unique: boolean
+          meta_color: string | null
+          meta_gender: string | null
+          meta_size: string | null
           original_price: number | null
           rejection_reason: string | null
           reserved_by: string | null
@@ -2472,6 +2532,10 @@ export type Database = {
         Returns: undefined
       }
       open_support_thread: { Args: never; Returns: string }
+      product_meta_field: {
+        Args: { _description: string; _key: string }
+        Returns: string
+      }
       promote_next_in_queue: {
         Args: { _product_id: string }
         Returns: undefined
