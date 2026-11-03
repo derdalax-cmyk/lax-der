@@ -1,3 +1,4 @@
+import brandIcon512 from "@/assets/derdalax-icon-512.png.asset.json";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
     brand.onerror = () => {
       if (!cancelled) toast.error("Não foi possível carregar o selo DERDALAX.");
     };
-    brand.src = "/icon-512.png";
+    brand.src = brandIcon512.url;
     return () => { cancelled = true; };
   }, [open, url]);
 

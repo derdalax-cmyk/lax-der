@@ -17,31 +17,31 @@
   ],
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/__l5e/assets-v1/c4cbf9aa-a838-496c-97e8-7a4467b550f5/derdalax-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/maskable-192.png",
+      "src": "/__l5e/assets-v1/b49ce24a-5f7c-4424-badc-2290078b346e/derdalax-maskable-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/maskable-512.png",
+      "src": "/__l5e/assets-v1/a6750a1d-36a0-4b5f-84d3-eb1eb8a92034/derdalax-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/__l5e/assets-v1/5ca18bbe-53f2-48f2-89db-dace856cdf8a/derdalax-apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
@@ -55,7 +55,7 @@
       "url": "/explorar",
       "icons": [
         {
-          "src": "/icon-192.png",
+          "src": "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -68,7 +68,7 @@
       "url": "/tornar-se-vendedor",
       "icons": [
         {
-          "src": "/icon-192.png",
+          "src": "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -81,7 +81,7 @@
       "url": "/suporte",
       "icons": [
         {
-          "src": "/icon-192.png",
+          "src": "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }

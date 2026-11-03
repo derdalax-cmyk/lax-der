@@ -1,3 +1,7 @@
+import brandIcon192 from "@/assets/derdalax-icon-192.png.asset.json";
+import brandIcon512 from "@/assets/derdalax-icon-512.png.asset.json";
+import brandAppleTouchIcon from "@/assets/derdalax-apple-touch-icon.png.asset.json";
+import brandFavicon32 from "@/assets/derdalax-favicon-32.png.asset.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -85,8 +89,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "DERDALAX" },
       { property: "og:description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
       { name: "twitter:description", content: "Peças únicas, selecionadas para você. Descubra a coleção DERDALAX e receba em todo o Moçambique." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3c125d24-87fe-42e5-afe6-57632fed97bb/id-preview-aca15444--67df5107-8177-480b-a27d-14dfb37e79d3.lovable.app-1779644899816.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3c125d24-87fe-42e5-afe6-57632fed97bb/id-preview-aca15444--67df5107-8177-480b-a27d-14dfb37e79d3.lovable.app-1779644899816.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Derdalax" },
@@ -101,11 +103,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "serviceworker", href: "/sw.js" },
-      { rel: "icon", href: "/favicon.ico", sizes: "any" },
-      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
-      { rel: "icon", type: "image/png", sizes: "512x512", href: "/icon-512.png" },
-      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      { rel: "icon", href: "/favicon.ico?v=der-20261103", sizes: "any" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: brandFavicon32.url },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: brandIcon192.url },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: brandIcon512.url },
+      { rel: "apple-touch-icon", sizes: "180x180", href: brandAppleTouchIcon.url },
 
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -125,7 +127,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           name: "Derdalax",
           alternateName: "Derdalax",
           url: "https://derdalax.co.mz/",
-          logo: "https://derdalax.co.mz/icon-512.png",
+          logo: `https://derdalax.co.mz${brandIcon512.url}`,
         }),
       },
       {

@@ -1,3 +1,4 @@
+import brandIcon192 from "@/assets/derdalax-icon-192.png.asset.json";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -225,7 +226,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
         <div>
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Pré-visualização Push</p>
           <div className="bg-card border border-border rounded-xl p-3 flex gap-3 shadow-sm">
-            <img src="/icon-192.png" alt="" className="w-10 h-10 rounded-lg" />
+            <img src={brandIcon192.url} alt="" className="w-10 h-10 rounded-lg" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold truncate">{title || "Título"}</p>
               <p className="text-xs text-muted-foreground line-clamp-3">{body || "Mensagem"}</p>
