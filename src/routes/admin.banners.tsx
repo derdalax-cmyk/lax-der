@@ -35,7 +35,6 @@ function AdminBanners() {
 
   const upload = async (files: FileList | null) => {
     if (!files?.length) return;
-    if (!newTitle.trim()) { toast.error("Introduza o título principal do banner."); return; }
     setUploading(true);
     let order = banners.reduce((m, b) => Math.max(m, b.sort_order), -1);
     for (const f of Array.from(files)) {
