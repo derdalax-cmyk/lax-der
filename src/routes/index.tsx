@@ -118,8 +118,6 @@ function Home() {
     <>
       <HomeHero />
 
-
-
       <RoletaHome />
 
       {productsLoading ? (
