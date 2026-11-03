@@ -123,7 +123,7 @@ function Home() {
       <RoletaHome />
 
       {productsLoading ? (
-        <div className="max-w-[1400px] mx-auto px-5 pt-10">
+        <div className="max-w-[1400px] mx-auto px-5 pt-5">
           <div className="h-7 w-52 bg-secondary animate-pulse rounded mb-4" />
           <div className="flex gap-3 overflow-hidden">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -142,7 +142,7 @@ function Home() {
       ) : (
         <>
           {/* DESTAQUES DA SEMANA */}
-          <div className="pt-8">
+          <div className="pt-4">
             <ProductCarousel
               title="Destaques da semana"
               products={featured}
