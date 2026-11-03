@@ -5,7 +5,7 @@
 //    Static hashed assets/icons: stale-while-revalidate.
 //    API calls (Supabase, /api/*) are NEVER cached.
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "brand-20261103";
 const SHELL_CACHE = `derdalax-shell-${CACHE_VERSION}`;
 const ASSET_CACHE = `derdalax-assets-${CACHE_VERSION}`;
 const OFFLINE_URL = "/";
@@ -13,10 +13,10 @@ const OFFLINE_URL = "/";
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",
-  "/icon-192.png",
-  "/icon-512.png",
-  "/apple-touch-icon.png",
-  "/favicon-32.png",
+  "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
+  "/__l5e/assets-v1/c4cbf9aa-a838-496c-97e8-7a4467b550f5/derdalax-icon-512.png",
+  "/__l5e/assets-v1/5ca18bbe-53f2-48f2-89db-dace856cdf8a/derdalax-apple-touch-icon.png",
+  "/__l5e/assets-v1/411dac7c-7d09-4fc7-9157-3ae9fbe8f030/derdalax-favicon-32.png",
 ];
 
 // Lovable preview / dev hosts must never serve cached HTML.
@@ -156,8 +156,8 @@ self.addEventListener("push", (event) => {
   const title = data.title || "DERDALAX";
   const options = {
     body: data.body || "",
-    icon: "/icon-192.png",
-    badge: "/icon-192.png",
+    icon: "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
+    badge: "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
     tag: data.tag || "derdalax",
     renotify: true,
     data: { url: data.url || "/" },

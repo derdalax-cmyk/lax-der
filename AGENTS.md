@@ -20,3 +20,5 @@
 - Product list back-navigation restores by anchor productId + viewport offset after saved batches, measured prefix and two stable animation frames; a global restoration signal pauses sentinel fetching until one optional late correction completes, because repeated scroll alignment competes with image reflow.
 - Admin campaigns: audience, queueing and claiming live in service-role-only SQL functions (admin_campaign_*), recipients are unique per campaign+user+channel and claimed with SKIP LOCKED, and the worker route is woken by a cron job scheduled on enqueue and removed on drain, because bulk sends must never loop inside one request or resend on re-runs.
 - Promotional/bulk email must not use the platform app-email queue (transactional only); the campaign Email channel stays disabled until a dedicated marketing email provider is connected.
+
+- Brand images use CDN asset pointers across app icons, installation, push and watermark; favicon remains a real public ICO, so every surface shares the uploaded mark without committed media binaries.
