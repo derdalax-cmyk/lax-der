@@ -22,7 +22,7 @@ function AdminBanners() {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [newTitle, setNewTitle] = useState(DEFAULT_TITLE);
+  const [newTitle, setNewTitle] = useState("");
   const { data: banners = [], refetch, isPending } = useQuery({
     queryKey: ["admin-home-banners"],
     queryFn: async () => {
@@ -35,7 +35,6 @@ function AdminBanners() {
 
   const upload = async (files: FileList | null) => {
     if (!files?.length) return;
-    if (!newTitle.trim()) { toast.error("Introduza o título principal do banner."); return; }
     setUploading(true);
     let order = banners.reduce((m, b) => Math.max(m, b.sort_order), -1);
     for (const f of Array.from(files)) {
@@ -78,14 +77,19 @@ function AdminBanners() {
 
   return (
     <div className="space-y-5">
+      <div className="rounded-xl border border-gold/40 bg-card p-3 text-xs text-muted-foreground">
+        <p>Tamanho recomendado do banner: <span className="text-foreground font-semibold">1600 × 460 px</span></p>
+        <p>Proporção aproximada: <span className="text-foreground font-semibold">3.48:1</span></p>
+        <p>Use sempre este tamanho para melhor enquadramento na Home.</p>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl">Banners da Home</h1>
         </div>
         <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => upload(e.target.files)} />
         <div className="flex w-full sm:w-auto flex-wrap items-end gap-2">
-        <div className="flex-1 min-w-0 sm:w-80"><Label htmlFor="new-banner-title" className="text-xs">Título principal do novo banner</Label><Input id="new-banner-title" value={newTitle} maxLength={120} disabled={uploading} onChange={(e) => setNewTitle(e.target.value)} /></div>
-        <Button onClick={() => fileRef.current?.click()} disabled={uploading || !newTitle.trim()} className="bg-gold text-ink hover:bg-gold/90">
+        <div className="flex-1 min-w-0 sm:w-80"><Label htmlFor="new-banner-title" className="text-xs">Título principal do novo banner (opcional)</Label><Input id="new-banner-title" value={newTitle} maxLength={120} placeholder={DEFAULT_TITLE} disabled={uploading} onChange={(e) => setNewTitle(e.target.value)} /></div>
+        <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="bg-gold text-ink hover:bg-gold/90">
           {uploading ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <ImagePlus className="w-4 h-4 mr-1" />} Adicionar banners
         </Button>
         </div>
@@ -102,10 +106,9 @@ function AdminBanners() {
 }
 
 function BannerRow({ b, first, last, onMove, onRemove, onSaved }: { b: Banner; first: boolean; last: boolean; onMove: (d: -1 | 1) => void; onRemove: () => void; onSaved: () => void }) {
-  const [f, setF] = useState({ title: b.title ?? DEFAULT_TITLE, subtitle: b.subtitle ?? "", alt: b.alt ?? "", link_url: b.link_url ?? "", cta_label: b.cta_label ?? "" });
+  const [f, setF] = useState({ title: b.title ?? "", subtitle: b.subtitle ?? "", alt: b.alt ?? "", link_url: b.link_url ?? "", cta_label: b.cta_label ?? "" });
   const [busy, setBusy] = useState(false);
   const save = async (patch?: Partial<Banner>) => {
-    if (!patch && !f.title.trim()) { toast.error("Introduza o título principal do banner."); return; }
     const link = f.link_url.trim();
     if (link && !/^(https?:\/\/|\/)/i.test(link)) { toast.error("O link deve começar por / ou https://"); return; }
     setBusy(true);
@@ -121,7 +124,7 @@ function BannerRow({ b, first, last, onMove, onRemove, onSaved }: { b: Banner; f
   };
   return (
     <div className="bg-card border border-border rounded-xl p-3 grid gap-3 md:grid-cols-[220px_1fr_auto] items-start">
-      <img src={b.image_url} alt={b.alt || "Banner"} className={`w-full aspect-[16/7] object-cover rounded-lg ${b.is_active ? "" : "opacity-50"}`} />
+      <img src={b.image_url} alt={b.alt || "Banner"} className={`w-full aspect-[1600/460] object-cover rounded-lg ${b.is_active ? "" : "opacity-50"}`} />
       <div className="grid sm:grid-cols-2 gap-2">
         <div className="sm:col-span-2"><Label htmlFor={`banner-title-${b.id}`} className="text-xs">Título principal</Label><Input id={`banner-title-${b.id}`} value={f.title} maxLength={120} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder={DEFAULT_TITLE} /></div>
         <div className="sm:col-span-2"><Label className="text-xs">Texto secundário</Label><Input value={f.subtitle} maxLength={160} onChange={(e) => setF({ ...f, subtitle: e.target.value })} placeholder="Peças únicas, selecionadas para você." /></div>

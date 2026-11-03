@@ -48,7 +48,7 @@ export function HomeHero() {
 
   return (
     <section
-      className="relative overflow-hidden h-[230px] sm:h-[270px] md:h-[320px]"
+      className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[230px]"
       aria-roledescription={n > 1 ? "carrossel" : undefined}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -65,24 +65,38 @@ export function HomeHero() {
           className={cn("absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out", i === idx ? "opacity-100" : "opacity-0")}
         />
       ))}
-      <div className="absolute inset-0 bg-ink/65" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
-
-      <div className="relative h-full max-w-[1400px] mx-auto px-5 flex flex-col items-center justify-center text-center">
-        <h1 key={`title-${cur.id}`} className="font-display text-3xl sm:text-4xl md:text-5xl leading-[1.05] mb-3 text-primary-foreground max-w-4xl break-words line-clamp-3 animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
-          {(!cur.title?.trim() || cur.title === FALLBACK.title) ? <>Conectamos-te ao <span className="text-gold italic">que procuras.</span></> : cur.title}
-        </h1>
-        <p key={cur.id} className="text-sm md:text-lg text-white/85 max-w-md mx-auto leading-relaxed animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
-          {cur.subtitle || FALLBACK.subtitle}
-        </p>
-        {cur.link_url && cur.cta_label && (
-          isExternal(cur.link_url) ? (
-            <a href={cur.link_url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center rounded-full bg-gold text-ink px-5 py-2 text-sm font-semibold hover:bg-gold/90">{cur.cta_label}</a>
+      {(() => {
+        const hasTitle = !!cur.title?.trim();
+        const hasSubtitle = !!cur.subtitle?.trim();
+        if (!hasTitle && !hasSubtitle) return null;
+        return (
+          <>
+            <div className="absolute inset-0 bg-ink/65" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/30 to-transparent" />
+            <div className="relative h-full max-w-[1400px] mx-auto px-5 flex flex-col items-center justify-center text-center">
+              {hasTitle && (
+                <h1 key={`title-${cur.id}`} className="font-display text-3xl sm:text-4xl md:text-5xl leading-[1.05] mb-3 text-primary-foreground max-w-4xl break-words line-clamp-3 animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
+                  {cur.id === FALLBACK.id ? <>Conectamos-te ao <span className="text-gold italic">que procuras.</span></> : cur.title}
+                </h1>
+              )}
+              {hasSubtitle && (
+                <p key={cur.id} className="text-sm md:text-lg text-white/85 max-w-md mx-auto leading-relaxed animate-fade-in" aria-live={n > 1 ? "polite" : undefined}>
+                  {cur.subtitle}
+                </p>
+              )}
+            </div>
+          </>
+        );
+      })()}
+      {cur.link_url && cur.cta_label && (
+        <div className="absolute bottom-6 inset-x-0 flex justify-center">
+          {isExternal(cur.link_url) ? (
+            <a href={cur.link_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-full bg-gold text-ink px-5 py-2 text-sm font-semibold hover:bg-gold/90">{cur.cta_label}</a>
           ) : (
-            <a href={cur.link_url} className="mt-4 inline-flex items-center rounded-full bg-gold text-ink px-5 py-2 text-sm font-semibold hover:bg-gold/90">{cur.cta_label}</a>
-          )
-        )}
-      </div>
+            <a href={cur.link_url} className="inline-flex items-center rounded-full bg-gold text-ink px-5 py-2 text-sm font-semibold hover:bg-gold/90">{cur.cta_label}</a>
+          )}
+        </div>
+      )}
 
       {n > 1 && (
         <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5">
