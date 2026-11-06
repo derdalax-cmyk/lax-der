@@ -53,6 +53,7 @@ import { Route as PerfilExcluirContaRouteImport } from './routes/perfil.excluir-
 import { Route as PerfilFavoritosRouteImport } from './routes/perfil.favoritos'
 import { Route as PerfilPedidosRouteImport } from './routes/perfil.pedidos'
 import { Route as PerfilRoletaRouteImport } from './routes/perfil.roleta'
+import { Route as PoliticasIndexRouteImport } from './routes/politicas.index'
 import { Route as PoliticasSlugRouteImport } from './routes/politicas.$slug'
 import { Route as ProdutoIdRouteImport } from './routes/produto.$id'
 import { Route as VendedorIndexRouteImport } from './routes/vendedor.index'
@@ -294,6 +295,11 @@ const PerfilRoletaRoute = PerfilRoletaRouteImport.update({
   path: '/roleta',
   getParentRoute: () => PerfilRoute,
 } as any)
+const PoliticasIndexRoute = PoliticasIndexRouteImport.update({
+  id: '/politicas/',
+  path: '/politicas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PoliticasSlugRoute = PoliticasSlugRouteImport.update({
   id: '/politicas/$slug',
   path: '/politicas/$slug',
@@ -453,6 +459,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/colaborador/': typeof ColaboradorIndexRoute
   '/perfil/': typeof PerfilIndexRoute
+  '/politicas/': typeof PoliticasIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
@@ -514,6 +521,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/colaborador': typeof ColaboradorIndexRoute
   '/perfil': typeof PerfilIndexRoute
+  '/politicas': typeof PoliticasIndexRoute
   '/vendedor': typeof VendedorIndexRoute
   '/admin/vendedores/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
@@ -581,6 +589,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/colaborador/': typeof ColaboradorIndexRoute
   '/perfil/': typeof PerfilIndexRoute
+  '/politicas/': typeof PoliticasIndexRoute
   '/vendedor/': typeof VendedorIndexRoute
   '/admin/vendedores_/dashboard': typeof AdminVendedoresDashboardRoute
   '/chat/order/$orderId': typeof ChatOrderOrderIdRoute
@@ -649,6 +658,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/colaborador/'
     | '/perfil/'
+    | '/politicas/'
     | '/vendedor/'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
@@ -710,6 +720,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/colaborador'
     | '/perfil'
+    | '/politicas'
     | '/vendedor'
     | '/admin/vendedores/dashboard'
     | '/chat/order/$orderId'
@@ -776,6 +787,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/colaborador/'
     | '/perfil/'
+    | '/politicas/'
     | '/vendedor/'
     | '/admin/vendedores_/dashboard'
     | '/chat/order/$orderId'
@@ -813,6 +825,7 @@ export interface RootRouteChildren {
   PedidoIdRoute: typeof PedidoIdRoute
   PoliticasSlugRoute: typeof PoliticasSlugRoute
   ProdutoIdRoute: typeof ProdutoIdRoute
+  PoliticasIndexRoute: typeof PoliticasIndexRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
   ApiPublicCampaignsProcessRoute: typeof ApiPublicCampaignsProcessRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
@@ -1132,6 +1145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PerfilRoletaRouteImport
       parentRoute: typeof PerfilRoute
     }
+    '/politicas/': {
+      id: '/politicas/'
+      path: '/politicas'
+      fullPath: '/politicas/'
+      preLoaderRoute: typeof PoliticasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/politicas/$slug': {
       id: '/politicas/$slug'
       path: '/politicas/$slug'
@@ -1413,6 +1433,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidoIdRoute: PedidoIdRoute,
   PoliticasSlugRoute: PoliticasSlugRoute,
   ProdutoIdRoute: ProdutoIdRoute,
+  PoliticasIndexRoute: PoliticasIndexRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
   ApiPublicCampaignsProcessRoute: ApiPublicCampaignsProcessRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,

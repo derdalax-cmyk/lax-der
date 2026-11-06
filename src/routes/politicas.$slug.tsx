@@ -21,13 +21,14 @@ export const Route = createFileRoute("/politicas/$slug")({
   loader: ({ params }) => {
     const policy = POLICIES.find((x) => x.slug === params.slug);
     if (!policy) throw notFound();
-    return { policy };
+    return { slug: policy.slug };
   },
   component: PolicyPage,
 });
 
 function PolicyPage() {
-  const { policy } = Route.useLoaderData() as { policy: Policy };
+  const { slug } = Route.useLoaderData() as { slug: string };
+  const policy = POLICIES.find((p) => p.slug === slug) as Policy;
   const Icon = policy.icon;
   return (
     <div className="min-h-screen bg-background">
