@@ -284,22 +284,21 @@ function Perfil() {
         <h2 className="font-display text-base font-semibold mb-1">Sobre a DERDALAX</h2>
         <PushSettingsRow />
 
-        <PoliciesDialog
-          trigger={
-            <button className="w-full group flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2.5 hover:border-gold/60 transition-colors">
-              <span className="flex items-center gap-3">
-                <span className="h-8 w-8 rounded-lg bg-gold/15 flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-gold" />
-                </span>
-                <span className="text-left">
-                  <span className="block font-medium leading-tight">Políticas</span>
-                  <span className="block text-xs text-muted-foreground mt-0.5">Ver todas as políticas da DERDALAX</span>
-                </span>
-              </span>
-              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-            </button>
-          }
-        />
+        <Link
+          to="/politicas"
+          className="w-full group flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2.5 hover:border-gold/60 transition-colors"
+        >
+          <span className="flex items-center gap-3">
+            <span className="h-8 w-8 rounded-lg bg-gold/15 flex items-center justify-center">
+              <FileText className="w-4 h-4 text-gold" />
+            </span>
+            <span className="text-left">
+              <span className="block font-medium leading-tight">Políticas</span>
+              <span className="block text-xs text-muted-foreground mt-0.5">Ver todas as políticas da DERDALAX</span>
+            </span>
+          </span>
+          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+        </Link>
 
         <div className="pt-2">
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Siga-nos</div>
