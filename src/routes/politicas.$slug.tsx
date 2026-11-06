@@ -27,7 +27,7 @@ export const Route = createFileRoute("/politicas/$slug")({
 });
 
 function PolicyPage() {
-  const { slug } = Route.useLoaderData();
+  const { slug } = Route.useLoaderData() as { slug: string };
   const policy = POLICIES.find((p) => p.slug === slug) as Policy;
   const Icon = policy.icon;
   return (
