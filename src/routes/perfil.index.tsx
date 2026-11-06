@@ -25,7 +25,6 @@ import {
   FileText,
   Trash2,
 } from "lucide-react";
-import { PoliciesDialog } from "@/components/PoliciesDialog";
 import { PushSettingsRow } from "@/components/PushSettingsRow";
 import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { toast } from "sonner";
