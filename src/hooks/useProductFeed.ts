@@ -5,6 +5,7 @@ import { isListRestoring, listContextKey, registerListLoader, subscribeListResto
 import { supabase } from "@/integrations/supabase/client";
 import type { ProductCardData } from "@/components/ProductCard";
 import { PRODUCT_BATCH_SIZE, productFeedCondition, uniqueProducts, type ProductCursor } from "@/lib/productFeed";
+import { stableFeedData, PUBLIC_FRESH_MS, catalogueRetry } from "@/lib/publicCachePolicy";
 
 type ExploreArgs = Record<string, unknown>;
 type Filters = { search: string; category: string; city: string | null | undefined; gender?: string; minPrice?: string; maxPrice?: string; explore?: ExploreArgs };
@@ -14,11 +15,12 @@ export function useProductFeed(filters: Filters) {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const query = useInfiniteQuery({
     queryKey: ["product-feed", filters],
-    staleTime: Infinity,
+    staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
     refetchOnWindowFocus: false,
     initialPageParam: null as ProductCursor | null,
-    retry: false,
+    retry: catalogueRetry,
+    structuralSharing: (old, incoming) => stableFeedData(old, incoming as { pages: { rows: Row[]; nextCursor: ProductCursor | null }[]; pageParams: unknown[] }),
     queryFn: async ({ pageParam, signal }) => {
       if (filters.explore) {
         const { data, error } = await supabase.rpc("explore_products", {
@@ -28,7 +30,9 @@ export function useProductFeed(filters: Filters) {
           _limit: PRODUCT_BATCH_SIZE,
         } as never).abortSignal(signal);
         if (error) throw error;
-        return (data ?? []) as unknown as Row[];
+        const rows = (data ?? []) as unknown as Row[];
+        const tail = rows.at(-1);
+        return { rows, nextCursor: rows.length === PRODUCT_BATCH_SIZE && tail ? { created_at: tail.created_at, id: tail.id } : null };
       }
       let q = supabase.from("public_products")
         .select("id,title,base_price,original_price,images,is_unique,status,category,created_at")
@@ -43,11 +47,12 @@ export function useProductFeed(filters: Filters) {
       if (condition) q = q.or(condition);
       const { data, error } = await q.limit(PRODUCT_BATCH_SIZE).abortSignal(signal);
       if (error) throw error;
-      return (data ?? []) as Row[];
+      const rows = (data ?? []) as Row[];
+      const tail = rows.at(-1);
+      return { rows, nextCursor: rows.length === PRODUCT_BATCH_SIZE && tail ? { created_at: tail.created_at, id: tail.id } : null };
     },
     getNextPageParam: (last) => {
-      const tail = last.at(-1);
-      return last.length === PRODUCT_BATCH_SIZE && tail ? { created_at: tail.created_at, id: tail.id } : undefined;
+      return last.nextCursor ?? undefined;
     },
   });
   const { hasNextPage, isFetching, isError, fetchNextPage } = query;
@@ -77,5 +82,5 @@ export function useProductFeed(filters: Filters) {
     for (const grid of document.querySelectorAll("[data-product-masonry]")) mutation.observe(grid, { attributes: true, attributeFilter: ["data-layout-ready"] });
     return () => { observer.disconnect(); mutation.disconnect(); };
   }, [hasNextPage, isFetching, isError, fetchNextPage, restoring, loc]);
-  return { items: uniqueProducts(query.data?.pages ?? []), loading: query.isPending, loadingMore: query.isFetchingNextPage, error: query.isError, retry: () => query.refetch(), sentinelRef };
+  return { items: uniqueProducts(query.data?.pages.map(page => page.rows) ?? []), loading: query.isPending, loadingMore: query.isFetchingNextPage, error: query.isError, retry: () => query.refetch(), sentinelRef };
 }

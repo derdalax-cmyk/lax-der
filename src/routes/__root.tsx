@@ -16,6 +16,7 @@ import {
 import { isPublicPath, safeRedirect } from "@/lib/safeRedirect";
 import { Suspense, lazy, useEffect } from "react";
 import { ListContextRestorer } from "@/components/ListContextRestorer";
+import { restorePublicCatalogue } from "@/lib/publicCatalogCache";
 
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -79,6 +80,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: ({ context }) => restorePublicCatalogue(context.queryClient),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -102,7 +104,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "serviceworker", href: "/sw.js" },
       { rel: "icon", href: "/favicon.ico?v=der-20261103", sizes: "any" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: brandFavicon32.url },
       { rel: "icon", type: "image/png", sizes: "192x192", href: brandIcon192.url },
@@ -115,10 +116,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" },
     ],
     scripts: [
-      {
-        children:
-          "if('serviceWorker' in navigator){try{navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){});}catch(e){}}",
-      },
       {
         type: "application/ld+json",
         children: JSON.stringify({

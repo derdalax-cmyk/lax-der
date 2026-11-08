@@ -1,4 +1,5 @@
 import { productImageAspect } from "./productImageFrame";
+import { safePublicImage } from "./publicCachePolicy";
 
 export type ImageSize = { width: number; height: number; aspect: number; ts: number };
 export const IMAGE_CACHE_LIMIT = 2000;
@@ -11,6 +12,7 @@ let writeTimer: ReturnType<typeof setTimeout> | undefined;
 /** Only full, uncropped public transformations share dimensions. Signed URLs never persist. */
 export function imageDimensionKey(src: string): string | null {
   try {
+    if (!safePublicImage(src)) return null;
     const url = new URL(src, "https://derdalax.co.mz");
     if (/\/sign\//.test(url.pathname) || url.searchParams.has("token")) return null;
     if (url.pathname.includes("/storage/v1/render/image/public/") && !url.searchParams.has("height") && url.searchParams.get("resize") !== "fill") {

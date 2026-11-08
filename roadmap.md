@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Persistir apenas catálogo público com TTL, limites e recuperação segura de quota.
+- [x] Migrar cache offline para worker gerado, preservar push e excluir dados privados.
+- [x] Validar reabertura, retorno, revalidação, segurança e falhas de armazenamento (offline em origem isolada; publicação/aparelho real não testados).
+
 - [x] Restaurar seleção lateral e produtos em Categorias; mover Ver tudo para o fim da faixa e compactar espaços Home (testes visuais com dados isolados; dados reais indisponíveis).
 
 - [x] Compactar popup Roleta, melhorar interação dos banners, espaços Home e navegação mobile; atualizar fontes.
@@ -7,9 +11,9 @@
 - [x] Garantir categorias de moda sem remover referências ou produtos existentes.
 - [x] Testar pacote visual em mobile/desktop, interações e regressões.
 
-- [ ] Estabilizar proporções persistentes, premedição limitada e masonry partilhado.
-- [ ] Pausar sentinel na restauração; alinhar âncora após layout estável com uma única correção.
-- [ ] Validar cache, prefetch, cold/warm load e retornos repetidos; documentar limites.
+- [x] Estabilizar proporções persistentes, premedição limitada e masonry partilhado.
+- [x] Pausar sentinel na restauração; alinhar âncora após layout estável com uma única correção.
+- [x] Validar cache, prefetch, cold/warm load e retornos repetidos; documentar limites.
 
 - [x] Adaptar grelhas de produtos a masonry sem mudar filtros, ordem ou carregamento.
 - [x] Respeitar proporções naturais nos cards e galeria, sem cortar a peça.
