@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Playfair Display', serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Libre Baskerville', serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -127,7 +127,14 @@
     color: var(--color-foreground);
     font-feature-settings: "cv11", "ss01";
   }
-  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; }
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 700; letter-spacing: 0; }
+}
+
+/* Keep the existing panel usable within the compact Home-only reward dialog. */
+@media (max-width: 639px) {
+  .roleta-home-panel input { min-width: 0; }
+  .roleta-home-panel input:not([readonly]) + button { max-width: 54%; height: auto; min-height: 36px; white-space: normal; padding-inline: 8px; font-size: 12px; }
+  .roleta-home-panel > div > .space-y-5 { gap: 12px; }
 }
 
 /* Explicit shortest-column tracks keep feed order stable as batches append. */

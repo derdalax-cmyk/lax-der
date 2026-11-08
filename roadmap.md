@@ -1,5 +1,10 @@
 # Roadmap
 
+- [ ] Compactar popup Roleta, melhorar interação dos banners, espaços Home e navegação mobile; atualizar fontes.
+- [ ] Limitar coleções Home a 20 e ligar categorias correspondentes ao Explorar.
+- [ ] Garantir categorias de moda sem remover referências ou produtos existentes.
+- [ ] Testar pacote visual em mobile/desktop, interações e regressões.
+
 - [ ] Estabilizar proporções persistentes, premedição limitada e masonry partilhado.
 - [ ] Pausar sentinel na restauração; alinhar âncora após layout estável com uma única correção.
 - [ ] Validar cache, prefetch, cold/warm load e retornos repetidos; documentar limites.
