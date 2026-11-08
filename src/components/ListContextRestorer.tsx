@@ -97,6 +97,19 @@ export function ListContextRestorer() {
   }, []);
 
   useEffect(() => {
+    let stop: (() => void) | undefined;
+    const updated = (event: Event) => {
+      const { id, offset } = (event as CustomEvent<{ id?: string; offset: number }>).detail;
+      if (!id) return;
+      stop?.();
+      const key = listContextKey(window.location.pathname, window.location.search);
+      stop = restore(key, id, offset, getListLoader(key)?.batches() ?? 1);
+    };
+    window.addEventListener("dx:catalogue-revalidated", updated);
+    return () => { stop?.(); window.removeEventListener("dx:catalogue-revalidated", updated); };
+  }, []);
+
+  useEffect(() => {
     if (!popped) return;
     popped = false;
     const key = listContextKey(window.location.pathname, window.location.search);

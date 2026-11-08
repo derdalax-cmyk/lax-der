@@ -1,9 +1,11 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { configurePublicCatalogue } from "./lib/publicCatalogCache";
 
 export const getRouter = () => {
   const queryClient = new QueryClient();
+  configurePublicCatalogue(queryClient);
 
   const router = createRouter({
     routeTree,
