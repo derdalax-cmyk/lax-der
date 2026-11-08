@@ -19,10 +19,10 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-white border-b border-white/5">
-      <div className="max-w-[1400px] mx-auto px-5">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-5">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="font-display text-2xl font-bold tracking-wider text-gold">
+          <div className="flex min-w-0 items-center gap-6">
+            <Link to="/" className="font-display text-base sm:text-2xl font-bold tracking-wider text-gold">
               DERDALAX
             </Link>
             <CitySelector className="hidden sm:inline-flex" />
@@ -42,7 +42,7 @@ export function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <CitySelector compact className="sm:hidden" />
             <Link to="/carrinho" className="relative hover:text-gold transition-colors" aria-label="Carrinho">
               <ShoppingCart className="w-5 h-5" />

@@ -8,6 +8,7 @@ import { CategoryIcon } from "@/lib/categoryIcons";
 import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
+import { homeCollectionProducts } from "@/lib/homePresentation";
 
 
 function firstImage(images: unknown): string | null {
@@ -34,9 +35,9 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
   if (!products.length) return null;
 
   return (
-    <section className="py-6">
-      <div className="max-w-[1400px] mx-auto px-5 flex items-end justify-between mb-4">
-        <h2 className="font-display text-xl md:text-2xl flex items-center gap-2">
+    <section className="py-3 md:py-5">
+      <div className="max-w-[1400px] mx-auto px-5 flex items-end justify-between gap-3 mb-2 md:mb-3">
+        <h2 className="min-w-0 break-words font-display text-xl md:text-2xl flex items-center gap-2">
           {icon && <CategoryIcon icon={icon} className="w-6 h-6" />} {title}
         </h2>
 
@@ -52,7 +53,7 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
       </div>
 
       <div id={`carousel-${encodeURIComponent(title)}`} className="flex items-start gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        {products.map((p) => {
+        {homeCollectionProducts(products).map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
           const activeReward = rewardFor(p.id);

@@ -9,6 +9,8 @@ import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
 import { RoletaHome } from "@/components/roleta/RoletaHome";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 import { HomeHero } from "@/components/HomeHero";
+import { useCategories } from "@/hooks/useCategories";
+import { HOME_COLLECTION_LIMIT, homeCollectionSearch } from "@/lib/homePresentation";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,6 +39,7 @@ const PRODUCT_FIELDS = "id,title,base_price,original_price,images,is_unique,stat
 
 function Home() {
   const { city } = useCity();
+  const { categories } = useCategories();
 
 
 
@@ -72,15 +75,19 @@ function Home() {
         .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
         .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
         .order("sort_order", { ascending: true }).order("id", { ascending: true });
-      if (!cols?.length) return [] as { id: string; name: string; icon: string | null; products: ProductCardData[] }[];
+      if (!cols?.length) return [] as { id: string; slug: string; name: string; icon: string | null; products: ProductCardData[] }[];
 
-      const { data: links } = await supabase
-        .from("featured_collection_products")
-        .select("collection_id,product_id,sort_order")
-        .eq("status", "approved")
-        .order("sort_order", { ascending: true }).order("product_id", { ascending: true });
-
-      const productIds = [...new Set((links ?? []).map((l) => l.product_id))];
+      // Bound each collection before requesting product records; never load the full link catalogue.
+      const linkBatches = await Promise.all(cols.map(async c => {
+        const { data } = await supabase.from("featured_collection_products")
+          .select("collection_id,product_id,sort_order")
+          .eq("collection_id", c.id).eq("status", "approved")
+          .order("sort_order", { ascending: true }).order("product_id", { ascending: true })
+          .limit(HOME_COLLECTION_LIMIT);
+        return data ?? [];
+      }));
+      const links = linkBatches.flat();
+      const productIds = [...new Set(links.map((l) => l.product_id))];
       let products: ProductCardData[] = [];
       if (productIds.length) {
         let pq = supabase
@@ -96,6 +103,7 @@ function Home() {
 
       return cols.map((c) => ({
         id: c.id,
+        slug: c.slug,
         name: c.name,
         icon: c.icon,
         products: (links ?? [])
@@ -140,7 +148,7 @@ function Home() {
       ) : (
         <>
           {/* DESTAQUES DA SEMANA */}
-          <div className="pt-4">
+          <div className="pt-2 md:pt-4">
             <ProductCarousel
               title="Destaques da semana"
               products={featured}
@@ -160,6 +168,7 @@ function Home() {
           products={c.products}
           seeMoreTo="/explorar"
           seeMoreLabel="Ver tudo"
+          seeMoreSearch={homeCollectionSearch(c, categories)}
         />
       ))}
 

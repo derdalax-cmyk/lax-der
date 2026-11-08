@@ -12,6 +12,7 @@
 - Roleta price estimates on cards/cart use `getRoletaLine`/`getRoletaCart` in `productPrice`, which mirror `roleta_apply_to_order`, so storefront previews match what the server charges.
 - Roleta: each valid code grants exactly one spin (no per-user/campaign limit); referral progress = valid referrals − 5 × referral codes issued; an order uses only the single ACTIVE reward with the best real saving (chosen in `roleta_apply_to_order`), because rewards must never stack.
 - Home hero headings and images come from each admin-managed `home_banners` row; images use the public `products` bucket under `banners/`, with the bundled hero and default heading as fallback so existing banners remain compatible.
+- Home collections bound approved link reads before fetching product records, and share presentation/navigation helpers with focused tests, so Home never downloads the whole collection catalogue.
 - Profile phone is normalized/validated by the `normalize_profile_phone` trigger only when it changes, so legacy values stay intact.
 
 - Storefront reads use the explicit public_products security-invoker projection; reservation ownership is a user-scoped boolean RPC and full moderation records use get_managed_products, because public clients must never read reservation owner IDs.
