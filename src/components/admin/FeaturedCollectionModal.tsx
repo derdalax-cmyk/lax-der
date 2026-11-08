@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CATEGORY_ICONS, CategoryIcon } from "@/lib/categoryIcons";
+import { CATEGORY_ICONS, CategoryIcon, optionalCategoryIcon } from "@/lib/categoryIcons";
 import { cn } from "@/lib/utils";
 import { GripVertical, X, Search, Plus, ImagePlus, Upload } from "lucide-react";
 
@@ -96,7 +96,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugEdited, setSlugEdited] = useState(false);
-  const [icon, setIcon] = useState<string>("tag");
+  const [icon, setIcon] = useState<string>("");
   const [selected, setSelected] = useState<ProductLite[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -137,7 +137,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
     if (collection) {
       setName(collection.name);
       setSlug(collection.slug);
-      setIcon(collection.icon ?? "tag");
+      setIcon(collection.icon ?? "");
       setCoverImage(collection.cover_image ?? null);
       setStartsAt(toLocalInput(collection.starts_at));
       setEndsAt(toLocalInput(collection.ends_at));
@@ -158,7 +158,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
         setSelected(ids.map((id) => byId.get(id)).filter((p): p is ProductLite => !!p));
       })();
     } else {
-      setName(""); setSlug(""); setIcon("tag"); setSelected([]);
+      setName(""); setSlug(""); setIcon(""); setSelected([]);
       setCoverImage(null); setStartsAt(""); setEndsAt(""); setMaxPerSeller(0); setIsActive(true);
       setAutoApprove(false);
       setHiddenSellers(new Set());
@@ -232,7 +232,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
       const payload = {
         name: name.trim(),
         slug: slug.trim(),
-        icon,
+        icon: optionalCategoryIcon(icon),
         cover_image: coverImage,
         starts_at: startsAt ? new Date(startsAt).toISOString() : null,
         ends_at: endsAt ? new Date(endsAt).toISOString() : null,
@@ -268,7 +268,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
           .delete().eq("collection_id", collectionId).is("submitted_by", null);
         if (selected.length) {
           const rows = selected.map((p, i) => ({
-            collection_id: collectionId!, product_id: p.id, sort_order: i, status: "approved", submitted_by: null,
+            collection_id: collectionId, product_id: p.id, sort_order: i, status: "approved", submitted_by: null,
           }));
           const { error } = await supabase.from("featured_collection_products").upsert(rows, { onConflict: "collection_id,product_id" });
           if (error) throw error;
@@ -333,7 +333,7 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
           </div>
 
           <div>
-            <Label className="mb-2 block">Ícone</Label>
+            <Label className="mb-2 block">Ícone (opcional)</Label>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-14 h-14 rounded-xl bg-secondary grid place-items-center">
                 <CategoryIcon icon={icon || null} className="w-7 h-7" />
@@ -341,14 +341,17 @@ export function FeaturedCollectionModal({ open, onOpenChange, collection, nextSo
               <div className="flex-1 text-xs text-muted-foreground">
                 {icon === "" ? "Sem ícone" : /^https?:\/\//.test(icon) ? "Ícone personalizado (upload)" : `Ícone: ${icon}`}
               </div>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
+                aria-pressed={!icon}
                 onClick={() => setIcon("")}
                 className={cn("text-xs px-3 py-1.5 rounded-lg border transition-colors",
                   icon === "" ? "border-gold bg-gold/10" : "border-border hover:bg-secondary")}
               >
                 Sem ícone
-              </button>
+              </Button>
               <label className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-secondary cursor-pointer">
                 <Upload className="w-3.5 h-3.5" /> {uploadingIcon ? "A enviar…" : "Enviar"}
                 <input
