@@ -29,7 +29,7 @@ export function optionalCategoryIcon(icon?: string | null): string | null {
 }
 
 export function CategoryIcon({ icon, className = "w-6 h-6" }: { icon?: string | null; className?: string }) {
-  if (!optionalCategoryIcon(icon)) return null;
+  if (!icon || !optionalCategoryIcon(icon)) return null;
   if (/^https?:\/\//.test(icon)) {
     return <img src={icon} alt="" className={`${className} object-contain`} />;
   }
