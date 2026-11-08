@@ -1,6 +1,6 @@
 import {
   Shirt, Footprints, HardHat, Scissors, Watch, Gem, Glasses, Backpack,
-  ShoppingBag, Tag, Diamond, Crown, Baby, Heart, Star, Package,
+  ShoppingBag, Tag, Diamond, Crown, Baby, Heart, Star,
   Umbrella, Sun, Snowflake, Flame, Feather, Layers, Palette, Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";

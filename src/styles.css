@@ -134,7 +134,6 @@
 @media (max-width: 639px) {
   .roleta-home-panel input { min-width: 0; }
   .roleta-home-panel input:not([readonly]) + button { max-width: 54%; height: auto; min-height: 36px; white-space: normal; padding-inline: 8px; font-size: 12px; }
-  .roleta-home-panel > div > .space-y-5 { gap: 12px; }
 }
 
 /* Explicit shortest-column tracks keep feed order stable as batches append. */
