@@ -9,7 +9,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { Store, MapPin, Loader2, Package } from "lucide-react";
 import { PUBLIC_FRESH_MS, deferCatalogueRefresh } from "@/lib/publicCachePolicy";
-import { isListRestoring } from "@/lib/listContext";
+import { isListRestoring, subscribeListRestoration } from "@/lib/listContext";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -40,6 +40,7 @@ function LojaPublica() {
     queryKey: ["public-seller", id],
     staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
+    refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_public_seller", { _id: id });
       if (error) throw error;
@@ -70,14 +71,16 @@ function LojaPublica() {
     const key = ["public-seller-products", id];
     const refresh = () => {
       const restoring = !!document.documentElement.dataset.listRestoring && isListRestoring(document.documentElement.dataset.listRestoring);
-      if (deferCatalogueRefresh(key, window.scrollY, restoring)) { void qc.cancelQueries({ queryKey: key, exact: true }); return; }
       const state = qc.getQueryState(key);
+      if (!state?.data || !navigator.onLine || document.visibilityState === "hidden") return;
+      if (deferCatalogueRefresh(key, window.scrollY, restoring)) { void qc.cancelQueries({ queryKey: key, exact: true }); return; }
       if (state?.fetchStatus === "idle" && (state.isInvalidated || Date.now() - state.dataUpdatedAt >= PUBLIC_FRESH_MS)) void qc.refetchQueries({ queryKey: key, exact: true });
     };
     const timer = window.setInterval(refresh, 60_000);
     window.addEventListener("scroll", refresh, { passive: true });
     window.addEventListener("online", refresh);
-    return () => { clearInterval(timer); window.removeEventListener("scroll", refresh); window.removeEventListener("online", refresh); };
+    const unsubscribe = subscribeListRestoration(refresh);
+    return () => { unsubscribe(); clearInterval(timer); window.removeEventListener("scroll", refresh); window.removeEventListener("online", refresh); };
   }, [id, qc]);
 
   if (isLoading) {

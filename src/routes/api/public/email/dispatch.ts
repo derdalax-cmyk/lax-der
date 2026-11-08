@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brandText } from "@/lib/brandText";
 
 function escapeHtml(s: string) {
   return s
@@ -10,8 +11,8 @@ function escapeHtml(s: string) {
 }
 
 function renderEmail(title: string, body: string, linkUrl: string) {
-  const safeTitle = escapeHtml(title);
-  const safeBody = escapeHtml(body).replace(/\n/g, "<br/>");
+  const safeTitle = escapeHtml(brandText(title));
+  const safeBody = escapeHtml(brandText(body)).replace(/\n/g, "<br/>");
   return `<!doctype html><html lang="pt"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>${safeTitle}</title></head><body style="margin:0;background:#f4f3f0;font-family:Helvetica,Arial,sans-serif;padding:40px 12px;color:#0a0a0a">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 10px 40px rgba(10,10,10,.08)">
     <div style="background:#0a0a0a;padding:28px 24px;text-align:center">
@@ -107,7 +108,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const linkPath = link && /^\/[A-Za-z0-9\-_\/?.=&%#]*$/.test(link) ? link : "/";
         const linkUrl = escapeHtml(`https://derdalax.co.mz${linkPath}`);
         const html = renderEmail(title, body ?? "", linkUrl);
-        const text = `${title}\n\n${body ?? ""}\n\n${linkUrl}`;
+        const text = `${brandText(title)}\n\n${brandText(body ?? "")}\n\n${linkUrl}`;
         const messageId = crypto.randomUUID();
 
         await supabaseAdmin.from("email_send_log").insert({
@@ -146,7 +147,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             from: "Derdalax <noreply@derdalax.co.mz>",
             reply_to: "suporte@derdalax.co.mz",
             sender_domain: "notify.derdalax.co.mz",
-            subject: title,
+            subject: brandText(title),
             html,
             text,
             purpose: "transactional",

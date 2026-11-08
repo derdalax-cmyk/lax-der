@@ -1,6 +1,6 @@
 import { dehydrate, hydrate, hashKey, type DehydratedState, type QueryClient } from "@tanstack/react-query";
 import { createStore, get, set, del } from "idb-keyval";
-import { isListRestoring } from "./listContext";
+import { isListRestoring, subscribeListRestoration } from "./listContext";
 import { deferCatalogueRefresh, isPublicQueryKey, projectPublicData, PUBLIC_CACHE_VERSION, PUBLIC_FRESH_MS, PUBLIC_MAX_AGE_MS, PUBLIC_QUERY_LIMIT, PUBLIC_QUERY_BYTES, PUBLIC_TOTAL_BYTES, PUBLIC_KEYS, catalogueRetry } from "./publicCachePolicy";
 
 type Saved = { version: string; queries: DehydratedState["queries"] };
@@ -114,7 +114,7 @@ export async function startPublicCatalogue(client: QueryClient, storage: Storage
           if (deferCatalogueRefresh(q.queryKey, window.scrollY, isListRestoringAny())) void client.cancelQueries({ queryKey: q.queryKey, exact: true });
         };
         window.addEventListener("scroll", cancelWhileBrowsing, { passive: true });
-        const unsubscribe = client.getQueryCache().subscribe(() => { if (isListRestoringAny()) cancelWhileBrowsing(); });
+        const unsubscribe = subscribeListRestoration(cancelWhileBrowsing);
         try {
         await client.refetchQueries({ queryKey: q.queryKey, exact: true }, { cancelRefetch: false });
         } finally { window.removeEventListener("scroll", cancelWhileBrowsing); unsubscribe(); }
