@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Plus, Pencil, Trash2, GripVertical, Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import { CATEGORY_ICONS, CategoryIcon } from "@/lib/categoryIcons";
+import { CATEGORY_ICONS, CategoryIcon, optionalCategoryIcon } from "@/lib/categoryIcons";
 import { cn } from "@/lib/utils";
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent,
@@ -21,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { validateUpload } from "@/lib/uploadLimits";
 
 export const Route = createFileRoute("/admin/categorias")({
+  head: () => ({ meta: [{ title: "Categorias · Admin Derdalax" }, { name: "description", content: "Gestão de categorias de produtos da Derdalax." }, { property: "og:title", content: "Categorias · Admin Derdalax" }, { property: "og:description", content: "Gestão de categorias de produtos da Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: AdminCategoriasPage,
 });
 
@@ -46,9 +47,9 @@ function SortableRow({ row, count, onEdit, onDelete }: { row: Row; count: number
       </td>
       <td className="px-3 py-3">
         <span className="inline-flex items-center gap-3">
-          <span className="w-9 h-9 rounded-lg bg-secondary grid place-items-center">
+          {optionalCategoryIcon(row.icon) && <span className="w-9 h-9 rounded-lg bg-secondary grid place-items-center">
             <CategoryIcon icon={row.icon} className="w-5 h-5" />
-          </span>
+          </span>}
           <span className="font-medium">{row.label}</span>
           {!row.is_active && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Inativa</span>}
         </span>
@@ -189,7 +190,7 @@ function CategoryModal({ open, onOpenChange, category, nextOrder }:
   const [label, setLabel] = useState("");
   const [slug, setSlug] = useState("");
   const [slugEdited, setSlugEdited] = useState(false);
-  const [icon, setIcon] = useState<string>("tag");
+  const [icon, setIcon] = useState<string>("");
   const [isActive, setIsActive] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -199,9 +200,9 @@ function CategoryModal({ open, onOpenChange, category, nextOrder }:
     setSlugEdited(!!category);
     if (category) {
       setLabel(category.label); setSlug(category.slug);
-      setIcon(category.icon ?? "tag"); setIsActive(category.is_active);
+      setIcon(category.icon ?? ""); setIsActive(category.is_active);
     } else {
-      setLabel(""); setSlug(""); setIcon("tag"); setIsActive(true);
+      setLabel(""); setSlug(""); setIcon(""); setIsActive(true);
     }
   }, [open, category]);
 
@@ -227,7 +228,7 @@ function CategoryModal({ open, onOpenChange, category, nextOrder }:
     if (!label.trim() || !slug.trim()) { toast.error("Preencha nome e slug"); return; }
     setSaving(true);
     try {
-      const payload = { label: label.trim(), slug: slug.trim(), icon, is_active: isActive };
+      const payload = { label: label.trim(), slug: slug.trim(), icon: optionalCategoryIcon(icon), is_active: isActive };
       if (category) {
         const { error } = await supabase.from("categories").update(payload).eq("id", category.id);
         if (error) throw error;
@@ -264,19 +265,20 @@ function CategoryModal({ open, onOpenChange, category, nextOrder }:
           </div>
 
           <div>
-            <Label className="mb-2 block">Ícone</Label>
+            <Label className="mb-2 block">Ícone (opcional)</Label>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-14 h-14 rounded-xl bg-secondary grid place-items-center">
                 <CategoryIcon icon={icon} className="w-7 h-7" />
               </div>
               <div className="flex-1 text-xs text-muted-foreground">
-                {isUrl ? "Ícone personalizado (upload)" : `Ícone escolhido: ${icon}`}
+                {!icon ? "Só texto" : isUrl ? "Ícone personalizado (upload)" : `Ícone escolhido: ${icon}`}
                 {isUrl && (
-                  <button onClick={() => setIcon("tag")} className="ml-2 text-destructive inline-flex items-center gap-1">
+                  <button onClick={() => setIcon("")} className="ml-2 text-destructive inline-flex items-center gap-1">
                     <X className="w-3 h-3" /> remover
                   </button>
                 )}
               </div>
+              <Button type="button" variant="outline" size="sm" aria-pressed={!icon} onClick={() => setIcon("")}>Sem ícone</Button>
               <label className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-secondary cursor-pointer">
                 <Upload className="w-3.5 h-3.5" /> {uploading ? "A enviar…" : "Enviar"}
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadIcon(e.target.files[0])} />

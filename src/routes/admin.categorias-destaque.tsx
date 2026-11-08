@@ -20,6 +20,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } 
 import { CSS } from "@dnd-kit/utilities";
 
 export const Route = createFileRoute("/admin/categorias-destaque")({
+  head: () => ({ meta: [{ title: "Coleções de destaque · Admin Derdalax" }, { name: "description", content: "Gestão das coleções de destaque da Home Derdalax." }, { property: "og:title", content: "Coleções de destaque · Admin Derdalax" }, { property: "og:description", content: "Gestão das coleções de destaque da Home Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: AdminFeaturedCollections,
 });
 

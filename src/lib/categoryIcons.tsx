@@ -24,8 +24,12 @@ export const CATEGORY_ICONS: { name: string; label: string; Icon: LucideIcon }[]
 
 const MAP = new Map(CATEGORY_ICONS.map((c) => [c.name, c.Icon]));
 
+export function optionalCategoryIcon(icon?: string | null): string | null {
+  return icon?.trim() || null;
+}
+
 export function CategoryIcon({ icon, className = "w-6 h-6" }: { icon?: string | null; className?: string }) {
-  if (!icon) return <Shirt className={className} />;
+  if (!optionalCategoryIcon(icon)) return null;
   if (/^https?:\/\//.test(icon)) {
     return <img src={icon} alt="" className={`${className} object-contain`} />;
   }
