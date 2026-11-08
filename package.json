@@ -54,6 +54,7 @@
     "@supabase/supabase-js": "^2.110.7",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-query-persist-client": "^5.107.1",
     "@tanstack/react-router": "1.170.41",
     "@tanstack/react-start": "1.168.60",
     "@tanstack/router-plugin": "1.168.42",
@@ -63,6 +64,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "idb-keyval": "^6.3.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
     "nitro": "3.0.260603-beta",
@@ -101,7 +103,8 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vite-plugin-pwa": "^2.0.0"
   },
   "pnpm": {
     "overrides": {
