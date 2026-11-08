@@ -12,8 +12,8 @@ export function ProductDetailPending() {
   let product: ProductCardData | undefined;
   if (id) {
     for (const query of client.getQueryCache().findAll()) {
-      const value = query.state.data as { pages?: ProductCardData[][]; product?: ProductCardData } | ProductCardData[] | undefined;
-      const rows = Array.isArray(value) ? value : value?.pages?.flat() ?? (value?.product ? [value.product] : []);
+      const value = query.state.data as { pages?: { rows: ProductCardData[] }[]; product?: ProductCardData } | ProductCardData[] | undefined;
+      const rows = Array.isArray(value) ? value : value?.pages?.flatMap(page => page.rows) ?? (value?.product ? [value.product] : []);
       product = rows.find(row => row.id === id);
       if (product) break;
     }

@@ -1,4 +1,5 @@
 export const SW_URL = "/sw.js";
+import { refuseOfflineRegistration } from "./offlineCachePolicy";
 
 let pending: Promise<ServiceWorkerRegistration | null> | null = null;
 
@@ -15,8 +16,19 @@ export function ensureServiceWorker(): Promise<ServiceWorkerRegistration | null>
   if (!pending) {
     pending = (async () => {
       try {
+        const refused = refuseOfflineRegistration(window.location.hostname, import.meta.env.PROD, window.self !== window.top, new URLSearchParams(window.location.search).get("sw") === "off");
+        if (refused) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const reg of registrations) {
+            const url = reg.active?.scriptURL ?? reg.waiting?.scriptURL ?? reg.installing?.scriptURL;
+            if (url && new URL(url).pathname === SW_URL) await reg.unregister();
+          }
+          // Messaging remains available independently in previews, without any offline cache.
+          return await navigator.serviceWorker.register("/push-events.js", { scope: "/" });
+        }
         const existing = await navigator.serviceWorker.getRegistration(SW_URL);
-        if (existing && (existing.active || existing.installing || existing.waiting)) {
+        if (existing && existing.active?.scriptURL.endsWith(SW_URL)) {
+          void existing.update().catch(() => {});
           return existing;
         }
         return await navigator.serviceWorker.register(SW_URL, { scope: "/" });
