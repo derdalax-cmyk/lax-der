@@ -1,11 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Gem, Truck, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import type { ProductCardData } from "@/components/ProductCard";
 import { useCity } from "@/contexts/CityContext";
-import { AboutDerdalaxCard } from "@/components/AboutDerdalax";
 import { RoletaHome } from "@/components/roleta/RoletaHome";
 import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 import { HomeHero } from "@/components/HomeHero";
@@ -173,26 +171,20 @@ function Home() {
       ))}
 
       {/* FEATURES */}
-      <section className="py-16 border-t border-border mt-6">
+      <section className="py-10 md:py-14 border-t border-border mt-6">
         <div className="max-w-[1400px] mx-auto px-5 grid md:grid-cols-3 gap-8">
           {[
-            { icon: Truck, title: "Entrega rápida", desc: "Em todas as principais cidades de Moçambique." },
-            { icon: ShieldCheck, title: "Pagamento flexível", desc: "Combine com o vendedor via chat ou pague na entrega." },
-            { icon: Gem, title: "Peças únicas", desc: "Coleções limitadas que ninguém mais terá." },
+            { title: "Entrega rápida", desc: "Em todas as principais cidades de Moçambique." },
+            { title: "Pagamento flexível", desc: "Combine com o vendedor via chat ou pague na entrega." },
+            { title: "Peças únicas", desc: "Coleções limitadas que ninguém mais terá." },
           ].map((f) => (
-            <div key={f.title} className="flex gap-4 items-start">
-              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                <f.icon className="w-5 h-5 text-ink" />
-              </div>
-              <div>
-                <h3 className="font-display text-lg mb-1">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
-              </div>
+            <div key={f.title}>
+              <h3 className="font-display text-lg mb-1">{f.title}</h3>
+              <p className="text-sm text-muted-foreground">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
-      <AboutDerdalaxCard />
     </>
   );
 }
