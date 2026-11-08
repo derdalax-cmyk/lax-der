@@ -80,21 +80,20 @@ export function projectPublicData(key: QueryKey, data: unknown): unknown {
 }
 
 export type FeedPage<T> = { rows: T[]; nextCursor: { created_at: string; id: string } | null };
-/** Keep surviving IDs in their displayed order; server cursors remain untouched. */
+/** Preserve order only within each server page; never move rows across cursor boundaries. */
 export function stableFeedData<T extends { id: string }>(old: unknown, incoming: { pages: FeedPage<T>[]; pageParams: unknown[] }) {
   const previous = old as typeof incoming | undefined;
   if (!previous?.pages || !incoming?.pages) return incoming;
-  const byId = new Map(incoming.pages.flatMap(p => p.rows).map(p => [p.id, p]));
-  const ordered: T[] = [];
-  for (const p of previous.pages.flatMap(p => p.rows)) {
-    const next = byId.get(p.id);
-    if (next) { ordered.push(next); byId.delete(p.id); }
-  }
-  ordered.push(...byId.values());
-  let offset = 0;
-  return { ...incoming, pages: incoming.pages.map(p => {
-    const rows = ordered.slice(offset, offset + p.rows.length);
-    offset += p.rows.length;
+  return { ...incoming, pages: incoming.pages.map((p, index) => {
+    const oldPage = previous.pages[index];
+    if (!oldPage || JSON.stringify(previous.pageParams[index]) !== JSON.stringify(incoming.pageParams[index])) return p;
+    const byId = new Map(p.rows.map(row => [row.id, row]));
+    const rows: T[] = [];
+    for (const row of oldPage.rows) {
+      const next = byId.get(row.id);
+      if (next) { rows.push(next); byId.delete(row.id); }
+    }
+    rows.push(...byId.values());
     return { ...p, rows };
   }) };
 }

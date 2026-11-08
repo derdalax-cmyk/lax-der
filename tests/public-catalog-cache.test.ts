@@ -63,10 +63,17 @@ test("malformed pages and cursor pairs are rejected", () => {
 test("revalidation preserves surviving order, removes deleted IDs and retains fresh server continuation", () => {
   const incoming = { pages: [page(["new", "a"]), page(["d", "c"])], pageParams: data.pageParams };
   const next = stableFeedData(data, incoming);
-  expect(next.pages.flatMap(p => p.rows.map(r => r.id))).toEqual(["a", "c", "d", "new"]);
+  expect(next.pages.flatMap(p => p.rows.map(r => r.id))).toEqual(["a", "new", "c", "d"]);
   expect(next.pages.map(p => p.nextCursor)).toEqual(incoming.pages.map(p => p.nextCursor));
   const appended = stableFeedData(next, { ...next, pages: [...next.pages, page(["e", "f"])] });
-  expect(appended.pages.flatMap(p => p.rows.map(r => r.id))).toEqual(["a", "c", "d", "new", "e", "f"]);
+  expect(appended.pages.flatMap(p => p.rows.map(r => r.id))).toEqual(["a", "new", "c", "d", "e", "f"]);
+});
+test("refresh never transfers a product across server cursor boundaries", () => {
+  const incoming = { pages: [page(["new", "a"]), page(["b", "c"])], pageParams: [null, { id: "a", created_at: "2026-11-08T00:00:00Z" }] };
+  const next = stableFeedData(data, incoming);
+  expect(next.pages.map(p => p.rows.map(r => r.id))).toEqual([["a", "new"], ["b", "c"]]);
+  expect(next.pageParams).toEqual(incoming.pageParams);
+  expect(next.pages.map(p => p.nextCursor)).toEqual(incoming.pages.map(p => p.nextCursor));
 });
 test("signed URLs, URL credentials and sensitive query arguments never persist", () => {
   for (const url of ["https://cdn.example/a.jpg?token=x", "https://cdn.example/storage/v1/object/sign/x", "https://u:p@cdn.example/a.jpg", "https://cdn.example/a.jpg?X-Amz-Signature=x"]) expect(safePublicImage(url)).toBe(false);
