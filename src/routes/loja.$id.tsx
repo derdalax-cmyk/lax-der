@@ -8,6 +8,10 @@ import { SellerReviews } from "@/components/SellerReviews";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { Store, MapPin, Loader2, Package } from "lucide-react";
+import { PUBLIC_FRESH_MS, deferCatalogueRefresh } from "@/lib/publicCachePolicy";
+import { isListRestoring } from "@/lib/listContext";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/loja/$id")({
   head: () => ({ meta: [{ title: "Loja · Derdalax" }, { name: "description", content: "Perfil da loja e avaliações na Derdalax." }, { property: "og:title", content: "Loja · Derdalax" }, { property: "og:description", content: "Perfil da loja e avaliações na Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
@@ -29,11 +33,12 @@ type PublicSeller = {
 
 function LojaPublica() {
   const { id } = Route.useParams();
+  const qc = useQueryClient();
   const { isFavorite, toggle } = useFavorites();
 
   const { data: seller, isLoading } = useQuery({
     queryKey: ["public-seller", id],
-    staleTime: Infinity,
+    staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_public_seller", { _id: id });
@@ -44,8 +49,9 @@ function LojaPublica() {
 
   const { data: products = [] } = useQuery({
     queryKey: ["public-seller-products", id],
-    staleTime: Infinity,
+    staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
+    refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false,
     enabled: !!seller?.id,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -59,6 +65,20 @@ function LojaPublica() {
       return (data ?? []) as ProductCardData[];
     },
   });
+
+  useEffect(() => {
+    const key = ["public-seller-products", id];
+    const refresh = () => {
+      const restoring = !!document.documentElement.dataset.listRestoring && isListRestoring(document.documentElement.dataset.listRestoring);
+      if (deferCatalogueRefresh(key, window.scrollY, restoring)) { void qc.cancelQueries({ queryKey: key, exact: true }); return; }
+      const state = qc.getQueryState(key);
+      if (state?.fetchStatus === "idle" && (state.isInvalidated || Date.now() - state.dataUpdatedAt >= PUBLIC_FRESH_MS)) void qc.refetchQueries({ queryKey: key, exact: true });
+    };
+    const timer = window.setInterval(refresh, 60_000);
+    window.addEventListener("scroll", refresh, { passive: true });
+    window.addEventListener("online", refresh);
+    return () => { clearInterval(timer); window.removeEventListener("scroll", refresh); window.removeEventListener("online", refresh); };
+  }, [id, qc]);
 
   if (isLoading) {
     return <div className="min-h-[50vh] grid place-items-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;

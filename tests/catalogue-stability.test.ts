@@ -1,6 +1,16 @@
 import { expect, test } from "bun:test";
 import { IMAGE_CACHE_LIMIT, IMAGE_CACHE_TTL, imageDimensionKey, pruneImageDimensions, productImageMetadata } from "../src/lib/productImageCache";
 import { anchorScrollTarget, isListRestoring, setListRestoring, subscribeListRestoration } from "../src/lib/listContext";
+import { deferCatalogueRefresh } from "../src/lib/publicCachePolicy";
+
+test("background catalogue refresh waits until the top and never runs during restoration", () => {
+  for (const key of ["product-feed","home-featured","home-collections","public-seller-products","home-banners"]) {
+    expect(deferCatalogueRefresh([key],500,false)).toBe(true);
+    expect(deferCatalogueRefresh([key],0,false)).toBe(false);
+    expect(deferCatalogueRefresh([key],0,true)).toBe(true);
+  }
+  expect(deferCatalogueRefresh(["public-categories"],500,false)).toBe(false);
+});
 
 test("uncropped thumbnail and main URL reuse the same persistent dimensions", () => {
   const original = "https://cdn.example/storage/v1/object/public/products/a.jpg";
