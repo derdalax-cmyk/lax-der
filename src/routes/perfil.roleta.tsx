@@ -30,7 +30,7 @@ function RoletaPage() {
       <Link to="/perfil" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="w-4 h-4" /> Perfil</Link>
       <div className="rounded-2xl bg-ink text-white border border-gold/50 p-5 space-y-5">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold">Roleta Derdalax</p>
+          <p className="text-xs tracking-[0.3em] text-gold">Roleta Derdalax</p>
           <h1 className="font-display text-3xl">{campaign ? <>Ganhe até <span className="text-gold">{campaign.max_percent}%</span> de desconto</> : "Roleta de Descontos"}</h1>
           {campaign && <p className="text-sm text-white/60 mt-1">{campaign.name}</p>}
         </div>

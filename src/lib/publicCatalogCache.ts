@@ -1,7 +1,7 @@
 import { dehydrate, hydrate, hashKey, type DehydratedState, type QueryClient } from "@tanstack/react-query";
 import { createStore, get, set, del } from "idb-keyval";
 import { isListRestoring } from "./listContext";
-import { isPublicQueryKey, projectPublicData, PUBLIC_CACHE_VERSION, PUBLIC_FRESH_MS, PUBLIC_MAX_AGE_MS, PUBLIC_QUERY_LIMIT, PUBLIC_QUERY_BYTES, PUBLIC_TOTAL_BYTES, PUBLIC_KEYS, catalogueRetry } from "./publicCachePolicy";
+import { deferCatalogueRefresh, isPublicQueryKey, projectPublicData, PUBLIC_CACHE_VERSION, PUBLIC_FRESH_MS, PUBLIC_MAX_AGE_MS, PUBLIC_QUERY_LIMIT, PUBLIC_QUERY_BYTES, PUBLIC_TOTAL_BYTES, PUBLIC_KEYS, catalogueRetry } from "./publicCachePolicy";
 
 type Saved = { version: string; queries: DehydratedState["queries"] };
 type StorageAdapter = { read: () => Promise<unknown>; write: (value: Saved) => Promise<void>; remove: () => Promise<void> };
@@ -87,6 +87,7 @@ export async function startPublicCatalogue(client: QueryClient, storage: Storage
   window.addEventListener("pagehide", () => void save());
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") void save(); else void refresh(); });
   window.addEventListener("online", () => void refresh());
+  window.addEventListener("scroll", () => { if (window.scrollY <= 80) void refresh(); }, { passive: true });
 
   // Actual writes already invalidate private management keys on success. Bridge ONLY these
   // targeted invalidations to public keys; auth, favourite and notification events never enter.
@@ -106,10 +107,17 @@ export async function startPublicCatalogue(client: QueryClient, storage: Storage
       const queries = client.getQueryCache().findAll({ predicate: q => isPublicQueryKey(q.queryKey) && q.getObserversCount() > 0 && q.state.fetchStatus === "idle" && (q.state.isInvalidated || Date.now() - q.state.dataUpdatedAt >= PUBLIC_FRESH_MS) });
       for (const q of queries) {
         if (isListRestoringAny()) break;
-        const anchor = q.queryKey[0] === "product-feed" ? [...document.querySelectorAll<HTMLElement>("[data-product-id]")].find(el => el.getBoundingClientRect().bottom > 0) : undefined;
-        const detail = anchor ? { id: anchor.dataset.productId, offset: anchor.getBoundingClientRect().top } : null;
+        if (deferCatalogueRefresh(q.queryKey, window.scrollY, false)) continue;
+        // If the user starts browsing during an in-flight refresh, retain the old coherent
+        // cursor chain by cancelling it before publication. No post-refresh scroll correction.
+        const cancelWhileBrowsing = () => {
+          if (deferCatalogueRefresh(q.queryKey, window.scrollY, isListRestoringAny())) void client.cancelQueries({ queryKey: q.queryKey, exact: true });
+        };
+        window.addEventListener("scroll", cancelWhileBrowsing, { passive: true });
+        const unsubscribe = client.getQueryCache().subscribe(() => { if (isListRestoringAny()) cancelWhileBrowsing(); });
+        try {
         await client.refetchQueries({ queryKey: q.queryKey, exact: true }, { cancelRefetch: false });
-        if (detail && !isListRestoringAny()) window.dispatchEvent(new CustomEvent("dx:catalogue-revalidated", { detail }));
+        } finally { window.removeEventListener("scroll", cancelWhileBrowsing); unsubscribe(); }
       }
     } finally { refreshing = false; }
   }

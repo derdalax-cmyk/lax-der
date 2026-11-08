@@ -8,6 +8,9 @@ export const PUBLIC_QUERY_BYTES = 750_000;
 export const PUBLIC_TOTAL_BYTES = 4_000_000;
 export const PUBLIC_MAX_BATCHES = 20;
 export const PUBLIC_KEYS = ["product-feed", "home-featured", "home-collections", "public-categories", "public-product-details", "home-banners"] as const;
+export function deferCatalogueRefresh(key: QueryKey, scrollY: number, restoring: boolean): boolean {
+  return restoring || scrollY > 80 && ["product-feed", "home-featured", "home-collections", "public-seller-products", "home-banners"].includes(String(key[0]));
+}
 
 export function isPublicQueryKey(key: QueryKey): boolean {
   if (!PUBLIC_KEYS.includes(key[0] as typeof PUBLIC_KEYS[number])) return false;

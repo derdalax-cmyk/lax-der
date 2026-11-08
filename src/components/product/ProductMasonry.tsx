@@ -4,26 +4,26 @@ import { cn } from "@/lib/utils";
 /** Measured shortest columns; keep the settled prefix untouched as batches append. */
 export function ProductMasonry({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const signatureRef = useRef("");
+  const widthRef = useRef(0);
   useLayoutEffect(() => {
     const grid = ref.current;
     if (!grid) return;
     let frame = 0;
-    let signature = "";
-    let measuredWidth = 0;
     const place = () => {
       frame = 0;
-      if (measuredWidth !== grid.clientWidth) {
+      if (widthRef.current !== grid.clientWidth) {
         for (const item of Array.from(grid.children)) if (item instanceof HTMLElement) item.style.gridColumn = "";
-        measuredWidth = grid.clientWidth;
+        widthRef.current = grid.clientWidth;
       }
       const style = getComputedStyle(grid);
       const columns = style.gridTemplateColumns.split(" ").length;
       const gutter = parseFloat(style.columnGap) || 0;
       const items = Array.from(grid.children).filter((item): item is HTMLElement => item instanceof HTMLElement);
       const heights = items.map(item => Math.ceil(item.firstElementChild?.getBoundingClientRect().height ?? 0));
-      const next = `${grid.clientWidth}:${columns}:${gutter}:${heights.join(",")}`;
-      if (next === signature) return;
-      signature = next;
+      const next = `${grid.clientWidth}:${columns}:${gutter}:${items.map((item, i) => `${item.querySelector<HTMLElement>('[data-product-id]')?.dataset.productId ?? item.firstElementChild?.getAttribute('data-product-id') ?? i}:${heights[i]}`).join(",")}`;
+      if (next === signatureRef.current) return;
+      signatureRef.current = next;
       const bottoms = new Array<number>(columns).fill(0);
       let pending = false;
       for (let i = 0; i < items.length; i++) {
@@ -47,7 +47,7 @@ export function ProductMasonry({ children, className }: { children: ReactNode; c
     observer.observe(grid);
     for (const item of Array.from(grid.children)) if (item.firstElementChild) observer.observe(item.firstElementChild);
     // Readiness can change without a height change (square images and errors).
-    const mutations = new MutationObserver(() => { signature = ""; schedule(); });
+    const mutations = new MutationObserver(() => { signatureRef.current = ""; schedule(); });
     mutations.observe(grid, { attributes: true, subtree: true, attributeFilter: ["data-image-ready"] });
     const proximity = new IntersectionObserver(entries => {
       for (const entry of entries) {
