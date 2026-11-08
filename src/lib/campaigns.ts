@@ -3,6 +3,21 @@ export const MAX_CAMPAIGN_PRODUCTS = 15;
 export const PUSH_TITLE_MAX = 65;
 export const PUSH_BODY_MAX = 180;
 export const LARGE_CAMPAIGN_THRESHOLD = 500;
+export const CAMPAIGN_LIMITS = [50, 75, 100] as const;
+export type CampaignLimit = typeof CAMPAIGN_LIMITS[number];
+export function campaignRecipientLimit(value: unknown = 50): CampaignLimit {
+  if (value === 50 || value === 75 || value === 100) return value;
+  throw new Error("Escolha um limite de 50, 75 ou 100 destinatários.");
+}
+export function campaignQueueCount(available: number, limit: CampaignLimit): number {
+  return Math.min(Math.max(0, available), campaignRecipientLimit(limit));
+}
+export function deterministicRecipients(ids: string[], limit: CampaignLimit): string[] {
+  return [...new Set(ids)].sort().slice(0, campaignRecipientLimit(limit));
+}
+export function campaignDispatchKey(campaignId: string, userId: string, channel: string) {
+  return `${campaignId}:${userId}:${channel}`;
+}
 
 export type Segment = "incomplete" | "all" | "push" | "email";
 export type CampaignType = "message" | "profile_recovery" | "products";

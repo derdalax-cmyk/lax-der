@@ -70,6 +70,7 @@ const campaignInput = z.object({
   name: z.string().min(2).max(100),
   type: z.enum(["message", "profile_recovery", "products"]),
   channels: z.array(z.enum(["push", "email"])).min(1),
+  recipientLimit: z.union([z.literal(50), z.literal(75), z.literal(100)]).default(50),
   segment,
   filters,
   title: z.string().min(2).max(PUSH_TITLE_MAX),
@@ -86,7 +87,7 @@ async function resolveProducts(db: Awaited<ReturnType<typeof guard>>["db"], ids:
   if (rows.length !== ids.length || rows.some((p) => !isCampaignEligible(p))) {
     throw new Error("Há produtos inválidos (vendidos, rejeitados ou inexistentes) na seleção.");
   }
-  return ids.map((id) => rows.find((r) => r.id === id)!);
+  return ids.flatMap((id) => { const row = rows.find((r) => r.id === id); return row ? [row] : []; });
 }
 
 function clean(data: z.infer<typeof campaignInput>) {
@@ -108,6 +109,9 @@ export const sendCampaignTestToMe = createServerFn({ method: "POST" })
     const { db } = await guard(context.userId);
     const c = clean(data);
     const prods = await resolveProducts(db, c.productIds);
+    const { data: eligible, error: eligibilityError } = await db.rpc("admin_campaign_push_eligible", { _user_id: context.userId });
+    if (eligibilityError) throw new Error("Não foi possível verificar a elegibilidade do teste.");
+    if (!eligible) return { push: "ineligible" as const };
     const { sendPushToUser } = await import("./push.server");
     const url = c.type === "products" ? (c.productIds.length === 1 ? `/produto/${c.productIds[0]}` : "/explorar") : c.ctaUrl;
     const res = await sendPushToUser(context.userId, { title: `[Teste] ${c.title}`, body: c.body, url, tag: "campaign-test", image: firstHttpsImage(prods[0]?.images) ?? undefined });
@@ -135,12 +139,13 @@ export const createAndSendCampaign = createServerFn({ method: "POST" })
       audience_filters: c.filters as never, channels: c.channels as never, title: c.title, body: c.body,
       cta_label: c.ctaLabel || null, cta_url: c.ctaUrl, image_url: firstHttpsImage(prods[0]?.images),
       estimated_push: c.channels.includes("push") ? e.push : 0, estimated_email: 0,
+      recipient_limit: c.recipientLimit, eligible_total: e.total,
     }).select("id").single();
     if (error || !row) throw new Error("Não foi possível criar a campanha.");
     if (c.productIds.length) {
       await db.from("admin_campaign_products").insert(c.productIds.map((product_id, i) => ({ campaign_id: row.id, product_id, sort_order: i })));
     }
-    await s.audit(context.userId, "campaign.created", { type: c.type, segment: c.segment, channels: c.channels, products: c.productIds.length }, row.id);
+    await s.audit(context.userId, "campaign.created", { type: c.type, segment: c.segment, channels: c.channels, limit: c.recipientLimit, products: c.productIds.length }, row.id);
     const { data: queued, error: qErr } = await db.rpc("admin_campaign_enqueue", { _campaign_id: row.id });
     if (qErr) throw new Error("Falha ao colocar a campanha na fila.");
     await s.audit(context.userId, "campaign.sent", { recipients: queued }, row.id);
@@ -155,7 +160,7 @@ export const listCampaigns = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { db } = await guard(context.userId);
     const { data } = await db.from("admin_campaigns")
-      .select("id,name,type,audience_type,channels,status,estimated_push,estimated_email,sent_push,failed_push,sent_email,failed_email,created_at,created_by")
+      .select("id,name,type,audience_type,channels,status,estimated_push,estimated_email,sent_push,failed_push,sent_email,failed_email,created_at,created_by,recipient_limit,eligible_total,queued_push,queued_email")
       .order("created_at", { ascending: false }).limit(100);
     const ids = [...new Set((data ?? []).map((c) => c.created_by))];
     const { data: profs } = ids.length ? await db.from("profiles").select("id,name").in("id", ids) : { data: [] };
@@ -167,11 +172,11 @@ export const getCampaignDetails = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { db } = await guard(context.userId);
-    const { data: c } = await db.from("admin_campaigns").select("id,name,type,title,body,cta_label,cta_url,status,audience_type,audience_filters,channels,sent_push,failed_push,estimated_push,created_at,completed_at").eq("id", data.id).maybeSingle();
+    const { data: c } = await db.from("admin_campaigns").select("id,name,type,title,body,cta_label,cta_url,status,audience_type,audience_filters,channels,sent_push,failed_push,estimated_push,created_at,completed_at,recipient_limit,eligible_total,queued_push,queued_email").eq("id", data.id).maybeSingle();
     if (!c) throw new Error("Campanha não encontrada.");
     const [{ data: prods }, { data: recs }] = await Promise.all([
       db.from("admin_campaign_products").select("sort_order,products(id,title,base_price)").eq("campaign_id", data.id).order("sort_order"),
-      db.from("admin_campaign_recipients").select("status,error_code,channel").eq("campaign_id", data.id).limit(100000),
+      db.from("admin_campaign_recipients").select("status,error_code,channel").eq("campaign_id", data.id).limit(200),
     ]);
     const byStatus: Record<string, number> = {};
     const failures: Record<string, number> = {};
