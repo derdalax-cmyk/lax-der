@@ -26,5 +26,7 @@ export const FEATURED_ICONS = [
   "crown",
   "gem",
   "tag",
-  "package",
+  "bag",
+  "glasses",
+  "watch",
 ];

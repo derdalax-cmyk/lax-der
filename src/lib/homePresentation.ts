@@ -5,7 +5,7 @@ export function homeCollectionProducts<T>(products: T[]): T[] {
 }
 
 function normalized(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "").replace(/s$/, "");
 }
 
 export function homeCollectionSearch(collection: { slug: string; name: string }, categories: { slug: string; label: string }[]): Record<string, string> | undefined {
