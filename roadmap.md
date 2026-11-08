@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Restaurar seleção lateral e produtos em Categorias; mover Ver tudo para o fim da faixa e compactar espaços Home; validar sem alterar dados.
+- [x] Restaurar seleção lateral e produtos em Categorias; mover Ver tudo para o fim da faixa e compactar espaços Home (testes visuais com dados isolados; dados reais indisponíveis).
 
 - [x] Compactar popup Roleta, melhorar interação dos banners, espaços Home e navegação mobile; atualizar fontes.
 - [x] Limitar coleções Home a 20 e ligar categorias correspondentes ao Explorar.
