@@ -20,7 +20,7 @@ export function isPublicQueryKey(key: QueryKey): boolean {
     const filters = key[1] as Record<string, unknown>;
     if (typeof filters.search !== "string" || typeof filters.category !== "string" || filters.city != null && typeof filters.city !== "string") return false;
     if (filters.explore) {
-      if (typeof filters.explore !== "object" || Object.entries(filters.explore).some(([k, v]) => !/^_(search|categories|gender|min|max|discount|available|unique|sizes|colors|seller)$/.test(k) || v !== null && !["string", "boolean", "number"].includes(typeof v) && !(Array.isArray(v) && v.every(item => typeof item === "string")))) return false;
+      if (typeof filters.explore !== "object" || Object.entries(filters.explore).some(([k, v]) => !/^_(q|city|categories|gender|min|max|discount|available|unique|sizes|colors|seller)$/.test(k) || v != null && !["string", "boolean", "number"].includes(typeof v) && !(Array.isArray(v) && v.every(item => typeof item === "string")))) return false;
     }
   }
   // Keys are filters, never arbitrary session/security objects.

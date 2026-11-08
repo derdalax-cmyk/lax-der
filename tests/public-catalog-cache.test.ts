@@ -12,6 +12,7 @@ const data = { pages: [page(["a", "b"]), page(["c", "d"])], pageParams: [null, {
 test("only positively allowlisted public queries persist", () => {
   for (const k of ["admin-products", "profile", "seller-products", "messages", "orders", "cart", "admin-passkeys", "notifications", "favorites"]) expect(isPublicQueryKey([k])).toBe(false);
   expect(isPublicQueryKey(["product-feed", { token: "private" }])).toBe(false);
+  expect(isPublicQueryKey(["product-feed", { search: "", category: "all", city: null, explore: { _q: undefined, _city: undefined, _discount: false, _categories: ["vestidos"] } }])).toBe(true);
   const c = new QueryClient(); c.setQueryData(key, data); c.setQueryData(["admin-products"], [row("secret")]);
   const saved = compactPublicCache(dehydrate(c));
   expect(saved.queries.length).toBe(1);
@@ -49,6 +50,11 @@ test("persisted prefix is capped at 20 batches and at most 24 query variants", (
   expect(projected.pages.length).toBe(PUBLIC_MAX_BATCHES); expect(projected.pageParams.length).toBe(20);
   const c = new QueryClient(); for (let i = 0; i < 40; i++) c.setQueryData(["home-featured", `city${i}`], [row(`${i}`)]);
   expect(compactPublicCache(dehydrate(c)).queries.length).toBe(PUBLIC_QUERY_LIMIT);
+});
+test("oversized queries are discarded without breaking smaller public entries", () => {
+  const c = new QueryClient(); c.setQueryData(["home-featured", "huge"], [{ ...row("x"), title: "x".repeat(800_000) }]);
+  c.setQueryData(["home-featured", "small"], [row("y")]);
+  expect(compactPublicCache(dehydrate(c)).queries.map(q => q.queryKey[1])).toEqual(["small"]);
 });
 test("malformed pages and cursor pairs are rejected", () => {
   expect(projectPublicData(key, { ...data, pageParams: [null] })).toBeUndefined();
