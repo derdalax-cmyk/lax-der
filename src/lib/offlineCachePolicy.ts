@@ -13,7 +13,7 @@ export function cachePublicStorageImage({ url, request }: { url: URL; request: R
 
 export function cachePublicNavigation({ url, request, sameOrigin }: { url: URL; request: Request; sameOrigin: boolean }): boolean {
   // Do not store SSR HTML that might carry a user's cookie-derived state.
-  return sameOrigin && request.mode === "navigate" && request.credentials === "omit" &&
+  return sameOrigin && request.mode === "navigate" &&
     /^(\/$|\/explorar$|\/categorias$|\/produtos$|\/produto\/[^/]+$|\/loja\/[^/]+$)/.test(url.pathname) &&
     !request.headers.has("authorization") && !request.headers.has("cookie") &&
     ![...url.searchParams.keys()].some(k => /token|sign|code|session/i.test(k));

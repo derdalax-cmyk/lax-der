@@ -11,6 +11,13 @@ export const PUBLIC_KEYS = ["product-feed", "home-featured", "home-collections",
 
 export function isPublicQueryKey(key: QueryKey): boolean {
   if (!PUBLIC_KEYS.includes(key[0] as typeof PUBLIC_KEYS[number])) return false;
+  if (["public-categories", "home-banners"].includes(String(key[0])) && key.length !== 1) return false;
+  if (["home-featured", "home-collections"].includes(String(key[0])) && (key.length !== 2 || key[1] !== null && typeof key[1] !== "string")) return false;
+  if (key[0] === "public-product-details" && (key.length !== 2 || typeof key[1] !== "string")) return false;
+  if (key[0] === "product-feed") {
+    if (key.length !== 2 || !key[1] || typeof key[1] !== "object") return false;
+    if (Object.keys(key[1]).some(k => !["search", "category", "city", "gender", "minPrice", "maxPrice", "explore"].includes(k))) return false;
+  }
   // Keys are filters, never arbitrary session/security objects.
   return !/token|authorization|password|session|email|phone|address|user_id/i.test(JSON.stringify(key));
 }
@@ -19,7 +26,7 @@ export function safePublicImage(value: unknown): value is string {
   if (typeof value !== "string") return false;
   try {
     const url = new URL(value, "https://derdalax.co.mz");
-    return url.protocol === "https:" && !/\/(sign|private)\//i.test(url.pathname) &&
+    return url.protocol === "https:" && !url.username && !url.password && !/\/(sign|private)\//i.test(url.pathname) &&
       ![...url.searchParams.keys()].some(k => /token|sign|credential|authorization|secret|expires/i.test(k));
   } catch { return false; }
 }
@@ -33,7 +40,7 @@ function pick(value: unknown, fields: string[]): Record<string, unknown> {
 }
 function product(value: unknown, detail = false): Record<string, unknown> {
   const row = value as Record<string, unknown> | null;
-  const images = Array.isArray(row?.images) ? row.images.flatMap(image => {
+  const images = Array.isArray(row?.images) ? row.images.flatMap<string | Record<string, unknown>>(image => {
     if (safePublicImage(image)) return [image];
     if (image && typeof image === "object" && safePublicImage(image.url)) return [{ ...pick(image, ["width", "height"]), url: image.url }];
     return [];
@@ -43,11 +50,13 @@ function product(value: unknown, detail = false): Record<string, unknown> {
 
 /** Positive field projection on write AND read; key allowlisting alone is insufficient. */
 export function projectPublicData(key: QueryKey, data: unknown): unknown {
-  const rows = (v: unknown) => Array.isArray(v) ? v.slice(0, 40).map(p => product(p)) : [];
+  const rows = (v: unknown) => Array.isArray(v) ? v.slice(0, 40).filter(p => p && typeof p === "object" && typeof p.id === "string").map(p => product(p)) : [];
   switch (key[0]) {
     case "product-feed": {
       const d = data as { pages?: { rows: unknown[]; nextCursor: unknown }[]; pageParams?: unknown[] };
-      if (!Array.isArray(d?.pages) || !Array.isArray(d.pageParams)) return undefined;
+      if (!Array.isArray(d?.pages) || !Array.isArray(d.pageParams) || d.pages.length !== d.pageParams.length) return undefined;
+      const validCursor = (v: unknown) => v === null || !!v && typeof v === "object" && typeof (v as Record<string, unknown>).id === "string" && typeof (v as Record<string, unknown>).created_at === "string";
+      if (d.pages.some(p => !p || !Array.isArray(p.rows) || p.rows.length > 40 || !validCursor(p.nextCursor)) || d.pageParams.some(p => !validCursor(p))) return undefined;
       // Keep the exact contiguous prefix and matching server cursors, not arbitrary tail pages.
       const cursor = (v: unknown) => v === null ? null : pick(v, ["created_at", "id"]);
       return { pages: d.pages.slice(0, PUBLIC_MAX_BATCHES).map(p => ({ rows: rows(p.rows), nextCursor: p.nextCursor ? cursor(p.nextCursor) : null })), pageParams: d.pageParams.slice(0, PUBLIC_MAX_BATCHES).map(cursor) };
@@ -58,6 +67,7 @@ export function projectPublicData(key: QueryKey, data: unknown): unknown {
     case "home-banners": return Array.isArray(data) ? data.slice(0, 20).filter(c => safePublicImage(c.image_url)).map(c => pick(c, ["id", "title", "image_url", "subtitle", "alt", "link_url", "cta_label"])) : undefined;
     case "public-product-details": {
       const d = data as { product?: unknown; related?: unknown[]; sellerProducts?: unknown[] };
+      if (!d || !Array.isArray(d.related) || !Array.isArray(d.sellerProducts) || d.product !== null && (!d.product || typeof d.product !== "object" || typeof (d.product as Record<string, unknown>).id !== "string")) return undefined;
       return d && { product: d.product ? product(d.product, true) : null, related: rows(d.related).slice(0, 5), sellerProducts: rows(d.sellerProducts).slice(0, 5) };
     }
     default: return undefined;

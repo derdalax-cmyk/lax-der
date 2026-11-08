@@ -30,7 +30,15 @@ export default defineConfig({
       importScripts: ["/push-events.js", "/offline-maintenance.js"],
       runtimeCaching: [
         { urlPattern: cachePublicStorageImage, handler: "StaleWhileRevalidate", options: { cacheName: `derdalax-product-images-${CACHE_VERSION}`, cacheableResponse: { statuses: [200] }, expiration: { maxEntries: IMAGE_CACHE_LIMIT, maxAgeSeconds: IMAGE_CACHE_SECONDS, purgeOnQuotaError: true } } },
-        { urlPattern: cachePublicNavigation, handler: "NetworkFirst", options: { cacheName: `derdalax-shell-${CACHE_VERSION}`, networkTimeoutSeconds: 3, cacheableResponse: { statuses: [200] }, expiration: { maxEntries: 30, maxAgeSeconds: 24 * 60 * 60, purgeOnQuotaError: true } } },
+        { urlPattern: cachePublicNavigation, handler: "NetworkFirst", options: {
+          cacheName: `derdalax-shell-${CACHE_VERSION}`, networkTimeoutSeconds: 3,
+          fetchOptions: { credentials: "omit" },
+          plugins: [{
+            requestWillFetch: async ({ request }) => new Request(request, { credentials: "omit" }),
+            cacheWillUpdate: async ({ response }) => response.status === 200 && !response.headers.has("set-cookie") && !/private|no-store/i.test(response.headers.get("cache-control") ?? "") ? response : null,
+          }],
+          expiration: { maxEntries: 30, maxAgeSeconds: 24 * 60 * 60, purgeOnQuotaError: true },
+        } },
         { urlPattern: cacheHashedAsset, handler: "CacheFirst", options: { cacheName: `derdalax-assets-${CACHE_VERSION}`, cacheableResponse: { statuses: [200] }, expiration: { maxEntries: 120, maxAgeSeconds: 30 * 24 * 60 * 60, purgeOnQuotaError: true } } },
       ],
     },
