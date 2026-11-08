@@ -218,6 +218,13 @@
       "when": 1793492195092,
       "tag": "0030_explore_filters_definer",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1794169699112,
+      "tag": "0031_category_facets",
+      "breakpoints": true
     }
   ]
 }

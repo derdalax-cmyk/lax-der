@@ -1,11 +1,11 @@
 import {
   Shirt, Footprints, HardHat, Scissors, Watch, Gem, Glasses, Backpack,
-  ShoppingBag, Tag, Diamond, Crown, Baby, Heart, Star,
-  Umbrella, Sun, Snowflake, Flame, Feather, Layers, Palette, Zap,
+  ShoppingBag, Baby, Feather, Layers,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 // Minimal outline icons that pair with the site typography.
+// Only fashion/vestuário-related options are offered to the Admin.
 // "pants" and "coat" don't ship in lucide — reuse a semantically close outline.
 export const CATEGORY_ICONS: { name: string; label: string; Icon: LucideIcon }[] = [
   { name: "shirt", label: "Camisa", Icon: Shirt },
@@ -19,24 +19,13 @@ export const CATEGORY_ICONS: { name: string; label: string; Icon: LucideIcon }[]
   { name: "glasses", label: "Óculos", Icon: Glasses },
   { name: "backpack", label: "Mochila", Icon: Backpack },
   { name: "bag", label: "Bolsa", Icon: ShoppingBag },
-  { name: "tag", label: "Etiqueta", Icon: Tag },
-  { name: "sparkles", label: "Novo", Icon: Diamond },
-  { name: "crown", label: "Premium", Icon: Crown },
   { name: "baby", label: "Infantil", Icon: Baby },
-  { name: "heart", label: "Favorito", Icon: Heart },
-  { name: "star", label: "Destaque", Icon: Star },
-  { name: "umbrella", label: "Chuva", Icon: Umbrella },
-  { name: "sun", label: "Verão", Icon: Sun },
-  { name: "snowflake", label: "Inverno", Icon: Snowflake },
-  { name: "flame", label: "Trending", Icon: Flame },
-  { name: "palette", label: "Cor", Icon: Palette },
-  { name: "zap", label: "Novidade", Icon: Zap },
 ];
 
 const MAP = new Map(CATEGORY_ICONS.map((c) => [c.name, c.Icon]));
 
 export function CategoryIcon({ icon, className = "w-6 h-6" }: { icon?: string | null; className?: string }) {
-  if (!icon) return <Tag className={className} />;
+  if (!icon) return <Shirt className={className} />;
   if (/^https?:\/\//.test(icon)) {
     return <img src={icon} alt="" className={`${className} object-contain`} />;
   }
@@ -44,6 +33,6 @@ export function CategoryIcon({ icon, className = "w-6 h-6" }: { icon?: string | 
   if (Icon) return <Icon className={className} strokeWidth={1.5} />;
   // Fallback: legacy emoji strings render as text so old data stays readable.
   if (icon.length <= 4) return <span className={`${className} inline-grid place-items-center leading-none`} aria-hidden>{icon}</span>;
-  return <Tag className={className} strokeWidth={1.5} />;
+  // Legacy icon names removed from the picker fall back to a vestuário icon.
+  return <Shirt className={className} strokeWidth={1.5} />;
 }
-

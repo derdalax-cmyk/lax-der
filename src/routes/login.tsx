@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -14,8 +14,14 @@ import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 import { safeRedirect, storePendingRedirect, takePendingRedirect, loginDestination } from "@/lib/safeRedirect";
+
+const termsLinkClass = "text-gold underline underline-offset-2 hover:text-gold/80";
+const TermsPageLink = ({ className = termsLinkClass }: { className?: string }) => (
+  <Link to="/politicas/$slug" params={{ slug: "termos-condicoes" }} className={className}>
+    Termos e Condições de Uso
+  </Link>
+);
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string; mode?: "signup" } => {
@@ -163,7 +169,7 @@ function LoginPage() {
           </Button>
         </div>
         <p className="text-[11px] text-muted-foreground text-center leading-relaxed mb-3">
-          Ao continuar, você aceita os <TermsLink className="text-gold underline underline-offset-2" /> e a <PrivacyLink className="text-gold underline underline-offset-2" /> da DERDALAX.
+          Ao continuar, você aceita os <TermsPageLink /> da DERDALAX.
         </p>
 
         <div className="relative my-6">
@@ -219,7 +225,7 @@ function LoginPage() {
                   className="mt-0.5"
                 />
                 <span>
-                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da DERDALAX.
+                  Li e aceito os <TermsPageLink /> da DERDALAX.
                 </span>
               </label>
               <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy || !acceptedTerms}>
@@ -228,11 +234,6 @@ function LoginPage() {
             </form>
           </TabsContent>
         </Tabs>
-        <div className="mt-6 text-center">
-          <a href="/politica-privacidade" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-gold">
-            Política de Privacidade
-          </a>
-        </div>
       </div>
     </div>
   );
