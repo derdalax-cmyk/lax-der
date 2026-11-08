@@ -29,12 +29,11 @@ function browserStorage(): StorageAdapter {
   const fallback = "dx:public-catalog";
   return {
     read: async () => {
-      try { return await get(slot, store); } catch {
+      try { const value = await get(slot, store); if (value !== undefined) return value; } catch { /* use fallback */ }
         try { return JSON.parse(localStorage.getItem(fallback) ?? "null"); } catch { return undefined; }
-      }
     },
     write: async value => {
-      try { await set(slot, value, store); } catch {
+      try { await set(slot, value, store); try { localStorage.removeItem(fallback); } catch { /* ignore */ } } catch {
         // Quota: prune half the least-recent entries once, then degrade without crashing.
         const smaller = { ...value, queries: value.queries.slice(0, Math.max(1, Math.floor(value.queries.length / 2))) };
         try { await set(slot, smaller, store); } catch {

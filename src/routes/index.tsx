@@ -9,6 +9,7 @@ import heroBg from "@/assets/hero-derdalax.jpeg.asset.json";
 import { HomeHero } from "@/components/HomeHero";
 import { useCategories } from "@/hooks/useCategories";
 import { HOME_COLLECTION_LIMIT, homeCollectionSearch } from "@/lib/homePresentation";
+import { PUBLIC_FRESH_MS } from "@/lib/publicCachePolicy";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,7 +44,7 @@ function Home() {
 
   const { data: featured = [], isPending: featuredPending } = useQuery({
     queryKey: ["home-featured", city],
-    staleTime: Infinity,
+    staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
     queryFn: async () => {
       let q = supabase
@@ -52,36 +53,39 @@ function Home() {
         .eq("featured", true)
         .neq("status", "sold");
       if (city) q = q.or(`city.eq.${city},city.is.null`);
-      const { data } = await q
+      const { data, error } = await q
         .order("created_at", { ascending: false })
         .order("id", { ascending: false })
         .limit(12);
+      if (error) throw error;
       return (data ?? []) as ProductCardData[];
     },
   });
 
   const { data: collections = [], isPending: collectionsPending } = useQuery({
     queryKey: ["home-collections", city],
-    staleTime: Infinity,
+    staleTime: PUBLIC_FRESH_MS,
     gcTime: Infinity,
     queryFn: async () => {
       const nowIso = new Date().toISOString();
-      const { data: cols } = await supabase
+      const { data: cols, error: collectionsError } = await supabase
         .from("featured_collections")
         .select("id,name,slug,icon,sort_order,starts_at,ends_at")
         .eq("is_active", true)
         .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
         .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
         .order("sort_order", { ascending: true }).order("id", { ascending: true });
+      if (collectionsError) throw collectionsError;
       if (!cols?.length) return [] as { id: string; slug: string; name: string; icon: string | null; products: ProductCardData[] }[];
 
       // Bound each collection before requesting product records; never load the full link catalogue.
       const linkBatches = await Promise.all(cols.map(async c => {
-        const { data } = await supabase.from("featured_collection_products")
+        const { data, error } = await supabase.from("featured_collection_products")
           .select("collection_id,product_id,sort_order")
           .eq("collection_id", c.id).eq("status", "approved")
           .order("sort_order", { ascending: true }).order("product_id", { ascending: true })
           .limit(HOME_COLLECTION_LIMIT);
+        if (error) throw error;
         return data ?? [];
       }));
       const links = linkBatches.flat();
@@ -94,7 +98,8 @@ function Home() {
           .in("id", productIds)
           .neq("status", "sold");
         if (city) pq = pq.or(`city.eq.${city},city.is.null`);
-        const { data: prods } = await pq;
+        const { data: prods, error } = await pq;
+        if (error) throw error;
         products = (prods ?? []) as ProductCardData[];
       }
       const byId = new Map(products.map((p) => [p.id, p]));

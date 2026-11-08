@@ -1,6 +1,7 @@
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
 import { ProductMasonry } from "@/components/product/ProductMasonry";
 import { productDetailsQuery } from "@/lib/productDetailsQuery";
+import { useQuery } from "@tanstack/react-query";
 import { ProductDetailPending } from "@/components/product/ProductDetailPending";
 import { productPageHead, shareProduct } from "@/lib/productDetails";
 import { createFileRoute, Link, useNavigate, useRouter, useRouterState } from "@tanstack/react-router";
@@ -138,7 +139,8 @@ function ProdutoDetalhe() {
   const navigate = useNavigate();
   const router = useRouter();
   const originKnown = useRouterState({ select: state => state.location.state.productOrigin === true });
-  const details = Route.useLoaderData();
+  const loaderDetails = Route.useLoaderData();
+  const { data: details = loaderDetails } = useQuery(productDetailsQuery(id));
   const goBack = () => {
     if (originKnown && router.history.canGoBack()) router.history.back();
     else void navigate({ to: "/explorar" });
