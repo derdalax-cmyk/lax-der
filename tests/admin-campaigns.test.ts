@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import { isCampaignEligible, missingProfileFields, needsRecentVerification, safeCampaignLink, campaignLink, plainText, maskEmail, MAX_CAMPAIGN_PRODUCTS } from "../src/lib/campaigns";
-import { campaignRecipientLimit, campaignQueueCount, deterministicRecipients, campaignDispatchKey } from "../src/lib/campaigns";
+import { campaignRecipientLimit, campaignQueueCount, deterministicRecipients, campaignDispatchKey, mayRetryCampaign } from "../src/lib/campaigns";
 
 test("default campaign limit is 50, only 50/75/100 are valid", () => {
   expect(campaignRecipientLimit()).toBe(50);
@@ -21,6 +21,11 @@ test("selection is deterministic and dispatch identity is per campaign/user/chan
   expect(deterministicRecipients(["c","a","b","a"],75)).toEqual(["a","b","c"]);
   expect(campaignDispatchKey("c","u","push")).toBe(campaignDispatchKey("c","u","push"));
   expect(campaignDispatchKey("c","u","push")).not.toBe(campaignDispatchKey("c","u","email"));
+});
+test("retries never redispatch a potentially accepted message", () => {
+  expect(mayRetryCampaign(1,null)).toBe(true);
+  expect(mayRetryCampaign(3,null)).toBe(false);
+  expect(mayRetryCampaign(1,"2026-11-08T21:00:00Z")).toBe(false);
 });
 
 test("incomplete segment: missing name/phone/province/city counts, email alone does not complete a Google profile", () => {

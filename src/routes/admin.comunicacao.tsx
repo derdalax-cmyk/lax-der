@@ -45,7 +45,7 @@ const SEGMENTS: { value: Segment; label: string }[] = [
   { value: "email", label: "Com Email disponível" },
 ];
 const STATUS: Record<string, string> = { draft: "Rascunho", queued: "Na fila", sending: "A enviar", completed: "Concluída", failed: "Falhou", cancelled: "Cancelada" };
-const FAIL: Record<string, string> = { no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_channel_unavailable: "Email indisponível", campaign_missing: "Campanha removida" };
+const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_channel_unavailable: "Email indisponível", campaign_missing: "Campanha removida" };
 
 function useStepUpErrors() {
   const navigate = useNavigate();

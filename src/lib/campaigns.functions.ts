@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { safePublicImage } from "./publicCachePolicy";
 import {
   MAX_CAMPAIGN_PRODUCTS, PUSH_BODY_MAX, PUSH_TITLE_MAX, isCampaignEligible, maskEmail, missingProfileFields,
   needsRecentVerification, plainText, safeCampaignLink, campaignLink, type CampaignType,
@@ -27,7 +28,7 @@ function firstHttpsImage(images: unknown): string | null {
   if (!Array.isArray(images)) return null;
   const f = images[0];
   const url = typeof f === "string" ? f : f && typeof f === "object" && "url" in f ? String((f as { url: unknown }).url) : null;
-  return url && url.startsWith("https://") ? url : null;
+  return safePublicImage(url) ? url : null;
 }
 
 export const estimateCampaignAudience = createServerFn({ method: "POST" })
@@ -217,8 +218,8 @@ export const listIncompleteAccounts = createServerFn({ method: "POST" })
       .eq("blocked", false).or(incomplete).order("created_at", { ascending: false }).order("id")
       .range(data.page * PAGE, data.page * PAGE + PAGE - 1);
     const ids = (rows ?? []).map((r) => r.id);
-    const { data: subs } = ids.length ? await db.from("push_subscriptions").select("user_id").in("user_id", ids) : { data: [] };
-    const withPush = new Set((subs ?? []).map((x) => x.user_id));
+    const eligibility = await Promise.all(ids.map(async id => { const { data } = await db.rpc("admin_campaign_push_eligible", { _user_id: id }); return data ? id : null; }));
+    const withPush = new Set(eligibility.filter(Boolean));
     return {
       total: count ?? 0, pageSize: PAGE,
       rows: (rows ?? []).map((r) => ({
@@ -236,6 +237,9 @@ export const sendProfileReminder = createServerFn({ method: "POST" })
     if (!p || missingProfileFields(p).length === 0) throw new Error("Este perfil já está completo.");
     const prefs = (p.notification_preferences ?? {}) as { marketing_push?: boolean };
     if (prefs.marketing_push === false) return { push: "opted_out" as const };
+    const { data: eligible, error } = await db.rpc("admin_campaign_push_eligible", { _user_id: data.userId });
+    if (error) throw new Error("Não foi possível verificar a elegibilidade.");
+    if (!eligible) return { push: "no_subscription" as const };
     const { PROFILE_RECOVERY_DEFAULTS: d } = await import("./campaigns");
     const { sendPushToUser } = await import("./push.server");
     const res = await sendPushToUser(data.userId, { title: d.title, body: d.body, url: d.url, tag: "profile-reminder" });

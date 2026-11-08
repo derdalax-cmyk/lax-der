@@ -1,5 +1,5 @@
 import { sendPushToUser } from "./push.server";
-import { campaignDispatchKey, campaignLink, type CampaignType } from "./campaigns";
+import { campaignDispatchKey, campaignLink, mayRetryCampaign, type CampaignType } from "./campaigns";
 
 const BATCH = 80;
 
@@ -53,7 +53,7 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
       } catch { code = "delivery_unknown"; }
       // Retry only pre-dispatch failures; ambiguous delivery is terminal, prioritising no duplicates.
       const { data: delivery } = await supabaseAdmin.from("admin_campaign_recipients").select("dispatch_started_at").eq("id", r.id).maybeSingle();
-      if (status === "failed" && r.attempts < 3 && delivery && !delivery.dispatch_started_at) {
+      if (status === "failed" && delivery && mayRetryCampaign(r.attempts, delivery.dispatch_started_at)) {
         await supabaseAdmin.from("admin_campaign_recipients").update({ status: "pending", error_code: code, updated_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing");
         return;
       }

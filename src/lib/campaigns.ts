@@ -18,6 +18,9 @@ export function deterministicRecipients(ids: string[], limit: CampaignLimit): st
 export function campaignDispatchKey(campaignId: string, userId: string, channel: string) {
   return `${campaignId}:${userId}:${channel}`;
 }
+export function mayRetryCampaign(attempts: number, dispatchStarted: string | null): boolean {
+  return attempts < 3 && dispatchStarted === null;
+}
 
 export type Segment = "incomplete" | "all" | "push" | "email";
 export type CampaignType = "message" | "profile_recovery" | "products";

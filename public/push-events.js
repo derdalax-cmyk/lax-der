@@ -4,6 +4,10 @@ self.addEventListener("push", (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; }
   catch { data = { title: "Derdalax", body: event.data ? event.data.text() : "" }; }
+  // Database-generated account notices may still carry the legacy presentation.
+  const brandText = value => typeof value === "string" ? value.replace(/\bDERDALAX\b/g, "Derdalax") : "";
+  data.title = brandText(data.title);
+  data.body = brandText(data.body);
   const options = {
     body: data.body || "",
     icon: "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
