@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useCity } from "@/contexts/CityContext";
 import { CategoryIcon } from "@/lib/categoryIcons";
 import { useCategories } from "@/hooks/useCategories";
@@ -48,6 +50,19 @@ function CategoriasPage() {
   });
   const selectedLabel = categories.find(c => c.slug === categoria)?.label ?? "Todos";
 
+  // Single server-side aggregate: a category only appears publicly when it has
+  // at least one approved, unsold product. Admin surfaces keep seeing all.
+  const { data: counts = {} } = useQuery({
+    queryKey: ["category-product-counts"],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_explore_facets");
+      if (error) throw error;
+      return ((data as { categories?: Record<string, number> } | null)?.categories ?? {}) as Record<string, number>;
+    },
+  });
+  const visibleCategories = categories.filter(c => (counts[c.slug] ?? 0) > 0);
+
   return (
     <div className="max-w-[1400px] mx-auto px-4 sm:px-5 py-6 md:py-12">
       <header className="mb-6 md:mb-8">
@@ -58,7 +73,7 @@ function CategoriasPage() {
       <div className="grid grid-cols-[88px_minmax(0,1fr)] sm:grid-cols-[144px_minmax(0,1fr)] md:grid-cols-[200px_minmax(0,1fr)] gap-3 md:gap-6 items-start">
         <nav aria-label="Categorias de produtos" className="sticky top-20 max-h-[calc(100dvh-180px)] overflow-y-auto overscroll-contain border-r border-border pr-2 space-y-1">
           <Button variant="ghost" aria-pressed={!categoria || categoria === "all"} onClick={() => selectCategory("")} className={cn("w-full justify-start", (!categoria || categoria === "all") && "bg-gold/10 text-gold")}>Todos</Button>
-          {categories.map(c => (
+          {visibleCategories.map(c => (
             <Button key={c.slug} variant="ghost" aria-pressed={categoria === c.slug} onClick={() => selectCategory(c.slug)} className={cn("w-full h-auto min-h-10 px-2 py-2 justify-start whitespace-normal text-left text-xs sm:text-sm", categoria === c.slug && "bg-gold/10 text-gold")}>
               <CategoryIcon icon={c.icon} className="hidden sm:block shrink-0" />
               <span className="min-w-0 break-words">{c.label}</span>
