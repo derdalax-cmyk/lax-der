@@ -5,7 +5,7 @@
 - Persistência IndexedDB `derdalax-public-catalog/cache`, versão `dx-public-catalog-v2`; fallback localStorage apenas quando IndexedDB falha. Projecção positiva de chaves **e campos**, novamente aplicada ao ler.
 - Freshness 30 minutos; retenção máxima 24 horas por query (não renovada só por guardar). Revalidação de queries públicas observadas em background, sem focus-refetch; offline-first, apenas um retry transitório. Defaults privados não mudam.
 - Máximo 24 queries recentes, 750 KB estimados por query, 4 MB totais (estimativa conservadora UTF-16), 20 batches contíguos de 40 produtos por feed, 5 imagens por produto. Quota: reduzir metade das entradas antigas, fallback e ignorar falha sem crash. Não é um catálogo normalizado global: reutiliza os batches React Query sem um segundo índice de produtos.
-- Ordem dos IDs sobreviventes mantida após refresh, novos resultados no fim; cursores permanecem derivados das respostas servidor, nunca do último item visual reordenado. Deduplicação partilhada continua ativa. Snapshot/âncora e medição masonry preservados; encontrada e corrigida corrida em que canonicalização da URL cancelava a restauração.
+- Ordem dos IDs sobreviventes mantida dentro de cada página com o mesmo cursor inicial; nunca se transferem produtos entre páginas servidor. Quando o cursor inicial muda, preserva-se a página recebida. Cursores permanecem derivados das respostas servidor, nunca do último item visual reordenado. Deduplicação partilhada continua ativa. Snapshot/âncora e medição masonry preservados; encontrada e corrigida corrida em que canonicalização da URL cancelava a restauração.
 - Invalidações existentes após escritas de produto/categoria/pedido do vendedor propagam apenas para chaves públicas do catálogo/facets, sem invalidar auth, favoritos, notificações ou todo o QueryClient. Mudanças noutro dispositivo chegam pelo TTL. Não se criou canal realtime novo.
 
 ## Persistido / excluído
@@ -20,7 +20,7 @@ Nunca persistido: queries admin/vendedor privado/perfil/pedidos/carrinho/mensage
 - Offline completo só após publicar e visitar páginas/imagens. Páginas não visitadas, dados privados e recursos não guardados continuam a precisar de rede. HTML público com `no-store` não é guardado por segurança; não prometemos offline para tais páginas. Não testado em PWA instalado físico nem domínio publicado nesta tarefa.
 
 ## Testes executados
-- 41 testes / 149 assertions passaram em seis ficheiros: novo `tests/public-catalog-cache.test.ts`, list-context, catalogue-stability, product-navigation-sharing, product-image-frame e home-presentation.
+- 42 testes / 152 assertions passaram em seis ficheiros: novo `tests/public-catalog-cache.test.ts`, list-context, catalogue-stability, product-navigation-sharing, product-image-frame e home-presentation; inclui regressão de fronteiras página/cursor.
 - Explorar real 390px: 160–200 produtos em 4–5 batches, sem duplicados; produto -> browser voltar: âncora delta **0px**. Reabertura em nova página (QueryClient novo) com rede do catálogo bloqueada: mesmos IDs/batches/ordem recuperados do IndexedDB.
 - Dados persistidos envelhecidos 31 min: aparecem antes da rede; reconexão e revalidação com catálogo real concluídas sem alterar a ordem.
 - Worker gerado com opções reais, testado em origem localhost isolada (não no preview): imagem pública gravada com URL transformada completa, segunda imagem disponível offline, versão antiga removida, APIs e signed URLs sem entradas de cache. Erros de rede provocados para endpoints excluídos eram esperados, não erros runtime da app.
