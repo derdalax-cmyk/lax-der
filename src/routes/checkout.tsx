@@ -19,7 +19,7 @@ import { TermsLink, PrivacyLink } from "@/components/TermsLink";
 import { isValidMzMobile, toMzE164 } from "@/lib/validation";
 
 export const Route = createFileRoute("/checkout")({
-  head: () => ({ meta: [{ title: "Checkout · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Checkout · Derdalax" }] }),
   component: CheckoutPage,
 });
 
@@ -149,7 +149,7 @@ function CheckoutPage() {
       if (oErr || !created) throw new Error(oErr?.message || "Falha ao criar pedido");
       const orderId = (created as { order_id: string }).order_id;
 
-      // Roleta DERDALAX: server decides and reserves the reward atomically
+      // Roleta Derdalax: server decides and reserves the reward atomically
       if (cartRoleta.reward) {
         const { error: rErr } = await supabase.rpc("roleta_apply_to_order", { _order_id: orderId });
         if (rErr) console.warn("roleta warning:", rErr.message);
@@ -346,7 +346,7 @@ function CheckoutPage() {
                   className="mt-0.5"
                 />
                 <span>
-                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da DERDALAX.
+                  Li e aceito os <TermsLink /> e a <PrivacyLink /> da Derdalax.
                 </span>
               </label>
 

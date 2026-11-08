@@ -31,18 +31,18 @@ export const POLICIES: Policy[] = [
     icon: FileText, tint: GOLD, iconColor: GOLD_ICON,
     sections: [
       { heading: "Natureza da plataforma", paragraphs: [
-        "Este é o contrato entre o Utilizador (comprador, revendedor ou visitante) e a DERDALAX. A DERDALAX é um marketplace tecnológico que intermedia negócios de moda; não é fabricante nem vendedora direta.",
-        "O contrato de compra e venda é sempre entre comprador e revendedor. A DERDALAX exige capacidade jurídica plena para comprar e maioridade de 18 anos para vender.",
+        "Este é o contrato entre o Utilizador (comprador, revendedor ou visitante) e a Derdalax. A Derdalax é um marketplace tecnológico que intermedia negócios de moda; não é fabricante nem vendedora direta.",
+        "O contrato de compra e venda é sempre entre comprador e revendedor. A Derdalax exige capacidade jurídica plena para comprar e maioridade de 18 anos para vender.",
       ]},
       { heading: "Conta e dados", paragraphs: [
         "Os dados fornecidos devem ser verídicos. A conta é pessoal e intransferível — cada pessoa só pode ter uma conta de comprador e uma de vendedor.",
       ]},
       { heading: "Condutas proibidas", paragraphs: [
         "É proibido: publicar conteúdo falso, ofensivo ou que viole direitos de terceiros; usar documentos ou dados bancários de terceiros; tentar contornar a mensalidade direcionando vendas para fora da plataforma; usar bots ou scraping; sobrecarregar a infraestrutura; criar avaliações falsas.",
-        "A DERDALAX pode remover conteúdo, suspender ou banir contas a qualquer momento em caso de violação, e reter valores por até 3 dias em caso de suspeita de fraude para auditoria.",
+        "A Derdalax pode remover conteúdo, suspender ou banir contas a qualquer momento em caso de violação, e reter valores por até 3 dias em caso de suspeita de fraude para auditoria.",
       ]},
       { heading: "Limitações e alterações", paragraphs: [
-        "O serviço é fornecido \"como está\", sem garantia de disponibilidade contínua. A DERDALAX não responde por defeitos de produtos de revendedores independentes nem por falhas de gateways de pagamento de terceiros.",
+        "O serviço é fornecido \"como está\", sem garantia de disponibilidade contínua. A Derdalax não responde por defeitos de produtos de revendedores independentes nem por falhas de gateways de pagamento de terceiros.",
         "Litígios são resolvidos preferencialmente por mediação da própria plataforma antes de via judicial. Os Termos podem ser alterados a qualquer momento, com efeito imediato após publicação.",
       ]},
     ],
@@ -59,14 +59,14 @@ export const POLICIES: Policy[] = [
       ]},
       { heading: "Como usamos", paragraphs: [
         "Usamos os dados para processar compras, validar identidade de vendedores, processar pagamentos, dar suporte, prevenir fraude e melhorar a plataforma.",
-        "A DERDALAX nunca vende ou aluga dados. Partilhamos apenas com o revendedor (nome, telefone e morada do comprador da respectiva venda), com provedores de pagamento (m-Pesa, e-Mola) e por obrigação legal.",
+        "A Derdalax nunca vende ou aluga dados. Partilhamos apenas com o revendedor (nome, telefone e morada do comprador da respectiva venda), com provedores de pagamento (m-Pesa, e-Mola) e por obrigação legal.",
       ]},
       { heading: "Segurança e cookies", paragraphs: [
         "Aplicamos encriptação e controlo de acesso restrito, especialmente a documentos e dados bancários. Os cookies dividem-se em essenciais, desempenho, preferências e marketing — geríveis pelo utilizador nas definições, com aviso de consentimento no primeiro acesso.",
       ]},
       { heading: "Retenção e direitos", paragraphs: [
         "Dados de conta ativa mantidos enquanto a conta existir; documentos de verificação de vendedores mantidos por período razoável após encerramento da loja para efeitos fiscais e antifraude; contas eliminadas a pedido são apagadas em até 30 dias, exceto obrigação legal ou disputa em aberto.",
-        "O utilizador tem o direito de aceder, corrigir ou eliminar os seus dados a qualquer momento, com resposta da DERDALAX em até 15 dias úteis, através das definições da conta ou do suporte.",
+        "O utilizador tem o direito de aceder, corrigir ou eliminar os seus dados a qualquer momento, com resposta da Derdalax em até 15 dias úteis, através das definições da conta ou do suporte.",
       ]},
     ],
   },
@@ -83,7 +83,7 @@ export const POLICIES: Policy[] = [
         "Discurso de ódio, discriminação, assédio, ameaças e spam; tentar levar negociações para fora da plataforma para evitar a mensalidade ou proteções contratuais; múltiplas contas para contornar suspensões; coordenar avaliações falsas.",
       ]},
       { heading: "Monitorização e denúncias", paragraphs: [
-        "A DERDALAX monitoriza sinais de fraude (contas duplicadas, padrões de cancelamento anómalos, avaliações em massa) e pode reter valores em disputa por até 3 dias para investigação, com direito de defesa do utilizador antes de qualquer decisão definitiva, salvo risco iminente.",
+        "A Derdalax monitoriza sinais de fraude (contas duplicadas, padrões de cancelamento anómalos, avaliações em massa) e pode reter valores em disputa por até 3 dias para investigação, com direito de defesa do utilizador antes de qualquer decisão definitiva, salvo risco iminente.",
         "Qualquer pessoa pode denunciar produtos suspeitos, comportamento fraudulento ou conteúdo ofensivo pelo botão de denúncia ou suporte. Denúncias são analisadas em até 3 dias úteis, com confidencialidade do denunciante; denúncias de má-fé podem ser penalizadas.",
       ]},
       { heading: "Idade mínima", paragraphs: [
@@ -103,10 +103,10 @@ export const POLICIES: Policy[] = [
         "O método é indicado no checkout ou combinado no chat.",
       ]},
       { heading: "Registo no chat", paragraphs: [
-        "Recomenda-se sempre registar o acordo no chat da plataforma como prova em caso de disputa — negociações totalmente fora da plataforma (por exemplo, WhatsApp pessoal) têm proteção limitada. A DERDALAX não guarda dados de cartão nem credenciais de carteira móvel.",
+        "Recomenda-se sempre registar o acordo no chat da plataforma como prova em caso de disputa — negociações totalmente fora da plataforma (por exemplo, WhatsApp pessoal) têm proteção limitada. A Derdalax não guarda dados de cartão nem credenciais de carteira móvel.",
       ]},
       { heading: "Mensalidade do vendedor", paragraphs: [
-        "Em vez de comissão por venda, a DERDALAX cobra dos vendedores uma mensalidade fixa para manter a loja ativa e visível, comunicada no registo da loja.",
+        "Em vez de comissão por venda, a Derdalax cobra dos vendedores uma mensalidade fixa para manter a loja ativa e visível, comunicada no registo da loja.",
         "Falta de pagamento pode suspender a loja temporariamente (produtos ocultos, mas gestão de pedidos em curso continua acessível) até regularização, com aviso prévio antes da suspensão e reativação automática após pagamento.",
         "Mudanças no valor ou periodicidade da mensalidade são avisadas com 15 dias de antecedência.",
       ]},
@@ -124,7 +124,7 @@ export const POLICIES: Policy[] = [
       ]},
       { heading: "Processo", paragraphs: [
         "Abrir pedido no perfil ou pelo suporte com fotos ou vídeo. Análise de qualidade em até 3 dias úteis.",
-        "Custos de frete de devolução: por conta da DERDALAX ou do vendedor se o erro for deles (defeito, envio errado); por conta do comprador se for por arrependimento ou troca de tamanho por opção própria.",
+        "Custos de frete de devolução: por conta da Derdalax ou do vendedor se o erro for deles (defeito, envio errado); por conta do comprador se for por arrependimento ou troca de tamanho por opção própria.",
       ]},
       { heading: "Reembolso e cancelamento", paragraphs: [
         "Reembolso autorizado após aprovação da análise, devolvido à carteira móvel ou conta bancária usada em até 3 dias, ou como crédito de loja válido por 12 meses, à escolha do comprador.",
@@ -146,7 +146,7 @@ export const POLICIES: Policy[] = [
         "Documentos falsos resultam em banimento imediato e definitivo, com possível comunicação às autoridades.",
       ]},
       { heading: "Obrigações e proteção", paragraphs: [
-        "Descrever produtos com precisão, manter stock atualizado, despachar dentro dos prazos, responder mensagens em até 24h idealmente, cumprir obrigações fiscais próprias. O vendedor atua como comerciante independente, sem vínculo empregatício com a DERDALAX.",
+        "Descrever produtos com precisão, manter stock atualizado, despachar dentro dos prazos, responder mensagens em até 24h idealmente, cumprir obrigações fiscais próprias. O vendedor atua como comerciante independente, sem vínculo empregatício com a Derdalax.",
         "O vendedor tem proteção contra compradores abusivos (uso e devolução, ameaças, comprovativos falsos) — pode denunciar e bloquear compradores problemáticos, e qualquer retenção de saldo para investigação tem prazo máximo de 3 dias com motivo comunicado.",
       ]},
     ],
@@ -179,7 +179,7 @@ export const POLICIES: Policy[] = [
     icon: Truck, tint: INK, iconColor: INK_ICON,
     sections: [
       { heading: "Expedição híbrida", paragraphs: [
-        "A DERDALAX opera com expedição híbrida: produtos podem sair de stock central ou diretamente do vendedor. O responsável pelo empacotamento é quem despacha.",
+        "A Derdalax opera com expedição híbrida: produtos podem sair de stock central ou diretamente do vendedor. O responsável pelo empacotamento é quem despacha.",
       ]},
       { heading: "Prazos", paragraphs: [
         "Prazo de despacho: até 3 dias úteis após confirmação de pagamento (ou, no caso de pagamento na entrega, conforme combinado).",
@@ -232,14 +232,14 @@ export const POLICIES: Policy[] = [
     short: "Como mediamos conflitos e os limites da nossa responsabilidade",
     icon: Scale, tint: GOLD, iconColor: GOLD_ICON,
     sections: [
-      { heading: "Papel da DERDALAX", paragraphs: [
-        "A DERDALAX é apenas uma intermediária tecnológica — não fabrica, não possui nem inspeciona os produtos vendidos por revendedores independentes, e não responde por vícios, atrasos ou extravios da responsabilidade deles, nem por falhas de operadoras de pagamento de terceiros.",
+      { heading: "Papel da Derdalax", paragraphs: [
+        "A Derdalax é apenas uma intermediária tecnológica — não fabrica, não possui nem inspeciona os produtos vendidos por revendedores independentes, e não responde por vícios, atrasos ou extravios da responsabilidade deles, nem por falhas de operadoras de pagamento de terceiros.",
       ]},
       { heading: "Mediação", paragraphs: [
         "Em disputa, qualquer parte pode acionar a plataforma, que atua como mediadora, com até 3 dias úteis para pedir esclarecimentos e reter valores em disputa. Se não houver acordo no prazo, os valores são liberados conforme as provas apresentadas, ficando as partes livres para vias judiciais, mantendo-se o histórico do chat como prova disponível.",
       ]},
       { heading: "Limites de responsabilidade", paragraphs: [
-        "Danos indiretos, lucros cessantes ou perda de dados estão fora da responsabilidade da DERDALAX, no limite máximo permitido por lei.",
+        "Danos indiretos, lucros cessantes ou perda de dados estão fora da responsabilidade da Derdalax, no limite máximo permitido por lei.",
       ]},
     ],
   },
@@ -267,7 +267,7 @@ export const POLICIES: Policy[] = [
     icon: Megaphone, tint: GOLD, iconColor: GOLD_ICON,
     sections: [
       { heading: "Promoções", paragraphs: [
-        "Promoções oficiais da DERDALAX seguem regras divulgadas em cada campanha. Vendedores podem criar descontos nos próprios produtos, desde que o preço \"de\" reflita um valor real anteriormente praticado.",
+        "Promoções oficiais da Derdalax seguem regras divulgadas em cada campanha. Vendedores podem criar descontos nos próprios produtos, desde que o preço \"de\" reflita um valor real anteriormente praticado.",
         "Publicidade enganosa sobre características ou disponibilidade é proibida.",
       ]},
       { heading: "Comunicações", paragraphs: [
@@ -285,7 +285,7 @@ export const POLICIES: Policy[] = [
     icon: UserX, tint: INK, iconColor: INK_ICON,
     sections: [
       { heading: "Idade mínima", paragraphs: [
-        "A DERDALAX não se destina a menores de 18 anos — o registo, seja como comprador ou vendedor, exige maioridade legal.",
+        "A Derdalax não se destina a menores de 18 anos — o registo, seja como comprador ou vendedor, exige maioridade legal.",
         "Contas identificadas como pertencentes a menores sem supervisão podem ser suspensas e as transações pendentes canceladas.",
       ]},
       { heading: "Responsabilidade de adultos", paragraphs: [

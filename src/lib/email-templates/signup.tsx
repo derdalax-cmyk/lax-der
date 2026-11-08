@@ -10,11 +10,11 @@ interface SignupEmailProps {
 
 export const SignupEmail = ({ recipient, confirmationUrl }: SignupEmailProps) => (
   <BrandLayout
-    preview="Confirme o seu email na DERDALAX"
+    preview="Confirme o seu email na Derdalax"
     title="Confirme o seu email"
     intro={
       <>
-        Bem-vindo(a) à DERDALAX. Falta apenas um passo para ativar a sua conta
+        Bem-vindo(a) à Derdalax. Falta apenas um passo para ativar a sua conta
         {recipient ? ` (${recipient})` : ''}. Toque no botão abaixo para
         confirmar o seu endereço de email.
       </>

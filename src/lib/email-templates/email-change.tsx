@@ -15,11 +15,11 @@ export const EmailChangeEmail = ({
   confirmationUrl,
 }: EmailChangeEmailProps) => (
   <BrandLayout
-    preview="Confirme a alteração do seu email na DERDALAX"
+    preview="Confirme a alteração do seu email na Derdalax"
     title="Confirmar novo email"
     intro={
       <>
-        Foi solicitada uma alteração do email da sua conta DERDALAX
+        Foi solicitada uma alteração do email da sua conta Derdalax
         {oldEmail ? <> de <strong>{oldEmail}</strong></> : null}
         {newEmail ? <> para <strong>{newEmail}</strong></> : null}. Toque no
         botão abaixo para confirmar esta alteração.

@@ -9,7 +9,7 @@ import { SellerNotificationBell } from "@/components/vendedor/SellerNotification
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/vendedor")({
-  head: () => ({ meta: [{ title: "Painel do Vendedor · DERDALAX" }, { name: "description", content: "Gerir a sua loja na DERDALAX." }] }),
+  head: () => ({ meta: [{ title: "Painel do Vendedor · Derdalax" }, { name: "description", content: "Gerir a sua loja na Derdalax." }] }),
   component: SellerLayout,
 });
 
@@ -55,7 +55,7 @@ function SellerLayout() {
         </h1>
         <p className="text-sm text-muted-foreground mb-6">
           {!seller
-            ? "Torne-se vendedor para começar a vender os seus produtos na DERDALAX."
+            ? "Torne-se vendedor para começar a vender os seus produtos na Derdalax."
             : seller.status === "rejected"
               ? "A sua candidatura não foi aprovada. Contacte o suporte para mais informações."
               : "A sua candidatura está a ser analisada pela nossa equipa. Assim que for aprovada, poderá gerir a sua loja aqui."}
@@ -121,7 +121,7 @@ function SellerLayout() {
               </nav>
             </SheetContent>
           </Sheet>
-          <Link to="/vendedor" className="font-display text-lg tracking-[0.2em] text-gold">DERDALAX</Link>
+          <Link to="/vendedor" className="font-display text-lg tracking-[0.2em] text-gold">Derdalax</Link>
           <div className="ml-auto">
             <SellerNotificationBell />
           </div>

@@ -26,7 +26,7 @@ import { SellerAuditSection } from "@/components/admin/SellerAuditSection";
 type Seller = Tables<"sellers">;
 
 export const Route = createFileRoute("/admin/vendedores")({
-  head: () => ({ meta: [{ title: "Vendedores · Admin DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Vendedores · Admin Derdalax" }] }),
   component: AdminVendedores,
 });
 
@@ -112,7 +112,7 @@ function AdminVendedores() {
       <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
         <div>
           <h1 className="font-display text-3xl">Vendedores</h1>
-          <p className="text-sm text-muted-foreground">Aprove ou rejeite as lojas que se cadastram na DERDALAX.</p>
+          <p className="text-sm text-muted-foreground">Aprove ou rejeite as lojas que se cadastram na Derdalax.</p>
         </div>
         <Link to="/admin/vendedores/dashboard">
           <Button variant="outline" className="gap-1.5"><BarChart3 className="w-4 h-4" /> Ver dashboard</Button>

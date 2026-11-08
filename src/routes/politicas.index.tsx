@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { POLICIES } from "@/lib/policies";
 
-const TITLE = "Políticas · DERDALAX";
+const TITLE = "Políticas · Derdalax";
 const DESC =
-  "Consulte as políticas e os termos da DERDALAX, incluindo os Termos e Condições de Uso e a Política de Privacidade e Dados.";
+  "Consulte as políticas e os termos da Derdalax, incluindo os Termos e Condições de Uso e a Política de Privacidade e Dados.";
 
 export const Route = createFileRoute("/politicas/")({
   head: () => ({

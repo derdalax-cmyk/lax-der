@@ -8,7 +8,7 @@ import { Copy, CheckCircle2, Smartphone, Clock, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/pedido/$id")({
-  head: () => ({ meta: [{ title: "Pedido · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Pedido · Derdalax" }] }),
   component: PedidoPage,
 });
 

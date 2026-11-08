@@ -110,7 +110,7 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
   if (error) throw new Error("Não foi possível gerar o código. Tente novamente.");
 
   const html = await render(React.createElement(AccountDeletionEmail, { token: code }));
-  const text = `O seu código para apagar a conta DERDALAX é ${code}. Expira em ${CODE_TTL_MINUTES} minutos.`;
+  const text = `O seu código para apagar a conta Derdalax é ${code}. Expira em ${CODE_TTL_MINUTES} minutos.`;
   const messageId = crypto.randomUUID();
 
   await db.from("email_send_log").insert({
@@ -144,10 +144,10 @@ export async function createAndSendDeletionCode(userId: string, email: string) {
     payload: {
       message_id: messageId,
       to: email,
-      from: "DERDALAX <noreply@derdalax.co.mz>",
+      from: "Derdalax <noreply@derdalax.co.mz>",
       reply_to: "suporte@derdalax.co.mz",
       sender_domain: "notify.derdalax.co.mz",
-      subject: "Código para apagar a sua conta DERDALAX",
+      subject: "Código para apagar a sua conta Derdalax",
       html,
       text,
       purpose: "transactional",

@@ -27,9 +27,9 @@ import {
 
 export const Route = createFileRoute("/admin/comunicacao")({
   head: () => ({ meta: [
-    { title: "Comunicação · Admin DERDALAX" },
+    { title: "Comunicação · Admin Derdalax" },
     { name: "description", content: "Campanhas de notificações, recuperação de perfis e divulgação de produtos." },
-    { property: "og:title", content: "Comunicação · Admin DERDALAX" },
+    { property: "og:title", content: "Comunicação · Admin Derdalax" },
     { property: "og:description", content: "Campanhas de notificações, recuperação de perfis e divulgação de produtos." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
@@ -203,7 +203,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
             <div className="grid sm:grid-cols-2 gap-4">
               <div><Label>Texto do botão</Label><Input value={ctaLabel} maxLength={40} onChange={(e) => setCtaLabel(e.target.value)} placeholder="Ex: Ver agora" /></div>
               <div><Label>Link</Label><Input value={ctaUrl} onChange={(e) => setCtaUrl(e.target.value)} placeholder="/perfil" />
-                {!linkOk && <p className="text-xs text-destructive mt-1">Use um caminho interno (ex: /perfil) ou um link https da DERDALAX.</p>}
+                {!linkOk && <p className="text-xs text-destructive mt-1">Use um caminho interno (ex: /perfil) ou um link https da Derdalax.</p>}
               </div>
             </div>
           )}

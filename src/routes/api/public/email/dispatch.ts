@@ -15,16 +15,16 @@ function renderEmail(title: string, body: string, linkUrl: string) {
   return `<!doctype html><html lang="pt"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>${safeTitle}</title></head><body style="margin:0;background:#f4f3f0;font-family:Helvetica,Arial,sans-serif;padding:40px 12px;color:#0a0a0a">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 10px 40px rgba(10,10,10,.08)">
     <div style="background:#0a0a0a;padding:28px 24px;text-align:center">
-      <div style="font-family:'Playfair Display',Georgia,serif;color:#e4b363;font-size:26px;letter-spacing:8px;font-weight:700">DERDALAX</div>
+      <div style="font-family:'Playfair Display',Georgia,serif;color:#e4b363;font-size:26px;letter-spacing:8px;font-weight:700">Derdalax</div>
     </div>
     <div style="height:4px;background:linear-gradient(90deg,#e4b363 0%,#f2d49b 50%,#e4b363 100%)"></div>
     <div style="padding:36px 32px 28px;text-align:center">
       <h1 style="font-family:'Playfair Display',Georgia,serif;color:#0a0a0a;font-size:22px;line-height:1.3;margin:0 0 16px">${safeTitle}</h1>
       <p style="color:#4a4a4a;font-size:15px;line-height:1.6;margin:0 0 26px">${safeBody}</p>
-      <a href="${linkUrl}" style="display:inline-block;background:#0a0a0a;color:#e4b363;text-decoration:none;padding:13px 30px;border-radius:999px;font-weight:600;letter-spacing:1px;font-size:13px">Abrir DERDALAX</a>
+      <a href="${linkUrl}" style="display:inline-block;background:#0a0a0a;color:#e4b363;text-decoration:none;padding:13px 30px;border-radius:999px;font-weight:600;letter-spacing:1px;font-size:13px">Abrir Derdalax</a>
     </div>
     <div style="padding:20px 18px;text-align:center;color:#8a8a8a;font-size:11px;line-height:1.6;border-top:1px solid #eee;background:#faf9f6">
-      <div style="font-family:'Playfair Display',Georgia,serif;color:#0a0a0a;letter-spacing:4px;font-size:14px;margin-bottom:4px">DERDALAX</div>
+      <div style="font-family:'Playfair Display',Georgia,serif;color:#0a0a0a;letter-spacing:4px;font-size:14px;margin-bottom:4px">Derdalax</div>
       <div>Moda e estilo, feitos em Moçambique.</div>
       <div style="margin-top:8px">
         <a href="https://derdalax.co.mz/politicas/termos-condicoes" style="color:#e4b363;text-decoration:underline;font-weight:600">Termos e Condições</a>
@@ -143,7 +143,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           payload: {
             message_id: messageId,
             to: email,
-            from: "DERDALAX <noreply@derdalax.co.mz>",
+            from: "Derdalax <noreply@derdalax.co.mz>",
             reply_to: "suporte@derdalax.co.mz",
             sender_domain: "notify.derdalax.co.mz",
             subject: title,

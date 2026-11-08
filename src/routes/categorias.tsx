@@ -24,10 +24,10 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/categorias")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({ meta: [
-    { title: "Categorias · DERDALAX" },
-    { name: "description", content: "Explore as categorias da loja DERDALAX: camisas, calças, sapatos e mais." },
-    { property: "og:title", content: "Categorias · DERDALAX" },
-    { property: "og:description", content: "Explore as categorias da loja DERDALAX: camisas, calças, sapatos e mais." },
+    { title: "Categorias · Derdalax" },
+    { name: "description", content: "Explore as categorias da loja Derdalax: camisas, calças, sapatos e mais." },
+    { property: "og:title", content: "Categorias · Derdalax" },
+    { property: "og:description", content: "Explore as categorias da loja Derdalax: camisas, calças, sapatos e mais." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ]}),

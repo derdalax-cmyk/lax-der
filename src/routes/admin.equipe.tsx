@@ -11,7 +11,7 @@ import {
 } from "@/components/admin/CollaboratorsSection";
 
 export const Route = createFileRoute("/admin/equipe")({
-  head: () => ({ meta: [{ title: "Equipe · Admin DERDALAX" }, { name: "description", content: "Gerir colaboradores por loja." }] }),
+  head: () => ({ meta: [{ title: "Equipe · Admin Derdalax" }, { name: "description", content: "Gerir colaboradores por loja." }] }),
   component: AdminEquipe,
 });
 

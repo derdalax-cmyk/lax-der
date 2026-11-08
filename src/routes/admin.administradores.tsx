@@ -11,7 +11,7 @@ import { listAdministrators, grantAdministrator, revokeAdministrator } from "@/l
 import { useAdminSecurityStatus } from "@/hooks/useAdminSecurityStatus";
 
 export const Route = createFileRoute("/admin/administradores")({
-  head: () => ({ meta: [{ title: "Administradores · DERDALAX" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Administradores · Derdalax" }, { name: "robots", content: "noindex" }] }),
   component: AdminAdmins,
 });
 

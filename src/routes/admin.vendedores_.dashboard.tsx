@@ -9,7 +9,7 @@ import {
 import { Store, Activity, UserPlus, Ban, ArrowLeft, Star, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/admin/vendedores_/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard de Vendedores · Admin DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Dashboard de Vendedores · Admin Derdalax" }] }),
   component: SellersDashboard,
 });
 
@@ -64,7 +64,7 @@ function SellersDashboard() {
             <ArrowLeft className="w-4 h-4" /> Vendedores
           </Link>
           <h1 className="font-display text-3xl">Dashboard de Vendedores</h1>
-          <p className="text-sm text-muted-foreground">Visão geral de desempenho das lojas na DERDALAX.</p>
+          <p className="text-sm text-muted-foreground">Visão geral de desempenho das lojas na Derdalax.</p>
         </div>
       </div>
 

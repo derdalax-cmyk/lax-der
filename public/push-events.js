@@ -3,7 +3,7 @@
 self.addEventListener("push", (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; }
-  catch { data = { title: "DERDALAX", body: event.data ? event.data.text() : "" }; }
+  catch { data = { title: "Derdalax", body: event.data ? event.data.text() : "" }; }
   const options = {
     body: data.body || "",
     icon: "/__l5e/assets-v1/d21e5da0-e5af-47b1-a541-797df4740df1/derdalax-icon-192.png",
@@ -11,7 +11,7 @@ self.addEventListener("push", (event) => {
     tag: data.tag || "derdalax", renotify: true, data: { url: data.url || "/" },
   };
   if (typeof data.image === "string" && data.image.startsWith("https://")) options.image = data.image;
-  event.waitUntil(self.registration.showNotification(data.title || "DERDALAX", options));
+  event.waitUntil(self.registration.showNotification(data.title || "Derdalax", options));
 });
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();

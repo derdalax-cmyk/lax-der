@@ -11,7 +11,7 @@ export const Route = createFileRoute("/mensagens")({
   validateSearch: (s: Record<string, unknown>): { c?: string } => ({
     c: typeof s.c === "string" ? s.c : undefined,
   }),
-  head: () => ({ meta: [{ title: "Mensagens · DERDALAX" }, { name: "description", content: "As suas conversas com lojas na DERDALAX." }] }),
+  head: () => ({ meta: [{ title: "Mensagens · Derdalax" }, { name: "description", content: "As suas conversas com lojas na Derdalax." }] }),
   component: MensagensPage,
 });
 

@@ -69,7 +69,7 @@ export function RateSellerModal({
             </span>
             Classifique {sellerName}
           </DialogTitle>
-          <DialogDescription>A sua opinião ajuda outros clientes na DERDALAX.</DialogDescription>
+          <DialogDescription>A sua opinião ajuda outros clientes na Derdalax.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3 py-1">
           {DIMS.map((d) => (

@@ -11,7 +11,7 @@ import { Plus, Search, Pencil, ImageOff, Store, Loader2, Clock, CheckCircle2, XC
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/colaborador/$sellerId")({
-  head: () => ({ meta: [{ title: "Produtos atribuídos · DERDALAX" }, { name: "description", content: "Gestão autorizada dos produtos atribuídos à sua equipa." }, { property: "og:title", content: "Produtos atribuídos · DERDALAX" }, { property: "og:description", content: "Gestão autorizada dos produtos atribuídos à sua equipa." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  head: () => ({ meta: [{ title: "Produtos atribuídos · Derdalax" }, { name: "description", content: "Gestão autorizada dos produtos atribuídos à sua equipa." }, { property: "og:title", content: "Produtos atribuídos · Derdalax" }, { property: "og:description", content: "Gestão autorizada dos produtos atribuídos à sua equipa." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: CollaboratorStorePanel,
 });
 

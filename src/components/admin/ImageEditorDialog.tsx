@@ -81,7 +81,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
       setSealReady(true);
     };
     brand.onerror = () => {
-      if (!cancelled) toast.error("Não foi possível carregar o selo DERDALAX.");
+      if (!cancelled) toast.error("Não foi possível carregar o selo Derdalax.");
     };
     brand.src = brandIcon512.url;
     return () => { cancelled = true; };
@@ -224,7 +224,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
             <canvas
               ref={canvasRef}
               role="img"
-              aria-label={seal ? "Pré-visualização da imagem com selo DERDALAX" : "Pré-visualização da imagem"}
+              aria-label={seal ? "Pré-visualização da imagem com selo Derdalax" : "Pré-visualização da imagem"}
               tabIndex={seal ? 0 : undefined}
               className={cn("max-h-full max-w-full object-contain object-center", seal && "touch-none cursor-move focus-visible:outline-gold")}
               onPointerDown={startDrag}
@@ -286,7 +286,7 @@ export function ImageEditorDialog({ open, onOpenChange, url, onSave }: Props) {
         <div className="space-y-3 rounded-md border border-border p-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <Button type="button" variant="outline" size="sm" className="border-gold/60 text-gold" disabled={!ready || !sealReady || saving || !!seal} onClick={addSeal}>
-              <Stamp /> {seal ? "Selo DERDALAX adicionado" : "Adicionar selo DERDALAX"}
+              <Stamp /> {seal ? "Selo Derdalax adicionado" : "Adicionar selo Derdalax"}
             </Button>
             {seal && <Button type="button" variant="ghost" size="icon" aria-label="Remover selo" title="Remover selo" disabled={saving} onClick={() => setSeal(null)}><Trash2 /></Button>}
           </div>

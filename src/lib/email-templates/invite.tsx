@@ -9,9 +9,9 @@ interface InviteEmailProps {
 
 export const InviteEmail = ({ confirmationUrl }: InviteEmailProps) => (
   <BrandLayout
-    preview="Foi convidado(a) para a DERDALAX"
+    preview="Foi convidado(a) para a Derdalax"
     title="Foi convidado(a)"
-    intro="Você foi convidado(a) a juntar-se à DERDALAX. Toque no botão abaixo para aceitar o convite e criar a sua conta."
+    intro="Você foi convidado(a) a juntar-se à Derdalax. Toque no botão abaixo para aceitar o convite e criar a sua conta."
     ctaLabel="Aceitar convite"
     ctaUrl={confirmationUrl}
     outro="Se não estava à espera deste convite, pode ignorar este email em segurança."

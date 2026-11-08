@@ -13,9 +13,9 @@ import { SellerAuditSection } from "@/components/admin/SellerAuditSection";
 export const Route = createFileRoute("/vendedor/equipe")({
   head: () => ({
     meta: [
-      { title: "Atividades da Equipe · DERDALAX" },
-      { name: "description", content: "Acompanhe os funcionários da sua loja e as atividades que realizaram na DERDALAX." },
-      { property: "og:title", content: "Atividades da Equipe · DERDALAX" },
+      { title: "Atividades da Equipe · Derdalax" },
+      { name: "description", content: "Acompanhe os funcionários da sua loja e as atividades que realizaram na Derdalax." },
+      { property: "og:title", content: "Atividades da Equipe · Derdalax" },
       { property: "og:description", content: "Acompanhe os funcionários da sua loja e as suas atividades." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -185,7 +185,7 @@ function SellerTeamPage() {
           </div>
           <p className="font-medium mb-1">Ainda sem funcionários</p>
           <p className="text-sm text-muted-foreground">
-            A associação de funcionários à sua loja é feita pela administração da DERDALAX.
+            A associação de funcionários à sua loja é feita pela administração da Derdalax.
           </p>
         </div>
       ) : (

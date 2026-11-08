@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CalendarClock } from "lucide-react";
 
 export const Route = createFileRoute("/vendedor/mensalidade")({
-  head: () => ({ meta: [{ title: "Mensalidade · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Mensalidade · Derdalax" }] }),
   component: MensalidadePage,
 });
 

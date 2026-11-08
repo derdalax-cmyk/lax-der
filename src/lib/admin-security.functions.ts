@@ -67,8 +67,8 @@ export const beginAdminPasskeyRegistration = createServerFn({ method: "POST" })
       .from("admin_webauthn_credentials").select("credential_id, transports").eq("user_id", uid).is("revoked_at", null);
     const options = {
       challenge: newChallenge(),
-      rp: { name: "DERDALAX Admin", id: rpID },
-      user: { id: b64url(new TextEncoder().encode(uid)), name: `admin-${uid.slice(0, 8)}`, displayName: "Administrador DERDALAX" },
+      rp: { name: "Derdalax Admin", id: rpID },
+      user: { id: b64url(new TextEncoder().encode(uid)), name: `admin-${uid.slice(0, 8)}`, displayName: "Administrador Derdalax" },
       pubKeyCredParams: [{ alg: -8, type: "public-key" }, { alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
       timeout: 60000,
       attestation: "none",

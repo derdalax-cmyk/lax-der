@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ROLETA_KEY } from "@/hooks/useRoleta";
 
 export const Route = createFileRoute("/admin/roleta")({
-  head: () => ({ meta: [{ title: "Roleta de Descontos · Admin DERDALAX" }, { name: "description", content: "Gestão da Roleta DERDALAX." }] }),
+  head: () => ({ meta: [{ title: "Roleta de Descontos · Admin Derdalax" }, { name: "description", content: "Gestão da Roleta Derdalax." }] }),
   component: AdminRoleta,
 });
 

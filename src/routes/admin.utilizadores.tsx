@@ -177,7 +177,7 @@ function AdminUtilizadores() {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="font-display text-3xl">Utilizadores</h1>
-          <p className="text-sm text-muted-foreground">Base de clientes da loja DERDALAX.</p>
+          <p className="text-sm text-muted-foreground">Base de clientes da loja Derdalax.</p>
         </div>
         <Button onClick={exportCsv} variant="outline">
           <Download className="w-4 h-4 mr-1" /> Exportar CSV

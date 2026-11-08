@@ -49,7 +49,7 @@ export function recommendationSections<T extends ProductCardData>(currentId: str
 
 export async function shareProduct(product: Pick<ProductCardData, "id" | "title" | "images">, api: Pick<Navigator, "share" | "canShare" | "clipboard"> = navigator, fetchImage: typeof fetch = fetch) {
   const url = `https://derdalax.co.mz/produto/${product.id}`;
-  const payload: ShareData = { title: product.title, text: `Vê isto na DERDALAX: ${product.title}`, url };
+  const payload: ShareData = { title: product.title, text: `Vê isto na Derdalax: ${product.title}`, url };
   if (typeof api.share !== "function") {
     await api.clipboard.writeText(url);
     return "copied";

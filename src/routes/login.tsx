@@ -33,10 +33,10 @@ export const Route = createFileRoute("/login")({
   },
   head: () => ({
     meta: [
-      { title: "Entrar · DERDALAX" },
-      { name: "description", content: "Aceda à sua conta DERDALAX." },
-      { property: "og:title", content: "Entrar · DERDALAX" },
-      { property: "og:description", content: "Aceda à sua conta DERDALAX ou crie uma nova conta." },
+      { title: "Entrar · Derdalax" },
+      { name: "description", content: "Aceda à sua conta Derdalax." },
+      { property: "og:title", content: "Entrar · Derdalax" },
+      { property: "og:description", content: "Aceda à sua conta Derdalax ou crie uma nova conta." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -159,7 +159,7 @@ function LoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-secondary/40">
       <div className="w-full max-w-md bg-card rounded-2xl shadow-[var(--shadow-elegant)] p-8 border border-border">
         <div className="text-center mb-6">
-          <div className="font-display text-3xl font-bold text-ink tracking-wider">DERDALAX</div>
+          <div className="font-display text-3xl font-bold text-ink tracking-wider">Derdalax</div>
           <p className="text-sm text-muted-foreground mt-1">Bem-vindo de volta</p>
         </div>
 
@@ -169,7 +169,7 @@ function LoginPage() {
           </Button>
         </div>
         <p className="text-[11px] text-muted-foreground text-center leading-relaxed mb-3">
-          Ao continuar, você aceita os <TermsPageLink /> da DERDALAX.
+          Ao continuar, você aceita os <TermsPageLink /> da Derdalax.
         </p>
 
         <div className="relative my-6">
@@ -225,7 +225,7 @@ function LoginPage() {
                   className="mt-0.5"
                 />
                 <span>
-                  Li e aceito os <TermsPageLink /> da DERDALAX.
+                  Li e aceito os <TermsPageLink /> da Derdalax.
                 </span>
               </label>
               <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={busy || !acceptedTerms}>

@@ -23,10 +23,10 @@ import { productImageMetadata } from "@/lib/productImageCache";
 export const Route = createFileRoute("/explorar")({
   validateSearch: zodValidator(exploreSearchSchema),
   head: () => ({ meta: [
-    { title: "Explorar · DERDALAX" },
-    { name: "description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
-    { property: "og:title", content: "Explorar · DERDALAX" },
-    { property: "og:description", content: "Explore todas as peças DERDALAX num mural de descobertas." },
+    { title: "Explorar · Derdalax" },
+    { name: "description", content: "Explore todas as peças Derdalax num mural de descobertas." },
+    { property: "og:title", content: "Explorar · Derdalax" },
+    { property: "og:description", content: "Explore todas as peças Derdalax num mural de descobertas." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ]}),

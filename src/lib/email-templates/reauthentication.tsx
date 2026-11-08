@@ -8,9 +8,9 @@ interface ReauthenticationEmailProps {
 
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <BrandLayout
-    preview="O seu código de verificação DERDALAX"
+    preview="O seu código de verificação Derdalax"
     title="Código de verificação"
-    intro="Use o código abaixo para confirmar a sua identidade na DERDALAX."
+    intro="Use o código abaixo para confirmar a sua identidade na Derdalax."
     extra={<Text style={brand.code}>{token}</Text>}
     outro="Este código expira em breve. Se não foi você que o pediu, pode ignorar este email."
   />

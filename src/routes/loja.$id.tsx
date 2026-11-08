@@ -10,7 +10,7 @@ import { ContactSellerButton } from "@/components/ContactSellerButton";
 import { Store, MapPin, Loader2, Package } from "lucide-react";
 
 export const Route = createFileRoute("/loja/$id")({
-  head: () => ({ meta: [{ title: "Loja · DERDALAX" }, { name: "description", content: "Perfil da loja e avaliações na DERDALAX." }, { property: "og:title", content: "Loja · DERDALAX" }, { property: "og:description", content: "Perfil da loja e avaliações na DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  head: () => ({ meta: [{ title: "Loja · Derdalax" }, { name: "description", content: "Perfil da loja e avaliações na Derdalax." }, { property: "og:title", content: "Loja · Derdalax" }, { property: "og:description", content: "Perfil da loja e avaliações na Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: LojaPublica,
 });
 

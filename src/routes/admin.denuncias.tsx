@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/admin/denuncias")({
-  head: () => ({ meta: [{ title: "Denúncias · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Denúncias · Derdalax" }] }),
   component: DenunciasPage,
 });
 

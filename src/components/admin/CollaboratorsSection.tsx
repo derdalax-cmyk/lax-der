@@ -157,7 +157,7 @@ export function AddCollaboratorModal({
 
     setSaving(false);
     if (error) {
-      if (error.message.includes("no_account")) toast.error("Não existe conta DERDALAX com esse e-mail. Peça à pessoa para se registar primeiro.");
+      if (error.message.includes("no_account")) toast.error("Não existe conta Derdalax com esse e-mail. Peça à pessoa para se registar primeiro.");
       else if (error.message.includes("forbidden")) toast.error("Apenas o administrador pode adicionar colaboradores.");
       else toast.error(error.message);
       return;
@@ -175,11 +175,11 @@ export function AddCollaboratorModal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Adicionar colaborador</DialogTitle>
-          <DialogDescription>Associa uma conta DERDALAX existente à loja {storeName}.</DialogDescription>
+          <DialogDescription>Associa uma conta Derdalax existente à loja {storeName}.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label className="text-xs">E-mail da conta DERDALAX *</Label>
+            <Label className="text-xs">E-mail da conta Derdalax *</Label>
             <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="pessoa@exemplo.com" />
             <p className="text-[11px] text-muted-foreground mt-1">Nenhuma conta nova é criada. A pessoa deve já estar registada.</p>
           </div>

@@ -92,7 +92,7 @@ async function resolveProducts(db: Awaited<ReturnType<typeof guard>>["db"], ids:
 
 function clean(data: z.infer<typeof campaignInput>) {
   const ctaUrl = safeCampaignLink(data.ctaUrl || "/");
-  if (!ctaUrl) throw new Error("Link inválido: use um caminho interno (ex: /perfil) ou um link https da DERDALAX.");
+  if (!ctaUrl) throw new Error("Link inválido: use um caminho interno (ex: /perfil) ou um link https da Derdalax.");
   const title = plainText(data.title, PUSH_TITLE_MAX);
   const body = plainText(data.body, PUSH_BODY_MAX);
   if (!title || !body) throw new Error("Título e mensagem são obrigatórios.");

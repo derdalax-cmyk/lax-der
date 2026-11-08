@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 const DESC =
-  "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na DERDALAX.";
+  "Plataforma de compra e venda de roupas da calamidade em Moçambique. Encontre peças, compre diretamente aos vendedores ou anuncie os seus produtos na Derdalax.";
 
 export const Route = createFileRoute("/inicial")({
   head: () => ({
     meta: [
-      { title: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
+      { title: "Derdalax — Marketplace de Roupas da Calamidade em Moçambique" },
       { name: "description", content: DESC },
-      { property: "og:title", content: "DERDALAX — Marketplace de Roupas da Calamidade em Moçambique" },
+      { property: "og:title", content: "Derdalax — Marketplace de Roupas da Calamidade em Moçambique" },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -25,7 +25,7 @@ function InicialPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="max-w-3xl mx-auto px-5 pt-14 text-center">
-        <p className="font-display text-sm font-bold tracking-widest text-gold">DERDALAX</p>
+        <p className="font-display text-sm font-bold tracking-widest text-gold">Derdalax</p>
         <h1 className="mt-3 font-display text-3xl md:text-5xl text-foreground">
           Moda da Calamidade, direto dos vendedores
         </h1>

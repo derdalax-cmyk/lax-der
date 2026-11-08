@@ -31,8 +31,8 @@ export type AudienceFilters = {
 };
 
 export const PROFILE_RECOVERY_DEFAULTS = {
-  title: "Complete o seu perfil na DERDALAX",
-  body: "Notámos que ainda faltam alguns dados no seu perfil. Complete-os para aproveitar melhor a DERDALAX.",
+  title: "Complete o seu perfil na Derdalax",
+  body: "Notámos que ainda faltam alguns dados no seu perfil. Complete-os para aproveitar melhor a Derdalax.",
   cta: "Completar perfil",
   url: "/perfil",
 };
@@ -51,7 +51,7 @@ export function missingProfileFields(p: ProfileLike): string[] {
 
 const ALLOWED_HOSTS = new Set(["derdalax.co.mz", "www.derdalax.co.mz"]);
 
-/** Internal paths or HTTPS links on the official DERDALAX domain only. Returns a normalized path/URL or null. */
+/** Internal paths or HTTPS links on the official Derdalax domain only. Returns a normalized path/URL or null. */
 export function safeCampaignLink(raw: string): string | null {
   const v = raw.trim();
   if (/^\/(?!\/)[A-Za-z0-9\-_/?.=&%#]*$/.test(v)) return v;

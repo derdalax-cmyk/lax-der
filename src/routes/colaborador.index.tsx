@@ -22,7 +22,7 @@ function CollaboratorHome() {
         </div>
         <h1 className="font-display text-2xl mb-2">Sem lojas atribuídas</h1>
         <p className="text-sm text-muted-foreground">
-          Ainda não foi atribuído a nenhuma loja. Fale com a administração da DERDALAX.
+          Ainda não foi atribuído a nenhuma loja. Fale com a administração da Derdalax.
         </p>
       </div>
     );

@@ -3,7 +3,7 @@ import { PoliciesDialog } from "@/components/PoliciesDialog";
 /**
  * Inline clickable link that opens the Policies dialog directly on the
  * "Termos e Condições de Uso" section. Use inside acceptance sentences,
- * e.g. "Aceito os <TermsLink /> da DERDALAX".
+ * e.g. "Aceito os <TermsLink /> da Derdalax".
  */
 export function TermsLink({
   label = "Termos e Condições de Uso",

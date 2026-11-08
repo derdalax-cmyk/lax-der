@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/admin/banners")({
-  head: () => ({ meta: [{ title: "Banners da Home · Admin DERDALAX" }, { name: "description", content: "Gestão das imagens e textos dos banners da página inicial DERDALAX." }, { property: "og:title", content: "Banners da Home · Admin DERDALAX" }, { property: "og:description", content: "Gestão das imagens e textos dos banners da página inicial DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
+  head: () => ({ meta: [{ title: "Banners da Home · Admin Derdalax" }, { name: "description", content: "Gestão das imagens e textos dos banners da página inicial Derdalax." }, { property: "og:title", content: "Banners da Home · Admin Derdalax" }, { property: "og:description", content: "Gestão das imagens e textos dos banners da página inicial Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: AdminBanners,
 });
 

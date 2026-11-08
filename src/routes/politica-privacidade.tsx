@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
-const TITLE = "Política de Privacidade | DERDALAX";
-const DESC = "Conheça como o DERDALAX recolhe, utiliza, protege e gere os dados dos seus utilizadores.";
+const TITLE = "Política de Privacidade | Derdalax";
+const DESC = "Conheça como o Derdalax recolhe, utiliza, protege e gere os dados dos seus utilizadores.";
 
 export const Route = createFileRoute("/politica-privacidade")({
   head: () => ({
@@ -26,15 +26,15 @@ const SECTIONS: Section[] = [
     id: "politica",
     title: "Política de Privacidade",
     paragraphs: [
-      "Esta Política de Privacidade explica como o DERDALAX recolhe, utiliza, armazena, protege e partilha as informações dos utilizadores da plataforma disponível em derdalax.co.mz e da respetiva aplicação instalável.",
-      "Ao criar uma conta ou utilizar o DERDALAX, o utilizador reconhece ter lido esta política.",
+      "Esta Política de Privacidade explica como o Derdalax recolhe, utiliza, armazena, protege e partilha as informações dos utilizadores da plataforma disponível em derdalax.co.mz e da respetiva aplicação instalável.",
+      "Ao criar uma conta ou utilizar o Derdalax, o utilizador reconhece ter lido esta política.",
     ],
   },
   {
     id: "sobre",
-    title: "Sobre o DERDALAX",
+    title: "Sobre o Derdalax",
     paragraphs: [
-      "O DERDALAX é uma plataforma de comércio de moda em Moçambique que liga compradores a lojas e vendedores independentes. Os vendedores publicam peças, os compradores fazem pedidos e a entrega é combinada dentro da plataforma.",
+      "O Derdalax é uma plataforma de comércio de moda em Moçambique que liga compradores a lojas e vendedores independentes. Os vendedores publicam peças, os compradores fazem pedidos e a entrega é combinada dentro da plataforma.",
     ],
   },
   {
@@ -64,9 +64,9 @@ const SECTIONS: Section[] = [
     id: "google",
     title: "Informações obtidas através do Google",
     paragraphs: [
-      "O DERDALAX utiliza o Google apenas como método de autenticação (\"Entrar com Google\"). Não solicitamos permissões adicionais além da autenticação básica.",
+      "O Derdalax utiliza o Google apenas como método de autenticação (\"Entrar com Google\"). Não solicitamos permissões adicionais além da autenticação básica.",
       "Com a autorização apresentada pelo Google no momento do início de sessão, recebemos apenas: o seu endereço de email, o seu nome e, quando disponível, a fotografia de perfil associada à conta Google, bem como um identificador da conta necessário para a autenticação.",
-      "O DERDALAX não acede ao Gmail, Google Drive, contactos, calendário nem a quaisquer outros dados ou serviços da sua conta Google.",
+      "O Derdalax não acede ao Gmail, Google Drive, contactos, calendário nem a quaisquer outros dados ou serviços da sua conta Google.",
     ],
   },
   {
@@ -87,7 +87,7 @@ const SECTIONS: Section[] = [
     id: "auth-google",
     title: "Autenticação com Google",
     paragraphs: [
-      "Ao escolher \"Entrar com Google\", é redirecionado para o Google para confirmar a sua identidade. Após a confirmação, o email e o nome recebidos são usados para criar ou identificar a sua conta DERDALAX e preencher o seu perfil. A fotografia, quando fornecida, pode ser usada como imagem de perfil.",
+      "Ao escolher \"Entrar com Google\", é redirecionado para o Google para confirmar a sua identidade. Após a confirmação, o email e o nome recebidos são usados para criar ou identificar a sua conta Derdalax e preencher o seu perfil. A fotografia, quando fornecida, pode ser usada como imagem de perfil.",
       "Estes dados não são vendidos, não são usados para publicidade e não são partilhados com terceiros para fins próprios. Pode deixar de usar o Google a qualquer momento e revogar o acesso nas definições da sua conta Google.",
     ],
   },
@@ -103,14 +103,14 @@ const SECTIONS: Section[] = [
     id: "comunicacoes",
     title: "Comunicações e suporte",
     paragraphs: [
-      "As mensagens trocadas nos chats de pedidos e com o suporte são guardadas para permitir o acompanhamento das conversas, a resolução de problemas e a análise de denúncias pela equipa do DERDALAX.",
+      "As mensagens trocadas nos chats de pedidos e com o suporte são guardadas para permitir o acompanhamento das conversas, a resolução de problemas e a análise de denúncias pela equipa do Derdalax.",
     ],
   },
   {
     id: "notificacoes",
     title: "Notificações",
     paragraphs: [
-      "Com a sua autorização, o DERDALAX pode enviar notificações no dispositivo (push) sobre pedidos, mensagens e novidades. Para isso guardamos a subscrição técnica do seu navegador. Também podem ser enviados emails de conta (confirmação, recuperação de senha, eliminação de conta).",
+      "Com a sua autorização, o Derdalax pode enviar notificações no dispositivo (push) sobre pedidos, mensagens e novidades. Para isso guardamos a subscrição técnica do seu navegador. Também podem ser enviados emails de conta (confirmação, recuperação de senha, eliminação de conta).",
       "Pode desativar as notificações nas preferências do perfil ou nas definições do navegador.",
     ],
   },
@@ -125,7 +125,7 @@ const SECTIONS: Section[] = [
   {
     id: "fornecedores",
     title: "Serviços e fornecedores utilizados",
-    paragraphs: ["Para funcionar, o DERDALAX recorre a fornecedores de confiança que tratam dados apenas em nosso nome:"],
+    paragraphs: ["Para funcionar, o Derdalax recorre a fornecedores de confiança que tratam dados apenas em nosso nome:"],
     list: [
       "Alojamento, base de dados, autenticação e armazenamento de ficheiros na infraestrutura cloud da plataforma;",
       "Google, para o início de sessão com Google;",
@@ -148,7 +148,7 @@ const SECTIONS: Section[] = [
       "Com o vendedor envolvido no seu pedido, na medida necessária;",
       "Com os fornecedores de serviços indicados acima;",
       "Quando exigido por lei ou por autoridade competente;",
-      "Para proteger os direitos, a segurança e a integridade do DERDALAX e dos seus utilizadores.",
+      "Para proteger os direitos, a segurança e a integridade do Derdalax e dos seus utilizadores.",
     ],
   },
   {
@@ -203,11 +203,11 @@ function PrivacyPolicyPage() {
       <header className="bg-ink text-white">
         <div className="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-14">
           <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-gold transition-colors mb-8">
-            <ArrowLeft className="w-4 h-4" /> Voltar ao DERDALAX
+            <ArrowLeft className="w-4 h-4" /> Voltar ao Derdalax
           </Link>
-          <p className="font-display text-2xl tracking-[0.2em] text-gold">DERDALAX</p>
+          <p className="font-display text-2xl tracking-[0.2em] text-gold">Derdalax</p>
           <h1 className="font-display text-3xl md:text-5xl mt-4 leading-tight">POLÍTICA DE PRIVACIDADE</h1>
-          <p className="mt-3 text-white/70">Como o DERDALAX recolhe, utiliza, protege e gere os seus dados.</p>
+          <p className="mt-3 text-white/70">Como o Derdalax recolhe, utiliza, protege e gere os seus dados.</p>
         </div>
       </header>
 
@@ -243,7 +243,7 @@ function PrivacyPolicyPage() {
 
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <p className="text-xs text-muted-foreground">Última atualização: 25 de setembro de 2026</p>
-          <Link to="/" className="text-sm text-gold underline underline-offset-2">Voltar ao DERDALAX</Link>
+          <Link to="/" className="text-sm text-gold underline underline-offset-2">Voltar ao Derdalax</Link>
         </div>
       </main>
     </div>
