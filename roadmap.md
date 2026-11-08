@@ -1,8 +1,8 @@
 # Roadmap
 
-- [ ] Limitar campanhas Push a 50/75/100, rever elegibilidade, fila, testes e histórico.
-- [ ] Atualizar marca textual visível para Derdalax sem renomear identificadores.
-- [ ] Estabilizar revalidação do catálogo e verificar scroll, imagens e retorno.
+- [x] Limitar campanhas Push a 50/75/100, rever elegibilidade, fila, testes e histórico (sem envio real; Admin mantém verificação).
+- [x] Atualizar marca textual visível para Derdalax sem renomear identificadores.
+- [x] Estabilizar revalidação do catálogo e verificar scroll, imagens e retorno (Explorar/Categorias validados; Home sem destaques, Loja sem dados visíveis nesta sessão).
 - [ ] Ativar campanhas Email e validar email-only/dual-channel: bloqueado pela ausência de serviço dedicado de marketing.
 
 - [x] Persistir apenas catálogo público com TTL, limites e recuperação segura de quota.
