@@ -9,6 +9,7 @@ import { getProductDiscount, getRoletaLine } from "@/lib/productPrice";
 import { useRoleta } from "@/hooks/useRoleta";
 import { NaturalProductImage } from "@/components/product/NaturalProductImage";
 import { homeCollectionProducts } from "@/lib/homePresentation";
+import { Button } from "@/components/ui/button";
 
 
 function firstImage(images: unknown): string | null {
@@ -35,24 +36,15 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
   if (!products.length) return null;
 
   return (
-    <section className="py-3 md:py-5">
-      <div className="max-w-[1400px] mx-auto px-5 flex items-end justify-between gap-3 mb-2 md:mb-3">
+    <section className="py-2 md:py-3">
+      <div className="max-w-[1400px] mx-auto px-5 flex items-end gap-3 mb-2">
         <h2 className="min-w-0 break-words font-display text-xl md:text-2xl flex items-center gap-2">
           {icon && <CategoryIcon icon={icon} className="w-6 h-6" />} {title}
         </h2>
 
-        {seeMoreTo && (
-          <Link
-            to={seeMoreTo as "/produtos"}
-            search={seeMoreSearch as never}
-            className="text-sm font-medium text-muted-foreground hover:text-gold inline-flex items-center gap-1 shrink-0"
-          >
-            {seeMoreLabel ?? "Ver tudo"} <ArrowRight className="w-4 h-4" />
-          </Link>
-        )}
       </div>
 
-      <div id={`carousel-${encodeURIComponent(title)}`} className="flex items-start gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <div id={`carousel-${encodeURIComponent(title)}`} className="flex items-start gap-3 overflow-x-auto px-5 pb-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {homeCollectionProducts(products).map((p) => {
           const img = firstImage(p.images);
           const fav = isFavorite(p.id);
@@ -98,6 +90,15 @@ export function ProductCarousel({ title, icon, products, seeMoreTo, seeMoreLabel
             </div>
           );
         })}
+        {seeMoreTo && (
+          <div className="snap-start shrink-0 self-center">
+            <Button asChild variant="ghost" className="text-gold gap-1">
+              <Link to={seeMoreTo as "/explorar"} search={seeMoreSearch as never}>
+                {seeMoreLabel ?? "Ver tudo"} <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );
