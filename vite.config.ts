@@ -29,7 +29,12 @@ export default defineConfig({
       clientsClaim: true,
       importScripts: ["/push-events.js", "/offline-maintenance.js"],
       runtimeCaching: [
-        { urlPattern: cachePublicStorageImage, handler: "StaleWhileRevalidate", options: { cacheName: `derdalax-product-images-${CACHE_VERSION}`, cacheableResponse: { statuses: [200] }, expiration: { maxEntries: IMAGE_CACHE_LIMIT, maxAgeSeconds: IMAGE_CACHE_SECONDS, purgeOnQuotaError: true } } },
+        { urlPattern: cachePublicStorageImage, handler: "StaleWhileRevalidate", options: {
+          cacheName: `derdalax-product-images-${CACHE_VERSION}`,
+          plugins: [{ requestWillFetch: async ({ request }) => new Request(request.url, { mode: "cors", credentials: "omit" }) }],
+          cacheableResponse: { statuses: [200] },
+          expiration: { maxEntries: IMAGE_CACHE_LIMIT, maxAgeSeconds: IMAGE_CACHE_SECONDS, purgeOnQuotaError: true },
+        } },
         { urlPattern: cachePublicNavigation, handler: "NetworkFirst", options: {
           cacheName: `derdalax-shell-${CACHE_VERSION}`, networkTimeoutSeconds: 3,
           fetchOptions: { credentials: "omit" },
