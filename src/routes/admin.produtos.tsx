@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { getProductDiscount } from "@/lib/productPrice";
 
 export const Route = createFileRoute("/admin/produtos")({
-  head: () => ({ meta: [{ title: "Administração de produtos · DERDALAX" }, { name: "description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:title", content: "Administração de produtos · DERDALAX" }, { property: "og:description", content: "Gestão autorizada do catálogo DERDALAX." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
+  head: () => ({ meta: [{ title: "Administração de produtos · Derdalax" }, { name: "description", content: "Gestão autorizada do catálogo Derdalax." }, { property: "og:title", content: "Administração de produtos · Derdalax" }, { property: "og:description", content: "Gestão autorizada do catálogo Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: AdminProdutos,
 });
 
@@ -201,7 +201,7 @@ function AdminProdutos() {
           <SelectTrigger className="w-[190px]"><SelectValue placeholder="Vendedor" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os vendedores</SelectItem>
-            <SelectItem value="__admin__">Loja DERDALAX (admin)</SelectItem>
+            <SelectItem value="__admin__">Loja Derdalax (admin)</SelectItem>
             {(sellers ?? []).map((s) => <SelectItem key={s.id} value={s.id}>{s.store_name}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -269,7 +269,7 @@ function AdminProdutos() {
                           <Store className="w-3.5 h-3.5" /> {sellerName.get(p.seller_id) ?? "Vendedor"}
                         </span>
                       ) : (
-                        <span className="text-xs bg-ink text-gold px-2 py-0.5 rounded">DERDALAX</span>
+                        <span className="text-xs bg-ink text-gold px-2 py-0.5 rounded">Derdalax</span>
                       )}
                     </td>
                     <td className="px-4 py-2 text-muted-foreground">{labelOf(p.category)}</td>

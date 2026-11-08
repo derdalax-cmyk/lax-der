@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/verificar")({
     const r = typeof s.redirect === "string" ? s.redirect : "";
     return { redirect: /^\/admin(\/[A-Za-z0-9/_-]*)?$/.test(r) && !r.startsWith("/admin/verificar") ? r : "/admin" };
   },
-  head: () => ({ meta: [{ title: "Verificação de administrador · DERDALAX" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Verificação de administrador · Derdalax" }, { name: "robots", content: "noindex" }] }),
   component: VerifyAdmin,
 });
 

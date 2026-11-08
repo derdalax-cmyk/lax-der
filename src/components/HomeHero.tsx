@@ -14,7 +14,7 @@ const FALLBACK: Banner = {
   title: "Conectamos-te ao que procuras.",
   image_url: heroBg.url,
   subtitle: "Peças únicas, selecionadas para você.",
-  alt: "Arara de roupas DERDALAX com iluminação quente",
+  alt: "Arara de roupas Derdalax com iluminação quente",
   link_url: null,
   cta_label: null,
 };
@@ -58,7 +58,7 @@ export function HomeHero() {
   return (
     <section
       className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[230px] touch-pan-y"
-      aria-label="Banners DERDALAX"
+      aria-label="Banners Derdalax"
       aria-roledescription={n > 1 ? "carrossel" : undefined}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -87,7 +87,7 @@ export function HomeHero() {
         <img
           key={b.id}
           src={b.image_url}
-          alt={b.alt || b.subtitle || "Banner DERDALAX"}
+          alt={b.alt || b.subtitle || "Banner Derdalax"}
           aria-hidden={i !== idx}
           fetchPriority={i === 0 ? "high" : "low"}
           loading={i === 0 ? "eager" : "lazy"}

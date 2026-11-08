@@ -155,7 +155,7 @@ export function BrandLayout({
         <Container style={brand.container}>
           <Section style={brand.headerBar}>
             <Heading as="h1" style={brand.brandName}>
-              DERDALAX
+              Derdalax
             </Heading>
           </Section>
           <Section style={brand.goldStrip} />
@@ -183,7 +183,7 @@ export function BrandLayout({
             {outro && <Text style={{ ...brand.paragraph, marginTop: '28px', fontSize: '13px' }}>{outro}</Text>}
           </Section>
           <Section style={brand.footer}>
-            <Text style={brand.footerBrand}>DERDALAX</Text>
+            <Text style={brand.footerBrand}>Derdalax</Text>
             <Text style={brand.footerTagline}>Moda e estilo, feitos em Moçambique.</Text>
             <Text style={{ ...brand.footerTagline, marginTop: '10px' }}>
               <a href="https://derdalax.co.mz/politicas/termos-condicoes" style={{ color: '#e4b363', textDecoration: 'underline', fontWeight: 600 }}>Termos e Condições</a>

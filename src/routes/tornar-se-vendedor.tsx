@@ -23,9 +23,9 @@ import { validateUpload } from "@/lib/uploadLimits";
 export const Route = createFileRoute("/tornar-se-vendedor")({
   head: () => ({
     meta: [
-      { title: "Venda na DERDALAX — Torne-se vendedor" },
-      { name: "description", content: "Leve o seu negócio para o digital e chegue a mais clientes vendendo na DERDALAX." },
-      { property: "og:title", content: "Venda na DERDALAX" },
+      { title: "Venda na Derdalax — Torne-se vendedor" },
+      { name: "description", content: "Leve o seu negócio para o digital e chegue a mais clientes vendendo na Derdalax." },
+      { property: "og:title", content: "Venda na Derdalax" },
       { property: "og:description", content: "Leve o seu negócio para o digital. Chegue a mais clientes." },
     ],
   }),
@@ -260,7 +260,7 @@ function TornarSeVendedor() {
                 <CheckCircle2 className="w-8 h-8 text-emerald-600" />
               </div>
               <h1 className="font-display text-2xl font-bold mb-1">A sua loja está ativa</h1>
-              <p className="text-muted-foreground mb-6">{existing.store_name} já pode vender na DERDALAX.</p>
+              <p className="text-muted-foreground mb-6">{existing.store_name} já pode vender na Derdalax.</p>
               <Link to="/vendedor" className="inline-flex items-center gap-2 bg-gold text-ink font-semibold px-5 py-3 rounded-xl hover:bg-gold/90 transition-colors">
                 Ir para o meu painel <ChevronRight className="w-4 h-4" />
               </Link>
@@ -313,7 +313,7 @@ function TornarSeVendedor() {
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-gold mb-5">
             <Store className="w-4 h-4" /> Programa de vendedores
           </div>
-          <h1 className="font-display text-4xl md:text-6xl font-bold leading-tight">Venda na DERDALAX</h1>
+          <h1 className="font-display text-4xl md:text-6xl font-bold leading-tight">Venda na Derdalax</h1>
           <p className="text-white/70 mt-4 text-lg max-w-2xl mx-auto">Leve o seu negócio para o digital. Chegue a mais clientes.</p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 text-left">
@@ -489,7 +489,7 @@ function TornarSeVendedor() {
             <label className="flex items-start gap-3 text-sm cursor-pointer">
               <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(!!v)} className="mt-0.5" />
               <span className="text-muted-foreground">
-                Li e aceito os <TermsLink /> da DERDALAX.
+                Li e aceito os <TermsLink /> da Derdalax.
               </span>
             </label>
           </div>

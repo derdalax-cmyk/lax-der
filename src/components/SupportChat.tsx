@@ -75,7 +75,7 @@ export function SupportChat() {
   if (!user) {
     return (
       <div className="border border-border rounded-2xl p-6 text-center text-sm text-muted-foreground bg-card">
-        Inicie sessão para conversar com o suporte da DERDALAX.
+        Inicie sessão para conversar com o suporte da Derdalax.
       </div>
     );
   }
@@ -85,7 +85,7 @@ export function SupportChat() {
       <div className="px-4 py-3 border-b border-border bg-ink text-white flex items-center gap-3">
         <div className="w-9 h-9 rounded-full bg-gold text-ink grid place-items-center font-bold">D</div>
         <div>
-          <p className="text-sm font-semibold leading-tight">Suporte DERDALAX</p>
+          <p className="text-sm font-semibold leading-tight">Suporte Derdalax</p>
           <p className="text-[11px] text-white/60">Normalmente responde em poucas horas</p>
         </div>
       </div>

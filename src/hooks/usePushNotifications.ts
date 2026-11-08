@@ -23,7 +23,7 @@ export const PUSH_ERROR_MESSAGES: Record<PushErrorStage, string> = {
   auth: "Inicie sessão para ativar as notificações.",
   declined: "Notificações não ativadas. Pode tocar em Ativar novamente quando quiser.",
   permission:
-    "As notificações estão bloqueadas. Ative-as nas definições do Android (Definições → Apps → DERDALAX → Notificações) e tente novamente.",
+    "As notificações estão bloqueadas. Ative-as nas definições do Android (Definições → Apps → Derdalax → Notificações) e tente novamente.",
   service_worker: "Não foi possível preparar o serviço de notificações. Recarregue a app e tente novamente.",
   subscription: "Não foi possível registar este dispositivo para notificações. Tente novamente.",
   database: "Não foi possível guardar a subscrição de notificações. Verifique a ligação e tente novamente.",

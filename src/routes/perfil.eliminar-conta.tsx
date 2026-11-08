@@ -5,10 +5,10 @@ import { AccountDeletionFlow } from "@/components/profile/AccountDeletionFlow";
 export const Route = createFileRoute("/perfil/eliminar-conta")({
   head: () => ({
     meta: [
-      { title: "Excluir conta · DERDALAX" },
-      { name: "description", content: "Apagar permanentemente a sua conta DERDALAX e os seus dados pessoais." },
-      { property: "og:title", content: "Excluir conta · DERDALAX" },
-      { property: "og:description", content: "Apagar permanentemente a sua conta DERDALAX e os seus dados pessoais." },
+      { title: "Excluir conta · Derdalax" },
+      { name: "description", content: "Apagar permanentemente a sua conta Derdalax e os seus dados pessoais." },
+      { property: "og:title", content: "Excluir conta · Derdalax" },
+      { property: "og:description", content: "Apagar permanentemente a sua conta Derdalax e os seus dados pessoais." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

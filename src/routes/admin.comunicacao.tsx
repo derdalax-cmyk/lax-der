@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { formatMZN } from "@/components/ProductCard";
 import { MZ_PROVINCES } from "@/lib/locations";
 import {
-  MAX_CAMPAIGN_PRODUCTS, PROFILE_RECOVERY_DEFAULTS, PUSH_BODY_MAX, PUSH_TITLE_MAX, safeCampaignLink,
+  CAMPAIGN_LIMITS, campaignRecipientLimit, campaignQueueCount, MAX_CAMPAIGN_PRODUCTS, PROFILE_RECOVERY_DEFAULTS, PUSH_BODY_MAX, PUSH_TITLE_MAX, safeCampaignLink,
   type AudienceFilters, type CampaignType, type Segment,
 } from "@/lib/campaigns";
 import {
@@ -27,9 +27,9 @@ import {
 
 export const Route = createFileRoute("/admin/comunicacao")({
   head: () => ({ meta: [
-    { title: "Comunicação · Admin DERDALAX" },
+    { title: "Comunicação · Admin Derdalax" },
     { name: "description", content: "Campanhas de notificações, recuperação de perfis e divulgação de produtos." },
-    { property: "og:title", content: "Comunicação · Admin DERDALAX" },
+    { property: "og:title", content: "Comunicação · Admin Derdalax" },
     { property: "og:description", content: "Campanhas de notificações, recuperação de perfis e divulgação de produtos." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
@@ -45,7 +45,7 @@ const SEGMENTS: { value: Segment; label: string }[] = [
   { value: "email", label: "Com Email disponível" },
 ];
 const STATUS: Record<string, string> = { draft: "Rascunho", queued: "Na fila", sending: "A enviar", completed: "Concluída", failed: "Falhou", cancelled: "Cancelada" };
-const FAIL: Record<string, string> = { no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_channel_unavailable: "Email indisponível", campaign_missing: "Campanha removida" };
+const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_channel_unavailable: "Email indisponível", campaign_missing: "Campanha removida" };
 
 function useStepUpErrors() {
   const navigate = useNavigate();
@@ -104,6 +104,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
   const [products, setProducts] = useState<Picked[]>([]);
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [recipientLimit, setRecipientLimit] = useState(campaignRecipientLimit());
 
   const effSegment = type === "profile_recovery" ? "incomplete" : segment;
   const est = useQuery({
@@ -113,7 +114,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
   });
   useEffect(() => { if (est.error) void onErr(est.error); }, [est.error]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const payload = () => ({ name: name.trim() || title.trim(), type, channels: ["push" as const], segment: effSegment, filters, title, body, ctaLabel, ctaUrl, productIds: products.map((p) => p.id) });
+  const payload = () => ({ name: name.trim() || title.trim(), type, channels: ["push" as const], recipientLimit, segment: effSegment, filters, title, body, ctaLabel, ctaUrl, productIds: products.map((p) => p.id) });
   const linkOk = type === "products" || !!safeCampaignLink(ctaUrl);
   const valid = title.trim().length >= 2 && body.trim().length >= 2 && linkOk && (type !== "products" || products.length > 0);
 
@@ -123,6 +124,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
       const r = await testFn({ data: payload() });
       if (r.push === "sent") toast.success("Teste enviado para os seus dispositivos.");
       else if (r.push === "no_subscription") toast.error("Ative as notificações neste dispositivo para receber o teste.");
+      else if (r.push === "ineligible") toast.error("Push: confirme as suas preferências e uma subscrição válida para receber o teste.");
       else toast.error("Não foi possível entregar o teste.");
     } catch (e) { await onErr(e); } finally { setBusy(false); }
   };
@@ -138,6 +140,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
   };
 
   const pushCount = est.data?.push ?? 0;
+  const queuedCount = campaignQueueCount(pushCount, recipientLimit);
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-6 mt-4">
       <div className="space-y-5 bg-card border border-border rounded-xl p-5">
@@ -162,6 +165,13 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
             <label className="flex items-center gap-2 text-muted-foreground"><Checkbox checked={false} disabled /> <Mail className="w-4 h-4" /> Email</label>
           </div>
           <p className="text-xs text-muted-foreground mt-1">Email de campanhas requer um serviço dedicado de email marketing; os emails da plataforma ficam reservados a avisos de conta e pedidos.</p>
+        </div>
+        <div>
+          <Label htmlFor="campaign-limit">Limite desta campanha</Label>
+          <Select value={String(recipientLimit)} onValueChange={v => setRecipientLimit(campaignRecipientLimit(Number(v)))}>
+            <SelectTrigger id="campaign-limit"><SelectValue /></SelectTrigger>
+            <SelectContent>{CAMPAIGN_LIMITS.map(limit => <SelectItem key={limit} value={String(limit)}>{limit} destinatários por canal</SelectItem>)}</SelectContent>
+          </Select>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -203,7 +213,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
             <div className="grid sm:grid-cols-2 gap-4">
               <div><Label>Texto do botão</Label><Input value={ctaLabel} maxLength={40} onChange={(e) => setCtaLabel(e.target.value)} placeholder="Ex: Ver agora" /></div>
               <div><Label>Link</Label><Input value={ctaUrl} onChange={(e) => setCtaUrl(e.target.value)} placeholder="/perfil" />
-                {!linkOk && <p className="text-xs text-destructive mt-1">Use um caminho interno (ex: /perfil) ou um link https da DERDALAX.</p>}
+                {!linkOk && <p className="text-xs text-destructive mt-1">Use um caminho interno (ex: /perfil) ou um link https da Derdalax.</p>}
               </div>
             </div>
           )}
@@ -213,7 +223,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
 
         <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border">
           <p className="text-sm flex-1 min-w-[200px]">
-            {est.isFetching ? "A calcular público…" : est.data ? <>Público estimado: <b>{est.data.total}</b> · Push: <b>{pushCount}</b></> : "—"}
+            {est.isFetching ? "A calcular público…" : est.data ? <>Elegíveis totais: <b>{est.data.total}</b><br />Push disponíveis: <b>{pushCount}</b> · Email disponíveis: <b>{est.data.email}</b><br />Limite: <b>{recipientLimit}</b> · A enfileirar: <b>{queuedCount} Push</b> / <b>0 Email</b></> : "—"}
           </p>
           <Button variant="outline" disabled={!valid || busy} onClick={test}>Enviar teste para mim</Button>
           <Button disabled={!valid || busy || !pushCount} onClick={() => setConfirm(true)}>
@@ -244,7 +254,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
           <AlertDialogHeader>
             <AlertDialogTitle>Enviar campanha?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta campanha será enviada para aproximadamente {pushCount} utilizadores por Push e 0 por Email.
+              Serão enfileiradas até {queuedCount} notificações Push elegíveis, com limite de {recipientLimit} destinatários. Cada utilizador recebe no máximo uma mensagem por canal nesta campanha. Email não será enviado.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -340,7 +350,7 @@ function Incomplete({ onCampaign }: { onCampaign: () => void }) {
     <div className="mt-4 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3 bg-card border border-border rounded-xl p-4">
         <p><span className="font-display text-2xl">{total}</span> <span className="text-muted-foreground text-sm">contas com dados em falta</span></p>
-        <Button onClick={onCampaign} disabled={!total}>Criar campanha para todos</Button>
+        <Button onClick={onCampaign} disabled={!total}>Criar campanha limitada</Button>
       </div>
       <div className="bg-card border border-border rounded-xl divide-y divide-border">
         {q.isPending && <p className="p-4 text-sm text-muted-foreground">A carregar…</p>}
@@ -379,7 +389,7 @@ function History() {
     refetchInterval: (query) => (query.state.data ?? []).some((c) => c.status === "queued" || c.status === "sending") ? 5000 : false,
   });
   useEffect(() => { if (q.error) void onErr(q.error); }, [q.error]); // eslint-disable-line react-hooks/exhaustive-deps
-  const d = useQuery({ queryKey: ["admin-campaign", open], queryFn: () => detailFn({ data: { id: open! } }), enabled: !!open });
+  const d = useQuery({ queryKey: ["admin-campaign", open], queryFn: () => { if (!open) throw new Error("Campanha não selecionada."); return detailFn({ data: { id: open } }); }, enabled: !!open });
   const cancel = async (id: string) => {
     try { await cancelFn({ data: { id } }); toast.success("Campanha cancelada."); qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); qc.invalidateQueries({ queryKey: ["admin-campaign", id] }); }
     catch (e) { await onErr(e); }
@@ -391,7 +401,7 @@ function History() {
         <thead className="text-left text-xs uppercase tracking-wider text-muted-foreground">
           <tr className="border-b border-border">
             <th className="p-3">Campanha</th><th className="p-3">Criada por</th><th className="p-3">Segmento</th><th className="p-3">Canais</th>
-            <th className="p-3">Estimados</th><th className="p-3">Push enviados/falhados</th><th className="p-3">Emails</th><th className="p-3">Estado</th><th className="p-3">Data</th><th className="p-3"></th>
+            <th className="p-3">Limite / elegíveis / fila</th><th className="p-3">Push aceites/falhados</th><th className="p-3">Emails</th><th className="p-3">Estado</th><th className="p-3">Data</th><th className="p-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -401,7 +411,7 @@ function History() {
               <td className="p-3">{c.createdBy}</td>
               <td className="p-3">{seg(c.audience_type)}</td>
               <td className="p-3">{(c.channels as string[]).join(", ")}</td>
-              <td className="p-3">{c.estimated_push + c.estimated_email}</td>
+              <td className="p-3">{c.recipient_limit} / {c.eligible_total} / {c.queued_push + c.queued_email}</td>
               <td className="p-3">{c.sent_push} / {c.failed_push}</td>
               <td className="p-3">{c.sent_email} / {c.failed_email}</td>
               <td className="p-3">{STATUS[c.status] ?? c.status}</td>
@@ -417,6 +427,7 @@ function History() {
           <DialogHeader><DialogTitle>{d.data?.campaign.name ?? "Campanha"}</DialogTitle></DialogHeader>
           {d.isPending ? <p className="text-sm text-muted-foreground">A carregar…</p> : d.data && (
             <div className="space-y-4 text-sm">
+              <p>Limite: {d.data.campaign.recipient_limit} · Elegíveis: {d.data.campaign.eligible_total} · Enfileirados: {d.data.campaign.queued_push} Push / {d.data.campaign.queued_email} Email · Ignorados: {d.data.byStatus.skipped ?? 0}</p>
               <div className="bg-secondary rounded-lg p-3"><p className="font-semibold">{d.data.campaign.title}</p><p className="text-muted-foreground">{d.data.campaign.body}</p></div>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">Enviados</p><p className="font-display text-xl">{d.data.byStatus.sent ?? 0}</p></div>
@@ -429,10 +440,10 @@ function History() {
               )}
               {d.data.products.length > 0 && (
                 <div><p className="font-medium mb-1">Produtos ({d.data.products.length})</p>
-                  <ul className="text-muted-foreground">{d.data.products.map((p) => <li key={p!.id}>{p!.title} · <span className="text-gold">{formatMZN(Number(p!.base_price))}</span></li>)}</ul></div>
+                  <ul className="text-muted-foreground">{d.data.products.map((p) => p ? <li key={p.id}>{p.title} · <span className="text-gold">{formatMZN(Number(p.base_price))}</span></li> : null)}</ul></div>
               )}
               {(d.data.byStatus.pending ?? 0) > 0 && ["queued", "sending"].includes(d.data.campaign.status) && (
-                <Button variant="destructive" onClick={() => cancel(d.data!.campaign.id)}>Cancelar envios pendentes</Button>
+                <Button variant="destructive" onClick={() => { if (d.data) void cancel(d.data.campaign.id); }}>Cancelar envios pendentes</Button>
               )}
             </div>
           )}

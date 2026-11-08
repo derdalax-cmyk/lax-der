@@ -1,5 +1,5 @@
 import { sendPushToUser } from "./push.server";
-import { campaignLink, type CampaignType } from "./campaigns";
+import { campaignDispatchKey, campaignLink, mayRetryCampaign, type CampaignType } from "./campaigns";
 
 const BATCH = 80;
 
@@ -29,17 +29,31 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
     else {
       const ids = (prods ?? []).filter((p) => p.campaign_id === c.id).map((p) => p.product_id);
       try {
+        // Recheck preferences/subscription after queueing. Failure here has not dispatched anything.
+        const { data: eligible, error: eligibilityError } = await supabaseAdmin.rpc("admin_campaign_push_eligible", { _user_id: r.user_id });
+        if (eligibilityError) throw new Error("eligibility_failed");
+        if (!eligible) {
+          await supabaseAdmin.from("admin_campaign_recipients").update({ status: "skipped", error_code: "ineligible", updated_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing");
+          return;
+        }
+        // Durable at-most-once dispatch gate: never retry a potentially accepted network send.
+        const { data: gate, error: gateError } = await supabaseAdmin.from("admin_campaign_recipients")
+          .update({ dispatch_started_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing")
+          .is("dispatch_started_at", null).select("id").maybeSingle();
+        if (gateError) throw new Error("dispatch_gate_failed");
+        if (!gate) return;
         const res = await sendPushToUser(r.user_id, {
-          title: c.title, body: c.body, tag: `campaign-${c.id}`,
+          title: c.title, body: c.body, tag: campaignDispatchKey(c.id, r.user_id, "push"),
           url: campaignLink(c.type as CampaignType, c.id, ids, c.cta_url),
           image: c.image_url ?? undefined,
         });
         if (res.total === 0 || (res.sent === 0 && res.removed === res.total)) { status = "skipped"; code = "no_subscription"; }
         else if (res.sent > 0) status = "sent";
         else code = "push_rejected";
-      } catch { code = "push_error"; }
-      // Transient failures go back to pending for a limited retry (max 3 attempts).
-      if (status === "failed" && r.attempts < 3 && code !== "campaign_missing") {
+      } catch { code = "delivery_unknown"; }
+      // Retry only pre-dispatch failures; ambiguous delivery is terminal, prioritising no duplicates.
+      const { data: delivery } = await supabaseAdmin.from("admin_campaign_recipients").select("dispatch_started_at").eq("id", r.id).maybeSingle();
+      if (status === "failed" && delivery && mayRetryCampaign(r.attempts, delivery.dispatch_started_at)) {
         await supabaseAdmin.from("admin_campaign_recipients").update({ status: "pending", error_code: code, updated_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing");
         return;
       }

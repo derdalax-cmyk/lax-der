@@ -12,7 +12,7 @@ import {
 } from "@/lib/admin-security.functions";
 
 export const Route = createFileRoute("/admin/seguranca")({
-  head: () => ({ meta: [{ title: "Segurança do administrador · DERDALAX" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Segurança do administrador · Derdalax" }, { name: "robots", content: "noindex" }] }),
   component: AdminSecurity,
 });
 

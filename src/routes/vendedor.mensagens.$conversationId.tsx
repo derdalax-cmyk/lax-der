@@ -5,7 +5,7 @@ import { ChatAvatar, ContextBadge } from "@/components/chat/ConversationList";
 import { ConversationThread } from "@/components/chat/ConversationThread";
 
 export const Route = createFileRoute("/vendedor/mensagens/$conversationId")({
-  head: () => ({ meta: [{ title: "Conversa · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Conversa · Derdalax" }] }),
   component: SellerConversationPage,
 });
 

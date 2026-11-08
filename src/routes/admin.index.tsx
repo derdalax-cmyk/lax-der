@@ -54,7 +54,7 @@ function AdminHome() {
   return (
     <div>
       <h1 className="font-display text-3xl mb-1">Dashboard</h1>
-      <p className="text-muted-foreground mb-6">Visão em tempo real da DERDALAX.</p>
+      <p className="text-muted-foreground mb-6">Visão em tempo real da Derdalax.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <KpiCard

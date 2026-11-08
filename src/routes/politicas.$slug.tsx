@@ -5,8 +5,8 @@ import { POLICIES, type Policy } from "@/lib/policies";
 export const Route = createFileRoute("/politicas/$slug")({
   head: ({ params }) => {
     const p = POLICIES.find((x) => x.slug === params.slug);
-    const title = p ? `${p.title} · DERDALAX` : "Políticas · DERDALAX";
-    const description = p?.short ?? "Políticas da DERDALAX";
+    const title = p ? `${p.title} · Derdalax` : "Políticas · Derdalax";
+    const description = p?.short ?? "Políticas da Derdalax";
     return {
       meta: [
         { title },

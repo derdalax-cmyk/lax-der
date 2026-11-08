@@ -8,9 +8,9 @@ interface MagicLinkEmailProps {
 
 export const MagicLinkEmail = ({ confirmationUrl }: MagicLinkEmailProps) => (
   <BrandLayout
-    preview="O seu link de acesso à DERDALAX"
+    preview="O seu link de acesso à Derdalax"
     title="Entrar na sua conta"
-    intro="Toque no botão abaixo para entrar na sua conta DERDALAX. Este link é pessoal e expira em breve."
+    intro="Toque no botão abaixo para entrar na sua conta Derdalax. Este link é pessoal e expira em breve."
     ctaLabel="Entrar agora"
     ctaUrl={confirmationUrl}
     outro="Se não foi você que solicitou este acesso, pode ignorar este email."

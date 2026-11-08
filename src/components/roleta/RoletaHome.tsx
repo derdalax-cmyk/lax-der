@@ -50,7 +50,7 @@ export function RoletaHome() {
           <DialogContent onFocusOutside={(e) => e.preventDefault()} className="bg-ink text-primary-foreground border-gold/50 w-[84vw] max-w-[340px] sm:w-full sm:max-w-md rounded-lg p-4 sm:p-6 gap-3 sm:gap-4 max-h-[calc(100dvh-40px)] overflow-y-auto">
             <div className="text-center space-y-1">
               <Gift aria-hidden="true" className="mx-auto mb-2 h-8 w-8 sm:h-10 sm:w-10 text-gold" />
-              <p className="text-xs uppercase tracking-[0.3em] text-gold">Roleta DERDALAX</p>
+              <p className="text-xs tracking-[0.3em] text-gold">Roleta Derdalax</p>
               <DialogTitle className="font-display text-xl sm:text-3xl leading-snug text-primary-foreground">Ganhe até <span className="text-gold">{campaign.max_percent}%</span> de desconto</DialogTitle>
               <DialogDescription className="text-primary-foreground/70 text-xs sm:text-sm">Desbloqueie com um código de 5 caracteres ou convidando 5 amigos.</DialogDescription>
             </div>

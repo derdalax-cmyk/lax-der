@@ -225,6 +225,13 @@
       "when": 1794169699112,
       "tag": "0031_category_facets",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1794171697468,
+      "tag": "0032_bounded_campaign_delivery",
+      "breakpoints": true
     }
   ]
 }

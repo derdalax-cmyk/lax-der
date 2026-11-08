@@ -5,7 +5,7 @@ import { ConversationList } from "@/components/chat/ConversationList";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/vendedor/mensagens")({
-  head: () => ({ meta: [{ title: "Mensagens da loja · DERDALAX" }, { name: "description", content: "Conversas da sua loja com clientes na DERDALAX." }] }),
+  head: () => ({ meta: [{ title: "Mensagens da loja · Derdalax" }, { name: "description", content: "Conversas da sua loja com clientes na Derdalax." }] }),
   component: SellerMessagesLayout,
 });
 

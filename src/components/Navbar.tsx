@@ -23,7 +23,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex min-w-0 items-center gap-6">
             <Link to="/" className="font-display text-base sm:text-2xl font-bold tracking-wider text-gold">
-              DERDALAX
+              Derdalax
             </Link>
             <CitySelector className="hidden sm:inline-flex" />
           </div>

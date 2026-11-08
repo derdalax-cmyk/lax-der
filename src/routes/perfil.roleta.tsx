@@ -5,10 +5,10 @@ import { RoletaPanel } from "@/components/roleta/RoletaPanel";
 
 export const Route = createFileRoute("/perfil/roleta")({
   head: () => ({ meta: [
-    { title: "Roleta de Descontos · DERDALAX" },
-    { name: "description", content: "Desbloqueie a Roleta DERDALAX com um código ou convidando amigos e ganhe desconto." },
-    { property: "og:title", content: "Roleta de Descontos · DERDALAX" },
-    { property: "og:description", content: "Desbloqueie a Roleta DERDALAX e ganhe desconto." },
+    { title: "Roleta de Descontos · Derdalax" },
+    { name: "description", content: "Desbloqueie a Roleta Derdalax com um código ou convidando amigos e ganhe desconto." },
+    { property: "og:title", content: "Roleta de Descontos · Derdalax" },
+    { property: "og:description", content: "Desbloqueie a Roleta Derdalax e ganhe desconto." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -30,7 +30,7 @@ function RoletaPage() {
       <Link to="/perfil" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"><ChevronLeft className="w-4 h-4" /> Perfil</Link>
       <div className="rounded-2xl bg-ink text-white border border-gold/50 p-5 space-y-5">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold">Roleta DERDALAX</p>
+          <p className="text-xs tracking-[0.3em] text-gold">Roleta Derdalax</p>
           <h1 className="font-display text-3xl">{campaign ? <>Ganhe até <span className="text-gold">{campaign.max_percent}%</span> de desconto</> : "Roleta de Descontos"}</h1>
           {campaign && <p className="text-sm text-white/60 mt-1">{campaign.name}</p>}
         </div>

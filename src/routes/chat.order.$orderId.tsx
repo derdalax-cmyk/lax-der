@@ -9,7 +9,7 @@ export const Route = createFileRoute("/chat/order/$orderId")({
   validateSearch: (search: Record<string, unknown>): { seller?: string } => ({
     seller: typeof search.seller === "string" ? search.seller : undefined,
   }),
-  head: () => ({ meta: [{ title: "Chat do pedido · DERDALAX" }] }),
+  head: () => ({ meta: [{ title: "Chat do pedido · Derdalax" }] }),
   component: OrderChatRedirect,
 });
 

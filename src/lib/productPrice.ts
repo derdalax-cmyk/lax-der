@@ -20,7 +20,7 @@ export function getProductDiscount(
   };
 }
 
-/* ---------------- Roleta DERDALAX ----------------
+/* ---------------- Roleta Derdalax ----------------
  * Mirrors public.roleta_apply_to_order on the server (server is the source of truth).
  * Roleta % applies to the reference price (original_price when the unit is the
  * base price and a valid promotion exists, otherwise the unit price), capped by

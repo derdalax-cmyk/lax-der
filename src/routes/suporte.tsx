@@ -6,10 +6,10 @@ import { FloatingSupportChat } from "@/components/FloatingSupportChat";
 export const Route = createFileRoute("/suporte")({
   head: () => ({
     meta: [
-      { title: "Suporte · DERDALAX" },
+      { title: "Suporte · Derdalax" },
       {
         name: "description",
-        content: "Apoio ao cliente DERDALAX: chat direto com a equipa, perguntas frequentes e contactos.",
+        content: "Apoio ao cliente Derdalax: chat direto com a equipa, perguntas frequentes e contactos.",
       },
     ],
   }),

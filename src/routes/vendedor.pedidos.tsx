@@ -306,7 +306,7 @@ function OrderDetailContent({ order, saving, onUpdate }: { order: SellerOrder; s
                     {it.roleta_percent ? (
                       <>
                         <span className="block text-xs text-muted-foreground">Preço normal: {mzn(Number(it.price_before_roleta) * it.quantity)}</span>
-                        <span className="block text-xs text-gold">Roleta DERDALAX -{it.roleta_percent}%: -{mzn(Number(it.roleta_discount))}</span>
+                        <span className="block text-xs text-gold">Roleta Derdalax -{it.roleta_percent}%: -{mzn(Number(it.roleta_discount))}</span>
                         <span className="block">{mzn(it.price * it.quantity)}</span>
                       </>
                     ) : mzn(it.price * it.quantity)}

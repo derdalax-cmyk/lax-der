@@ -85,10 +85,10 @@ export function InstallAppPrompt() {
       <div className="mx-auto max-w-md pointer-events-auto rounded-2xl border border-gold/30 bg-ink text-white shadow-elegant overflow-hidden">
         <div className="flex items-center gap-3 p-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold font-display text-2xl overflow-hidden">
-            <img src={brandIcon192.url} alt="DERDALAX" className="h-full w-full object-cover" />
+            <img src={brandIcon192.url} alt="Derdalax" className="h-full w-full object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-display text-sm leading-tight">Instalar app DERDALAX</p>
+            <p className="font-display text-sm leading-tight">Instalar app Derdalax</p>
             <p className="text-xs text-white/60 truncate">
               {expanded ? "Toque em Instalar para adicionar ao ecrã inicial." : "Mais rápido, offline e com notificações."}
             </p>

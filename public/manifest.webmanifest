@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "DERDALAX · Moda com história",
-  "short_name": "DERDALAX",
+  "name": "Derdalax · Moda com história",
+  "short_name": "Derdalax",
   "description": "Loja de moda em Moçambique. Peças únicas e coleções selecionadas.",
   "start_url": "/",
   "scope": "/",
@@ -62,7 +62,7 @@
       ]
     },
     {
-      "name": "Vender na DERDALAX",
+      "name": "Vender na Derdalax",
       "short_name": "Vender",
       "description": "Criar ou gerir a sua loja",
       "url": "/tornar-se-vendedor",
@@ -94,7 +94,7 @@
       "sizes": "1080x1920",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Página inicial da DERDALAX"
+      "label": "Página inicial da Derdalax"
     },
     {
       "src": "/screenshot-explorar.png",
@@ -108,7 +108,7 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "DERDALAX no computador"
+      "label": "Derdalax no computador"
     }
   ],
   "display_override": [

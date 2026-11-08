@@ -23,10 +23,10 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/produtos")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({ meta: [
-    { title: "Produtos · DERDALAX" },
-    { name: "description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
-    { property: "og:title", content: "Produtos · DERDALAX" },
-    { property: "og:description", content: "Explore a coleção DERDALAX — peças únicas e selecionadas." },
+    { title: "Produtos · Derdalax" },
+    { name: "description", content: "Explore a coleção Derdalax — peças únicas e selecionadas." },
+    { property: "og:title", content: "Produtos · Derdalax" },
+    { property: "og:description", content: "Explore a coleção Derdalax — peças únicas e selecionadas." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ]}),

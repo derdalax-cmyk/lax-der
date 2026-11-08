@@ -37,7 +37,7 @@ import facebookAsset from "@/assets/facebook.png.asset.json";
 import instagramAsset from "@/assets/instagram.png.asset.json";
 
 export const Route = createFileRoute("/perfil/")({
-  head: () => ({ meta: [{ title: "Perfil · DERDALAX" }, { name: "description", content: "O seu perfil." }] }),
+  head: () => ({ meta: [{ title: "Perfil · Derdalax" }, { name: "description", content: "O seu perfil." }] }),
   component: Perfil,
 });
 
@@ -278,9 +278,9 @@ function Perfil() {
         </Link>
       </div>
 
-      {/* Sobre a DERDALAX */}
+      {/* Sobre a Derdalax */}
       <div className="bg-card border border-border rounded-2xl mt-4 p-4 sm:p-6 shadow-sm space-y-2.5">
-        <h2 className="font-display text-base font-semibold mb-1">Sobre a DERDALAX</h2>
+        <h2 className="font-display text-base font-semibold mb-1">Sobre a Derdalax</h2>
         <PushSettingsRow />
 
         <Link
@@ -293,7 +293,7 @@ function Perfil() {
             </span>
             <span className="text-left">
               <span className="block font-medium leading-tight">Políticas</span>
-              <span className="block text-xs text-muted-foreground mt-0.5">Ver todas as políticas da DERDALAX</span>
+              <span className="block text-xs text-muted-foreground mt-0.5">Ver todas as políticas da Derdalax</span>
             </span>
           </span>
           <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />

@@ -8,7 +8,7 @@ import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin · DERDALAX" }, { name: "description", content: "Painel administrativo." }] }),
+  head: () => ({ meta: [{ title: "Admin · Derdalax" }, { name: "description", content: "Painel administrativo." }] }),
   component: AdminLayout,
 });
 
@@ -70,7 +70,7 @@ function AdminLayout() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[74vw] max-w-sm p-0 flex flex-col">
               <SheetHeader className="px-5 py-4 border-b border-border shrink-0">
-                <SheetTitle className="font-display text-lg tracking-[0.2em] text-gold text-left">DERDALAX</SheetTitle>
+                <SheetTitle className="font-display text-lg tracking-[0.2em] text-gold text-left">Derdalax</SheetTitle>
                 <p className="text-xs text-muted-foreground text-left">Painel administrativo</p>
               </SheetHeader>
               <nav className="flex-1 overflow-y-auto py-1">
@@ -98,7 +98,7 @@ function AdminLayout() {
               </nav>
             </SheetContent>
           </Sheet>
-          <Link to="/admin" className="font-display text-lg tracking-[0.2em] text-gold">DERDALAX</Link>
+          <Link to="/admin" className="font-display text-lg tracking-[0.2em] text-gold">Derdalax</Link>
           <div className="ml-auto">
             <NotificationBell />
           </div>

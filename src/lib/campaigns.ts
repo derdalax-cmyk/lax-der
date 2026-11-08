@@ -3,6 +3,24 @@ export const MAX_CAMPAIGN_PRODUCTS = 15;
 export const PUSH_TITLE_MAX = 65;
 export const PUSH_BODY_MAX = 180;
 export const LARGE_CAMPAIGN_THRESHOLD = 500;
+export const CAMPAIGN_LIMITS = [50, 75, 100] as const;
+export type CampaignLimit = typeof CAMPAIGN_LIMITS[number];
+export function campaignRecipientLimit(value: unknown = 50): CampaignLimit {
+  if (value === 50 || value === 75 || value === 100) return value;
+  throw new Error("Escolha um limite de 50, 75 ou 100 destinatários.");
+}
+export function campaignQueueCount(available: number, limit: CampaignLimit): number {
+  return Math.min(Math.max(0, available), campaignRecipientLimit(limit));
+}
+export function deterministicRecipients(ids: string[], limit: CampaignLimit): string[] {
+  return [...new Set(ids)].sort().slice(0, campaignRecipientLimit(limit));
+}
+export function campaignDispatchKey(campaignId: string, userId: string, channel: string) {
+  return `${campaignId}:${userId}:${channel}`;
+}
+export function mayRetryCampaign(attempts: number, dispatchStarted: string | null): boolean {
+  return attempts < 3 && dispatchStarted === null;
+}
 
 export type Segment = "incomplete" | "all" | "push" | "email";
 export type CampaignType = "message" | "profile_recovery" | "products";
@@ -16,8 +34,8 @@ export type AudienceFilters = {
 };
 
 export const PROFILE_RECOVERY_DEFAULTS = {
-  title: "Complete o seu perfil na DERDALAX",
-  body: "Notámos que ainda faltam alguns dados no seu perfil. Complete-os para aproveitar melhor a DERDALAX.",
+  title: "Complete o seu perfil na Derdalax",
+  body: "Notámos que ainda faltam alguns dados no seu perfil. Complete-os para aproveitar melhor a Derdalax.",
   cta: "Completar perfil",
   url: "/perfil",
 };
@@ -36,7 +54,7 @@ export function missingProfileFields(p: ProfileLike): string[] {
 
 const ALLOWED_HOSTS = new Set(["derdalax.co.mz", "www.derdalax.co.mz"]);
 
-/** Internal paths or HTTPS links on the official DERDALAX domain only. Returns a normalized path/URL or null. */
+/** Internal paths or HTTPS links on the official Derdalax domain only. Returns a normalized path/URL or null. */
 export function safeCampaignLink(raw: string): string | null {
   const v = raw.trim();
   if (/^\/(?!\/)[A-Za-z0-9\-_/?.=&%#]*$/.test(v)) return v;

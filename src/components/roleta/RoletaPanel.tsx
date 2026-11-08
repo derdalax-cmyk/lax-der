@@ -150,7 +150,7 @@ export function RoletaPanel({ onSpun }: { onSpun?: () => void }) {
             <Input readOnly value={link} className="text-xs text-foreground bg-background" />
             <Button variant="outline" size="icon" className="text-ink bg-background" aria-label="Copiar link" onClick={() => { navigator.clipboard.writeText(link); toast.success("Link copiado"); }}><Copy className="w-4 h-4 !text-ink" /></Button>
             {typeof navigator !== "undefined" && "share" in navigator && (
-              <Button variant="outline" size="icon" className="text-ink bg-background" aria-label="Partilhar" onClick={() => navigator.share({ title: "DERDALAX", text: "Crie conta na DERDALAX com o meu link", url: link }).catch(() => {})}><Share2 className="w-4 h-4 !text-ink" /></Button>
+              <Button variant="outline" size="icon" className="text-ink bg-background" aria-label="Partilhar" onClick={() => navigator.share({ title: "Derdalax", text: "Crie conta na Derdalax com o meu link", url: link }).catch(() => {})}><Share2 className="w-4 h-4 !text-ink" /></Button>
             )}
           </div>
           <p className="text-xs text-muted-foreground">Conta apenas quando uma pessoa nova cria conta pelo seu link.</p>

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/perfil/pedidos")({
     novo: typeof search.novo === "string" ? search.novo : undefined,
   }),
   head: () => ({ meta: [
-    { title: "Os meus pedidos · DERDALAX" },
+    { title: "Os meus pedidos · Derdalax" },
     { name: "description", content: "Acompanhe as suas compras e converse com cada loja." },
   ] }),
   component: OrdersHistoryPage,
@@ -162,7 +162,7 @@ function OrdersHistoryPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="font-display text-2xl">Acompanhe os seus pedidos</DialogTitle>
-            <DialogDescription>Aqui está o histórico de todas as suas compras na DERDALAX.</DialogDescription>
+            <DialogDescription>Aqui está o histórico de todas as suas compras na Derdalax.</DialogDescription>
           </DialogHeader>
           <div className="text-sm space-y-3">
             <p>Em cada pedido, pode:</p>
