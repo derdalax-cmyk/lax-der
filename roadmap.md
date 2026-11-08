@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Persistir apenas catálogo público com TTL, limites e recuperação segura de quota.
+- [ ] Migrar cache offline para worker gerado, preservar push e excluir dados privados.
+- [ ] Validar reabertura, retorno, revalidação, segurança e falhas de armazenamento.
+
 - [x] Restaurar seleção lateral e produtos em Categorias; mover Ver tudo para o fim da faixa e compactar espaços Home (testes visuais com dados isolados; dados reais indisponíveis).
 
 - [x] Compactar popup Roleta, melhorar interação dos banners, espaços Home e navegação mobile; atualizar fontes.
