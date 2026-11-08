@@ -182,6 +182,7 @@ export type Database = {
           attempts: number
           campaign_id: string
           channel: string
+          dispatch_started_at: string | null
           error_code: string | null
           id: string
           sent_at: string | null
@@ -193,6 +194,7 @@ export type Database = {
           attempts?: number
           campaign_id: string
           channel: string
+          dispatch_started_at?: string | null
           error_code?: string | null
           id?: string
           sent_at?: string | null
@@ -204,6 +206,7 @@ export type Database = {
           attempts?: number
           campaign_id?: string
           channel?: string
+          dispatch_started_at?: string | null
           error_code?: string | null
           id?: string
           sent_at?: string | null
@@ -247,6 +250,7 @@ export type Database = {
           created_by: string
           cta_label: string | null
           cta_url: string
+          eligible_total: number
           estimated_email: number
           estimated_push: number
           failed_email: number
@@ -254,6 +258,9 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          queued_email: number
+          queued_push: number
+          recipient_limit: number
           sent_email: number
           sent_push: number
           started_at: string | null
@@ -271,6 +278,7 @@ export type Database = {
           created_by: string
           cta_label?: string | null
           cta_url?: string
+          eligible_total?: number
           estimated_email?: number
           estimated_push?: number
           failed_email?: number
@@ -278,6 +286,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          queued_email?: number
+          queued_push?: number
+          recipient_limit?: number
           sent_email?: number
           sent_push?: number
           started_at?: string | null
@@ -295,6 +306,7 @@ export type Database = {
           created_by?: string
           cta_label?: string | null
           cta_url?: string
+          eligible_total?: number
           estimated_email?: number
           estimated_push?: number
           failed_email?: number
@@ -302,6 +314,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          queued_email?: number
+          queued_push?: number
+          recipient_limit?: number
           sent_email?: number
           sent_push?: number
           started_at?: string | null
@@ -2282,6 +2297,10 @@ export type Database = {
       admin_campaign_estimate: {
         Args: { _filters: Json; _segment: string }
         Returns: Json
+      }
+      admin_campaign_push_eligible: {
+        Args: { _user_id: string }
+        Returns: boolean
       }
       admin_campaign_refresh: {
         Args: { _campaign_id: string }
