@@ -17,6 +17,11 @@ export function isPublicQueryKey(key: QueryKey): boolean {
   if (key[0] === "product-feed") {
     if (key.length !== 2 || !key[1] || typeof key[1] !== "object") return false;
     if (Object.keys(key[1]).some(k => !["search", "category", "city", "gender", "minPrice", "maxPrice", "explore"].includes(k))) return false;
+    const filters = key[1] as Record<string, unknown>;
+    if (typeof filters.search !== "string" || typeof filters.category !== "string" || filters.city != null && typeof filters.city !== "string") return false;
+    if (filters.explore) {
+      if (typeof filters.explore !== "object" || Object.entries(filters.explore).some(([k, v]) => !/^_(search|categories|gender|min|max|discount|available|unique|sizes|colors|seller)$/.test(k) || v !== null && !["string", "boolean", "number"].includes(typeof v) && !(Array.isArray(v) && v.every(item => typeof item === "string")))) return false;
+    }
   }
   // Keys are filters, never arbitrary session/security objects.
   return !/token|authorization|password|session|email|phone|address|user_id/i.test(JSON.stringify(key));

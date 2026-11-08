@@ -1,4 +1,4 @@
-import { dehydrate, hydrate, type DehydratedState, type QueryClient } from "@tanstack/react-query";
+import { dehydrate, hydrate, hashKey, type DehydratedState, type QueryClient } from "@tanstack/react-query";
 import { createStore, get, set, del } from "idb-keyval";
 import { isListRestoring } from "./listContext";
 import { isPublicQueryKey, projectPublicData, PUBLIC_CACHE_VERSION, PUBLIC_FRESH_MS, PUBLIC_MAX_AGE_MS, PUBLIC_QUERY_LIMIT, PUBLIC_QUERY_BYTES, PUBLIC_TOTAL_BYTES, PUBLIC_KEYS, catalogueRetry } from "./publicCachePolicy";
@@ -13,7 +13,7 @@ export function compactPublicCache(state: DehydratedState, now = Date.now()): Sa
       const data = projectPublicData(q.queryKey, q.state.data);
       if (data === undefined) return [];
       // No query meta, error objects, promises or mutation state are serialized.
-      const clean = { queryKey: q.queryKey, queryHash: q.queryHash, state: { data, dataUpdatedAt: q.state.dataUpdatedAt, dataUpdateCount: 1, error: null, errorUpdatedAt: 0, errorUpdateCount: 0, fetchFailureCount: 0, fetchFailureReason: null, fetchMeta: null, isInvalidated: q.state.isInvalidated, status: "success" as const, fetchStatus: "idle" as const } };
+      const clean = { queryKey: q.queryKey, queryHash: hashKey(q.queryKey), state: { data, dataUpdatedAt: q.state.dataUpdatedAt, dataUpdateCount: 1, error: null, errorUpdatedAt: 0, errorUpdateCount: 0, fetchFailureCount: 0, fetchFailureReason: null, fetchMeta: null, isInvalidated: q.state.isInvalidated, status: "success" as const, fetchStatus: "idle" as const } };
       const size = JSON.stringify(clean).length * 2;
       if (size > PUBLIC_QUERY_BYTES || bytes + size > PUBLIC_TOTAL_BYTES) return [];
       bytes += size;
