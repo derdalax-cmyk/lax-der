@@ -13,7 +13,6 @@ const SETTLE_MS = 800;
 
 /** Captures product-card clicks and restores the list around the same product after history back. */
 export function ListContextRestorer() {
-  const href = useRouterState({ select: (s) => s.location.href });
   const client = useQueryClient();
   const router = useRouter();
 
@@ -91,9 +90,22 @@ export function ListContextRestorer() {
 
   // Restore: only after a history traversal (browser back, gesture, internal history.back()).
   useEffect(() => {
-    const onPop = () => { popped = true; setListRestoring(listContextKey(window.location.pathname, window.location.search)); };
+    let stop: (() => void) | undefined;
+    let frame = 0;
+    const onPop = () => {
+      stop?.();
+      cancelAnimationFrame(frame);
+      const key = listContextKey(window.location.pathname, window.location.search);
+      const snap = loadSnapshot(key);
+      if (!snap || !pendingBack.has(key) && snap.session !== listSessionId()) { setListRestoring(null); return; }
+      setListRestoring(key);
+      pendingBack.delete(key);
+      // URL canonicalisation can cause multiple route commits; it must not cancel
+      // the history restoration before the destination masonry has mounted.
+      frame = requestAnimationFrame(() => { stop = restore(key, snap.anchorProductId, snap.anchorOffset, snap.batches); });
+    };
     window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+    return () => { stop?.(); cancelAnimationFrame(frame); window.removeEventListener("popstate", onPop); };
   }, []);
 
   useEffect(() => {
@@ -109,20 +121,9 @@ export function ListContextRestorer() {
     return () => { stop?.(); window.removeEventListener("dx:catalogue-revalidated", updated); };
   }, []);
 
-  useEffect(() => {
-    if (!popped) return;
-    popped = false;
-    const key = listContextKey(window.location.pathname, window.location.search);
-    const snap = loadSnapshot(key);
-    if (!snap || !pendingBack.has(key) && snap.session !== listSessionId()) { setListRestoring(null); return; }
-    pendingBack.delete(key);
-    return restore(key, snap.anchorProductId, snap.anchorOffset, snap.batches);
-  }, [href]);
-
   return null;
 }
 
-let popped = false;
 const pendingBack = new Set<string>();
 
 function restore(key: string, anchorId: string, offset: number, savedBatches: number): () => void {
