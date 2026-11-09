@@ -31,18 +31,19 @@ import { toast } from "sonner";
 import { RoletaFloatingButton } from "@/components/roleta/RoletaFloatingButton";
 import { isValidMzMobile, toMzE164, mzNationalPart, MZ_PHONE_ERROR, sanitizeMzPhoneInput } from "@/lib/validation";
 import { isMzProvince } from "@/lib/locations";
+import { missingProfileFields } from "@/lib/profileCompletion";
 import coverAsset from "@/assets/profile-cover.jpg.asset.json";
 import whatsappAsset from "@/assets/whatsapp.png.asset.json";
 import facebookAsset from "@/assets/facebook.png.asset.json";
 import instagramAsset from "@/assets/instagram.png.asset.json";
 
 export const Route = createFileRoute("/perfil/")({
-  head: () => ({ meta: [{ title: "Perfil · Derdalax" }, { name: "description", content: "O seu perfil." }] }),
+  head: () => ({ meta: [{ title: "Perfil · Derdalax" }, { name: "description", content: "Gerir os seus dados pessoais e preferências na Derdalax." }, { property: "og:title", content: "Perfil · Derdalax" }, { property: "og:description", content: "Gerir os seus dados pessoais e preferências na Derdalax." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Perfil,
 });
 
 function Perfil() {
-  const { user, profile, isAdmin, loading, signOut, refreshProfile } = useAuth();
+  const { user, profile, isAdmin, loading, signOut, refreshProfile, needsProfileCompletion } = useAuth();
   const { campaign: roletaPublicCampaign, mine: roletaMine, activeReward: roletaReward } = useRoleta();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
@@ -61,7 +62,8 @@ function Perfil() {
     queryKey: ["my-profile-extra", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("is_vip, created_at").eq("id", user!.id).maybeSingle();
+      if (!user) return null;
+      const { data } = await supabase.from("profiles").select("is_vip, created_at").eq("id", user.id).maybeSingle();
       return data;
     },
   });
@@ -203,6 +205,11 @@ function Perfil() {
           )}
         </div>
 
+        {needsProfileCompletion && profile && <div className="mb-4 border-l-2 border-destructive pl-3 text-sm" role="status">
+          <p className="font-semibold text-destructive">Perfil incompleto</p>
+          <p className="text-muted-foreground">Preencha os dados em falta para aproveitar melhor a Derdalax.</p>
+          <p className="mt-1 text-destructive">Em falta: {missingProfileFields(profile).join(", ")}.</p>
+        </div>}
         {editing ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">

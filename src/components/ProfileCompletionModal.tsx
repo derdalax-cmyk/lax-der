@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,15 +10,21 @@ import { toast } from "sonner";
 import { ProvinceCityFields } from "@/components/ProvinceCityFields";
 import { isValidMzMobile, toMzE164, mzNationalPart, MZ_PHONE_ERROR, sanitizeMzPhoneInput } from "@/lib/validation";
 import { isMzProvince } from "@/lib/locations";
+import { shouldPromptProfile } from "@/lib/profileCompletion";
+import { dismissProfileCompletion } from "@/lib/profileCompletion.functions";
 
 export function ProfileCompletionModal() {
   const { user, profile, needsProfileCompletion, refreshProfile } = useAuth();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const prompted = useRef(new Set<string>());
+  const dismiss = useServerFn(dismissProfileCompletion);
   const [form, setForm] = useState({ name: "", phone: "", city: "", province: "" });
 
   useEffect(() => {
-    if (needsProfileCompletion && profile) {
+    if (!needsProfileCompletion) { setOpen(false); return; }
+    if (user && profile && !prompted.current.has(user.id) && shouldPromptProfile(profile)) {
+      prompted.current.add(user.id);
       setForm({
         name: profile.name || "",
         phone: mzNationalPart(profile.phone),
@@ -25,15 +32,20 @@ export function ProfileCompletionModal() {
         province: profile.province || "",
       });
       setOpen(true);
-    } else {
-      setOpen(false);
     }
-  }, [needsProfileCompletion, profile]);
+  }, [needsProfileCompletion, profile, user]);
+
+  const close = () => {
+    setOpen(false);
+    void dismiss().then(() => refreshProfile()).catch((error: unknown) => {
+      toast.error(error instanceof Error ? error.message : "Não foi possível guardar o adiamento.");
+    });
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    if (!form.name || !form.phone || !form.city) {
+    if (!form.name.trim() || !form.phone || !form.city.trim()) {
       toast.error("Preencha todos os campos.");
       return;
     }
@@ -41,7 +53,7 @@ export function ProfileCompletionModal() {
     if (!isMzProvince(form.province)) { toast.error("Selecione a província."); return; }
     setSaving(true);
     const { error } = await supabase.from("profiles").update({
-      name: form.name,
+      name: form.name.trim(),
       phone: toMzE164(form.phone),
       province: form.province,
       city: form.city.trim(),
@@ -53,12 +65,12 @@ export function ProfileCompletionModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => { /* obrigatório */ }}>
-      <DialogContent className="max-w-md" onPointerDownOutside={(e) => e.preventDefault()} onEscapeKeyDown={(e) => e.preventDefault()}>
+    <Dialog open={open} onOpenChange={(value) => { if (!value) close(); }}>
+      <DialogContent className="max-w-md w-[calc(100%-2rem)] max-h-[85dvh] overflow-y-auto rounded-lg p-4 sm:p-6" onCloseAutoFocus={(event) => event.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Complete o seu perfil</DialogTitle>
           <DialogDescription>
-            Precisamos destes dados para podermos entregar a si. Pode editá-los depois no perfil.
+            Adicione os seus dados para facilitar compras, entregas e atendimento. Pode fazer isso agora ou mais tarde.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
@@ -75,6 +87,7 @@ export function ProfileCompletionModal() {
           <Button type="submit" className="w-full bg-gold text-ink hover:bg-gold/90" disabled={saving}>
             {saving ? "A guardar..." : "Guardar e continuar"}
           </Button>
+          <Button type="button" variant="outline" className="w-full" onClick={close}>Agora não</Button>
         </form>
       </DialogContent>
     </Dialog>

@@ -3,6 +3,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { endAdminSession } from "@/lib/admin-security.functions";
+import { missingProfileFields } from "@/lib/profileCompletion";
 
 type Profile = {
   id: string;
@@ -11,6 +12,8 @@ type Profile = {
   phone: string | null;
   city: string | null;
   province?: string | null;
+  profile_completion_dismissed_at?: string | null;
+  profile_completion_reminder_sent_at?: string | null;
   avatar_url: string | null;
 };
 
@@ -72,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const needsProfileCompletion = !!user && !!profile && (!profile.city || !profile.phone || !profile.name);
+  const needsProfileCompletion = !!user && !!profile && missingProfileFields(profile).length > 0;
 
   return (
     <Ctx.Provider value={{
