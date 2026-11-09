@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Tornar conclusão de perfil opcional, persistir dispensa e ciclo, lembrar após 30 minutos com consentimento, indicar campos em falta e validar.
+- [x] Tornar conclusão de perfil opcional, persistir dispensa e ciclo, lembrar após 30 minutos com consentimento, indicar campos em falta (validação em curso).
 
 - [x] Limitar campanhas Push a 50/75/100, rever elegibilidade, fila, testes e histórico (sem envio real; Admin mantém verificação).
 - [x] Atualizar marca textual visível para Derdalax sem renomear identificadores.
