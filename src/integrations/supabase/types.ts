@@ -185,6 +185,7 @@ export type Database = {
           dispatch_started_at: string | null
           error_code: string | null
           id: string
+          retry_after: string | null
           sent_at: string | null
           status: string
           updated_at: string
@@ -197,6 +198,7 @@ export type Database = {
           dispatch_started_at?: string | null
           error_code?: string | null
           id?: string
+          retry_after?: string | null
           sent_at?: string | null
           status?: string
           updated_at?: string
@@ -209,6 +211,7 @@ export type Database = {
           dispatch_started_at?: string | null
           error_code?: string | null
           id?: string
+          retry_after?: string | null
           sent_at?: string | null
           status?: string
           updated_at?: string

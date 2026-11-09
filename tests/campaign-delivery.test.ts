@@ -8,6 +8,7 @@ let sends = 0;
 let channel = "push";
 let userEmail: string | null = "ana@mail.co.mz";
 let emailOk = true;
+let emailQueue: { ok: boolean; status: number; errorName?: string; retryAfter?: number }[] = [];
 let result = { sent: 1, total: 1, removed: 0 };
 const db = {
   rpc: async (name: string) => ({ data: name === "admin_campaign_claim" ? [{ id: "r", campaign_id: "c", user_id: "u", channel, attempts: 1 }] : (name === "admin_campaign_push_eligible" || name === "admin_campaign_email_eligible") ? eligible : null, error: null }),
@@ -22,7 +23,7 @@ const db = {
         if (dispatched) return { data: null, error: null };
         dispatched = true; return { data: { id: "r" }, error: null };
       }
-      if (update) { if (typeof update.status === "string") status = update.status; errorCode = String(update.error_code ?? ""); }
+      if (update) { if ("dispatch_started_at" in update && update.dispatch_started_at === null) dispatched = false; if (typeof update.status === "string") status = update.status; errorCode = String(update.error_code ?? ""); }
       return { data: { dispatch_started_at: dispatched ? "started" : null }, error: null };
     };
     const q: any = {
@@ -36,10 +37,10 @@ const db = {
   },
 };
 mock.module("../src/integrations/supabase/client.server", () => ({ supabaseAdmin: db }));
-mock.module("../src/lib/resend.server", () => ({ sendResendEmail: async () => { sends++; return { ok: emailOk, status: emailOk ? 200 : 422 }; }, unsubscribeUrlFor: async () => "https://derdalax.co.mz/api/public/campaigns/unsubscribe?token=t" }));
+mock.module("../src/lib/resend.server", () => ({ sendResendEmail: async () => { sends++; const n = emailQueue.shift(); if (n) return n; return { ok: emailOk, status: emailOk ? 200 : 422 }; }, unsubscribeUrlFor: async () => "https://derdalax.co.mz/api/public/campaigns/unsubscribe?token=t" }));
 mock.module("../src/lib/push.server", () => ({ sendPushToUser: async () => { sends++; return result; } }));
 const { processCampaignBatch } = await import("../src/lib/campaigns.server");
-function reset() { eligible = true; dispatched = false; status = "processing"; errorCode = null; sends = 0; channel = "push"; userEmail = "ana@mail.co.mz"; emailOk = true; result = { sent: 1, total: 1, removed: 0 }; }
+function reset() { emailQueue = []; eligible = true; dispatched = false; status = "processing"; errorCode = null; sends = 0; channel = "push"; userEmail = "ana@mail.co.mz"; emailOk = true; result = { sent: 1, total: 1, removed: 0 }; }
 
 test("campaign worker rechecks opt-out and skips without sending", async () => {
   reset(); eligible = false; await processCampaignBatch();
@@ -73,4 +74,23 @@ test("invalid email address is skipped without sending", async () => {
 test("a rejected email after dispatch is never retried", async () => {
   reset(); channel = "email"; emailOk = false; await processCampaignBatch(); await processCampaignBatch();
   expect(status).toBe("failed"); expect(sends).toBe(1);
+});
+
+test("a 429 rate limit is re-queued (not failed) and later sent once, with no duplicate", async () => {
+  reset(); channel = "email"; emailQueue = [{ ok: false, status: 429, errorName: "rate_limit_exceeded", retryAfter: 1 }];
+  await processCampaignBatch(80, { sleep: async () => {} });
+  expect(status).toBe("pending"); expect(errorCode).toBe("email_rate_limited"); expect(dispatched).toBe(false);
+  await processCampaignBatch(80, { sleep: async () => {} });
+  expect(status).toBe("sent"); expect(sends).toBe(2);
+  await processCampaignBatch(80, { sleep: async () => {} });
+  expect(sends).toBe(2);
+});
+test("repeated 429s never end as a definitive failure", async () => {
+  reset(); channel = "email";
+  for (let i = 0; i < 6; i++) { emailQueue = [{ ok: false, status: 429 }]; status = "processing"; await processCampaignBatch(80, { sleep: async () => {} }); expect(status).toBe("pending"); }
+});
+test("daily quota pauses the recipient as pending instead of failing", async () => {
+  reset(); channel = "email"; emailQueue = [{ ok: false, status: 429, errorName: "daily_quota_exceeded" }];
+  await processCampaignBatch(80, { sleep: async () => {} });
+  expect(status).toBe("pending"); expect(errorCode).toBe("email_quota_reached");
 });

@@ -23,9 +23,14 @@ export async function sendResendEmail(args: { to: string; subject: string; html:
   const body = await res.text();
   if (!res.ok) {
     console.error(`Resend send failed [${res.status}]: ${body.slice(0, 500)}`);
-    return { ok: false as const, status: res.status };
+    let errorName: string | null = null;
+    try { const j = JSON.parse(body) as { name?: unknown }; errorName = typeof j.name === "string" ? j.name : null; } catch { /* non-JSON */ }
+    const ra = Number(res.headers.get("retry-after"));
+    return { ok: false as const, status: res.status, errorName, retryAfter: Number.isFinite(ra) && ra > 0 ? ra : null };
   }
-  return { ok: true as const, status: res.status };
+  let id: string | null = null;
+  try { const j = JSON.parse(body) as { id?: unknown }; id = typeof j.id === "string" ? j.id : null; } catch { /* ignore */ }
+  return { ok: true as const, status: res.status, id };
 }
 
 /** Returns (creating if needed) the per-address unsubscribe URL. */
