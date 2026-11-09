@@ -1,5 +1,5 @@
 import { sendPushToUser } from "./push.server";
-import { campaignDispatchKey, campaignLink, mayRetryCampaign, type CampaignType } from "./campaigns";
+import { campaignDispatchKey, campaignLink, classifyEmailSend, EMAIL_SEND_INTERVAL_MS, mayRetryCampaign, type CampaignType } from "./campaigns";
 
 import { isValidEmail, renderCampaignEmail, type EmailProduct } from "./campaignEmail";
 import { sendResendEmail, unsubscribeUrlFor } from "./resend.server";
@@ -40,7 +40,8 @@ export async function buildCampaignEmail(c: CampaignRow, productIds: string[], e
 type Claimed = { id: string; campaign_id: string; user_id: string; channel: string; attempts: number };
 
 /** Processes one claimed batch. Rows are claimed atomically (SKIP LOCKED) so re-runs never resend a "sent" row. */
-export async function processCampaignBatch(limit = BATCH): Promise<{ processed: number }> {
+export async function processCampaignBatch(limit = BATCH, opts: { sleep?: (ms: number) => Promise<void> } = {}): Promise<{ processed: number }> {
+  const sleep = opts.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
   productCache.clear();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: rows, error } = await supabaseAdmin.rpc("admin_campaign_claim", { _limit: limit });
@@ -55,7 +56,16 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
   ]);
   const byId = new Map((camps ?? []).map((c) => [c.id, c]));
 
-  await Promise.all(claimed.map(async (r) => {
+  // Re-queue a row Resend did NOT accept (429/5xx/quota): clear the dispatch gate, keep the idempotency key.
+  const requeue = (r: Claimed, code: string, retryAt: Date, refundAttempt: boolean) =>
+    supabaseAdmin.from("admin_campaign_recipients").update({
+      status: "pending", error_code: code, dispatch_started_at: null, retry_after: retryAt.toISOString(),
+      attempts: refundAttempt ? Math.max(0, r.attempts - 1) : r.attempts, updated_at: new Date().toISOString(),
+    } as never).eq("id", r.id).eq("status", "processing");
+  let quotaUntil: Date | null = null;
+  let lastEmailAt = 0;
+
+  const handle = async (r: Claimed) => {
     const c = byId.get(r.campaign_id);
     let status: "sent" | "failed" | "skipped" = "failed";
     let code: string | null = null;
@@ -71,14 +81,27 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
           return;
         }
         const email = prof!.email!.trim();
+        if (quotaUntil) { await requeue(r, "email_quota_reached", quotaUntil, true); return; }
         const message = await buildCampaignEmail(c, ids, email);
         const { data: gate, error: gateError } = await supabaseAdmin.from("admin_campaign_recipients")
           .update({ dispatch_started_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing")
           .is("dispatch_started_at", null).select("id").maybeSingle();
         if (gateError) throw new Error("dispatch_gate_failed");
         if (!gate) return;
+        // Throttle: never exceed EMAIL_SEND_INTERVAL_MS between Resend calls.
+        const wait = lastEmailAt + EMAIL_SEND_INTERVAL_MS - Date.now();
+        if (lastEmailAt && wait > 0) await sleep(wait);
+        lastEmailAt = Date.now();
         const res = await sendResendEmail({ to: email, ...message, idempotencyKey: campaignDispatchKey(c.id, r.user_id, `email:${email.toLowerCase()}`) });
-        if (res.ok) status = "sent"; else code = `email_rejected_${res.status}`;
+        const outcome = classifyEmailSend(res, r.attempts);
+        if (outcome.kind === "sent") status = "sent";
+        else if (outcome.kind === "failed") code = outcome.code;
+        else {
+          if (outcome.kind === "quota") quotaUntil = outcome.retryAt;
+          if (outcome.kind === "rate_limited") lastEmailAt = outcome.retryAt.getTime() - EMAIL_SEND_INTERVAL_MS;
+          await requeue(r, outcome.code, outcome.retryAt, outcome.kind !== "transient");
+          return;
+        }
       } catch { code = "delivery_unknown"; }
       const { data: delivery } = await supabaseAdmin.from("admin_campaign_recipients").select("dispatch_started_at").eq("id", r.id).maybeSingle();
       if (status === "failed" && delivery && mayRetryCampaign(r.attempts, delivery.dispatch_started_at)) {
@@ -121,7 +144,12 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
     await supabaseAdmin.from("admin_campaign_recipients").update({
       status, error_code: code, sent_at: status === "sent" ? new Date().toISOString() : null, updated_at: new Date().toISOString(),
     }).eq("id", r.id).eq("status", "processing");
-  }));
+  };
+  // Push runs in parallel (Web Push endpoints); Email is sequential and throttled for Resend.
+  await Promise.all([
+    Promise.all(claimed.filter((r) => r.channel !== "email").map(handle)),
+    (async () => { for (const r of claimed.filter((x) => x.channel === "email")) await handle(r); })(),
+  ]);
 
   for (const id of campaignIds) {
     await supabaseAdmin.rpc("admin_campaign_refresh", { _campaign_id: id });
