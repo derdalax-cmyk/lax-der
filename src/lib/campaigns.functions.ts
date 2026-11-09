@@ -203,6 +203,7 @@ export const getCampaignDetails = createServerFn({ method: "POST" })
     const failures: Record<string, number> = {};
     for (const r of recs ?? []) {
       byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+      const k = `${r.status}_${r.channel}`; byStatus[k] = (byStatus[k] ?? 0) + 1;
       if ((r.status === "failed" || r.status === "skipped") && r.error_code) failures[r.error_code] = (failures[r.error_code] ?? 0) + 1;
     }
     return {
