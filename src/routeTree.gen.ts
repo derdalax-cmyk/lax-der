@@ -71,6 +71,7 @@ import { Route as VendedorMensagensConversationIdRouteImport } from './routes/ve
 import { Route as ApiPublicCampaignsProcessRouteImport } from './routes/api/public/campaigns/process'
 import { Route as ApiPublicCampaignsUnsubscribeRouteImport } from './routes/api/public/campaigns/unsubscribe'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
+import { Route as ApiPublicProfileRemindersRouteImport } from './routes/api/public/profile/reminders'
 import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -390,6 +391,12 @@ const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   path: '/api/public/email/dispatch',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicProfileRemindersRoute =
+  ApiPublicProfileRemindersRouteImport.update({
+    id: '/api/public/profile/reminders',
+    path: '/api/public/profile/reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPushSendRoute = ApiPublicPushSendRouteImport.update({
   id: '/api/public/push/send',
   path: '/api/public/push/send',
@@ -475,6 +482,7 @@ export interface FileRoutesByFullPath {
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/profile/reminders': typeof ApiPublicProfileRemindersRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -538,6 +546,7 @@ export interface FileRoutesByTo {
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/profile/reminders': typeof ApiPublicProfileRemindersRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -607,6 +616,7 @@ export interface FileRoutesById {
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
   '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/profile/reminders': typeof ApiPublicProfileRemindersRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -677,6 +687,7 @@ export interface FileRouteTypes {
     | '/api/public/campaigns/process'
     | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
+    | '/api/public/profile/reminders'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -740,6 +751,7 @@ export interface FileRouteTypes {
     | '/api/public/campaigns/process'
     | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
+    | '/api/public/profile/reminders'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -808,6 +820,7 @@ export interface FileRouteTypes {
     | '/api/public/campaigns/process'
     | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
+    | '/api/public/profile/reminders'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -843,6 +856,7 @@ export interface RootRouteChildren {
   ApiPublicCampaignsProcessRoute: typeof ApiPublicCampaignsProcessRoute
   ApiPublicCampaignsUnsubscribeRoute: typeof ApiPublicCampaignsUnsubscribeRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
+  ApiPublicProfileRemindersRoute: typeof ApiPublicProfileRemindersRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -1285,6 +1299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEmailDispatchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/profile/reminders': {
+      id: '/api/public/profile/reminders'
+      path: '/api/public/profile/reminders'
+      fullPath: '/api/public/profile/reminders'
+      preLoaderRoute: typeof ApiPublicProfileRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/push/send': {
       id: '/api/public/push/send'
       path: '/api/public/push/send'
@@ -1459,6 +1480,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCampaignsProcessRoute: ApiPublicCampaignsProcessRoute,
   ApiPublicCampaignsUnsubscribeRoute: ApiPublicCampaignsUnsubscribeRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
+  ApiPublicProfileRemindersRoute: ApiPublicProfileRemindersRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

@@ -253,6 +253,20 @@
       "when": 1794244491703,
       "tag": "0035_campaign_tick_resume",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1794260990575,
+      "tag": "0036_optional_profile_onboarding",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1794261285936,
+      "tag": "0037_profile_reminder_private_grants",
+      "breakpoints": true
     }
   ]
 }

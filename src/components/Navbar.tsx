@@ -6,7 +6,7 @@ import { CitySelector } from "@/components/CitySelector";
 import { useSeller } from "@/hooks/useSeller";
 
 export function Navbar() {
-  const { user } = useAuth();
+  const { user, needsProfileCompletion } = useAuth();
   const { count } = useCart();
   const { isApproved } = useSeller();
   const links = [
@@ -51,8 +51,9 @@ export function Navbar() {
               )}
             </Link>
             {user ? (
-              <Link to="/perfil" className="hover:text-gold transition-colors" aria-label="Conta">
+              <Link to="/perfil" className="relative hover:text-gold transition-colors" aria-label={needsProfileCompletion ? "Conta — perfil incompleto" : "Conta"}>
                 <User className="w-5 h-5" />
+                {needsProfileCompletion && <span aria-hidden="true" className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-destructive" />}
               </Link>
             ) : (
               <div className="flex items-center gap-3">
