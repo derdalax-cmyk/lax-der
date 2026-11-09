@@ -41,6 +41,7 @@ type Claimed = { id: string; campaign_id: string; user_id: string; channel: stri
 
 /** Processes one claimed batch. Rows are claimed atomically (SKIP LOCKED) so re-runs never resend a "sent" row. */
 export async function processCampaignBatch(limit = BATCH): Promise<{ processed: number }> {
+  productCache.clear();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: rows, error } = await supabaseAdmin.rpc("admin_campaign_claim", { _limit: limit });
   if (error) throw new Error("claim_failed");
