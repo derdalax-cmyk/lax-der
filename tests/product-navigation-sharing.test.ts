@@ -18,11 +18,19 @@ test("each product gets self-referencing metadata and its own image without stal
   expect(first.meta.find(m => "name" in m && m.name === "description")?.content).toBe("Camisa com botões.");
   expect(productPageHead("missing", null).meta.some(m => "property" in m && m.property === "og:image")).toBe(false);
 });
-test("related and seller sections each cap at five and exclude current, sold and duplicate products", () => {
-  const rows = Array.from({ length: 15 }, (_, i) => ({ ...product, id: String(i) }));
-  const sections = recommendationSections("one", [product, { ...product, id: "sold", status: "sold" }, ...rows], rows.slice(0, 5));
-  expect(sections.sellerProducts.map(p => p.id)).toEqual(["0", "1", "2", "3", "4"]);
-  expect(sections.related.map(p => p.id)).toEqual(["5", "6", "7", "8", "9"]);
+test("Também pode gostar caps at thirty and Mais deste vendedor at fifty, excluding current, sold and duplicates", () => {
+  const categoryRows = Array.from({ length: 40 }, (_, i) => ({ ...product, id: `c${i}` }));
+  const sellerRows = Array.from({ length: 60 }, (_, i) => ({ ...product, id: `s${i}` }));
+  const sections = recommendationSections("one", [product, { ...product, id: "sold", status: "sold" }, ...categoryRows], sellerRows);
+  expect(sections.sellerProducts.map(p => p.id)).toEqual(Array.from({ length: 50 }, (_, i) => `s${i}`));
+  expect(sections.related.map(p => p.id)).toEqual(Array.from({ length: 30 }, (_, i) => `c${i}`));
+});
+test("a product shown in Mais deste vendedor is never repeated in Também pode gostar", () => {
+  const categoryRows = [{ ...product, id: "shared" }, { ...product, id: "only-category" }, { ...product, id: "sold-in-category", status: "sold" as const }];
+  const sellerRows = [{ ...product, id: "shared" }, { ...product, id: "current", status: "sold" as const }];
+  const sections = recommendationSections("current", categoryRows, sellerRows);
+  expect(sections.sellerProducts.map(p => p.id)).toEqual(["shared"]);
+  expect(sections.related.map(p => p.id)).toEqual(["only-category"]);
 });
 test("cached batches retain the exact original order when reused", () => {
   const batches = [[{ id: "b" }, { id: "a" }], [{ id: "a" }, { id: "c" }]];

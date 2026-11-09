@@ -38,8 +38,8 @@ export const getPublicProductDetails = createServerFn({ method: "GET" })
       .eq("status", "available").neq("id", data.id)
       .order("created_at", { ascending: false }).order("id", { ascending: false });
     const [categoryRows, sellerRows] = await Promise.all([
-      product.category ? available().eq("category", product.category).limit(10) : Promise.resolve({ data: [] }),
-      product.seller_id ? available().eq("seller_id", product.seller_id).limit(5) : Promise.resolve({ data: [] }),
+      product.category ? available().eq("category", product.category).limit(30) : Promise.resolve({ data: [] }),
+      product.seller_id ? available().eq("seller_id", product.seller_id).limit(50) : Promise.resolve({ data: [] }),
     ]);
     const normalize = (row: ProductCardData) => ({ ...row, images: normalizedImages(row.images) });
     return { product: { ...product, images: normalizedImages(product.images) } as PublicProduct, ...recommendationSections(data.id, ((categoryRows.data ?? []) as ProductCardData[]).map(normalize), ((sellerRows.data ?? []) as ProductCardData[]).map(normalize)) };
