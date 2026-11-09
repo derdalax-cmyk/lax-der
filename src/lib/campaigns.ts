@@ -90,3 +90,48 @@ export function maskEmail(email: string | null | undefined): string {
   if (!d) return "—";
   return `${u.slice(0, 2)}${"•".repeat(Math.max(1, Math.min(6, u.length - 2)))}@${d}`;
 }
+
+// ---- Email delivery outcome classification (Resend) ----
+/** Pause between Resend calls: 5 requests/second, below Resend's default rate limit, leaving headroom. */
+export const EMAIL_SEND_INTERVAL_MS = 200;
+export const MAX_TRANSIENT_ATTEMPTS = 3;
+export type EmailSendResult = { ok: boolean; status: number; errorName?: string | null; retryAfter?: number | null };
+export type EmailOutcome =
+  | { kind: "sent" }
+  | { kind: "rate_limited"; retryAt: Date; code: "email_rate_limited" }
+  | { kind: "quota"; retryAt: Date; code: "email_quota_reached" }
+  | { kind: "transient"; retryAt: Date; code: "email_transient" }
+  | { kind: "failed"; code: string };
+
+/** Next UTC midnight (daily quota) or first day of next month (monthly quota). */
+export function quotaResetAt(now: Date, monthly: boolean): Date {
+  return monthly
+    ? new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 5))
+    : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 5));
+}
+
+/**
+ * 429 and 5xx mean Resend did NOT accept the email, so the row may be safely re-queued
+ * (same Idempotency-Key). Rate limits never consume attempts; quotas pause until reset;
+ * other 4xx are definitive.
+ */
+export function classifyEmailSend(res: EmailSendResult, attempts: number, now = new Date()): EmailOutcome {
+  if (res.ok) return { kind: "sent" };
+  const name = (res.errorName ?? "").toLowerCase();
+  if (res.status === 429) {
+    if (name.includes("quota")) return { kind: "quota", code: "email_quota_reached", retryAt: quotaResetAt(now, name.includes("monthly")) };
+    const secs = Math.min(Math.max(res.retryAfter ?? 2, 1), 600);
+    return { kind: "rate_limited", code: "email_rate_limited", retryAt: new Date(now.getTime() + secs * 1000) };
+  }
+  if (res.status >= 500 && attempts < MAX_TRANSIENT_ATTEMPTS) {
+    return { kind: "transient", code: "email_transient", retryAt: new Date(now.getTime() + 30_000 * 2 ** Math.max(0, attempts - 1)) };
+  }
+  return { kind: "failed", code: `email_rejected_${res.status}` };
+}
+
+/** Admin wording for a channel's queue: distinguishes "not selected" from "no active subscriptions". */
+export function channelQueueLabel(selected: boolean, queued: number, channel: "push" | "email"): string {
+  if (!selected) return channel === "push" ? "Push não selecionado" : "Email não selecionado";
+  if (queued === 0) return channel === "push" ? "0 utilizadores com Push ativo" : "0 utilizadores com Email elegível";
+  return `${queued} ${channel === "push" ? "Push" : "Email"}`;
+}
