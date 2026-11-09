@@ -45,7 +45,7 @@ const SEGMENTS: { value: Segment; label: string }[] = [
   { value: "email", label: "Com Email disponível" },
 ];
 const STATUS: Record<string, string> = { draft: "Rascunho", queued: "Na fila", sending: "A enviar", completed: "Concluída", failed: "Falhou", cancelled: "Cancelada" };
-const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_channel_unavailable: "Email indisponível", campaign_missing: "Campanha removida" };
+const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_ineligible: "Email inválido, suprimido ou sem consentimento", email_rejected_422: "Email rejeitado pelo serviço", email_rejected_429: "Limite do serviço de email", campaign_missing: "Campanha removida" };
 
 function useStepUpErrors() {
   const navigate = useNavigate();
@@ -56,8 +56,7 @@ function useStepUpErrors() {
       toast.message("Confirme novamente a sua identidade para continuar.");
       await qc.invalidateQueries({ queryKey: ["admin-security-status"] });
       navigate({ to: "/admin/verificar", search: { redirect: "/admin/comunicacao" } });
-    } else if (m.includes("EMAIL_CHANNEL_UNAVAILABLE")) toast.error("O canal Email para campanhas ainda não está disponível.");
-    else toast.error(m);
+    } else toast.error(m);
   };
 }
 
@@ -114,18 +113,24 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
   });
   useEffect(() => { if (est.error) void onErr(est.error); }, [est.error]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const payload = () => ({ name: name.trim() || title.trim(), type, channels: ["push" as const], recipientLimit, segment: effSegment, filters, title, body, ctaLabel, ctaUrl, productIds: products.map((p) => p.id) });
+  const [usePush, setUsePush] = useState(true);
+  const [useEmail, setUseEmail] = useState(recovery);
+  const channels = [...(usePush ? ["push" as const] : []), ...(useEmail ? ["email" as const] : [])];
+  const payload = () => ({ name: name.trim() || title.trim(), type, channels, recipientLimit, segment: effSegment, filters, title, body, ctaLabel, ctaUrl, productIds: products.map((p) => p.id) });
   const linkOk = type === "products" || !!safeCampaignLink(ctaUrl);
-  const valid = title.trim().length >= 2 && body.trim().length >= 2 && linkOk && (type !== "products" || products.length > 0);
+  const valid = channels.length > 0 && title.trim().length >= 2 && body.trim().length >= 2 && linkOk && (type !== "products" || products.length > 0);
 
   const test = async () => {
     setBusy(true);
     try {
       const r = await testFn({ data: payload() });
-      if (r.push === "sent") toast.success("Teste enviado para os seus dispositivos.");
-      else if (r.push === "no_subscription") toast.error("Ative as notificações neste dispositivo para receber o teste.");
+      if (r.push === "sent") toast.success("Push: teste enviado para os seus dispositivos.");
+      else if (r.push === "no_subscription") toast.error("Push: ative as notificações neste dispositivo para receber o teste.");
       else if (r.push === "ineligible") toast.error("Push: confirme as suas preferências e uma subscrição válida para receber o teste.");
-      else toast.error("Não foi possível entregar o teste.");
+      else if (r.push === "failed") toast.error("Push: não foi possível entregar o teste.");
+      if (r.email === "sent") toast.success(`Email: teste enviado para ${r.emailTo}.`);
+      else if (r.email === "ineligible") toast.error("Email: o seu email não é válido, está suprimido ou desativou emails de novidades.");
+      else if (r.email === "failed") toast.error("Email: o serviço de email recusou o teste.");
     } catch (e) { await onErr(e); } finally { setBusy(false); }
   };
   const send = async () => {
@@ -140,7 +145,10 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
   };
 
   const pushCount = est.data?.push ?? 0;
-  const queuedCount = campaignQueueCount(pushCount, recipientLimit);
+  const emailCount = est.data?.email ?? 0;
+  const queuedPush = usePush ? campaignQueueCount(pushCount, recipientLimit) : 0;
+  const queuedEmail = useEmail ? campaignQueueCount(emailCount, recipientLimit) : 0;
+  const queuedCount = queuedPush + queuedEmail;
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-6 mt-4">
       <div className="space-y-5 bg-card border border-border rounded-xl p-5">
@@ -161,10 +169,10 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
         <div>
           <Label>Canais</Label>
           <div className="flex flex-wrap gap-4 mt-2 text-sm">
-            <label className="flex items-center gap-2"><Checkbox checked disabled /> <Bell className="w-4 h-4" /> Push</label>
-            <label className="flex items-center gap-2 text-muted-foreground"><Checkbox checked={false} disabled /> <Mail className="w-4 h-4" /> Email</label>
+            <label className="flex items-center gap-2"><Checkbox checked={usePush} onCheckedChange={(v) => setUsePush(v === true)} /> <Bell className="w-4 h-4" /> Push</label>
+            <label className="flex items-center gap-2"><Checkbox checked={useEmail} onCheckedChange={(v) => setUseEmail(v === true)} /> <Mail className="w-4 h-4" /> Email</label>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Email de campanhas requer um serviço dedicado de email marketing; os emails da plataforma ficam reservados a avisos de conta e pedidos.</p>
+          {!channels.length && <p className="text-xs text-destructive mt-1">Escolha pelo menos um canal.</p>}
         </div>
         <div>
           <Label htmlFor="campaign-limit">Limite desta campanha</Label>
@@ -223,10 +231,10 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
 
         <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border">
           <p className="text-sm flex-1 min-w-[200px]">
-            {est.isFetching ? "A calcular público…" : est.data ? <>Elegíveis totais: <b>{est.data.total}</b><br />Push disponíveis: <b>{pushCount}</b> · Email disponíveis: <b>{est.data.email}</b><br />Limite: <b>{recipientLimit}</b> · A enfileirar: <b>{queuedCount} Push</b> / <b>0 Email</b></> : "—"}
+            {est.isFetching ? "A calcular público…" : est.data ? <>Elegíveis totais: <b>{est.data.total}</b><br />Push disponíveis: <b>{pushCount}</b> · Email disponíveis: <b>{est.data.email}</b><br />Limite: <b>{recipientLimit}</b> · A enfileirar: <b>{queuedPush} Push</b> / <b>{queuedEmail} Email</b></> : "—"}
           </p>
           <Button variant="outline" disabled={!valid || busy} onClick={test}>Enviar teste para mim</Button>
-          <Button disabled={!valid || busy || !pushCount} onClick={() => setConfirm(true)}>
+          <Button disabled={!valid || busy || !queuedCount} onClick={() => setConfirm(true)}>
             {busy ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Enviar campanha
           </Button>
         </div>
@@ -254,7 +262,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
           <AlertDialogHeader>
             <AlertDialogTitle>Enviar campanha?</AlertDialogTitle>
             <AlertDialogDescription>
-              Serão enfileiradas até {queuedCount} notificações Push elegíveis, com limite de {recipientLimit} destinatários. Cada utilizador recebe no máximo uma mensagem por canal nesta campanha. Email não será enviado.
+              Serão enfileirados até {queuedPush} Push e {queuedEmail} Email, com limite de {recipientLimit} destinatários por canal. Cada utilizador recebe no máximo uma mensagem por canal nesta campanha; os emails incluem link para cancelar a subscrição.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -428,6 +436,7 @@ function History() {
           {d.isPending ? <p className="text-sm text-muted-foreground">A carregar…</p> : d.data && (
             <div className="space-y-4 text-sm">
               <p>Limite: {d.data.campaign.recipient_limit} · Elegíveis: {d.data.campaign.eligible_total} · Enfileirados: {d.data.campaign.queued_push} Push / {d.data.campaign.queued_email} Email · Ignorados: {d.data.byStatus.skipped ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Email — na fila: {d.data.campaign.queued_email} · enviados: {d.data.byStatus.sent_email ?? 0} · falhados: {d.data.byStatus.failed_email ?? 0} · ignorados: {d.data.byStatus.skipped_email ?? 0}</p>
               <div className="bg-secondary rounded-lg p-3"><p className="font-semibold">{d.data.campaign.title}</p><p className="text-muted-foreground">{d.data.campaign.body}</p></div>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">Enviados</p><p className="font-display text-xl">{d.data.byStatus.sent ?? 0}</p></div>
