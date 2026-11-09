@@ -2290,6 +2290,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_campaign_email_eligible: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       admin_campaign_enqueue: {
         Args: { _campaign_id: string }
         Returns: number

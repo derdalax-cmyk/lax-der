@@ -232,6 +232,13 @@
       "when": 1794171697468,
       "tag": "0032_bounded_campaign_delivery",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1794240943030,
+      "tag": "0033_campaign_email_channel",
+      "breakpoints": true
     }
   ]
 }
