@@ -1387,6 +1387,59 @@ export type Database = {
           },
         ]
       }
+      profile_completion_reminders: {
+        Row: {
+          accepted_at: string | null
+          attempts: number
+          channel: string
+          cycle_id: string
+          dispatch_started_at: string | null
+          due_at: string
+          error_code: string | null
+          id: string
+          provider_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          attempts?: number
+          channel: string
+          cycle_id: string
+          dispatch_started_at?: string | null
+          due_at: string
+          error_code?: string | null
+          id?: string
+          provider_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          attempts?: number
+          channel?: string
+          cycle_id?: string
+          dispatch_started_at?: string | null
+          due_at?: string
+          error_code?: string | null
+          id?: string
+          provider_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_completion_reminders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           admin_notes: string | null
@@ -1401,6 +1454,8 @@ export type Database = {
           name: string | null
           notification_preferences: Json
           phone: string | null
+          profile_completion_dismissed_at: string | null
+          profile_completion_reminder_sent_at: string | null
           province: string | null
           updated_at: string
         }
@@ -1417,6 +1472,8 @@ export type Database = {
           name?: string | null
           notification_preferences?: Json
           phone?: string | null
+          profile_completion_dismissed_at?: string | null
+          profile_completion_reminder_sent_at?: string | null
           province?: string | null
           updated_at?: string
         }
@@ -1433,6 +1490,8 @@ export type Database = {
           name?: string | null
           notification_preferences?: Json
           phone?: string | null
+          profile_completion_dismissed_at?: string | null
+          profile_completion_reminder_sent_at?: string | null
           province?: string | null
           updated_at?: string
         }
@@ -2335,6 +2394,7 @@ export type Database = {
         Returns: boolean
       }
       delete_message: { Args: { _message_id: string }; Returns: undefined }
+      dismiss_profile_completion: { Args: never; Returns: string }
       edit_message: {
         Args: { _body: string; _message_id: string }
         Returns: undefined
@@ -2562,6 +2622,39 @@ export type Database = {
         Args: { _description: string; _key: string }
         Returns: string
       }
+      profile_is_complete: {
+        Args: {
+          _city: string
+          _name: string
+          _phone: string
+          _province: string
+        }
+        Returns: boolean
+      }
+      profile_reminder_claim: {
+        Args: never
+        Returns: {
+          accepted_at: string | null
+          attempts: number
+          channel: string
+          cycle_id: string
+          dispatch_started_at: string | null
+          due_at: string
+          error_code: string | null
+          id: string
+          provider_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profile_completion_reminders"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      profile_reminder_pause_if_drained: { Args: never; Returns: undefined }
       promote_next_in_queue: {
         Args: { _product_id: string }
         Returns: undefined
