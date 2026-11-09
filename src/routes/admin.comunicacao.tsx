@@ -1,4 +1,5 @@
 import brandIcon192 from "@/assets/derdalax-icon-192.png.asset.json";
+import { channelQueueLabel } from "@/lib/campaigns";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -45,7 +46,7 @@ const SEGMENTS: { value: Segment; label: string }[] = [
   { value: "email", label: "Com Email disponível" },
 ];
 const STATUS: Record<string, string> = { draft: "Rascunho", queued: "Na fila", sending: "A enviar", completed: "Concluída", failed: "Falhou", cancelled: "Cancelada" };
-const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_ineligible: "Email inválido, suprimido ou sem consentimento", email_rejected_422: "Email rejeitado pelo serviço", email_rejected_429: "Limite do serviço de email", campaign_missing: "Campanha removida" };
+const FAIL: Record<string, string> = { ineligible: "Preferências desativadas ou subscrição inválida", delivery_unknown: "Entrega não confirmada; não repetida para evitar duplicação", no_subscription: "Sem subscrição push", push_rejected: "Push rejeitado", push_error: "Erro no envio", max_attempts: "Tentativas esgotadas", cancelled: "Cancelado", email_ineligible: "Email inválido, suprimido ou sem consentimento", email_rejected_422: "Email rejeitado pelo serviço", email_rejected_429: "Limite temporário do serviço — será tentado novamente", "retry:email_rate_limited": "Limite temporário do serviço — será tentado novamente", "retry:email_transient": "Erro temporário do serviço — será tentado novamente", "retry:email_quota_reached": "Quota de email atingida — retoma após o próximo reset", email_quota_reached: "Quota de email atingida", email_transient: "Erro temporário do serviço de email", campaign_missing: "Campanha removida" };
 
 function useStepUpErrors() {
   const navigate = useNavigate();
@@ -175,10 +176,10 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
           {!channels.length && <p className="text-xs text-destructive mt-1">Escolha pelo menos um canal.</p>}
         </div>
         <div>
-          <Label htmlFor="campaign-limit">Limite desta campanha</Label>
+          <Label htmlFor="campaign-limit">Máximo por canal: 50 / 75 / 100</Label>
           <Select value={String(recipientLimit)} onValueChange={v => setRecipientLimit(campaignRecipientLimit(Number(v)))}>
             <SelectTrigger id="campaign-limit"><SelectValue /></SelectTrigger>
-            <SelectContent>{CAMPAIGN_LIMITS.map(limit => <SelectItem key={limit} value={String(limit)}>{limit} destinatários por canal</SelectItem>)}</SelectContent>
+            <SelectContent>{CAMPAIGN_LIMITS.map(limit => <SelectItem key={limit} value={String(limit)}>até {limit} por canal</SelectItem>)}</SelectContent>
           </Select>
         </div>
 
@@ -231,7 +232,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
 
         <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border">
           <p className="text-sm flex-1 min-w-[200px]">
-            {est.isFetching ? "A calcular público…" : est.data ? <>Elegíveis totais: <b>{est.data.total}</b><br />Push disponíveis: <b>{pushCount}</b> · Email disponíveis: <b>{est.data.email}</b><br />Limite: <b>{recipientLimit}</b> · A enfileirar: <b>{queuedPush} Push</b> / <b>{queuedEmail} Email</b></> : "—"}
+            {est.isFetching ? "A calcular público…" : est.data ? <>Elegíveis totais: <b>{est.data.total}</b><br />Push disponíveis: <b>{pushCount}</b> · Email disponíveis: <b>{est.data.email}</b><br />Limite máximo: <b>{recipientLimit}</b> (não é quantidade garantida) · Serão enfileirados: <b>{channelQueueLabel(usePush, queuedPush, "push")}</b> / <b>{channelQueueLabel(useEmail, queuedEmail, "email")}</b></> : "—"}
           </p>
           <Button variant="outline" disabled={!valid || busy} onClick={test}>Enviar teste para mim</Button>
           <Button disabled={!valid || busy || !queuedCount} onClick={() => setConfirm(true)}>
@@ -262,7 +263,7 @@ function Composer({ initialType, onSent }: { initialType: CampaignType; onSent: 
           <AlertDialogHeader>
             <AlertDialogTitle>Enviar campanha?</AlertDialogTitle>
             <AlertDialogDescription>
-              Serão enfileirados até {queuedPush} Push e {queuedEmail} Email, com limite de {recipientLimit} destinatários por canal. Cada utilizador recebe no máximo uma mensagem por canal nesta campanha; os emails incluem link para cancelar a subscrição.
+              Limite escolhido: {recipientLimit} por canal (máximo, não quantidade garantida). Elegíveis encontrados: {useEmail ? `${emailCount} Email` : "Email não selecionado"} / {usePush ? `${pushCount} Push` : "Push não selecionado"}. Serão enfileirados: {channelQueueLabel(useEmail, queuedEmail, "email")} / {channelQueueLabel(usePush, queuedPush, "push")}. Cada utilizador recebe no máximo uma mensagem por canal nesta campanha; os emails incluem link para cancelar a subscrição.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -435,14 +436,16 @@ function History() {
           <DialogHeader><DialogTitle>{d.data?.campaign.name ?? "Campanha"}</DialogTitle></DialogHeader>
           {d.isPending ? <p className="text-sm text-muted-foreground">A carregar…</p> : d.data && (
             <div className="space-y-4 text-sm">
-              <p>Limite: {d.data.campaign.recipient_limit} · Elegíveis: {d.data.campaign.eligible_total} · Enfileirados: {d.data.campaign.queued_push} Push / {d.data.campaign.queued_email} Email · Ignorados: {d.data.byStatus.skipped ?? 0}</p>
-              <p className="text-xs text-muted-foreground">Email — na fila: {d.data.campaign.queued_email} · enviados: {d.data.byStatus.sent_email ?? 0} · falhados: {d.data.byStatus.failed_email ?? 0} · ignorados: {d.data.byStatus.skipped_email ?? 0}</p>
-              <div className="bg-secondary rounded-lg p-3"><p className="font-semibold">{d.data.campaign.title}</p><p className="text-muted-foreground">{d.data.campaign.body}</p></div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">Enviados</p><p className="font-display text-xl">{d.data.byStatus.sent ?? 0}</p></div>
-                <div className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">Falhados</p><p className="font-display text-xl">{d.data.byStatus.failed ?? 0}</p></div>
-                <div className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">Pendentes</p><p className="font-display text-xl">{(d.data.byStatus.pending ?? 0) + (d.data.byStatus.processing ?? 0)}</p></div>
+              {(() => { const cc = d.data.campaign; const ch = (cc.channels as string[]) ?? []; const b = d.data.byStatus; return (<>
+              <p>Limite máximo: {cc.recipient_limit} por canal · Elegíveis: {cc.eligible_total} · Enfileirados: {channelQueueLabel(ch.includes("push"), cc.queued_push, "push")} / {channelQueueLabel(ch.includes("email"), cc.queued_email, "email")} · Ignorados: {b.skipped ?? 0}</p>
+              <div className="bg-secondary rounded-lg p-3"><p className="font-semibold">{cc.title}</p><p className="text-muted-foreground">{cc.body}</p></div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
+                {[["Aceites pelo provedor", b.sent ?? 0], ["Entregues", "—"], ["Falhados definitivos", b.failed ?? 0], ["Aguardando retry", b.retry_wait ?? 0], ["Pendentes", (b.pending ?? 0) - (b.retry_wait ?? 0) + (b.processing ?? 0)], ["Email aceites", ch.includes("email") ? b.sent_email ?? 0 : "—"]].map(([l, v]) => (
+                  <div key={String(l)} className="border border-border rounded-lg p-2"><p className="text-xs text-muted-foreground">{l}</p><p className="font-display text-xl">{v}</p></div>
+                ))}
               </div>
+              <p className="text-xs text-muted-foreground">"Entregues" fica disponível quando os avisos de entrega do Resend estiverem ligados.</p>
+              </>); })()}
               {Object.keys(d.data.failures).length > 0 && (
                 <div><p className="font-medium mb-1">Falhas / ignorados por motivo</p>
                   <ul className="text-muted-foreground">{Object.entries(d.data.failures).map(([k, v]) => <li key={k}>{FAIL[k] ?? k}: {v}</li>)}</ul></div>

@@ -205,6 +205,11 @@ export const getCampaignDetails = createServerFn({ method: "POST" })
       byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
       const k = `${r.status}_${r.channel}`; byStatus[k] = (byStatus[k] ?? 0) + 1;
       if ((r.status === "failed" || r.status === "skipped") && r.error_code) failures[r.error_code] = (failures[r.error_code] ?? 0) + 1;
+      // Pending rows carrying an error code were not accepted by the provider and wait for a retry.
+      if (r.status === "pending" && r.error_code && r.error_code !== "cancelled") {
+        byStatus.retry_wait = (byStatus.retry_wait ?? 0) + 1;
+        const w = `retry:${r.error_code}`; failures[w] = (failures[w] ?? 0) + 1;
+      }
     }
     return {
       campaign: c,
