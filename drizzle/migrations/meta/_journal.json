@@ -239,6 +239,13 @@
       "when": 1794240943030,
       "tag": "0033_campaign_email_channel",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1794244472155,
+      "tag": "0034_campaign_email_retry_after",
+      "breakpoints": true
     }
   ]
 }
