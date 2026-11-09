@@ -1,12 +1,47 @@
 import { sendPushToUser } from "./push.server";
 import { campaignDispatchKey, campaignLink, mayRetryCampaign, type CampaignType } from "./campaigns";
 
+import { isValidEmail, renderCampaignEmail, type EmailProduct } from "./campaignEmail";
+import { sendResendEmail, unsubscribeUrlFor } from "./resend.server";
+import { safePublicImage } from "./publicCachePolicy";
+
 const BATCH = 80;
+
+type CampaignRow = { id: string; type: string; title: string; body: string; cta_url: string | null; cta_label?: string | null };
+const productCache = new Map<string, EmailProduct[]>();
+
+function firstImage(images: unknown): string | null {
+  if (!Array.isArray(images)) return null;
+  const f = images[0];
+  const url = typeof f === "string" ? f : f && typeof f === "object" && "url" in f ? String((f as { url: unknown }).url) : null;
+  return url && safePublicImage(url) && /^https:\/\//i.test(url) ? url : null;
+}
+
+export async function loadEmailProducts(ids: string[]): Promise<EmailProduct[]> {
+  if (!ids.length) return [];
+  const key = ids.join(",");
+  const hit = productCache.get(key);
+  if (hit) return hit;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin.from("products").select("id,title,base_price,images,approval_status,status").in("id", ids);
+  const rows = (data ?? []).filter((p) => p.approval_status === "approved" && p.status !== "sold");
+  const out = ids.flatMap((id) => { const p = rows.find((r) => r.id === id); return p ? [{ id: p.id, title: p.title, price: Number(p.base_price), image: firstImage(p.images) }] : []; });
+  productCache.set(key, out);
+  return out;
+}
+
+export async function buildCampaignEmail(c: CampaignRow, productIds: string[], email: string, subjectPrefix = "") {
+  const unsubscribeUrl = await unsubscribeUrlFor(email);
+  const products = c.type === "products" ? await loadEmailProducts(productIds) : [];
+  const m = renderCampaignEmail({ type: c.type as "message", title: c.title, body: c.body, ctaLabel: c.cta_label, ctaUrl: c.cta_url ?? "/", products, unsubscribeUrl });
+  return { subject: subjectPrefix + m.subject, html: m.html, text: m.text, unsubscribeUrl };
+}
 
 type Claimed = { id: string; campaign_id: string; user_id: string; channel: string; attempts: number };
 
 /** Processes one claimed batch. Rows are claimed atomically (SKIP LOCKED) so re-runs never resend a "sent" row. */
 export async function processCampaignBatch(limit = BATCH): Promise<{ processed: number }> {
+  productCache.clear();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: rows, error } = await supabaseAdmin.rpc("admin_campaign_claim", { _limit: limit });
   if (error) throw new Error("claim_failed");
@@ -15,7 +50,7 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
 
   const campaignIds = [...new Set(claimed.map((r) => r.campaign_id))];
   const [{ data: camps }, { data: prods }] = await Promise.all([
-    supabaseAdmin.from("admin_campaigns").select("id,type,title,body,cta_url,image_url").in("id", campaignIds),
+    supabaseAdmin.from("admin_campaigns").select("id,type,title,body,cta_url,cta_label,image_url").in("id", campaignIds),
     supabaseAdmin.from("admin_campaign_products").select("campaign_id,product_id,sort_order").in("campaign_id", campaignIds).order("sort_order"),
   ]);
   const byId = new Map((camps ?? []).map((c) => [c.id, c]));
@@ -25,7 +60,32 @@ export async function processCampaignBatch(limit = BATCH): Promise<{ processed: 
     let status: "sent" | "failed" | "skipped" = "failed";
     let code: string | null = null;
     if (!c) { code = "campaign_missing"; }
-    else if (r.channel === "email") { status = "skipped"; code = "email_channel_unavailable"; }
+    else if (r.channel === "email") {
+      const ids = (prods ?? []).filter((p) => p.campaign_id === c.id).map((p) => p.product_id);
+      try {
+        const { data: eligible, error: eErr } = await supabaseAdmin.rpc("admin_campaign_email_eligible", { _user_id: r.user_id });
+        if (eErr) throw new Error("eligibility_failed");
+        const { data: prof } = await supabaseAdmin.from("profiles").select("email").eq("id", r.user_id).maybeSingle();
+        if (!eligible || !isValidEmail(prof?.email)) {
+          await supabaseAdmin.from("admin_campaign_recipients").update({ status: "skipped", error_code: "email_ineligible", updated_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing");
+          return;
+        }
+        const email = prof!.email!.trim();
+        const message = await buildCampaignEmail(c, ids, email);
+        const { data: gate, error: gateError } = await supabaseAdmin.from("admin_campaign_recipients")
+          .update({ dispatch_started_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing")
+          .is("dispatch_started_at", null).select("id").maybeSingle();
+        if (gateError) throw new Error("dispatch_gate_failed");
+        if (!gate) return;
+        const res = await sendResendEmail({ to: email, ...message, idempotencyKey: campaignDispatchKey(c.id, r.user_id, `email:${email.toLowerCase()}`) });
+        if (res.ok) status = "sent"; else code = `email_rejected_${res.status}`;
+      } catch { code = "delivery_unknown"; }
+      const { data: delivery } = await supabaseAdmin.from("admin_campaign_recipients").select("dispatch_started_at").eq("id", r.id).maybeSingle();
+      if (status === "failed" && delivery && mayRetryCampaign(r.attempts, delivery.dispatch_started_at)) {
+        await supabaseAdmin.from("admin_campaign_recipients").update({ status: "pending", error_code: code, updated_at: new Date().toISOString() }).eq("id", r.id).eq("status", "processing");
+        return;
+      }
+    }
     else {
       const ids = (prods ?? []).filter((p) => p.campaign_id === c.id).map((p) => p.product_id);
       try {

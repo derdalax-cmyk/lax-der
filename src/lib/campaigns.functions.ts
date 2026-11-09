@@ -98,7 +98,6 @@ function clean(data: z.infer<typeof campaignInput>) {
   const body = plainText(data.body, PUSH_BODY_MAX);
   if (!title || !body) throw new Error("Título e mensagem são obrigatórios.");
   if (data.type === "products" && data.productIds.length === 0) throw new Error("Selecione pelo menos um produto.");
-  if (data.channels.includes("email")) throw new Error("EMAIL_CHANNEL_UNAVAILABLE");
   const segment = data.type === "profile_recovery" ? "incomplete" as const : data.segment;
   return { ...data, title, body, ctaUrl, segment, ctaLabel: plainText(data.ctaLabel, 40) };
 }
@@ -110,13 +109,34 @@ export const sendCampaignTestToMe = createServerFn({ method: "POST" })
     const { db } = await guard(context.userId);
     const c = clean(data);
     const prods = await resolveProducts(db, c.productIds);
-    const { data: eligible, error: eligibilityError } = await db.rpc("admin_campaign_push_eligible", { _user_id: context.userId });
-    if (eligibilityError) throw new Error("Não foi possível verificar a elegibilidade do teste.");
-    if (!eligible) return { push: "ineligible" as const };
-    const { sendPushToUser } = await import("./push.server");
-    const url = c.type === "products" ? (c.productIds.length === 1 ? `/produto/${c.productIds[0]}` : "/explorar") : c.ctaUrl;
-    const res = await sendPushToUser(context.userId, { title: `[Teste] ${c.title}`, body: c.body, url, tag: "campaign-test", image: firstHttpsImage(prods[0]?.images) ?? undefined });
-    return { push: res.sent > 0 ? "sent" as const : res.total === 0 ? "no_subscription" as const : "failed" as const };
+    type PushR = "sent" | "no_subscription" | "failed" | "ineligible";
+    type EmailR = "sent" | "ineligible" | "failed";
+    const out: { push?: PushR; email?: EmailR } = {};
+    if (c.channels.includes("push")) {
+      const { data: eligible, error: eligibilityError } = await db.rpc("admin_campaign_push_eligible", { _user_id: context.userId });
+      if (eligibilityError) throw new Error("Não foi possível verificar a elegibilidade do teste.");
+      if (!eligible) out.push = "ineligible";
+      else {
+        const { sendPushToUser } = await import("./push.server");
+        const url = c.type === "products" ? (c.productIds.length === 1 ? `/produto/${c.productIds[0]}` : "/explorar") : c.ctaUrl;
+        const res = await sendPushToUser(context.userId, { title: `[Teste] ${c.title}`, body: c.body, url, tag: "campaign-test", image: firstHttpsImage(prods[0]?.images) ?? undefined });
+        out.push = res.sent > 0 ? "sent" : res.total === 0 ? "no_subscription" : "failed";
+      }
+    }
+    if (c.channels.includes("email")) {
+      const { data: eligible } = await db.rpc("admin_campaign_email_eligible", { _user_id: context.userId });
+      const { data: me } = await db.from("profiles").select("email").eq("id", context.userId).maybeSingle();
+      const email = me?.email?.trim();
+      if (!eligible || !email) out.email = "ineligible";
+      else {
+        const { buildCampaignEmail } = await import("./campaigns.server");
+        const { sendResendEmail } = await import("./resend.server");
+        const m = await buildCampaignEmail({ id: "test", type: c.type, title: c.title, body: c.body, cta_url: c.ctaUrl, cta_label: c.ctaLabel }, c.productIds, email, "[Teste] ");
+        const res = await sendResendEmail({ to: email, ...m, idempotencyKey: `campaign-test:${context.userId}:${crypto.randomUUID()}` });
+        out.email = res.ok ? "sent" : "failed";
+      }
+    }
+    return { ...out, emailTo: c.channels.includes("email") ? maskEmail((await db.from("profiles").select("email").eq("id", context.userId).maybeSingle()).data?.email) : undefined };
   });
 
 export const createAndSendCampaign = createServerFn({ method: "POST" })
@@ -139,7 +159,7 @@ export const createAndSendCampaign = createServerFn({ method: "POST" })
       created_by: context.userId, name: plainText(c.name, 100), type: c.type, audience_type: c.segment,
       audience_filters: c.filters as never, channels: c.channels as never, title: c.title, body: c.body,
       cta_label: c.ctaLabel || null, cta_url: c.ctaUrl, image_url: firstHttpsImage(prods[0]?.images),
-      estimated_push: c.channels.includes("push") ? e.push : 0, estimated_email: 0,
+      estimated_push: c.channels.includes("push") ? e.push : 0, estimated_email: c.channels.includes("email") ? e.email : 0,
       recipient_limit: c.recipientLimit, eligible_total: e.total,
     }).select("id").single();
     if (error || !row) throw new Error("Não foi possível criar a campanha.");
@@ -183,6 +203,7 @@ export const getCampaignDetails = createServerFn({ method: "POST" })
     const failures: Record<string, number> = {};
     for (const r of recs ?? []) {
       byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+      const k = `${r.status}_${r.channel}`; byStatus[k] = (byStatus[k] ?? 0) + 1;
       if ((r.status === "failed" || r.status === "skipped") && r.error_code) failures[r.error_code] = (failures[r.error_code] ?? 0) + 1;
     }
     return {

@@ -69,6 +69,7 @@ import { Route as ChatOrderOrderIdRouteImport } from './routes/chat.order.$order
 import { Route as VendedorMensagensIndexRouteImport } from './routes/vendedor.mensagens.index'
 import { Route as VendedorMensagensConversationIdRouteImport } from './routes/vendedor.mensagens.$conversationId'
 import { Route as ApiPublicCampaignsProcessRouteImport } from './routes/api/public/campaigns/process'
+import { Route as ApiPublicCampaignsUnsubscribeRouteImport } from './routes/api/public/campaigns/unsubscribe'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 import { Route as ApiPublicPushSendRouteImport } from './routes/api/public/push/send'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -378,6 +379,12 @@ const ApiPublicCampaignsProcessRoute =
     path: '/api/public/campaigns/process',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicCampaignsUnsubscribeRoute =
+  ApiPublicCampaignsUnsubscribeRouteImport.update({
+    id: '/api/public/campaigns/unsubscribe',
+    path: '/api/public/campaigns/unsubscribe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   id: '/api/public/email/dispatch',
   path: '/api/public/email/dispatch',
@@ -466,6 +473,7 @@ export interface FileRoutesByFullPath {
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
+  '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -528,6 +536,7 @@ export interface FileRoutesByTo {
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens': typeof VendedorMensagensIndexRoute
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
+  '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -596,6 +605,7 @@ export interface FileRoutesById {
   '/vendedor/mensagens/$conversationId': typeof VendedorMensagensConversationIdRoute
   '/vendedor/mensagens/': typeof VendedorMensagensIndexRoute
   '/api/public/campaigns/process': typeof ApiPublicCampaignsProcessRoute
+  '/api/public/campaigns/unsubscribe': typeof ApiPublicCampaignsUnsubscribeRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/push/send': typeof ApiPublicPushSendRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -665,6 +675,7 @@ export interface FileRouteTypes {
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens/'
     | '/api/public/campaigns/process'
+    | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -727,6 +738,7 @@ export interface FileRouteTypes {
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens'
     | '/api/public/campaigns/process'
+    | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -794,6 +806,7 @@ export interface FileRouteTypes {
     | '/vendedor/mensagens/$conversationId'
     | '/vendedor/mensagens/'
     | '/api/public/campaigns/process'
+    | '/api/public/campaigns/unsubscribe'
     | '/api/public/email/dispatch'
     | '/api/public/push/send'
     | '/lovable/email/auth/preview'
@@ -828,6 +841,7 @@ export interface RootRouteChildren {
   PoliticasIndexRoute: typeof PoliticasIndexRoute
   ChatOrderOrderIdRoute: typeof ChatOrderOrderIdRoute
   ApiPublicCampaignsProcessRoute: typeof ApiPublicCampaignsProcessRoute
+  ApiPublicCampaignsUnsubscribeRoute: typeof ApiPublicCampaignsUnsubscribeRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicPushSendRoute: typeof ApiPublicPushSendRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -1257,6 +1271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCampaignsProcessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/campaigns/unsubscribe': {
+      id: '/api/public/campaigns/unsubscribe'
+      path: '/api/public/campaigns/unsubscribe'
+      fullPath: '/api/public/campaigns/unsubscribe'
+      preLoaderRoute: typeof ApiPublicCampaignsUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/dispatch': {
       id: '/api/public/email/dispatch'
       path: '/api/public/email/dispatch'
@@ -1436,6 +1457,7 @@ const rootRouteChildren: RootRouteChildren = {
   PoliticasIndexRoute: PoliticasIndexRoute,
   ChatOrderOrderIdRoute: ChatOrderOrderIdRoute,
   ApiPublicCampaignsProcessRoute: ApiPublicCampaignsProcessRoute,
+  ApiPublicCampaignsUnsubscribeRoute: ApiPublicCampaignsUnsubscribeRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicPushSendRoute: ApiPublicPushSendRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

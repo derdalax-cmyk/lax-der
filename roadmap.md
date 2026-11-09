@@ -52,3 +52,4 @@
 - [x] Adicionar preço original opcional por produto e apresentar desconto válido no formulário, cartões e detalhe.
 - [x] Roleta DERDALAX (campanhas, códigos, indicações, sorteio no servidor, desconto por produto participante, admin).
 - [x] Auditoria de segurança: checkout server-side (create_order_secure), finalização idempotente, proteção de aprovação de produtos, cooldown da Roleta, headers de segurança, SW sem cache privado, logout com limpeza, auditoria de ações admin, whitelist de imagens no storage.
+- [x] Email de campanhas via Resend (news.derdalax.co.mz) no Centro de Comunicação.
