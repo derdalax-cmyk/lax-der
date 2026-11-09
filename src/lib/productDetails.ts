@@ -42,9 +42,9 @@ export function productPageHead(id: string, product: PublicProduct | null) {
 
 export function recommendationSections<T extends ProductCardData>(currentId: string, related: T[], seller: T[]) {
   const unique = (rows: T[]) => [...new Map(rows.filter(p => p.id !== currentId && p.status !== "sold").map(p => [p.id, p])).values()];
-  const sellerProducts = unique(seller).slice(0, 5);
+  const sellerProducts = unique(seller).slice(0, 50);
   const sellerIds = new Set(sellerProducts.map(p => p.id));
-  return { sellerProducts, related: unique(related).filter(p => !sellerIds.has(p.id)).slice(0, 5) };
+  return { sellerProducts, related: unique(related).filter(p => !sellerIds.has(p.id)).slice(0, 30) };
 }
 
 export async function shareProduct(product: Pick<ProductCardData, "id" | "title" | "images">, api: Pick<Navigator, "share" | "canShare" | "clipboard"> = navigator, fetchImage: typeof fetch = fetch) {

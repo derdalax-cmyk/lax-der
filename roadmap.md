@@ -26,6 +26,7 @@
 
 - [x] Preservar contexto/ordem/scroll das listas e corrigir preços em cards mobile.
 - [x] Recomendações reais e partilha/metadata por produto; validar navegação e testes.
+- [x] Ampliar recomendações do produto: até 30 da mesma categoria e até 50 do vendedor, sem login.
 
 - [x] Remover paginação de produtos e validar carregamento automático/filtros/duplicados.
 - [x] Reforçar prompt e pós-validação IA sem alterar autorização ou modelo.
