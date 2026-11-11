@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Remover Perfil do BottomNav; unificar nota pública do vendedor e invalidar após avaliações; testar loja/produto e navegação mobile.
+
 - [x] Tornar conclusão de perfil opcional, persistir dispensa e ciclo, lembrar após 30 minutos com consentimento, indicar campos em falta; 148 testes passam, X/ESC/fora/Agora não e reload validados em conta real, mobile/desktop. Entrega real e novo OAuth Google não testados.
 
 - [x] Limitar campanhas Push a 50/75/100, rever elegibilidade, fila, testes e histórico (sem envio real; Admin mantém verificação).
