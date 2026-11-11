@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Loader2, Store } from "lucide-react";
 import { toast } from "sonner";
+import { invalidateSellerRatings } from "@/lib/sellerRatings";
 
 const DIMS = [
   { key: "quality" as const, label: "Qualidade do produto" },
@@ -52,9 +53,7 @@ export function RateSellerModal({
     setSaving(false);
     if (error) { toast.error("Não foi possível guardar a avaliação."); return; }
     toast.success("Obrigado pela sua avaliação!");
-    qc.invalidateQueries({ queryKey: ["seller-reviews", sellerId] });
-    qc.invalidateQueries({ queryKey: ["seller-breakdown", sellerId] });
-    qc.invalidateQueries({ queryKey: ["public-seller", sellerId] });
+    await invalidateSellerRatings(qc, sellerId);
     onOpenChange(false);
     onDone?.();
   };

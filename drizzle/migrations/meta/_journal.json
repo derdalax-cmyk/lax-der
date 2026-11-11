@@ -267,6 +267,13 @@
       "when": 1794261285936,
       "tag": "0037_profile_reminder_private_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1794433440561,
+      "tag": "0038_public_seller_live_review_rating",
+      "breakpoints": true
     }
   ]
 }

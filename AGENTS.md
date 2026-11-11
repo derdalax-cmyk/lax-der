@@ -1,4 +1,5 @@
 # Project architecture
+- Public seller summaries share get_public_seller live seller_reviews aggregates and one public-seller Query key across store/product; review mutations invalidate seller summaries, breakdowns and matching product details so stored seller counters never drive public ratings.
 - Profile onboarding uses a shared completion predicate, owner-only dismissal RPC and private per-cycle/channel queue with durable dispatch gates; the managed five-minute callback pauses after drain and enqueue resumes it, so optional onboarding survives app closure without duplicate reminders.
 - Product discovery grids use measured shortest-column masonry with unchanged DOM/feed order and reveal only the measured prefix; shared natural-image frames use bounded TTL/LRU dimension persistence and nearby concurrent measurement before reveal, while Home carousels stay square and originals stay untouched, to avoid image-driven reflow.
 - Complete catalogue feeds share a keyset cursor (created_at/id), filter-keyed incremental query and automatic viewport sentinel; deduplication prevents repeated products without visible pagination.
