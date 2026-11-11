@@ -8,7 +8,7 @@ test("public seller aggregate tracks zero, three, insert, edit and removal witho
   // Execute the deployed SQL body against read-only CTE fixtures; no writes or RLS changes.
   const [fn] = await sql`select prosrc from pg_proc where oid='public.get_public_seller(uuid)'::regprocedure`;
   const id = "00000000-0000-0000-0000-000000000001";
-  const body = String(fn.prosrc).replaceAll("public.sellers", "fixture_sellers").replaceAll("public.seller_reviews", "fixture_reviews").replaceAll("public.products", "fixture_products").replaceAll("_id", `'${id}'::uuid`);
+  const body = String(fn.prosrc).replaceAll("public.sellers", "fixture_sellers").replaceAll("public.seller_reviews", "fixture_reviews").replaceAll("public.products", "fixture_products").replace(/\b_id\b/g, `'${id}'::uuid`);
   for (const [ratings, average, total] of [
     [[], 0, 0], [[5, 5, 4], 14 / 3, 3], [[5, 5, 4, 3], 4.25, 4], [[5, 5, 4, 5], 4.75, 4], [[5, 5, 4], 14 / 3, 3], [[5, 5, 4, 0, 6], 14 / 3, 3],
   ] as [number[], number, number][]) {
