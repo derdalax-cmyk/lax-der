@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Trash2, Pencil, MessageSquare, Star } from "lucide-react";
 import { toast } from "sonner";
+import { invalidateSellerRatings } from "@/lib/sellerRatings";
 
 type Review = {
   id: string;
@@ -62,11 +63,12 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     queryKey: ["my-seller-review", sellerId, user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return null;
       const { data } = await supabase
         .from("seller_reviews")
         .select("id,rating,rating_quality,rating_delivery,rating_service,comment")
         .eq("seller_id", sellerId)
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .maybeSingle();
       return (data ?? null) as
         | { id: string; rating: number; rating_quality: number | null; rating_delivery: number | null; rating_service: number | null; comment: string | null }
@@ -79,11 +81,12 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
     queryKey: ["review-eligible-order", sellerId, user?.id],
     enabled: !!user,
     queryFn: async () => {
+      if (!user) return null;
       const { data } = await supabase
         .from("order_items")
         .select("order_id, orders!inner(user_id,status)")
         .eq("seller_id", sellerId)
-        .eq("orders.user_id", user!.id)
+        .eq("orders.user_id", user.id)
         .neq("orders.status", "cancelled")
         .limit(1);
       return (data?.[0]?.order_id as string | undefined) ?? null;
@@ -147,10 +150,7 @@ export function SellerReviews({ sellerId }: { sellerId: string }) {
   };
 
   const invalidate = () => {
-    qc.invalidateQueries({ queryKey: ["seller-reviews", sellerId] });
-    qc.invalidateQueries({ queryKey: ["seller-breakdown", sellerId] });
-    qc.invalidateQueries({ queryKey: ["my-seller-review", sellerId, user?.id] });
-    qc.invalidateQueries({ queryKey: ["public-seller", sellerId] });
+    void invalidateSellerRatings(qc, sellerId);
   };
 
   const total = reviews.length;

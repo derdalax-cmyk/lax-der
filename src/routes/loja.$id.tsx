@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ProductCard, type ProductCardData } from "@/components/ProductCard";
-import { StarRating } from "@/components/StarRating";
+import { SellerRatingSummary } from "@/components/SellerRatingSummary";
+import { publicSellerQuery } from "@/lib/publicSellerQuery";
 import { SellerReviews } from "@/components/SellerReviews";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ContactSellerButton } from "@/components/ContactSellerButton";
@@ -18,35 +19,12 @@ export const Route = createFileRoute("/loja/$id")({
   component: LojaPublica,
 });
 
-type PublicSeller = {
-  id: string;
-  store_name: string;
-  logo_url: string | null;
-  city: string | null;
-  province: string | null;
-  description: string | null;
-  rating: number | null;
-  total_reviews: number | null;
-  created_at: string;
-  product_count: number;
-};
-
 function LojaPublica() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const { isFavorite, toggle } = useFavorites();
 
-  const { data: seller, isLoading } = useQuery({
-    queryKey: ["public-seller", id],
-    staleTime: PUBLIC_FRESH_MS,
-    gcTime: Infinity,
-    refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false,
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_public_seller", { _id: id });
-      if (error) throw error;
-      return (data ?? null) as unknown as PublicSeller | null;
-    },
-  });
+  const { data: seller, isLoading } = useQuery(publicSellerQuery(id));
 
   const { data: products = [] } = useQuery({
     queryKey: ["public-seller-products", id],
@@ -110,11 +88,7 @@ function LojaPublica() {
         <div className="flex-1 text-center sm:text-left">
           <h1 className="font-display text-2xl md:text-3xl">{seller.store_name}</h1>
           <div className="flex items-center justify-center sm:justify-start gap-3 mt-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5">
-              <StarRating value={Number(seller.rating ?? 0)} size={16} />
-              <span className="text-sm font-medium">{Number(seller.rating ?? 0).toFixed(1)}</span>
-              <span className="text-sm text-muted-foreground">({seller.total_reviews ?? 0})</span>
-            </span>
+            <SellerRatingSummary seller={seller} />
             {(seller.city || seller.province) && (
               <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" /> {[seller.city, seller.province].filter(Boolean).join(", ")}
